@@ -3,5 +3,7 @@ from decouple import config
 
 conn = MongoClient(config("MONGO_CREDENTIALS"))
 
-db = conn.config("DB_LIVE")
+omh = config("DB_LIVE")
+
+db = conn.omh
 
