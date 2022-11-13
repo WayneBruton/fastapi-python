@@ -181,8 +181,8 @@ def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment
             pdf.multi_cell(150, 5, c.contract[line]["text"], new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=False,
                            markdown=True)
         elif c.contract[line]["indent"] == 999:
-            if c.contract[line]["first"] == "Yes":
-                pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            # if c.contract[line]["first"] == "Yes":
+            #     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
             pdf.cell(40, 5, "")
             pdf.cell(40, 5, c.contract[line]["text"], markdown=True, align="L", fill=True, border=True)
             pdf.multi_cell(50, 5, c.contract[line]["text1"], new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=True,
