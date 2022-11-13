@@ -28,7 +28,8 @@ investors = db.investors
 
 @investor.get("/")
 async def get_all_investors():
-    result = list(investors.find({}, {'_id': 0}))
+    # result = list(investors.find({}, {'_id': 0}))
+    result = "AWESOME IT WORKS!!"
     return result
 
 
