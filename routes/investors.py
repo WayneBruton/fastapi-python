@@ -36,7 +36,7 @@ async def get_all_investors():
 @investor.post("/investorloanagreement")
 async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber):
     # token_verification = verify_jwt_token(investor_acc_number.token_received)
-    token_verification = ""
+    token_verification = "ABC"
     print(token_verification)
     if token_verification == "Verification Failed":
         return {"error":"User Not Verified"}
