@@ -84,7 +84,7 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
             for i in result_loan:
                 for key in i:
                     if key == "investor_name":
-                        investor_name += i[key] + ""
+                        investor_name += i[key] + " "
                     if key == "investor_surname":
                         investor_name += i[key]
                         l1.lender_info[1]['text'] = investor_name
