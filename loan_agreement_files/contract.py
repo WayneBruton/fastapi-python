@@ -36,7 +36,7 @@ point1p9 = "**'Draft SDP'** means the Draft Site Development Plan which serves a
 point1p10 = "**'FICA'** means the Financial Intelligence Centre Act 38 of 2001;"
 point1p11 = "**'Interest'** means, collectively, \n 1. the: Interest Rate; \n 2. an Investment Account Supplemented " \
             "Interest. "
-point1p12 = "**'Interest Rate'** per Investment Information Schedule on page 3. Interest shall be calculated on a " \
+point1p12 = "**'Interest Rate'** per Investment Information Schedule on page 2. Interest shall be calculated on a " \
             "day-to-day basis and be calculated on the actual number of days elapsed and on the basis of a 365 (three " \
             "hundred and sixty-five) day year, or on the basis of a 366 (three hundred and sixty-six) day year should " \
             "a leap year be applicable; "

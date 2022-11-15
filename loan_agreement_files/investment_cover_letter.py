@@ -43,6 +43,7 @@ def print_investor_cover_letter(lender):
     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(10, 5, "")
+    # pdf.set_stretching(150)
     pdf.multi_cell(170, 5,
                    "This is a private placement. Different types of investments involve varying degrees of risk, "
                    "and there can be no assurance that any specific investment will either be suitable or profitable "
@@ -62,7 +63,7 @@ def print_investor_cover_letter(lender):
                    "been prepared for informational purposes only. You should consult your own investment, tax, "
                    "legal and accounting advisors before engaging in any transaction.",
                    new_x=XPos.LMARGIN, new_y=YPos.NEXT, markdown=True,
-                   align="L")
+                   align="J")
     pdf.cell(10, 5, "")
 
     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)

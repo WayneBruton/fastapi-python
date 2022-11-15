@@ -140,8 +140,12 @@ def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment
     pdf.cell(80, 7, "Loan Amount (R)", align="L", markdown=True, fill=True, border=True)
     pdf.cell(110, 7, f"{investment_amount}", align="L", markdown=True, fill=False, border=True, new_x=XPos.LMARGIN,
              new_y=YPos.NEXT)
-    pdf.cell(80, 7, "Property & Linked Unit", align="L", markdown=True, fill=True, border=True)
-    pdf.cell(110, 7, f"{project} - {linked_unit}", align="L", markdown=True, fill=False, border=True,
+    pdf.cell(80, 7, "Property", align="L", markdown=True, fill=True, border=True)
+    pdf.cell(110, 7, f"{project}", align="L", markdown=True, fill=False, border=True,
+             new_x=XPos.LMARGIN,
+             new_y=YPos.NEXT)
+    pdf.cell(80, 7, "Linked Unit", align="L", markdown=True, fill=True, border=True)
+    pdf.cell(110, 7, f"{linked_unit}", align="L", markdown=True, fill=False, border=True,
              new_x=XPos.LMARGIN,
              new_y=YPos.NEXT)
 
@@ -152,7 +156,7 @@ def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment
     for i in cont.contentsList:
         pdf.cell(50, 5, f"**{i['number']}** ", align="R", markdown=True)
         pdf.cell(100, 5, f"**{i['text']}**", markdown=True)
-        pdf.cell(40, 5, f"**{i['page']}**", new_x=XPos.LMARGIN, new_y=YPos.NEXT, markdown=True)
+        pdf.cell(10, 5, f"**{i['page']}**", new_x=XPos.LMARGIN, new_y=YPos.NEXT, markdown=True, align="R")
         # pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
     pdf.add_page()
