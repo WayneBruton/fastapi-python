@@ -83,7 +83,7 @@ def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment
     else:
         pdf.cell(50, 5, f"Identity/Registration Number {investor_id}", align="L", markdown=True, border=False,
                  new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        
+
     pdf.cell(30, 5, "", align="R", markdown=True)
     pdf.cell(50, 5, "Herein represented by ___________________ (delete if not applicable)", align="L", markdown=True,
              border=False,

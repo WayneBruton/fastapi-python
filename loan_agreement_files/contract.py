@@ -303,8 +303,8 @@ point13_1 = "The Parties to this Agreement choose the following addresses as the
             "executandi__ for all purposes arising hereunder and as their respective addresses for the service of any " \
             "notices required to be served upon them: "
 
-point13_1_1 = "The Borrower at:\nHERON PROJECTS (PTY) LTD\n2ND FLOOR, EDWARD 2 BUILDING, 72 - 76 EDWARD STREET, " \
-              "BELLVILLE\nEmail Address: debbie@opportunity.co.za. "
+point13_1_1 = "The Borrower at:\nHERON PROJECTS (PTY) LTD\nOFFICE 2, FIRST FLOOR, 251 DURBAN ROAD, " \
+              "BO-OAKDALE, BELLVILLE\nEmail Address: debbie@opportunity.co.za. "
 
 point13_1_2 = "the Lender at:\nAs per Lender Information Schedule on page 2\nEmail Address:  As per Lender " \
               "Information Schedule on page 2 "

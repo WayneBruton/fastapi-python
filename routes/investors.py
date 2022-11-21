@@ -258,32 +258,45 @@ async def get_sales_info(data: Request):
             insert2['released_investment_number'] = item['investment_number']
 
             final_data_trust_and_investment.append(insert2)
-        else:
-            insert3 = {}
-            for data in filtered_data:
-                for key in data:
-                    insert3[key] = data[key]
-            insert3['released_investment_amount'] = 0
-            insert3['investment_end_date'] = ""
-            insert3['investment_release_date'] = ""
-            insert3['released_investment_number'] = 999
+        # else:
+        #     insert3 = {}
+        #     for data in filtered_data:
+        #         for key in data:
+        #             insert3[key] = data[key]
+        #     insert3['released_investment_amount'] = 0
+        #     insert3['investment_end_date'] = ""
+        #     insert3['investment_release_date'] = ""
+        #     insert3['opportunity_code'] = item["opportunity_code"]
+        #     insert3['investor_acc_number'] = "item["opportunity_code"]"
+        #     insert3['released_investment_number'] = 999
+        #
+        #     final_data_trust_and_investment.append(insert3)
 
-            final_data_trust_and_investment.append(insert3)
-
+    # print(len(final_data_trust_and_investment))
+    # test = []
+    # for x in final_data_trust_and_investment:
+    #     try:
+    #         test.append(x["investor_acc_number"])
+    #     except:
+    #         print(x)
+    # print(len(test))
     # POPULATE WITH UNALLOCATED DATA
     for item in interim_data:
+        # try:
         filtered_data = list(filter(
             lambda x: x['opportunity_code'] == item['opportunity_code'], final_data_trust_and_investment))
+        # except:
+        #     filtered_data = []
         if len(filtered_data) == 0:
             insert = {}
             for key in item:
                 insert[key] = item[key]
             insert['investor_acc_number'] = "ZZUN01"
             insert['investor_name'] = "Allocated UN"
+            insert['opportunity_code'] = item['opportunity_code']
             final_data_trust_and_investment.append(insert)
 
-    final_data_trust_and_investment = sorted(final_data_trust_and_investment,
-                                             key=lambda i: (i['opportunity_code'], i['investor_acc_number']))
+    final_data_trust_and_investment = sorted(final_data_trust_and_investment, key=lambda z: (z['opportunity_code'], z['investor_acc_number']))
 
     return final_data_trust_and_investment
 
