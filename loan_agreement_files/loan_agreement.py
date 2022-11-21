@@ -15,7 +15,7 @@ class PDF(FPDF):
 
 
 # print(c.contract)
-def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment_amount, investment_interest_rate):
+def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment_amount, investment_interest_rate, investor_id):
     # lender = lender
     # nsst = nsst
     # project = project
@@ -77,8 +77,13 @@ def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment
         pdf.cell(50, 5, "__________________________________", align="L", markdown=True, border=False,
                  new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(30, 5, "", align="R", markdown=True)
-    pdf.cell(50, 5, "Identity/Registration Number _______________________", align="L", markdown=True, border=False,
-             new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    if investor_id == "":
+        pdf.cell(50, 5, "Identity/Registration Number _______________________", align="L", markdown=True, border=False,
+                new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    else:
+        pdf.cell(50, 5, f"Identity/Registration Number {investor_id}", align="L", markdown=True, border=False,
+                 new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        
     pdf.cell(30, 5, "", align="R", markdown=True)
     pdf.cell(50, 5, "Herein represented by ___________________ (delete if not applicable)", align="L", markdown=True,
              border=False,

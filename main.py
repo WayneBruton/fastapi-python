@@ -1,18 +1,19 @@
 import os
+from datetime import datetime
 from loan_agreement_files.investment_cover_letter import print_investor_cover_letter
 from loan_agreement_files.loan_agreement import print_investor_loan_agreement
 from loan_agreement_files.annexure_c import print_annexure_c
 from loan_agreement_files.merge_documents import merge_files
 
 
-def create_final_loan_agreement(linked_unit, investor, nsst, project, investment_amount, investment_interest_rate):
+def create_final_loan_agreement(linked_unit, investor, nsst, project, investment_amount, investment_interest_rate, investor_id):
     pdf_list = []
     linked_unit_split = []
 
     cover_letter = print_investor_cover_letter(investor)
     pdf_list.append(cover_letter)
     loan_agreement = print_investor_loan_agreement(investor, nsst, project, linked_unit, investment_amount,
-                                                   investment_interest_rate)
+                                                   investment_interest_rate, investor_id)
     pdf_list.append(loan_agreement)
     pdf_list.append("annexures/Heron View - Annexure A.pdf")
 
@@ -36,3 +37,25 @@ def create_final_loan_agreement(linked_unit, investor, nsst, project, investment
     os.remove(annexure_C)
 
     return final_doc
+
+
+# def test(a):
+#     try:
+#         result = int(a) * 10
+#         return result
+#     except:
+#         a = 10
+#         result = {"error": f"Parameter must be a number like {a}"}
+#         return result
+#
+#
+# newResult = test("50A")
+# print(newResult)
+
+# today = datetime.today()
+# dateStr = today.strftime("%Y/%m/%d")
+# datetime = datetime.strptime(dateStr, '%Y/%m/%d')
+#
+# print(dateStr)
+# print(datetime)
+
