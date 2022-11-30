@@ -6,9 +6,10 @@ from routes.excel_sales_forecast import excel_sales_forecast
 from routes.sales import sales
 
 if not os.path.isdir("sales_documents"):
-    # if the demo_folder2 directory is
-    # not present then create it.
     os.makedirs("sales_documents")
+
+if not os.path.isdir("loan_agreements"):
+    os.makedirs("loan_agreements")
 
 app = FastAPI()
 
