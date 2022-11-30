@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import FileResponse
 from config.db import db
 import os
-import time
-from datetime import datetime
-from datetime import timedelta
+# import time
+# from datetime import datetime
+# from datetime import timedelta
 from pydantic import BaseModel
 import loan_agreement_files.lender as l1
 from main import create_final_loan_agreement
+from bson import ObjectId
 
 
 # from verify_token import verify_jwt_token
@@ -39,19 +40,15 @@ async def get_all_investors():
     return result
 
 
-
-
-
 @investor.post("/investorloanagreement")
 async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber):
     # token_verification = verify_jwt_token(investor_acc_number.token_received)
     token_verification = "ABC"
-    # print(token_verification)
+
     if token_verification == "Verification Failed":
         return {"error": "User Not Verified"}
     else:
 
-        # result = investors.find_one({"investor_acc_number": investor_acc_number.investor_acc_number}, {'_id': 0})
         result_loan = list(investors.aggregate(
             [{"$match": {"investor_acc_number": investor_acc_number.investor_acc_number}}, {"$unwind": "$pledges"},
              {"$match": {"pledges.opportunity_code": investor_acc_number.opportunity_code}}, {
@@ -71,14 +68,13 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                               "telefax_number": 1, "trading_name": 1, "vat_number": 1, "pledges": 1,
                               "id": {'$toString': "$_id"}, "_id": 0, }}]))
 
-        # print(result_loan)
         if len(result_loan) == 0:
             return {
-                "error": f"No data found for {investor_acc_number.investor_acc_number} and {investor_acc_number.opportunity_code}"}
+                "error": f"No data found for {investor_acc_number.investor_acc_number} and "
+                         f"{investor_acc_number.opportunity_code}"}
         else:
 
             for i in range(0, len(l1.lender_info)):
-                # print(i)
                 l1.lender_info[i]['text'] = ""
 
             physical_address2 = ""
@@ -94,7 +90,6 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
             investor_id = ""
             for i in result_loan:
                 for key in i:
-                    # if key == "investor_id_number":
 
                     if key == "investor_name":
                         investor_name += i[key] + " "
@@ -193,7 +188,7 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
 
                     if key == "pledges":
                         for pledge in i[key]:
-                            # print(pledge)
+
                             if pledge == "opportunity_code":
                                 linked_unit = i[key][pledge]
                             if pledge == "Category":
@@ -219,10 +214,7 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
 async def loan_agreement(loan_agreement_name):
     dir_path = "loan_agreements"
     dir_list = os.listdir(dir_path)
-    # print("AAWESOMEEEEE")
     if loan_agreement_name in dir_list:
         return FileResponse(f"loan_agreements/{loan_agreement_name}", media_type="application/pdf")
     else:
         return {"ERROR": "File does not exist!!"}
-
-# http://127.0.0.1:8000/get_loan_agreement?loan_agreement_name=Loan_Agreement_Wayne%20Bruton_Heron%20View_HVC102.pdf

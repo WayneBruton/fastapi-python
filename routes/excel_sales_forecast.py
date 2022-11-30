@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Request
-from fastapi.responses import FileResponse
+# from fastapi.responses import FileResponse
+from excel_functions.sales_forecast import create_sales_forecast_file
 from config.db import db
-import os
-import time
+# import os
+# import time
 from datetime import datetime
 from datetime import timedelta
 
@@ -118,7 +119,8 @@ async def get_sales_info(data: Request):
                 'investor_acc_number': 1,
                 'opportunity_code': 1,
                 'rollover_amount': 1,
-                'investment_number': 1
+                'investment_number': 1,
+                'available_date': 1,
             }
         }, {
             '$match': {
@@ -127,9 +129,7 @@ async def get_sales_info(data: Request):
         }
     ]))
 
-    print(project_rollovers)
-
-    # FILTER OUT NON RELEVENT OPPORTUNITIES
+    # FILTER OUT NON RELEVANT OPPORTUNITIES
     for inv in initial_forecast_data:
         if len(request["Category"]) == 1:
             inv["trust"] = [x for x in inv["trust"] if x["Category"] == request["Category"][0]]
@@ -141,13 +141,12 @@ async def get_sales_info(data: Request):
                                   x["Category"] == request["Category"][0] or x["Category"] == request["Category"][1]]
     initial_forecast_data = [x for x in initial_forecast_data if len(x["trust"]) > 0]
 
-    # SEPERATE INVESTMENTS AND TRUST
+    # SEPARATE INVESTMENTS AND TRUST
 
     trust_items = []
     investment_items = []
     interim_data = []
 
-    final_data = []
     for inv in initial_forecast_data:
         for t in inv['trust']:
             t['investor_acc_number'] = inv['investor_acc_number']
@@ -164,7 +163,6 @@ async def get_sales_info(data: Request):
         rate_item["Efective_date"] = rate_item["Efective_date"].replace("/", "-")
         rate_item["Efective_date"] = datetime.strptime(rate_item["Efective_date"], '%Y-%m-%d')
     rates_retrieved = sorted(rates_retrieved, key=lambda d: d['Efective_date'], reverse=True)
-    # print(rates_retrieved)
 
     # FILTER COSTS
     costs = [x for x in costs if x["Development"] == request["Category"][0]]
@@ -198,7 +196,7 @@ async def get_sales_info(data: Request):
             rate = cost["rate"]
             insert[key] = rate
 
-            interim_data.append(insert)
+        interim_data.append(insert)
 
     final_data_trust = []
     final_data_trust_and_investment = []
@@ -211,7 +209,7 @@ async def get_sales_info(data: Request):
     for item in trust_items:
         opportunity_code = item['opportunity_code']
         filtered_data = list(filter(lambda x: x['opportunity_code'] == opportunity_code, interim_data))
-        # print(len(filtered_data))
+
         insert1 = {}
         for data in filtered_data:
             for key in data:
@@ -237,6 +235,7 @@ async def get_sales_info(data: Request):
                     'investor_acc_number'] and x['investment_number'] == item['investment_number'], final_data_trust))
         except:
             filtered_data = []
+
         if len(filtered_data) > 0:
 
             insert2 = {}
@@ -271,6 +270,7 @@ async def get_sales_info(data: Request):
             insert['investment_amount'] = 0
             insert['released_investment_amount'] = 0
             insert['investment_release_date'] = ""
+            insert["investment_interest_rate"] = 18
             final_data_trust_and_investment.append(insert)
 
     final_data_trust_and_investment = sorted(final_data_trust_and_investment,
@@ -282,6 +282,15 @@ async def get_sales_info(data: Request):
             inv["opportunity_end_date"] = "2022/03/01"
         if inv["opportunity_final_transfer_date"] == "":
             inv["opportunity_final_transfer_date"] = inv["opportunity_end_date"]
+        filtered_rollovers = [x for x in project_rollovers if
+                              x['opportunity_code'] == inv['opportunity_code'] and x["investor_acc_number"] == inv[
+                                  "investor_acc_number"]]
+        if not filtered_rollovers:
+            inv['rollover_amount'] = 0
+            inv['rollover_date'] = ""
+        else:
+            inv["rollover_amount"] = filtered_rollovers[0]["rollover_amount"]
+            inv["rollover_date"] = filtered_rollovers[0]["available_date"]
 
     # CALCULATE INVESTMENT INTEREST
     for inv in final_data_trust_and_investment:
@@ -293,10 +302,13 @@ async def get_sales_info(data: Request):
             inv["released_interest_to_date"] = 0
         # INVESTMENT INTEREST
         if inv["investor_acc_number"] != "ZZUN01":
+
             final_transfer_date = inv["opportunity_final_transfer_date"].replace("/", "-")
             final_transfer_date = datetime.strptime(final_transfer_date, '%Y-%m-%d')
+
             report_date = inv["report_date"].replace("/", "-")
             report_date = datetime.strptime(report_date, '%Y-%m-%d')
+
             deposit_date = inv["deposit_date"].replace("/", "-")
             deposit_date = datetime.strptime(deposit_date, '%Y-%m-%d')
             deposit_date = deposit_date + timedelta(days=1)
@@ -340,8 +352,33 @@ async def get_sales_info(data: Request):
                     deposit_date_to_date = deposit_date_to_date + timedelta(days=1)
                 inv["investment_interest_to_date"] = investment_interest_to_date
 
-            # if inv["release_date"] != "" and inv["release_date"]
+            # RELEASED INTEREST
+            if inv["release_date"] != "":
+                from_date = inv["release_date"].replace("/", "-")
+                from_date = datetime.strptime(from_date, '%Y-%m-%d')
+                from_date = from_date + timedelta(days=1)
 
-        # RELEASED INTEREST
+                from_date_to_date = inv["release_date"].replace("/", "-")
+                from_date_to_date = datetime.strptime(from_date_to_date, '%Y-%m-%d')
+                from_date_to_date = from_date_to_date + timedelta(days=1)
+                # RELEASED INTEREST TILL TRANSFER
+                released_interest = 0
+                while from_date <= final_transfer_date:
+                    released_interest += inv["investment_amount"] * inv["investment_interest_rate"] / 100 / 365
+                    from_date = from_date + timedelta(days=1)
+                inv["released_interest_total"] = released_interest
+                # RELEASED INTEREST TO DATE
+                released_interest_to_date = 0
+
+                if report_date <= final_transfer_date:
+                    while from_date_to_date <= report_date:
+                        released_interest_to_date += inv["investment_amount"] * inv[
+                            "investment_interest_rate"] / 100 / 365
+                        from_date_to_date = from_date_to_date + timedelta(days=1)
+                    inv["released_interest_to_date"] = released_interest_to_date
+                else:
+                    inv["released_interest_to_date"] = released_interest
+
+    create_sales_forecast_file(final_data_trust_and_investment, request)
 
     return final_data_trust_and_investment

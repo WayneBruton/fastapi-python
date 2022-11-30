@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.investors import investor
 from routes.excel_sales_forecast import excel_sales_forecast
+from routes.sales import sales
 
 app = FastAPI()
 
@@ -17,4 +18,5 @@ app.add_middleware(
 
 app.include_router(investor)
 app.include_router(excel_sales_forecast)
+app.include_router(sales)
 
