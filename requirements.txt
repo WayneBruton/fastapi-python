@@ -1,6 +1,5 @@
 aiofiles
 anyio
-bson
 click
 defusedxml
 dnspython
