@@ -165,7 +165,7 @@ async def delete_uploaded_file(data: Request):
 
 
 @sales.get("/get_uploaded_document")
-async def get_uploaded_file(file_name): # File Name incl path.
+async def get_uploaded_file(file_name):  # File Name incl path.
     is_exists = os.path.exists(file_name)
     if is_exists:
         return FileResponse(f"{file_name}", media_type="application/pdf")
