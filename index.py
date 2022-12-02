@@ -11,6 +11,9 @@ if not os.path.isdir("sales_documents"):
 if not os.path.isdir("loan_agreements"):
     os.makedirs("loan_agreements")
 
+if not os.path.isdir("split_pdf_files"):
+    os.makedirs("split_pdf_files")
+
 app = FastAPI()
 
 origins = ["*"]
