@@ -1,8 +1,11 @@
 import os
+import boto3
+from botocore.exceptions import ClientError
 from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse
 from config.db import db
 from bson.objectid import ObjectId
+from decouple import config
 
 sales = APIRouter()
 
@@ -13,15 +16,64 @@ opportunities = db.opportunities
 sales_parameters = db.salesParameters
 sales_processed = db.sales_processed
 
+print(config("AWS_BUCKET_NAME"))
 
+# AWS BUCKET INFO - ENSURE IN VARIABLES ON HEROKU
+AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
+AWS_BUCKET_REGION = config("AWS_BUCKET_REGION")
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+
+# CONNECT TO S3 SERVICE
+s3 = boto3.client(
+    "s3",
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+)
+
+
+# final_list_to_download = []
+def get_files_required_for_sales():
+    file_list_items = []
+    results = list(sales_processed.find(({})))
+    for result in results:
+        file_list_items.append(result['opportunity_otp'])
+        file_list_items.append(result['opportunity_uploadId'])
+        file_list_items.append(result['opportunity_addressproof'])
+        file_list_items.append(result['opportunity_uploadId_sec'])
+        file_list_items.append(result['opportunity_addressproof_sec'])
+        file_list_items.append(result['opportunity_upload_deposite'])
+        file_list_items.append(result['opportunity_upload_statement'])
+    file_list_items = [x for x in file_list_items if x != None]
+    file_list_items = [x.split("/")[1] for x in file_list_items if x != None]
+    print(file_list_items)
+    list_of_filenames = os.listdir("sales_documents")
+    final_list_to_download = [x for x in file_list_items if x not in list_of_filenames]
+    print(final_list_to_download)
+    if final_list_to_download:
+        for file in final_list_to_download:
+            try:
+                s3.download_file(AWS_BUCKET_NAME, file, f"./sales_documents/{file}")
+            except ClientError as err:
+                print("Credentials are incorrect")
+                print(err)
+            except Exception as err:
+                print(err)
+    else:
+        print("List is empty")
+
+
+# GET DEVELOPMENTS
 @sales.post("/getDevelopmentForSales")
 async def get_developments_for_sales():
     result_developments = list(opportunityCategories.aggregate([{"$project": {
         "id2": {'$toString': "$_id"}, "_id": 0, "Description": 1, "blocked": 1
     }}]))
+    get_files_required_for_sales()
     return result_developments
 
 
+# GET UNITS FOR SALE
 @sales.post("/getUnitsForSales")
 async def get_units_for_sales(data: Request):
     request = await data.json()
@@ -41,6 +93,7 @@ async def get_units_for_sales(data: Request):
     return result
 
 
+# GET SOLD UNITS
 @sales.post("/get_units_sold")
 async def get_all_units_sold(data: Request):
     request = await data.json()
@@ -62,9 +115,11 @@ async def get_all_units_sold(data: Request):
         }
     ]))
     print(response)
+
     return response
 
 
+# GET LINKED INVESTORS
 @sales.post("/getLinkedInvestors")
 async def get_investors_linked_to_sale(data: Request):
     request = await data.json()
@@ -101,6 +156,7 @@ async def get_investors_linked_to_sale(data: Request):
     return result
 
 
+# SAVE A SALE
 @sales.post("/saveSale")
 async def save_sale(data: Request):
     request = await data.json()
@@ -116,6 +172,7 @@ async def save_sale(data: Request):
         return {"id": str(obj_instance)}
 
 
+# DELETE A SALE AND ASSOCIATED UPLOADED DOCUMENTS
 @sales.post("/delete_sale")
 async def delete_sale(data: Request):
     request = await data.json()
@@ -124,6 +181,7 @@ async def delete_sale(data: Request):
     print(result)
     unit = request['unit']
     list_of_filenames = os.listdir("sales_documents")
+    # DO AWS REMOVE FILE
     for file in list_of_filenames:
         length = len(unit)
         if file[:length] == unit:
@@ -131,6 +189,7 @@ async def delete_sale(data: Request):
     return "Deleted"
 
 
+# RETRIEVE AN ALREADY SOLD UNIT
 @sales.post("/get_sold_unit")
 async def get_sold_unit(data: Request):
     request = await data.json()
@@ -141,6 +200,7 @@ async def get_sold_unit(data: Request):
     return result
 
 
+# UPLOAD A DOCUMENT
 @sales.post("/upload_file")
 async def upload_file(data: Request):
     form = await data.form()
@@ -148,9 +208,21 @@ async def upload_file(data: Request):
     contents = await form['doc'].read()
     with open(f"sales_documents/{filename}", 'wb') as f:
         f.write(contents)
+    try:
+        s3.upload_file(
+            f"sales_documents/{filename}",
+            AWS_BUCKET_NAME,
+            f"{filename}",
+        )
+    except ClientError as err:
+        print("Credentials are incorrect")
+        print(err)
+    except Exception as err:
+        print(err)
     return {"fileName": f"sales_documents/{filename}"}
 
 
+# DELETE AN UPLOADED DOCUMENT
 @sales.post("/delete_uploaded_file")
 async def delete_uploaded_file(data: Request):
     request = await data.json()
@@ -164,6 +236,7 @@ async def delete_uploaded_file(data: Request):
         return {"file_deleted": False}
 
 
+# RETRIEVE AN UPLOADED DOCUMENT
 @sales.get("/get_uploaded_document")
 async def get_uploaded_file(file_name):  # File Name incl path.
     is_exists = os.path.exists(file_name)

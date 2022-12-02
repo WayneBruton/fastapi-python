@@ -134,126 +134,234 @@ point3_3 = "It is further recorded that the sum total of the Loan Amount and all
 point3_4 = "The Lender hereby agrees to lend to the Borrower who agrees to borrow from the Lender the Loan Amount on " \
            "the terms and conditions herein contained. "
 
-point3_5 = "The Loan Amount paid by the Lender to the Borrower is effective from payment date at which date the Loan Amount vests with the Borrower. The Loan Amount will not be repayable to the Lender, save as otherwise set out herein."
+point3_5 = "The Loan Amount paid by the Lender to the Borrower is effective from payment date at which date the Loan " \
+           "Amount vests with the Borrower. The Loan Amount will not be repayable to the Lender, save as otherwise " \
+           "set out herein. "
 
-point3_6 = "Notwithstanding anything contained herein, the Parties record, and it is agreed, that the Attorneys shall receive the Loan Amount as the agent of, and on instructions of the Borrower."
+point3_6 = "Notwithstanding anything contained herein, the Parties record, and it is agreed, that the Attorneys shall " \
+           "receive the Loan Amount as the agent of, and on instructions of the Borrower. "
 
-point3_7 = "The Attorneys are hereby instructed by the Borrower, upon successful completion of the FICA process with the Lender, to transfer the Loan Amount advanced by the Lender into the Investment Account."
+point3_7 = "The Attorneys are hereby instructed by the Borrower, upon successful completion of the FICA process with " \
+           "the Lender, to transfer the Loan Amount advanced by the Lender into the Investment Account. "
 
 heading4 = "**4. ADVANCEMENT OF LOAN AMOUNT**"
-point4_1 = "The Lender hereby agrees to pay the full Loan Amount into the Attorneys' Trust Account within 7 (Seven) days of the Signature Date, which Loan Amount shall, subject to clause 4.5, be transferred by the Attorneys to the Investment Account pending the Release Date."
+point4_1 = "The Lender hereby agrees to pay the full Loan Amount into the Attorneys' Trust Account within 7 (Seven) " \
+           "days of the Signature Date, which Loan Amount shall, subject to clause 4.5, be transferred by the " \
+           "Attorneys to the Investment Account pending the Release Date. "
 
-point4_2 = "Upon payment of the Loan Amount into the Attorneys' Trust Account, the Lender shall furnish the Attorneys with proof of payment and the Attorneys shall allocate a reference number to the Loan Amount."
+point4_2 = "Upon payment of the Loan Amount into the Attorneys' Trust Account, the Lender shall furnish the Attorneys " \
+           "with proof of payment and the Attorneys shall allocate a reference number to the Loan Amount. "
 
-point4_3 = "The date on which the Loan Amount reflects in the Attorneys' Trust Account shall be referred to as the Payment Date and the date on which the Loan Amount is transferred by the Attorneys to the Investment Account pursuant to this clause 4 shall be referred to as the Investment Date."
+point4_3 = "The date on which the Loan Amount reflects in the Attorneys' Trust Account shall be referred to as the " \
+           "Payment Date and the date on which the Loan Amount is transferred by the Attorneys to the Investment " \
+           "Account pursuant to this clause 4 shall be referred to as the Investment Date. "
 
 point4_4 = "From the Payment Date to the Repayment date, the Lender shall be a beneficiary of NSST."
 
-point4_5 = "Before the Loan Amount may be transferred to the Investment Account as aforesaid, in order to comply with the provisions of FICA and the Legal Practice Act, the Lender must furnish the Attorneys with the relevant FICA documentation requested by the Attorneys."
+point4_5 = "Before the Loan Amount may be transferred to the Investment Account as aforesaid, in order to comply with " \
+           "the provisions of FICA and the Legal Practice Act, the Lender must furnish the Attorneys with the " \
+           "relevant FICA documentation requested by the Attorneys. "
 
-point4_6 = "The Lender undertakes to fulfil his/her/its obligations recorded in clause 4.5 upon request by the Attorneys, failing which the Loan Amount shall not be transferred to the Investment Account in accordance with the provisions of this Agreement."
+point4_6 = "The Lender undertakes to fulfil his/her/its obligations recorded in clause 4.5 upon request by the " \
+           "Attorneys, failing which the Loan Amount shall not be transferred to the Investment Account in accordance " \
+           "with the provisions of this Agreement. "
 
-point4_7 = "Subject to clause 8, the Borrower may use the Loan Amount held in the Investment Account, or any portion thereof, for the issue of letters of undertaking by attorneys relating to the Proposed Development, which letters of undertaking are to be approved by the NSST before issue."
+point4_7 = "Subject to clause 8, the Borrower may use the Loan Amount held in the Investment Account, or any portion " \
+           "thereof, for the issue of letters of undertaking by attorneys relating to the Proposed Development, " \
+           "which letters of undertaking are to be approved by the NSST before issue. "
 
 heading5 = "**5. RELEASE OF LOAN AMOUNT FROM INVESTMENT ACCOUNT**"
-point5_1 = "It is specifically recorded that, apart from the payment of transfer duty and conveyancing fees and disbursements relating to the Development Land and Proposed Development, no portion of the Loan Amount or any Investment Account Interest shall be released to the Borrower before the mortgage bond contemplated in clause 8 is registered over the Development Land in favour of NSST."
+point5_1 = "It is specifically recorded that, apart from the payment of transfer duty and conveyancing fees and " \
+           "disbursements relating to the Development Land and Proposed Development, no portion of the Loan Amount or " \
+           "any Investment Account Interest shall be released to the Borrower before the mortgage bond contemplated " \
+           "in clause 8 is registered over the Development Land in favour of NSST. "
 
-point5_2 = "NSST may, from time to time and as same is required for purposes of funding the Proposed Development, instruct the release of the Loan Amount and Investment Account Interest or any portion thereof out of the Investment Account to the Borrower. The balance of the Loan Amount and Investment Account Interest, if any, shall be retained in the Investment Account and shall be released to the Borrower in such portions as instructed by NSST from time to time."
+point5_2 = "NSST may, from time to time and as same is required for purposes of funding the Proposed Development, " \
+           "instruct the release of the Loan Amount and Investment Account Interest or any portion thereof out of the " \
+           "Investment Account to the Borrower. The balance of the Loan Amount and Investment Account Interest, " \
+           "if any, shall be retained in the Investment Account and shall be released to the Borrower in such " \
+           "portions as instructed by NSST from time to time. "
 
 point5_3 = "Any request for payment in terms of clause 5.2 shall be within the sole discretion of NSST."
 
-point5_4 = "The Loan Amount, Investment Account Interest or any portion thereof released in terms of this clause 5 may only be used by the Borrower for purposes of funding the Proposed Development, which shall include but not be limited to -"
+point5_4 = "The Loan Amount, Investment Account Interest or any portion thereof released in terms of this clause 5 " \
+           "may only be used by the Borrower for purposes of funding the Proposed Development, which shall include " \
+           "but not be limited to - "
 point5_4_1 = "the acquisition of the Development Land and any costs related thereto;"
-point5_4_2 = "the installation of any services or infrastructure as required by the relevant authority on the Development Land (including but not limited to water, electricity, sewerage, roads, boundary walls, refuse room(s), entrance gate(s), and electric fencing);"
-point5_4_3 = "the payment of any administrative, transactional, municipal and professional fees related to the Proposed Development;"
-point5_4_4 = "the payment of any construction costs relating to the Property and the other sectional title units situated on the Development Land;"
+point5_4_2 = "the installation of any services or infrastructure as required by the relevant authority on the " \
+             "Development Land (including but not limited to water, electricity, sewerage, roads, boundary walls, " \
+             "refuse room(s), entrance gate(s), and electric fencing); "
+point5_4_3 = "the payment of any administrative, transactional, municipal and professional fees related to the " \
+             "Proposed Development; "
+point5_4_4 = "the payment of any construction costs relating to the Property and the other sectional title units " \
+             "situated on the Development Land; "
 point5_4_5 = "the payment of any unforeseen expenses related to the Proposed Development and approved by NSST."
 
-point5_5 = "NSST (Trustees) are the required signatories on the Investment Account for purposes of releasing funds to the Borrower, in respect of the Proposed Development."
+point5_5 = "NSST (Trustees) are the required signatories on the Investment Account for purposes of releasing funds to " \
+           "the Borrower, in respect of the Proposed Development. "
 
 heading6 = "**6. THE INTEREST**"
-point6_1 = "In the event that NSST instructs the release of the Loan Amount and or Investment Account Interest from the Investment Account for purposes of funding the Proposed Development, the Lender shall:"
-point6_1_1 = "from the Investment Date to the Release Date, earn Investment Account Supplemented Interest on the Loan Amount which supplemented interest is paid on repayment date; and"
-point6_1_2 = "from the Release Date to the Repayment Date, earn the Interest Rate on the Loan Amount. It is recorded that the Interest Rate is simple interest and shall not be compounded and shall be calculated annually on the Loan Amount."
+point6_1 = "In the event that NSST instructs the release of the Loan Amount and or Investment Account Interest from " \
+           "the Investment Account for purposes of funding the Proposed Development, the Lender shall: "
+point6_1_1 = "from the Investment Date to the Release Date, earn Investment Account Supplemented Interest on the Loan " \
+             "Amount which supplemented interest is paid on repayment date; and "
+point6_1_2 = "from the Release Date to the Repayment Date, earn the Interest Rate on the Loan Amount. It is recorded " \
+             "that the Interest Rate is simple interest and shall not be compounded and shall be calculated annually " \
+             "on the Loan Amount. "
 
-point6_2 = "Should the Loan Amount remain in the Investment Account for longer than 6 (Six) months from the Payment Date and not be utilised by the Borrower to fund the Proposed Development, the full Loan Amount plus Investment Account Supplemented Interest thereon shall be paid back to the Lender."
+point6_2 = "Should the Loan Amount remain in the Investment Account for longer than 6 (Six) months from the Payment " \
+           "Date and not be utilised by the Borrower to fund the Proposed Development, the full Loan Amount plus " \
+           "Investment Account Supplemented Interest thereon shall be paid back to the Lender. "
 
-point6_3 = "The Lender acknowledges that the Interest shall, unless the provisions of clause 6.2 apply, only vest in the Lender on the Repayment Date and the Lender shall accordingly not be entitled to request payment of the loan amount or any Interest on a date earlier than the Repayment Date."
+point6_3 = "The Lender acknowledges that the Interest shall, unless the provisions of clause 6.2 apply, only vest in " \
+           "the Lender on the Repayment Date and the Lender shall accordingly not be entitled to request payment of " \
+           "the loan amount or any Interest on a date earlier than the Repayment Date. "
 
-point6_4 = "Before the Repayment Date, the Borrower shall furnish the Lender with a statement which sets out all the Interest earned from the Investment Date to the Repayment Date."
+point6_4 = "Before the Repayment Date, the Borrower shall furnish the Lender with a statement which sets out all the " \
+           "Interest earned from the Investment Date to the Repayment Date. "
 
 heading7 = "**7. REPAYMENT OF LOAN AMOUNT AND INTEREST**"
-point7_1 = "Repayment of the Loan Amount plus Interest thereon shall be linked to the registration of transfer of the Property;"
+point7_1 = "Repayment of the Loan Amount plus Interest thereon shall be linked to the registration of transfer of the " \
+           "Property; "
 
-point7_2 = "Upon registration of transfer of the Property, the proceeds of the sale of the Property shall be paid to the Attorneys and the Loan Amount plus Interest thereon shall be paid by the Attorneys to the Lender from such proceeds."
+point7_2 = "Upon registration of transfer of the Property, the proceeds of the sale of the Property shall be paid to " \
+           "the Attorneys and the Loan Amount plus Interest thereon shall be paid by the Attorneys to the Lender from " \
+           "such proceeds. "
 
-point7_3 = "To secure repayment of the Loan Amount plus Interest thereon to the Lender, neither the Property, Development Land or any portion thereof may be released from the covering bond, as set out in Clause 8, without the required consent to release signed by NSST (Trustees) and submitted to the Attorneys prior to transfer."
+point7_3 = "To secure repayment of the Loan Amount plus Interest thereon to the Lender, neither the Property, " \
+           "Development Land or any portion thereof may be released from the covering bond, as set out in Clause 8, " \
+           "without the required consent to release signed by NSST (Trustees) and submitted to the Attorneys prior to " \
+           "transfer. "
 
-point7_4 = "It is specifically recorded that the Borrower shall be entitled to, and at its sole discretion, pay the full Loan Amount plus Interest thereon to the Lender at any time before the registration of transfer of the Property or sale of the Development Land without incurring any costs and/or penalty."
+point7_4 = "It is specifically recorded that the Borrower shall be entitled to, and at its sole discretion, " \
+           "pay the full Loan Amount plus Interest thereon to the Lender at any time before the registration of " \
+           "transfer of the Property or sale of the Development Land without incurring any costs and/or penalty. "
 
-point7_5 = "Repayment Date is the date upon which the Lender is paid the Loan Amount plus Interest on the Loan Amount, which interest shall be calculated from the Investment Date to the Repayment Date."
+point7_5 = "Repayment Date is the date upon which the Lender is paid the Loan Amount plus Interest on the Loan " \
+           "Amount, which interest shall be calculated from the Investment Date to the Repayment Date. "
 
-point7_6 = "The Lender may accordingly not request repayment of the Loan Amount or Interest thereon prior to the Repayment Date."
+point7_6 = "The Lender may accordingly not request repayment of the Loan Amount or Interest thereon prior to the " \
+           "Repayment Date. "
 
-point7_7 = "For the avoidance of any doubt, the Lender shall not earn any Interest until Repayment Date and the Interest shall only vest in the Lender on the Repayment Date."
+point7_7 = "For the avoidance of any doubt, the Lender shall not earn any Interest until Repayment Date and the " \
+           "Interest shall only vest in the Lender on the Repayment Date. "
 
-point7_8 = "The Borrower has no obligation towards Lender or the South African Revenue Services reporting on any income or interest earned from this agreement by the Lender.  If and where applicable the Lender is responsible for his own tax liability (affairs) and reporting to the South African Revenue Services stemming from this agreement."
+point7_8 = "The Borrower has no obligation towards Lender or the South African Revenue Services reporting on any " \
+           "income or interest earned from this agreement by the Lender.  If and where applicable the Lender is " \
+           "responsible for his own tax liability (affairs) and reporting to the South African Revenue Services " \
+           "stemming from this agreement. "
 
-point7_9 = "NSST will call for a Status Report from the Borrower 24 months after the Release Date to ascertain an estimated repayment date to the Lender.  Subject to the findings in the report and in order to serve the best interest of the Lender, NSST may issue a Repayment Notice to the Borrower in order to effect repayment to the Lender of the Loan Amount plus Interest."
+point7_9 = "NSST will call for a Status Report from the Borrower 24 months after the Release Date to ascertain an " \
+           "estimated repayment date to the Lender.  Subject to the findings in the report and in order to serve the " \
+           "best interest of the Lender, NSST may issue a Repayment Notice to the Borrower in order to effect " \
+           "repayment to the Lender of the Loan Amount plus Interest. "
 
 heading8 = "**8. MORTGAGE BOND IN FAVOUR OF NSST**"
-point8_1 = "As security for the Total Loan advanced to the Borrower and the fulfilment of the obligations of the Borrower under this Agreement and similar agreements to be concluded between the Borrower and further investors, the Borrower shall register a covering mortgage bond over the Development Land in favour of NSST to the value of R300 000 000.00 (Three Hundred Million Rand)."
+point8_1 = "As security for the Total Loan advanced to the Borrower and the fulfilment of the obligations of the " \
+           "Borrower under this Agreement and similar agreements to be concluded between the Borrower and further " \
+           "investors, the Borrower shall register a covering mortgage bond over the Development Land in favour of " \
+           "NSST to the value of R300 000 000.00 (Three Hundred Million Rand). "
 
-point8_2 = "The mortgage bond recorded in clause 8.1 shall be registered simultaneously with registration of transfer of the Development Land into the name of the Borrower."
+point8_2 = "The mortgage bond recorded in clause 8.1 shall be registered simultaneously with registration of transfer " \
+           "of the Development Land into the name of the Borrower. "
 
-point8_3 = "Simultaneously with the opening of a sectional title scheme(s) on the Development Land, of which the Property forms part, the said mortgage bond will convert to a sectional mortgage bond(s) and the Property and all other units in the sectional title scheme(s) shall substitute the Development Land under the mortgage bond(s)."
+point8_3 = "Simultaneously with the opening of a sectional title scheme(s) on the Development Land, of which the " \
+           "Property forms part, the said mortgage bond will convert to a sectional mortgage bond(s) and the Property " \
+           "and all other units in the sectional title scheme(s) shall substitute the Development Land under the " \
+           "mortgage bond(s). "
 
-point8_4 = "The Lender and all other investors in respect of the Total Loan shall, subject to the provisions of this Agreement and similar agreements to be concluded between the Borrower and the other investors, be beneficiaries of NSST."
-
+point8_4 = "The Lender and all other investors in respect of the Total Loan shall, subject to the provisions of this " \
+           "Agreement and similar agreements to be concluded between the Borrower and the other investors, " \
+           "be beneficiaries of NSST. "
 
 heading9 = "**9. SALE OF DEVELOPMENT LAND**"
-heading9a = "Notwithstanding anything to the contrary herein contained, should the Borrower at any time receive an offer to purchase for the Development Land or the property (as the case may be) from a prospective purchaser and decide to sell the Development Land or the property (as the case may be) to such a prospective purchaser, the sale proceeds shall, against registration of transfer of the Development Land or the property (as the case may be) to the prospective purchaser and simultaneous cancellation of the mortgage bond(s) over the Development Land or the property (as the case may be) be distributed as follows:"
-point9_1 = "in the event that the sale proceeds are sufficient to settle the Total Loan plus Interest thereon in full, the Borrower shall repay the Loan Amount plus Interest thereon to the Lender; or"
-point9_2 = "in the event that the sale proceeds are not sufficient to settle the Total Loan plus Interest thereon in full, such sale must be authorised by NSST and the Lender, together with all other investors."
+heading9a = "Notwithstanding anything to the contrary herein contained, should the Borrower at any time receive an " \
+            "offer to purchase for the Development Land or the property (as the case may be) from a prospective " \
+            "purchaser and decide to sell the Development Land or the property (as the case may be) to such a " \
+            "prospective purchaser, the sale proceeds shall, against registration of transfer of the Development Land " \
+            "or the property (as the case may be) to the prospective purchaser and simultaneous cancellation of the " \
+            "mortgage bond(s) over the Development Land or the property (as the case may be) be distributed as " \
+            "follows: "
+point9_1 = "in the event that the sale proceeds are sufficient to settle the Total Loan plus Interest thereon in " \
+           "full, the Borrower shall repay the Loan Amount plus Interest thereon to the Lender; or "
+point9_2 = "in the event that the sale proceeds are not sufficient to settle the Total Loan plus Interest thereon in " \
+           "full, such sale must be authorised by NSST and the Lender, together with all other investors. "
 
 heading10 = "**10. GENERAL**"
 point10_1 = "**Borrower Undertakings**\nThe Borrower hereby undertakes that it shall, for the duration of this " \
             "Agreement: "
 point10_1_1 = "advise the Lender of any fact, circumstance or the like which may affect the Lender's rights or " \
               "security in terms of this Agreement, within 7 (Seven) Business Days of becoming aware thereof; "
-point10_1_2 = "not commit any act which would have been an act of insolvency in terms of the Insolvency Act No. 24 of 1936 (as amended), had the Borrower been a natural person;"
+point10_1_2 = "not commit any act which would have been an act of insolvency in terms of the Insolvency Act No. 24 of " \
+              "1936 (as amended), had the Borrower been a natural person; "
 point10_1_3 = "not do or allow to be done any act or thing which prejudices the rights of the Lender."
 
-point10_2 = "**Company Resolutions**\nThe Parties undertake to ensure that any and all resolutions necessary for the due performance in and fulfilment of this Agreement and all terms and conditions contained herein or pursuant hereto are passed by their respective directors' and/or shareholders and/or trustees timeously."
-point10_3 = "**Governing Law**\nThis Agreement shall be governed by and construed and interpreted in accordance with the laws of the Republic of South Africa."
+point10_2 = "**Company Resolutions**\nThe Parties undertake to ensure that any and all resolutions necessary for the " \
+            "due performance in and fulfilment of this Agreement and all terms and conditions contained herein or " \
+            "pursuant hereto are passed by their respective directors' and/or shareholders and/or trustees timeously. "
+point10_3 = "**Governing Law**\nThis Agreement shall be governed by and construed and interpreted in accordance with " \
+            "the laws of the Republic of South Africa. "
 
-point10_4 = "**No Influence**\nThe Parties acknowledges that they have not been influenced into entering into this Agreement by any express or implied information, statement or representation given or made by or on behalf of any other Party."
+point10_4 = "**No Influence**\nThe Parties acknowledges that they have not been influenced into entering into this " \
+            "Agreement by any express or implied information, statement or representation given or made by or on " \
+            "behalf of any other Party. "
 
-point10_5 = "**Cession and Delegation**\nThis Agreement is personal to the Parties. Accordingly, no Party may cede any of its rights or delegate any of its obligations under this Agreement without the prior written consent of the other Parties."
+point10_5 = "**Cession and Delegation**\nThis Agreement is personal to the Parties. Accordingly, no Party may cede " \
+            "any of its rights or delegate any of its obligations under this Agreement without the prior written " \
+            "consent of the other Parties. "
 
-point10_6 = "**Variation**\nNo variation of, addition to, consensual cancellation of or waiver of provision, term or any right arising in terms of this Agreement shall be of any force or effect unless it is reduced to writing and signed by a duly authorised representative of each of the Parties."
+point10_6 = "**Variation**\nNo variation of, addition to, consensual cancellation of or waiver of provision, " \
+            "term or any right arising in terms of this Agreement shall be of any force or effect unless it is " \
+            "reduced to writing and signed by a duly authorised representative of each of the Parties. "
 
-point10_7 = "**Whole Agreement**\nThis document contains the entire Agreement between the Parties and no Party shall be bound by any undertakings, representations, warranties, promises or the like not recorded herein."
+point10_7 = "**Whole Agreement**\nThis document contains the entire Agreement between the Parties and no Party shall " \
+            "be bound by any undertakings, representations, warranties, promises or the like not recorded herein. "
 
-point10_8 = "**Relaxation**\nNo relaxation, indulgence or extension of time granted by any Party (the 'Grantor') to any other Party shall be construed as a waiver of any of the Grantor's rights in terms hereof, or novation of any of the terms of this Agreement or stop the Grantor from enforcing strict and punctual compliance with the terms of this Agreement."
+point10_8 = "**Relaxation**\nNo relaxation, indulgence or extension of time granted by any Party (the 'Grantor') to " \
+            "any other Party shall be construed as a waiver of any of the Grantor's rights in terms hereof, " \
+            "or novation of any of the terms of this Agreement or stop the Grantor from enforcing strict and punctual " \
+            "compliance with the terms of this Agreement. "
 
-point10_9 = "**Successors-in-Title**\nThis Agreement will be binding upon the Parties hereto, their estates, administrators, executors, successors-in-title or permitted assigns."
+point10_9 = "**Successors-in-Title**\nThis Agreement will be binding upon the Parties hereto, their estates, " \
+            "administrators, executors, successors-in-title or permitted assigns. "
 
-point10_10 = "**Supersession**\nThis Agreement cancels and supersedes all prior negotiations and agreements entered into between the Parties relating to the matters set forth in this Agreement."
+point10_10 = "**Supersession**\nThis Agreement cancels and supersedes all prior negotiations and agreements entered " \
+             "into between the Parties relating to the matters set forth in this Agreement. "
 
-point10_11 = "**Severability**\nAny provision in this Agreement which is or may become illegal, invalid or unenforceable in any jurisdiction shall, with respect to such jurisdiction, be ineffective to the extent of such prohibition or unenforceability and shall be treated pro non scripto and severed from the balance of this Agreement, without invalidating the remaining provisions of this Agreement or affecting the validity or enforceability of such provision in any other jurisdiction."
+point10_11 = "**Severability**\nAny provision in this Agreement which is or may become illegal, invalid or " \
+             "unenforceable in any jurisdiction shall, with respect to such jurisdiction, be ineffective to the " \
+             "extent of such prohibition or unenforceability and shall be treated pro non scripto and severed from " \
+             "the balance of this Agreement, without invalidating the remaining provisions of this Agreement or " \
+             "affecting the validity or enforceability of such provision in any other jurisdiction. "
 
-point10_12 = "**Survival**\nAny provision of this Agreement which contemplates performance or observance subsequent to any termination or expiration of this Agreement shall survive any termination or expiration of this Agreement and continue in full force and effect."
+point10_12 = "**Survival**\nAny provision of this Agreement which contemplates performance or observance subsequent " \
+             "to any termination or expiration of this Agreement shall survive any termination or expiration of this " \
+             "Agreement and continue in full force and effect. "
 
-point10_13 = "**Independent Advice**\nEach Party hereto acknowledges that it has been free to secure independent legal advice as to the nature and effect of all of the provisions of this Agreement and that it has either taken such independent legal advice or dispensed with the necessity of doing so.  Furthermore, each Party hereto acknowledges that all of the provisions of this Agreement and the restrictions herein contained are fair and reasonable in all the circumstances and are part of the overall intention of the Parties in connection with the transaction contemplated in this Agreement."
+point10_13 = "**Independent Advice**\nEach Party hereto acknowledges that it has been free to secure independent " \
+             "legal advice as to the nature and effect of all of the provisions of this Agreement and that it has " \
+             "either taken such independent legal advice or dispensed with the necessity of doing so.  Furthermore, " \
+             "each Party hereto acknowledges that all of the provisions of this Agreement and the restrictions herein " \
+             "contained are fair and reasonable in all the circumstances and are part of the overall intention of the " \
+             "Parties in connection with the transaction contemplated in this Agreement. "
 
-point10_14 = "**Risk**\nThe Lender is exposed to risk and liability equal to the Loan Amount. Neither the Borrower nor NSST nor any of its agents makes any representation and/or guarantees as to the success of the Proposed Development and the amount of return on investment to be made by the Lender, if any."
+point10_14 = "**Risk**\nThe Lender is exposed to risk and liability equal to the Loan Amount. Neither the Borrower " \
+             "nor NSST nor any of its agents makes any representation and/or guarantees as to the success of the " \
+             "Proposed Development and the amount of return on investment to be made by the Lender, if any. "
 
-point10_15 = "**Objection to Proposed Development**\nThe Lender undertakes to the Borrower and its shareholders that while he/she/it is a Lender, and for a period of 24 (Twenty Four) months thereafter, he/she/it shall not and shall procure that no one on his behalf shall be engaged, concerned or interested (either directly or indirectly and whether on his/her/its own behalf or on behalf of or in association with others and in any capacity whatsoever) in any objection to the Proposed Development."
+point10_15 = "**Objection to Proposed Development**\nThe Lender undertakes to the Borrower and its shareholders that " \
+             "while he/she/it is a Lender, and for a period of 24 (Twenty Four) months thereafter, he/she/it shall " \
+             "not and shall procure that no one on his behalf shall be engaged, concerned or interested (either " \
+             "directly or indirectly and whether on his/her/its own behalf or on behalf of or in association with " \
+             "others and in any capacity whatsoever) in any objection to the Proposed Development. "
 
-point10_16 = "**Nature of Agreement**\nThis is not a public offering of securities and nothing in this document should be construed as a profit forecast. Nothing contained in this Agreement constitutes an offer in any area of jurisdiction in which it is illegal to make such an offer. In such circumstances, this Agreement and the application form are sent for information purposes only."
+point10_16 = "**Nature of Agreement**\nThis is not a public offering of securities and nothing in this document " \
+             "should be construed as a profit forecast. Nothing contained in this Agreement constitutes an offer in " \
+             "any area of jurisdiction in which it is illegal to make such an offer. In such circumstances, " \
+             "this Agreement and the application form are sent for information purposes only. "
 
-point10_17 = "**Stipulatio Alteri**\nThe conditions of this Agreement are for the benefit of the NSST and constitute a __stipulatio alteri__, which it may accept at any time."
+point10_17 = "**Stipulatio Alteri**\nThe conditions of this Agreement are for the benefit of the NSST and constitute " \
+             "a __stipulatio alteri__, which it may accept at any time. "
 
 heading11 = "**11. BREACH**"
 heading11a = "Should any Party fail to fulfill any of the terms and conditions of this Agreement ('the defaulting " \
@@ -272,30 +380,40 @@ heading11b = "Any latitude which may have been allowed by the aggrieved party in
              "party from exercising any right nor absolve the defaulting party from any obligation under this " \
              "Agreement. "
 
-
-
 heading12 = "**12. DISPUTE RESOLUTION**"
 
-point12_1 = "Any dispute arising out of or in connection with this Agreement shall, at the instance of the Party seeking relief, be decided by way of arbitration as follows -"
+point12_1 = "Any dispute arising out of or in connection with this Agreement shall, at the instance of the Party " \
+            "seeking relief, be decided by way of arbitration as follows - "
 
-point12_1_1 = "The arbitration shall take place in Cape Town in English in accordance with the rules ('Rules') of the Arbitration Foundation of Southern Africa ('AFSA') before 1 (One) arbitrator appointed by the Parties."
+point12_1_1 = "The arbitration shall take place in Cape Town in English in accordance with the rules ('Rules') of the " \
+              "Arbitration Foundation of Southern Africa ('AFSA') before 1 (One) arbitrator appointed by the Parties. "
 
-point12_1_2 = "Should the Parties fail to agree in writing on an arbitrator within 10(Ten) days after the arbitration has been demanded, the arbitrator shall be nominated by AFSA at the request of either Party."
+point12_1_2 = "Should the Parties fail to agree in writing on an arbitrator within 10(Ten) days after the arbitration " \
+              "has been demanded, the arbitrator shall be nominated by AFSA at the request of either Party. "
 
-
-point12_1_3 = "Subject to each Party's rights of appeal to a tribunal of arbitrators in accordance with the Rules, the Parties irrevocably agree that the decision of the arbitrator shall be final and binding on them, shall be carried into effect and be capable of being made an order of the High Court of South Africa."
+point12_1_3 = "Subject to each Party's rights of appeal to a tribunal of arbitrators in accordance with the Rules, " \
+              "the Parties irrevocably agree that the decision of the arbitrator shall be final and binding on them, " \
+              "shall be carried into effect and be capable of being made an order of the High Court of South Africa. "
 
 point12_2 = "The provisions of this clause 12:"
 
-point12_2_1 = "Constitute an irrevocable consent by the Parties to any proceedings in terms hereof and no Party shall be entitled to withdraw therefrom or claim at any such proceedings that it is not bound by such provisions;"
+point12_2_1 = "Constitute an irrevocable consent by the Parties to any proceedings in terms hereof and no Party shall " \
+              "be entitled to withdraw therefrom or claim at any such proceedings that it is not bound by such " \
+              "provisions; "
 
-point12_2_2 = "Are severable from the rest of this Agreement and shall remain in effect despite the termination of or invalidity for any reason of this Agreement; and"
+point12_2_2 = "Are severable from the rest of this Agreement and shall remain in effect despite the termination of or " \
+              "invalidity for any reason of this Agreement; and "
 
-point12_2_3 = "Shall not preclude any from obtaining interim relief on an urgent basis from a High Court pending the outcome of the arbitration proceedings."
+point12_2_3 = "Shall not preclude any from obtaining interim relief on an urgent basis from a High Court pending the " \
+              "outcome of the arbitration proceedings. "
 
-point12_3 = "Any arbitration in terms of this clause shall be conducted in camera and the Parties shall treat as confidential and not disclose to any third party details of the dispute submitted to arbitration, the conduct of the arbitration proceedings or the outcome of the arbitration, without the written consent of all the Parties."
+point12_3 = "Any arbitration in terms of this clause shall be conducted in camera and the Parties shall treat as " \
+            "confidential and not disclose to any third party details of the dispute submitted to arbitration, " \
+            "the conduct of the arbitration proceedings or the outcome of the arbitration, without the written " \
+            "consent of all the Parties. "
 
-point12_4 = "The arbitrator shall have the power to give default judgment if any Party fails to make submissions on due date and/or fails to appear at the arbitration."
+point12_4 = "The arbitrator shall have the power to give default judgment if any Party fails to make submissions on " \
+            "due date and/or fails to appear at the arbitration. "
 
 heading13 = "**13. NOTICES AND DOMICILIA**"
 
@@ -335,21 +453,42 @@ point13_4_4 = "Notwithstanding anything to the contrary herein contained, a writ
               "notwithstanding that it was not sent to or delivered at the chosen domicilium or transmitted to such " \
               "Party's email address as stipulated herein. "
 
-
 heading14 = "**14 SIGNATURE**"
-point14_1 = "This Agreement may be executed in a number of counterparts and by the same Parties in different counterparts, but shall only be deemed to have been concluded at the date of signature of the Party last signing one of the counterparts."
+point14_1 = "This Agreement may be executed in a number of counterparts and by the same Parties in different " \
+            "counterparts, but shall only be deemed to have been concluded at the date of signature of the Party last " \
+            "signing one of the counterparts. "
 
-point14_2 = "Each counterpart, when executed, shall be an original, but all counterparts together constitute the same document."
+point14_2 = "Each counterpart, when executed, shall be an original, but all counterparts together constitute the same " \
+            "document. "
 
-point14_3 = "The Parties record that it is not required for this Agreement to be valid and enforceable that a Party shall initial the pages of this Agreement and/or have its signature of this Agreement verified by a witness."
-
+point14_3 = "The Parties record that it is not required for this Agreement to be valid and enforceable that a Party " \
+            "shall initial the pages of this Agreement and/or have its signature of this Agreement verified by a " \
+            "witness. "
 
 heading15 = "**15 PROTECTION OF PERSONAL INFORMATION ACT ('POPI')"
-heading15a = "**The Lender hereby consents to the Borrower and/or NSST to furnish the Attorneys or third parties associated with this agreement, with all such Personal Information of the Lender, as may be required to process such information for purposes of adhering to the terms of this Agreement, to process payments, and to otherwise comply with the legal and regulatory obligations envisaged in this Agreement.**"
+heading15a = "**The Lender hereby consents to the Borrower and/or NSST to furnish the Attorneys or third parties " \
+             "associated with this agreement, with all such Personal Information of the Lender, as may be required to " \
+             "process such information for purposes of adhering to the terms of this Agreement, to process payments, " \
+             "and to otherwise comply with the legal and regulatory obligations envisaged in this Agreement.** "
 
-disclaimer = "**Notice:** The Borrower has not been registered as a regulated collective investment scheme pursuant to the Collective Investment Schemes Control Act 45 of 2002 ('**CISCA**'). Neither the Borrower nor NSST is licensed under CISCA or under the Banks Act No 94 of 1990 ('**Banks Act**') and neither the Borrower nor NSST is licensed under the Financial Advisory and Intermediary Services Act 37 of 2002 ('**FAIS**'). This Agreement does not constitute a solicitation or advertising from any person in respect of which such solicitation or advertising would be prohibited nor does it constitute or relate to the provision of a financial service to any person, the acceptance of any deposit or the solicitation of investment from any member of the public for investment in any collective investment scheme. If this document is in the possession of anyone to whom its provision would be prohibited by CISCA, FAIS or the Banks Act, or any person to whom the distribution hereof would otherwise be prohibited by South African law, it should be returned immediately to the Borrower. Investment in the Property carries risk and there can be no assurance that the investment objective will be achieved and past performance is not necessarily a guide to performance in the future. The capital invested may be returned later, or not at all, as well as be returned with gains. Investment in the Property is only suitable for investors who are in a position to understand and to take risks and satisfy themselves that such investment is appropriate for them in light of their circumstances and financial resources. If you are in any doubt about the contents of this document, you should consult your accountant, attorney, or other independent professional advisor."
-
-
+disclaimer = "**Notice:** The Borrower has not been registered as a regulated collective investment scheme pursuant " \
+             "to the Collective Investment Schemes Control Act 45 of 2002 ('**CISCA**'). Neither the Borrower nor " \
+             "NSST is licensed under CISCA or under the Banks Act No 94 of 1990 ('**Banks Act**') and neither the " \
+             "Borrower nor NSST is licensed under the Financial Advisory and Intermediary Services Act 37 of 2002 (" \
+             "'**FAIS**'). This Agreement does not constitute a solicitation or advertising from any person in " \
+             "respect of which such solicitation or advertising would be prohibited nor does it constitute or relate " \
+             "to the provision of a financial service to any person, the acceptance of any deposit or the " \
+             "solicitation of investment from any member of the public for investment in any collective investment " \
+             "scheme. If this document is in the possession of anyone to whom its provision would be prohibited by " \
+             "CISCA, FAIS or the Banks Act, or any person to whom the distribution hereof would otherwise be " \
+             "prohibited by South African law, it should be returned immediately to the Borrower. Investment in the " \
+             "Property carries risk and there can be no assurance that the investment objective will be achieved and " \
+             "past performance is not necessarily a guide to performance in the future. The capital invested may be " \
+             "returned later, or not at all, as well as be returned with gains. Investment in the Property is only " \
+             "suitable for investors who are in a position to understand and to take risks and satisfy themselves " \
+             "that such investment is appropriate for them in light of their circumstances and financial resources. " \
+             "If you are in any doubt about the contents of this document, you should consult your accountant, " \
+             "attorney, or other independent professional advisor. "
 
 contract = {
     "-1": {
@@ -793,7 +932,7 @@ contract = {
         "indent": 0,
         "text": heading9,
     },
-"9.0A": {
+    "9.0A": {
         "indent": 111,
         "text": heading9a,
     },
@@ -805,7 +944,7 @@ contract = {
         "indent": 1,
         "text": point9_2,
     },
- "10.0": {
+    "10.0": {
         "indent": 0,
         "text": heading10,
     },
@@ -813,15 +952,15 @@ contract = {
         "indent": 1,
         "text": point10_1,
     },
-"10.1.1": {
+    "10.1.1": {
         "indent": 2,
         "text": point10_1_1,
     },
-"10.1.2": {
+    "10.1.2": {
         "indent": 2,
         "text": point10_1_2,
     },
-"10.1.3": {
+    "10.1.3": {
         "indent": 2,
         "text": point10_1_3,
     },
@@ -829,72 +968,72 @@ contract = {
         "indent": 1,
         "text": point10_2,
     },
-"10.3": {
+    "10.3": {
         "indent": 1,
         "text": point10_3,
     },
-"10.4": {
+    "10.4": {
         "indent": 1,
         "text": point10_4,
     },
-"10.5": {
+    "10.5": {
         "indent": 1,
         "text": point10_5,
     },
-"10.6": {
+    "10.6": {
         "indent": 1,
         "text": point10_6,
     },
-"10.7": {
+    "10.7": {
         "indent": 1,
         "text": point10_7,
     },
-"10.8": {
+    "10.8": {
         "indent": 1,
         "text": point10_8,
     },
-"10.9": {
+    "10.9": {
         "indent": 1,
         "text": point10_9,
     },
-"10.10": {
+    "10.10": {
         "indent": 1,
         "text": point10_10,
     },
-"10.11": {
+    "10.11": {
         "indent": 1,
         "text": point10_11,
     },
-"10.12": {
+    "10.12": {
         "indent": 1,
         "text": point10_12,
     },
-"10.13": {
+    "10.13": {
         "indent": 1,
         "text": point10_13,
     },
-"10.14": {
+    "10.14": {
         "indent": 1,
         "text": point10_14,
     },
-"10.15": {
+    "10.15": {
         "indent": 1,
         "text": point10_15,
     },
-"10.16": {
+    "10.16": {
         "indent": 1,
         "text": point10_16,
     },
-"10.17": {
+    "10.17": {
         "indent": 1,
         "text": point10_17,
     },
 
- "11.0": {
+    "11.0": {
         "indent": 0,
         "text": heading11,
     },
-"11.0A": {
+    "11.0A": {
         "indent": 111,
         "text": heading11a,
     },
@@ -906,11 +1045,11 @@ contract = {
         "indent": 1,
         "text": point11_2,
     },
-"11.0B": {
+    "11.0B": {
         "indent": 111,
         "text": heading11b,
     },
-"12.0": {
+    "12.0": {
         "indent": 0,
         "text": heading12,
     },
@@ -918,15 +1057,15 @@ contract = {
         "indent": 1,
         "text": point12_1,
     },
-"12.1.1": {
+    "12.1.1": {
         "indent": 2,
         "text": point12_1_1,
     },
-"12.1.2": {
+    "12.1.2": {
         "indent": 2,
         "text": point12_1_2,
     },
-"12.1.3": {
+    "12.1.3": {
         "indent": 2,
         "text": point12_1_3,
     },
@@ -934,28 +1073,28 @@ contract = {
         "indent": 1,
         "text": point12_2,
     },
-"12.2.1": {
+    "12.2.1": {
         "indent": 2,
         "text": point12_2_1,
     },
-"12.2.2": {
+    "12.2.2": {
         "indent": 2,
         "text": point12_2_2,
     },
-"12.2.3": {
+    "12.2.3": {
         "indent": 2,
         "text": point12_2_3,
     },
-"12.3": {
+    "12.3": {
         "indent": 1,
         "text": point12_3,
     },
-"12.4": {
+    "12.4": {
         "indent": 1,
         "text": point12_4,
     },
 
-"13.0": {
+    "13.0": {
         "indent": 0,
         "text": heading13,
     },
@@ -963,15 +1102,15 @@ contract = {
         "indent": 1,
         "text": point13_1,
     },
-"13.1.1": {
+    "13.1.1": {
         "indent": 2,
         "text": point13_1_1,
     },
-"13.1.2": {
+    "13.1.2": {
         "indent": 2,
         "text": point13_1_2,
     },
-"13.1.3": {
+    "13.1.3": {
         "indent": 2,
         "text": point13_1_3,
     },
@@ -980,31 +1119,31 @@ contract = {
         "text": point13_2,
     },
 
-"13.3": {
+    "13.3": {
         "indent": 1,
         "text": point13_3,
     },
-"13.4": {
+    "13.4": {
         "indent": 1,
         "text": point13_4,
     },
-"13.4.1": {
+    "13.4.1": {
         "indent": 2,
         "text": point13_4_1,
     },
-"13.4.2": {
+    "13.4.2": {
         "indent": 2,
         "text": point13_4_2,
     },
-"13.4.3": {
+    "13.4.3": {
         "indent": 2,
         "text": point13_4_3,
     },
-"13.4.4": {
+    "13.4.4": {
         "indent": 2,
         "text": point13_4_4,
     },
-"14.0": {
+    "14.0": {
         "indent": 0,
         "text": heading14,
     },
@@ -1020,15 +1159,15 @@ contract = {
         "indent": 1,
         "text": point14_3,
     },
-"15.0": {
+    "15.0": {
         "indent": 0,
         "text": heading15,
     },
-"15.0A": {
+    "15.0A": {
         "indent": 111,
         "text": heading15a,
     },
-"disclaimer": {
+    "disclaimer": {
         "indent": 333,
         "text": disclaimer,
     },
