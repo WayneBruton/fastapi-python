@@ -1,16 +1,10 @@
 from fastapi import APIRouter
-from fastapi.responses import FileResponse, StreamingResponse
-
+from fastapi.responses import FileResponse
 from config.db import db
 import os
-# import time
-# from datetime import datetime
-# from datetime import timedelta
 from pydantic import BaseModel
 import loan_agreement_files.lender as l1
 from main import create_final_loan_agreement
-
-
 # from verify_token import verify_jwt_token
 
 
@@ -207,7 +201,7 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                                                     project=project, investment_amount=investment_amount,
                                                     investment_interest_rate=investment_interest_rate,
                                                     investor_id=investor_id)
-            print("TEST", final_doc)
+
             return final_doc
 
 
@@ -222,13 +216,3 @@ async def loan_agreement(loan_agreement_name):
         return FileResponse(f"{dir_path}/{loan_agreement_name}", media_type="application/zip")
     else:
         return {"ERROR": "File does not exist!!"}
-
-
-
-# @investor.get("/files/download/{file_name}")
-# async def image_from_id(file_name: str):
-#     # Get filenames from the database
-#     # file_list = ['sales_documents/EA101-OTP.pdf', 'sales_documents/HFA101-OTP.pdf']
-#     # return zip_files(file_list)
-#     # return f"loan_agreements/{file_name}"
-#     return file_name

@@ -1,10 +1,7 @@
 from fpdf import FPDF, XPos, YPos
-
 import loan_agreement_files.contract as c
 import loan_agreement_files.contents as cont
 import loan_agreement_files.lender as l
-
-
 
 
 class PDF(FPDF):
@@ -15,11 +12,9 @@ class PDF(FPDF):
 
 
 # print(c.contract)
-def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment_amount, investment_interest_rate, investor_id):
-    # lender = lender
-    # nsst = nsst
-    # project = project
-    # linked_unit = linked_unit
+def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment_amount, investment_interest_rate,
+                                  investor_id):
+
     pdf = PDF('P', 'mm', 'A4')
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
@@ -79,7 +74,7 @@ def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment
     pdf.cell(30, 5, "", align="R", markdown=True)
     if investor_id == "":
         pdf.cell(50, 5, "Identity/Registration Number _______________________", align="L", markdown=True, border=False,
-                new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+                 new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     else:
         pdf.cell(50, 5, f"Identity/Registration Number {investor_id}", align="L", markdown=True, border=False,
                  new_x=XPos.LMARGIN, new_y=YPos.NEXT)
@@ -140,7 +135,8 @@ def print_investor_loan_agreement(lender, nsst, project, linked_unit, investment
     pdf.cell(190, 10, "**INVESTMENT INFORMATION SCHEDULE**", align="C", markdown=True, fill=True, border=True,
              new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(80, 7, "Interest rate (%) per annum", align="L", markdown=True, fill=True, border=True)
-    pdf.cell(110, 7, f"{investment_interest_rate} %", align="L", markdown=True, fill=False, border=True, new_x=XPos.LMARGIN,
+    pdf.cell(110, 7, f"{investment_interest_rate} %", align="L", markdown=True, fill=False, border=True,
+             new_x=XPos.LMARGIN,
              new_y=YPos.NEXT)
     pdf.cell(80, 7, "Loan Amount (R)", align="L", markdown=True, fill=True, border=True)
     pdf.cell(110, 7, f"{investment_amount}", align="L", markdown=True, fill=False, border=True, new_x=XPos.LMARGIN,

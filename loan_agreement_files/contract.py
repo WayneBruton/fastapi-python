@@ -864,10 +864,10 @@ contract = {
         "indent": 1,
         "text": point6_4,
     },
-    "6.0": {
-        "indent": 0,
-        "text": heading6,
-    },
+    # "6.0": {
+    #     "indent": 0,
+    #     "text": heading6,
+    # },
     "7.0": {
         "indent": 0,
         "text": heading7,
