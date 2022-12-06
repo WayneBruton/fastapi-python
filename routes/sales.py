@@ -51,7 +51,9 @@ def get_files_required_for_sales():
     new_files = []
     for file in file_list_items:
         try:
-            new_files.append(file.split("/")[1])
+            # new_files.append(file.split("/")[1])
+            result = file.split("/")
+            new_files.append(result[len(result) - 1])
         except Exception as err:
             print("Waynes Err:", err)
         # print("file", file)
