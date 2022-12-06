@@ -48,8 +48,10 @@ def get_files_required_for_sales():
     # print("file_list_items",file_list_items)
     file_list_items = [x for x in file_list_items if x is not None]
     print("file_list_items", file_list_items)
+    for file in file_list_items:
+        print("file", file)
     file_list_items = [x.split("/")[1] for x in file_list_items if x is not None]
-    print("file_list_items",file_list_items)
+    print("file_list_items", file_list_items)
     list_of_filenames = os.listdir("sales_documents")
     final_list_to_download = [x for x in file_list_items if x not in list_of_filenames]
     print(final_list_to_download)
