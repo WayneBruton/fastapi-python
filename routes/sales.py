@@ -48,21 +48,8 @@ def get_files_required_for_sales():
     file_list_items = [x for x in file_list_items if x is not None]
     file_list_items = [x for x in file_list_items if type(x) == str]
 
-
     file_list_items = [x.split("/")[1] for x in file_list_items]
-    print("file_list_items", file_list_items)
-    # new_files = []
 
-    # for file in file_list_items:
-    #     try:
-    #         # print(type(file))
-    #         if type(file) == str:
-    #             result = file.split("/")
-    #             new_files.append(result[-1:][0])
-    #     except Exception as err:
-    #         print("Waynes Err:", err)
-    # print("new_files",new_files)
-    # file_list_items = new_files
     list_of_filenames = os.listdir("sales_documents")
     final_list_to_download = [x for x in file_list_items if x not in list_of_filenames]
     if final_list_to_download:
