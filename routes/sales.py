@@ -46,14 +46,18 @@ def get_files_required_for_sales():
         file_list_items.append(result['opportunity_upload_deposite'])
         file_list_items.append(result['opportunity_upload_statement'])
     file_list_items = [x for x in file_list_items if x is not None]
+    # new_files = [x.split("/")[1] for x in file_list_items]
     new_files = []
+
     for file in file_list_items:
         try:
-            result = file.split("/")
-            # new_files.append(result[len(result) - 1])
-            new_files.append(result[-1:][0])
+            # print(type(file))
+            if type(file) == str:
+                result = file.split("/")
+                new_files.append(result[-1:][0])
         except Exception as err:
             print("Waynes Err:", err)
+    print(new_files)
     file_list_items = new_files
     list_of_filenames = os.listdir("sales_documents")
     final_list_to_download = [x for x in file_list_items if x not in list_of_filenames]
