@@ -36,7 +36,6 @@ s3 = boto3.client(
 def get_files_required_for_sales():
     file_list_items = []
     results = list(sales_processed.find(({})))
-    # print("results", results)
     for result in results:
         file_list_items.append(result['opportunity_otp'])
         file_list_items.append(result['opportunity_uploadId'])
@@ -45,11 +44,9 @@ def get_files_required_for_sales():
         file_list_items.append(result['opportunity_addressproof_sec'])
         file_list_items.append(result['opportunity_upload_deposite'])
         file_list_items.append(result['opportunity_upload_statement'])
-    file_list_items = [x for x in file_list_items if x is not None]
-    file_list_items = [x for x in file_list_items if type(x) == str]
-
-    file_list_items = [x.split("/")[1] for x in file_list_items]
-
+    # file_list_items = [x for x in file_list_items if x is not None]
+    # file_list_items = [x for x in file_list_items if type(x) == str]
+    file_list_items = [x.split("/")[1] for x in file_list_items if type(x) == str]
     list_of_filenames = os.listdir("sales_documents")
     final_list_to_download = [x for x in file_list_items if x not in list_of_filenames]
     if final_list_to_download:
