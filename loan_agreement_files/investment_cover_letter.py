@@ -1,4 +1,6 @@
 from fpdf import FPDF, XPos, YPos
+
+
 # from loan_agreement_files.loan_agreement import lender
 
 
@@ -9,7 +11,7 @@ class PDF(FPDF):
         self.cell(0, 10, f"Page {self.page_no()}/{{nb}}", align="C")
 
 
-def print_investor_cover_letter(lender):
+def print_investor_cover_letter(lender, lender2):
     pdf = PDF('P', 'mm', 'A4')
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
@@ -28,9 +30,14 @@ def print_investor_cover_letter(lender):
                  new_x=XPos.LMARGIN, new_y=YPos.NEXT, markdown=True,
                  align="C")
     else:
-        pdf.cell(0, 5, f"**LENDER NAME / ENTITY NAME: {lender}**",
-                 new_x=XPos.LMARGIN, new_y=YPos.NEXT, markdown=True,
-                 align="C")
+        if lender2 == "":
+            pdf.cell(0, 5, f"**LENDER NAME / ENTITY NAME: {lender}**",
+                     new_x=XPos.LMARGIN, new_y=YPos.NEXT, markdown=True,
+                     align="C")
+        else:
+            pdf.cell(0, 5, f"**LENDER NAME / ENTITY NAME: {lender} & {lender2}**",
+                     new_x=XPos.LMARGIN, new_y=YPos.NEXT, markdown=True,
+                     align="C")
 
     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
@@ -70,7 +77,7 @@ def print_investor_cover_letter(lender):
     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
     pdf.multi_cell(0, 5,
-                   "**LENDER SIGN: ___________________________**",
+                   "**LENDER/S SIGN: ___________________________**",
                    new_x=XPos.LMARGIN, new_y=YPos.NEXT, markdown=True,
                    align="L")
 

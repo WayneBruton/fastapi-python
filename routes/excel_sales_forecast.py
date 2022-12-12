@@ -21,6 +21,8 @@ rollovers = db.investorRollovers
 async def get_sales_info(data: Request):
     request = await data.json()
 
+
+
     initial_forecast_data = list(investors.aggregate([
         {
             '$project': {
@@ -129,6 +131,8 @@ async def get_sales_info(data: Request):
         }
     ]))
 
+    # return request
+
     # FILTER OUT NON RELEVANT OPPORTUNITIES
     for inv in initial_forecast_data:
         if len(request["Category"]) == 1:
@@ -167,6 +171,7 @@ async def get_sales_info(data: Request):
     # FILTER COSTS
     costs = [x for x in costs if x["Development"] == request["Category"][0]]
 
+
     # CREATE FINAL DATA (INITIAL)
     for opportunity in opportunities_listed:
         opportunity_code = opportunity["opportunity_code"]
@@ -191,12 +196,13 @@ async def get_sales_info(data: Request):
             insert["opportunity_transferred"] = True
         insert["report_date"] = request["date"]
 
-        for cost in costs:
-            key = cost["Description"]
-            rate = cost["rate"]
-            insert[key] = rate
+    costs = [x for x in costs if x.get('Description') is not None]
+    for cost in costs:
+        key = cost["Description"]
+        rate = cost["rate"]
+        insert[key] = rate
 
-        interim_data.append(insert)
+    interim_data.append(insert)
 
     final_data_trust = []
     final_data_trust_and_investment = []

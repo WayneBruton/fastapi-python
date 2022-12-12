@@ -5,6 +5,8 @@ import os
 from pydantic import BaseModel
 import loan_agreement_files.lender as l1
 from main import create_final_loan_agreement
+
+
 # from verify_token import verify_jwt_token
 
 
@@ -47,6 +49,7 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
             [{"$match": {"investor_acc_number": investor_acc_number.investor_acc_number}}, {"$unwind": "$pledges"},
              {"$match": {"pledges.opportunity_code": investor_acc_number.opportunity_code}}, {
                  "$project": {"investor_name": 1, "investor_surname": 1, "investor_id_number": 1, "investor_email": 1,
+                              "investor_name2": 1, "investor_surname2": 1, "investor_id_number2": 1,
                               "investor_mobile": 1, "investor_landline": 1, "investor_physical_street": 1,
                               "investor_physical_suburb": 1, "investor_physical_city": 1,
                               "investor_physical_province": 1,
@@ -62,6 +65,7 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                               "telefax_number": 1, "trading_name": 1, "vat_number": 1, "pledges": 1,
                               "id": {'$toString': "$_id"}, "_id": 0, }}]))
 
+        # print(result_loan)
         if len(result_loan) == 0:
             return {
                 "error": f"No data found for {investor_acc_number.investor_acc_number} and "
@@ -77,11 +81,13 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
             postal_address3 = ""
             linked_unit = ""
             investor_name = ""
+            investor_name2 = ""
             nsst = "Martin Deon van Rooyen"
             project = ""
             investment_amount = ""
             investment_interest_rate = ""
             investor_id = ""
+            investor_id2 = ""
             for i in result_loan:
                 for key in i:
 
@@ -90,6 +96,11 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                     if key == "investor_surname":
                         investor_name += i[key]
                         l1.lender_info[1]['text'] = investor_name
+                    if key == "investor_name2":
+                        investor_name2 += i[key] + " "
+                    if key == "investor_surname2":
+                        investor_name2 += i[key]
+                        l1.lender_info[1]['text'] = f"{investor_name} - {investor_name2}"
                     if key == "registered_company_name":
                         l1.lender_info[0]['text'] = i[key]
 
@@ -108,6 +119,10 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                     if key == "investor_id_number":
                         l1.lender_info[6]['text'] = i[key]
                         investor_id = i[key]
+
+                    if key == "investor_id_number2":
+                        # l1.lender_info[6]['text'] = i[key]
+                        investor_id2 = i[key]
 
                     if key == "members_directors2":
                         l1.lender_info[7]['text'] = i[key]
@@ -197,10 +212,11 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
             amt_list.append(investment_amount)
             investment_amount = ['R {:0,.2f}'.format(x) for x in amt_list][0]
 
-            final_doc = create_final_loan_agreement(linked_unit=linked_unit, investor=investor_name, nsst=nsst,
+            final_doc = create_final_loan_agreement(linked_unit=linked_unit, investor=investor_name,
+                                                    investor2=investor_name2, nsst=nsst,
                                                     project=project, investment_amount=investment_amount,
                                                     investment_interest_rate=investment_interest_rate,
-                                                    investor_id=investor_id)
+                                                    investor_id=investor_id, investor_id2=investor_id2)
 
             return final_doc
 

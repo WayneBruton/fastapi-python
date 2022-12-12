@@ -21,14 +21,14 @@ def create_zip_file(file_list, linked_unit, investor):
 
 
 # CREATE THE FINAL LOAN AGREEMENT FILES AS A ZIP
-def create_final_loan_agreement(linked_unit, investor, nsst, project, investment_amount, investment_interest_rate,
-                                investor_id):
+def create_final_loan_agreement(linked_unit, investor,investor2, nsst, project, investment_amount, investment_interest_rate,
+                                investor_id, investor_id2):
     # GENERATE COVER LETTER
-    cover_letter = print_investor_cover_letter(investor)
+    cover_letter = print_investor_cover_letter(investor, investor2)
 
     # GENERATE LOAN AGREEMENT
-    loan_agreement = print_investor_loan_agreement(investor, nsst, project, linked_unit, investment_amount,
-                                                   investment_interest_rate, investor_id)
+    loan_agreement = print_investor_loan_agreement(investor,investor2, nsst, project, linked_unit, investment_amount,
+                                                   investment_interest_rate, investor_id, investor_id2)
 
     # GENERATE ANNEXURE C
     annexure_C = print_annexure_c(investor, nsst)
@@ -81,3 +81,10 @@ def create_final_loan_agreement(linked_unit, investor, nsst, project, investment
 
 
 # MY SANDBOX OR PLAT AREA
+
+x = 5000000.00
+
+name = 'wayne'
+print(f"R {x:,.2f}")
+
+print(f"Congratulations {name.title()}, you have won ${x:,.2f}")

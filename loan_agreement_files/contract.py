@@ -52,14 +52,14 @@ point1p16 = "**'Investment Date'** means the date on which the Attorneys transfe
             "Account. "
 point1p17 = "**'Legal Practice Act'** means the Legal Practice Act 28 of 2014;"
 point1p18 = "**'Legal Practice Council'** means the Council established in terms of the Legal Practice Act;"
-point1p19 = "**'Loan Amount'** per Investment Information Schedule on page 3, advanced or to be advanced by the " \
+point1p19 = "**'Loan Amount'** per Investment Information Schedule on page 2, advanced or to be advanced by the " \
             "Lender to the Borrower for the purpose of partially funding the Proposed Development, which Loan Amount " \
             "is included in the Development Amount and linked to the Property; "
 point1p20 = "**'Parties'** means the Borrower, the Lender and NSST collectively and the word 'Party' shall have a " \
             "corresponding meaning; "
 point1p21 = "**'Payment Date'** means the date on which the Loan Amount reflects in the Attorneys' Trust Account;"
 point1p22 = "**'Protection of Personal Information Act'** means the Protection of Personal Information Act 4 of 2013;"
-point1p23 = "**'Property'** per Investment Information Schedule on page 3 as shown and more fully described on the " \
+point1p23 = "**'Property'** per Investment Information Schedule on page 2 as shown and more fully described on the " \
             "Annexures and a sectional plan number to be registered, in the sectional title scheme to be known as " \
             "HERON VIEW in respect of the land and building or buildings situate on the Development Land, " \
             "of which section the floor area is approximately 70 (Seventy) square meters in extent. The location and " \
