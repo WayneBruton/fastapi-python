@@ -13,7 +13,7 @@ class PDF(FPDF):
 
 # print(c.contract)
 def print_investor_loan_agreement(lender, lender2, nsst, project, linked_unit, investment_amount, investment_interest_rate,
-                                  investor_id, investor_id2):
+                                  investor_id, investor_id2, registered_company_name, registration_number):
 
     pdf = PDF('P', 'mm', 'A4')
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -66,29 +66,44 @@ def print_investor_loan_agreement(lender, lender2, nsst, project, linked_unit, i
     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(30, 5, "", align="R", markdown=True)
     if not lender == "":
-        pdf.cell(50, 5, f"**{lender}**", align="L", markdown=True, border=False,
-                 new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        if registered_company_name != "":
+            pdf.cell(50, 5, f"**{registered_company_name}**", align="L", markdown=True, border=False,
+                     new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        else:
+            pdf.cell(50, 5, f"**{lender}**", align="L", markdown=True, border=False,
+                     new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     else:
         pdf.cell(50, 5, "__________________________________", align="L", markdown=True, border=False,
                  new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(30, 5, "", align="R", markdown=True)
-    if investor_id == "":
+    if investor_id == "" and registration_number == "":
         pdf.cell(50, 5, "Identity/Registration Number _______________________", align="L", markdown=True, border=False,
                  new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    else:
-        pdf.cell(50, 5, f"Identity/Registration Number {investor_id}", align="L", markdown=True, border=False,
+
+    elif registration_number != "":
+        pdf.cell(50, 5, f"Registration Number: **{registration_number}**", align="L", markdown=True, border=False,
+                 new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    elif investor_id != "":
+        pdf.cell(50, 5, f"Identity Number: **{investor_id}**", align="L", markdown=True, border=False,
                  new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
     pdf.cell(30, 5, "", align="R", markdown=True)
-    pdf.cell(50, 5, "Herein represented by ___________________ (delete if not applicable)", align="L", markdown=True,
+    if registered_company_name != "":
+        pdf.cell(50, 5, f"Herein represented by **{lender}** (delete if not applicable)", align="L", markdown=True,
              border=False,
              new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    else:
+        pdf.cell(50, 5, "Herein represented by ___________________ (delete if not applicable)", align="L",
+                 markdown=True,
+                 border=False,
+                 new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
     pdf.cell(30, 5, "", align="R", markdown=True)
     pdf.cell(50, 5, "Duly authorised in terms of a resolution (delete if not applicable)", align="L", markdown=True,
              border=False,
              new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     # pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    # pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(30, 5, "", align="R", markdown=True)
     pdf.cell(50, 5, "(hereinafter referred to as 'the Lender No1')", align="L", markdown=True, border=False,
              new_x=XPos.LMARGIN, new_y=YPos.NEXT)
@@ -130,7 +145,7 @@ def print_investor_loan_agreement(lender, lender2, nsst, project, linked_unit, i
              border=False,
              new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     # pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    # pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(30, 5, "", align="R", markdown=True)
     pdf.cell(50, 5, "(hereinafter referred to as 'the Lender No2')", align="L", markdown=True, border=False,
              new_x=XPos.LMARGIN, new_y=YPos.NEXT)

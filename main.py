@@ -12,7 +12,7 @@ from loan_agreement_files.annexure_c import print_annexure_c
 # HELPER FUNCTION TO CREATE A ZIP FILE - THIS IS USED IN THE MAIN FUNCTION BELOW:
 def create_zip_file(file_list, linked_unit, investor):
     investor = investor.split(" ")
-    investor = [x for x in investor if x != '']
+    investor = [z for z in investor if z != '']
     investor = '_'.join(investor)
     with ZipFile(f'loan_agreements/{investor}-{linked_unit}.zip', 'w') as zipObj2:
         for item in file_list:
@@ -21,14 +21,15 @@ def create_zip_file(file_list, linked_unit, investor):
 
 
 # CREATE THE FINAL LOAN AGREEMENT FILES AS A ZIP
-def create_final_loan_agreement(linked_unit, investor,investor2, nsst, project, investment_amount, investment_interest_rate,
-                                investor_id, investor_id2):
+def create_final_loan_agreement(linked_unit, investor, investor2, nsst, project, investment_amount,
+                                investment_interest_rate,
+                                investor_id, investor_id2, registered_company_name, registration_number):
     # GENERATE COVER LETTER
     cover_letter = print_investor_cover_letter(investor, investor2)
 
     # GENERATE LOAN AGREEMENT
-    loan_agreement = print_investor_loan_agreement(investor,investor2, nsst, project, linked_unit, investment_amount,
-                                                   investment_interest_rate, investor_id, investor_id2)
+    loan_agreement = print_investor_loan_agreement(investor, investor2, nsst, project, linked_unit, investment_amount,
+                                                   investment_interest_rate, investor_id, investor_id2, registered_company_name, registration_number)
 
     # GENERATE ANNEXURE C
     annexure_C = print_annexure_c(investor, nsst)
@@ -80,7 +81,7 @@ def create_final_loan_agreement(linked_unit, investor,investor2, nsst, project, 
     return final_doc
 
 
-# MY SANDBOX OR PLAT AREA
+# MY SANDBOX OR PLAY AREA
 
 x = 5000000.00
 

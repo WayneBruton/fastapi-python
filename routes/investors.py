@@ -88,6 +88,8 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
             investment_interest_rate = ""
             investor_id = ""
             investor_id2 = ""
+            registered_company_name = ""
+            registration_number = ""
             for i in result_loan:
                 for key in i:
 
@@ -102,12 +104,14 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                         investor_name2 += i[key]
                         l1.lender_info[1]['text'] = f"{investor_name} - {investor_name2}"
                     if key == "registered_company_name":
+                        registered_company_name = i[key]
                         l1.lender_info[0]['text'] = i[key]
 
                     if key == "trading_name":
                         l1.lender_info[2]['text'] = i[key]
 
                     if key == "registration_number":
+                        registration_number = i[key]
                         l1.lender_info[3]['text'] = i[key]
 
                     if key == "vat_number":
@@ -216,18 +220,20 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                                                     investor2=investor_name2, nsst=nsst,
                                                     project=project, investment_amount=investment_amount,
                                                     investment_interest_rate=investment_interest_rate,
-                                                    investor_id=investor_id, investor_id2=investor_id2)
+                                                    investor_id=investor_id, investor_id2=investor_id2,
+                                                    registered_company_name=registered_company_name,
+                                                    registration_number=registration_number)
 
             return final_doc
 
 
 @investor.get("/get_loan_agreement")
 async def loan_agreement(loan_agreement_name):
-    print("loan_agreement_name", loan_agreement_name)
+    # print("loan_agreement_name", loan_agreement_name)
     loan_agreement_name = loan_agreement_name.split('/')[1]
     dir_path = "loan_agreements"
     dir_list = os.listdir(dir_path)
-    print("dir_list", dir_list)
+    # print("dir_list", dir_list)
     if loan_agreement_name in dir_list:
         return FileResponse(f"{dir_path}/{loan_agreement_name}", media_type="application/zip")
     else:
