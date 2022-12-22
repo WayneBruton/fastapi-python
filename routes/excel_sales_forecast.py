@@ -162,9 +162,6 @@ async def get_sales_info(data: Request):
             i["source"] = "XInvestment"
             investment_items.append(i)
 
-    investment_items = [x for x in investment_items if
-                        x.get('early_release') is None or x.get('early_release') == False]
-
     # SORT RATES BY DATE DESCENDING
     for rate_item in rates_retrieved:
         rate_item["Efective_date"] = rate_item["Efective_date"].replace("/", "-")
@@ -191,6 +188,9 @@ async def get_sales_info(data: Request):
             trust['investment_end_date'] = ""
             trust['rollover_amount'] = 0
             new_trust_items.append(trust)
+
+    new_trust_items = [x for x in new_trust_items if
+                       x.get('early_release') is None or x.get('early_release') == False]
 
     # print(trust_items[0])
     # print()
@@ -320,7 +320,6 @@ async def get_sales_info(data: Request):
         insert1['investment_release_date'] = item['release_date']
         insert1['released_investment_number'] = item['investment_number']
         insert1['rollover_amount'] = 0
-
 
         # print(insert)
 
