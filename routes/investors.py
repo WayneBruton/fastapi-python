@@ -231,6 +231,7 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
 async def loan_agreement(loan_agreement_name):
     loan_agreement_name = loan_agreement_name.replace('$', '&')
     loan_agreement_name = loan_agreement_name.split('/')[1]
+    print("Loan Agreement", loan_agreement_name)
     dir_path = "loan_agreements"
     dir_list = os.listdir(dir_path)
     if loan_agreement_name in dir_list:
