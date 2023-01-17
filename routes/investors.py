@@ -230,11 +230,18 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
 @investor.get("/get_loan_agreement")
 async def loan_agreement(loan_agreement_name):
     # print("loan_agreement_name", loan_agreement_name)
+    loan_agreement_name = loan_agreement_name.replace('$', '&')
+    # print("loan_agreement_name 2", loan_agreement_name)
+
     loan_agreement_name = loan_agreement_name.split('/')[1]
+    # print("loan_agreement_name Split ", loan_agreement_name)
+
     dir_path = "loan_agreements"
     dir_list = os.listdir(dir_path)
     # print("dir_list", dir_list)
     if loan_agreement_name in dir_list:
+        # print("XXXX", f"{dir_path}/{loan_agreement_name}")
         return FileResponse(f"{dir_path}/{loan_agreement_name}", media_type="application/zip")
     else:
+        # print("YYYYYYYY", f"{dir_path}/{loan_agreement_name}")
         return {"ERROR": "File does not exist!!"}
