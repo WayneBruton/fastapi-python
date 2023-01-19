@@ -2,6 +2,7 @@ aiofiles
 anyio
 boto3
 click
+deepdiff
 defusedxml
 dnspython
 fastapi

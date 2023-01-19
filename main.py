@@ -1,4 +1,5 @@
 import os
+# from operator import add, sub, mul, truediv
 from zipfile import ZipFile
 from typing import Union
 from io import BytesIO, FileIO, BufferedReader, BufferedWriter
@@ -29,7 +30,8 @@ def create_final_loan_agreement(linked_unit, investor, investor2, nsst, project,
 
     # GENERATE LOAN AGREEMENT
     loan_agreement = print_investor_loan_agreement(investor, investor2, nsst, project, linked_unit, investment_amount,
-                                                   investment_interest_rate, investor_id, investor_id2, registered_company_name, registration_number)
+                                                   investment_interest_rate, investor_id, investor_id2,
+                                                   registered_company_name, registration_number)
 
     # GENERATE ANNEXURE C
     annexure_C = print_annexure_c(investor, nsst)
@@ -83,9 +85,23 @@ def create_final_loan_agreement(linked_unit, investor, investor2, nsst, project,
 
 # MY SANDBOX OR PLAY AREA
 
-x = 5000000.00
+# x = 5000000.00
+#
+# name = 'wayne'
+# print(f"R {x:,.2f}")
+#
+# print(f"Congratulations {name.title()}, you have won ${x:,.2f}")
 
-name = 'wayne'
-print(f"R {x:,.2f}")
+# def calculator(operator, a, b):
+#     ops = {
+#         "+": add,
+#         "-": sub,
+#         "*": mul,
+#         "/": truediv,
+#     }
+#     if operator in ops:
+#         return ops[operator](a, b)
+#     else:
+#         return "Invalid operator"
 
-print(f"Congratulations {name.title()}, you have won ${x:,.2f}")
+# print(calculator('-', 3, 15))
