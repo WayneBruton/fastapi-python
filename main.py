@@ -85,23 +85,3 @@ def create_final_loan_agreement(linked_unit, investor, investor2, nsst, project,
 
 # MY SANDBOX OR PLAY AREA
 
-# x = 5000000.00
-#
-# name = 'wayne'
-# print(f"R {x:,.2f}")
-#
-# print(f"Congratulations {name.title()}, you have won ${x:,.2f}")
-
-# def calculator(operator, a, b):
-#     ops = {
-#         "+": add,
-#         "-": sub,
-#         "*": mul,
-#         "/": truediv,
-#     }
-#     if operator in ops:
-#         return ops[operator](a, b)
-#     else:
-#         return "Invalid operator"
-
-# print(calculator('-', 3, 15))

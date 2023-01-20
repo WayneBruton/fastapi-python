@@ -15,12 +15,10 @@ audit_trail = db.audit_trail
 async def add_to_audit_trail(data: Request):
     request = await data.json()
     posted = audit_trail.insert_one(request)
-    print("Request", request)
-    print(posted.inserted_id)
     return f"new trail item inserted: Id = {posted.inserted_id}"
 
 
-# UPDATE INVESTOR CHANGES - BLOCK AND DELETE TO FOLLOW
+# UPDATE INVESTOR CHANGES - DELETE TO FOLLOW (CURRENTLY ONLY DEBBIE AND I CAN DELETE AN INVESTOR)
 @audit.post("/update_audit_investor")
 async def add_to_audit_trail_investor(data: Request):
     request = await data.json()
@@ -29,8 +27,8 @@ async def add_to_audit_trail_investor(data: Request):
     task = ""
     ddiff = DeepDiff(original, current)
 
-    if ddiff.get('dictionary_item_removed') is not None:
-        del ddiff['dictionary_item_removed']
+    # if ddiff.get('dictionary_item_removed') is not None:
+    #     del ddiff['dictionary_item_removed']
     if ddiff.get('values_changed') is not None:
         for item in ddiff['values_changed']:
             task += f"{item} = {ddiff['values_changed'][item]}; \n"
@@ -51,16 +49,14 @@ async def add_to_audit_trail_investor(data: Request):
             "page_reference": request['page_reference'],
             "task": task
         }
-        print("task", task)
         posted = audit_trail.insert_one(dictionary)
         return f"new trail item inserted: Id = {posted.inserted_id}"
 
     else:
-        print("No Changes made")
         return "No Changes made"
 
 
-# GET ALL USERS THAT HAVE DONE STUFF ON APP - THIS IS FOR FIRST SELECT ON AUDIT PAGE
+# GET ALL USERS THAT HAVE DONE STUFF ON APP - THIS IS FOR FIRST SELECT ON AUDIT PAGE (THIS IS TO CHOOSE THE USER)
 @audit.post("/getAuditUsers")
 async def get_user_info_from_audit_trail():
     users = audit_trail.distinct('user')
@@ -74,13 +70,10 @@ async def get_user_info_from_audit_trail():
 @audit.post('/retrieve_audit_trail')
 async def get_audit_trail(data: Request):
     request = await data.json()
-    print(request)
-    time_stamp = request["period"]
-    date_object = datetime.strptime(time_stamp, "%Y/%m/%d %H:%M:%S")
-    print("date_object", date_object.hour)
-    user = request["user"]
-    print(user)
-    if user != "All Users":
+    # time_stamp = request["period"]
+    date_object = datetime.strptime(request["period"], "%Y/%m/%d %H:%M:%S")
+    # user = request["user"]
+    if request["user"] != "All Users":
         retrieved_audit_trail = audit_trail.aggregate([
             {
                 '$match': {
