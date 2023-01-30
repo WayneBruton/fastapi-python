@@ -16,8 +16,6 @@ opportunities = db.opportunities
 sales_parameters = db.salesParameters
 sales_processed = db.sales_processed
 
-print(config("AWS_BUCKET_NAME"))
-
 # AWS BUCKET INFO - ENSURE IN VARIABLES ON HEROKU
 AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
 AWS_BUCKET_REGION = config("AWS_BUCKET_REGION")
@@ -32,7 +30,6 @@ s3 = boto3.client(
 )
 
 
-# final_list_to_download = []
 def get_files_required_for_sales():
     file_list_items = []
     results = list(sales_processed.find(({})))
@@ -201,6 +198,7 @@ async def get_sold_unit(data: Request):
 @sales.post("/upload_file")
 async def upload_file(data: Request):
     form = await data.form()
+    print("form", form)
     filename = form['fileName']
     contents = await form['doc'].read()
     with open(f"sales_documents/{filename}", 'wb') as f:

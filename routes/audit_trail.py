@@ -27,22 +27,37 @@ async def add_to_audit_trail_investor(data: Request):
     task = ""
     ddiff = DeepDiff(original, current)
 
-    # if ddiff.get('dictionary_item_removed') is not None:
-    #     del ddiff['dictionary_item_removed']
+    if ddiff.get('dictionary_item_removed') is not None:
+        del ddiff['dictionary_item_removed']
     if ddiff.get('values_changed') is not None:
         for item in ddiff['values_changed']:
-            task += f"{item} = {ddiff['values_changed'][item]}; \n"
+            task += f"{item} = {ddiff['values_changed'][item]};"
     if ddiff.get('iterable_item_added') is not None:
         for item in ddiff['iterable_item_added']:
-            task += f"{item} = {ddiff['iterable_item_added'][item]}; \n"
+            task += f"{item} = {ddiff['iterable_item_added'][item]};"
     if ddiff.get('iterable_item_removed') is not None:
         for item in ddiff['iterable_item_removed']:
-            task += f"{item} = {ddiff['iterable_item_removed'][item]}; \n"
+            task += f"{item} = {ddiff['iterable_item_removed'][item]};"
 
     if task:
+        # REPLACE TEXT WITH TEXT MEANINGFUL TO THE USE
         task = task.replace('investments', 'released')
         task = task.replace('trust', 'investment')
         task = task.replace('root', '')
+
+        task_list = task.split(";")
+        # REMOVE AUTOMATIC TASKS THAT THE USER DOES NOT DO HIMSELF
+        filtered_list = [x for x in task_list if "released" not in x and ("interest" not in x or "exit_value" not in x)]
+        filtered_list = [x for x in filtered_list if "investment" not in x and ("interest" not in x or "available_date"
+                                                                                not in x)]
+        task = ""
+        for item in filtered_list:
+            if item != '':
+                item += ';'
+                task += item
+        print("filtered_list",filtered_list)
+        print()
+        print("task", task)
         dictionary = {
             "time_stamp": request['time_stamp'],
             "user": request['user'],
@@ -70,9 +85,7 @@ async def get_user_info_from_audit_trail():
 @audit.post('/retrieve_audit_trail')
 async def get_audit_trail(data: Request):
     request = await data.json()
-    # time_stamp = request["period"]
     date_object = datetime.strptime(request["period"], "%Y/%m/%d %H:%M:%S")
-    # user = request["user"]
     if request["user"] != "All Users":
         retrieved_audit_trail = audit_trail.aggregate([
             {
