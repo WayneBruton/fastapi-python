@@ -23,7 +23,7 @@ python-dotenv
 python-multipart
 PyYAML
 sniffio
-starlette==0.23.1
+starlette==0.22.0
 svg.path
 typing_extensions
 uvicorn==0.20.0
