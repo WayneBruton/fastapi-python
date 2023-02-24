@@ -7,6 +7,8 @@ from config.db import db
 from bson.objectid import ObjectId
 from decouple import config
 
+from sales_python_files.sales_excel_sheet import create_excel_file
+
 sales = APIRouter()
 
 # MONGO COLLECTIONS
@@ -239,3 +241,16 @@ async def get_uploaded_file(file_name):  # File Name incl path.
         return FileResponse(f"{file_name}", media_type="application/pdf")
     else:
         return {"ERROR": "File does not exist!!"}
+
+
+# GET ALL SALES and when returning ensure _id is a string and project all fields, then call create_excel_file
+@sales.get("/get_all_sales")
+async def get_all_sales():
+    result = list(sales_processed.find())
+
+    for item in result:
+        item['_id'] = str(item['_id'])
+
+    create_excel_file(result, "sales.xlsx")
+    return result
+    # return {"done": "done"}

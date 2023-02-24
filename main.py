@@ -1,5 +1,7 @@
 import os
 # from operator import add, sub, mul, truediv
+# import smtplib
+# from email.message import EmailMessage
 from zipfile import ZipFile
 from typing import Union
 from io import BytesIO, FileIO, BufferedReader, BufferedWriter
@@ -84,80 +86,3 @@ def create_final_loan_agreement(linked_unit, investor, investor2, nsst, project,
 
 
 # MY SANDBOX OR PLAY AREA
-
-# def solve(grid):
-#     empty = find_empty(grid)
-#     if not empty:
-#         return True
-#     row, col = empty
-#
-#     for num in range(1, 10):
-#         if is_valid(grid, (row, col), num):
-#             grid[row][col] = num
-#             if solve(grid):
-#                 return True
-#             grid[row][col] = 0
-#
-#     return False
-#
-#
-# def find_empty(grid):
-#     for i in range(9):
-#         for j in range(9):
-#             if grid[i][j] == 0:
-#                 return (i, j)
-#     return None
-#
-#
-# def is_valid(grid, pos, num):
-#     # Check row
-#     for i in range(9):
-#         if grid[pos[0]][i] == num:
-#             return False
-#
-#     # Check col
-#     for i in range(9):
-#         if grid[i][pos[1]] == num:
-#             return False
-#
-#     # Check box
-#     box_x = pos[1] // 3
-#     box_y = pos[0] // 3
-#     for i in range(box_y * 3, box_y * 3 + 3):
-#         for j in range(box_x * 3, box_x * 3 + 3):
-#             if grid[i][j] == num:
-#                 return False
-#
-#     return True
-#
-#
-# grid = [[0, 3, 0, 0, 5, 0, 0, 0, 8],
-#         [0, 0, 0, 0, 0, 0, 7, 3, 9],
-#         [0, 0, 2, 0, 8, 0, 6, 0, 0],
-#         [2, 0, 0, 0, 0, 0, 8, 0, 0],
-#         [0, 0, 8, 4, 0, 6, 9, 0, 0],
-#         [0, 0, 9, 0, 0, 0, 0, 0, 5],
-#         [0, 0, 3, 0, 2, 0, 5, 0, 0],
-#         [5, 1, 6, 0, 0, 0, 0, 0, 0],
-#         [8, 0, 0, 5, 9, 0, 0, 4, 0]]
-#
-# print(grid[0])
-# print(grid[1])
-# print(grid[2])
-# print(grid[3])
-# print(grid[4])
-# print(grid[5])
-# print(grid[6])
-# print(grid[7])
-# print(grid[8])
-# print()
-#
-# if solve(grid):
-#     for i in range(9):
-#         for j in range(9):
-#             print(grid[i][j], end=" ")
-#         print()
-# else:
-#     print("No solution exists.")
-
-
