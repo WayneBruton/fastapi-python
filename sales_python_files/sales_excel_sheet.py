@@ -223,8 +223,5 @@ def create_excel_file(data, file_name):
             cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
             cell.fill = PatternFill(start_color='D3D3D3', end_color='D3D3D3', fill_type='solid')
 
-        
-
-
     # SAVE THE EXCEL FILE
     wb.save(file_name)
