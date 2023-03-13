@@ -21,8 +21,6 @@ rollovers = db.investorRollovers
 async def get_sales_info(data: Request):
     start = time.time()
     request = await data.json()
-    print("request ABC", request)
-
 
     # Get Investors and Manipulate accordingly
     investments = []
@@ -59,8 +57,6 @@ async def get_sales_info(data: Request):
                         del insert['link']
                     pledges.append(insert)
             # Do the same for investments
-
-
 
             if len(investor['investments']):
                 for investment in investor['investments']:
@@ -101,8 +97,9 @@ async def get_sales_info(data: Request):
                 opportunity["opportunity_transferred"] = True
             else:
                 opportunity["opportunity_transferred"] = False
-            # print()
-            # print("opportunity", opportunity)
+            if opportunity["opportunity_sold"] == False:
+                opportunity["opportunity_transferred"] = False
+
             if opportunity['opportunity_final_transfer_date'] == '':
                 # if  opportunity['opportunity_end_date'] != '' or does not exist
                 if 'opportunity_end_date' in opportunity:
@@ -165,15 +162,10 @@ async def get_sales_info(data: Request):
                       }
             # Filter investments by investor_acc_number, opportunity_code and investment_number
 
-            # print("CHECK",investments[42])
             for investment in investments:
                 # if investment['investment_number'] does not exist, create it and set it to 0
                 if 'investment_number' not in investment:
                     investment['investment_number'] = 0
-            # print(investments[42])
-
-            # for index, investment in enumerate(investments):
-            #     print("investment",index,  investment['investor_acc_number'], investment['opportunity_code'],investment['investment_number'])
 
             final_investment = [investment for investment in investments if
                                 investment['investor_acc_number'] == trust['investor_acc_number'] and
@@ -229,7 +221,8 @@ async def get_sales_info(data: Request):
                           "project_interest_rate": trust["project_interest_rate"],
                           "planned_release_date": trust["planned_release_date"],
                           "trust_interest": 0.00,
-                          "investment_interest_rate": 0.00, "investment_end_date": "", "Category": item['Category'],
+                          "investment_interest_rate": trust["project_interest_rate"], "investment_end_date": "",
+                          "Category": item['Category'],
                           "opportunity_sold": item['opportunity_sold'],
                           "opportunity_end_date": item['opportunity_end_date'],
                           "opportunity_final_transfer_date": item['opportunity_final_transfer_date'],
@@ -237,7 +230,7 @@ async def get_sales_info(data: Request):
                           "opportunity_sale_price": float(item['opportunity_sale_price']),
                           "investment_interest_today": 0, "released_interest_today": 0, "trust_interest_total": 0,
                           "released_interest_total": 0,
-                          "opportunity_transferred" : item["opportunity_transferred"]
+                          "opportunity_transferred": item["opportunity_transferred"]
                           }
 
                 final_investors_list.append(insert)
@@ -261,12 +254,16 @@ async def get_sales_info(data: Request):
                     final_investors_list.append(invest)
 
         # Convert Rates_list Efective_date to datetime
+
         for rate in rates_list:
             rate['Efective_date'] = datetime.strptime(rate['Efective_date'], '%Y-%m-%d')
         # order rates_list by Efective_date in descending order
         rates_list = sorted(rates_list, key=lambda k: k['Efective_date'], reverse=True)
 
-        for investment in final_investors_list:
+        for index, investment in enumerate(final_investors_list):
+            # If investment["investment_interest_rate"] is an empty string then set it to 15.5
+            investment["investment_interest_rate"] = investment["investment_interest_rate"] if investment[
+                                                                                                   "investment_interest_rate"] != "" else 15.5
 
             for sales_parameter in sales_parameters_list:
                 for item in sales_parameter:
@@ -292,7 +289,8 @@ async def get_sales_info(data: Request):
                 investment["deposit_date"] = investment["deposit_date"].replace('-', '/')
 
                 investment["planned_release_date"] = str(datetime.strptime(investment["deposit_date"],
-                                                                           '%Y/%m/%d') + timedelta(days=30)).split(" ")[0]
+                                                                           '%Y/%m/%d') + timedelta(days=30)).split(" ")[
+                    0]
             else:
                 investment["planned_release_date"] = investment["release_date"]
                 # investment["planned_release_date"] = ""
@@ -335,6 +333,7 @@ async def get_sales_info(data: Request):
                 investment_interest_today = 0
                 released_interest_today = 0
 
+                # Days between deposit_date and today
                 # DO TO DATE CALCS
                 deposit_date = investment["deposit_date"].replace('-', '/')
                 deposit_date = deposit_date.split(" ")[0]
@@ -360,10 +359,13 @@ async def get_sales_info(data: Request):
                 while deposit_date <= today_released:
                     # Filter rates_list where Efective_date is less than or equal to deposit_date
                     # using list comprehension
+
                     interim_rate = float(
                         [rate for rate in rates_list if rate['Efective_date'] <= deposit_date][0]['rate'])
+
                     investment_interest_today = investment_interest_today + (
                             float(investment["investment_amount"]) * interim_rate / 100 / 365)
+
                     deposit_date = deposit_date + timedelta(days=1)
                 investment["investment_interest_today"] = round(investment_interest_today, 2)
 
@@ -375,8 +377,10 @@ async def get_sales_info(data: Request):
                 investment["released_interest_today"] = round(released_interest_today, 2)
 
         # bring rollovers into the mix
+
         for investment in final_investors_list:
-            filtered_rollovers = [rollover for rollover in rollovers_list if rollover['investor_acc_number'] == investment['investor_acc_number']
+            filtered_rollovers = [rollover for rollover in rollovers_list if
+                                  rollover['investor_acc_number'] == investment['investor_acc_number']
                                   and rollover['investment_number'] == investment['investment_number']
                                   and rollover['opportunity_code'] == investment['opportunity_code']]
             if len(filtered_rollovers) > 0:
@@ -386,12 +390,53 @@ async def get_sales_info(data: Request):
                 investment['rollover_amount'] = 0
                 investment['rollover_date'] = ""
 
+        ## LOOP THROUGH AND FILL OPPORTUNITIES
+        for opportunity in opportunities_list:
+            # Filter final_investors_list where opportunity_code is equal to opportunity['opportunity_code']
+            # using list comprehension
+            filtered_investors = [investor for investor in final_investors_list if
+                                  investor['opportunity_code'] == opportunity['opportunity_code']]
+
+            opportunity_required = float(opportunity['opportunity_amount_required'])
+
+            # sum the investment_amounts in filtered_investors list using list comprehension
+            opportunity_invested = sum(float(investor['investment_amount']) for investor in filtered_investors)
+            if opportunity_invested > 0 and opportunity_invested < opportunity_required:
+                insert = {"investor_surname": "UnAllocated", "investor_name": "",
+                          "investor_acc_number": "ZZUN01",
+                          "investment_amount": 0, "deposit_date": "",
+                          "release_date": "", "opportunity_code": opportunity['opportunity_code'],
+                          "investment_number": 0,
+                          "project_interest_rate": opportunity["opportunity_interest_rate"],
+                          "planned_release_date": "",
+                          "trust_interest": 0.00,
+                          "investment_interest_rate": opportunity["opportunity_interest_rate"],
+                          "investment_end_date": "", "Category": opportunity['Category'],
+                          "opportunity_sold": opportunity['opportunity_sold'],
+                          "opportunity_end_date": opportunity['opportunity_end_date'],
+                          "opportunity_final_transfer_date": opportunity['opportunity_final_transfer_date'],
+                          "opportunity_amount_required": float(opportunity['opportunity_amount_required']),
+                          "opportunity_sale_price": float(opportunity['opportunity_sale_price']),
+                          "investment_interest_today": 0, "released_interest_today": 0, "trust_interest_total": 0,
+                          "released_interest_total": 0,
+                          "opportunity_transferred": opportunity["opportunity_transferred"],
+                          "raising_commission": 0, "structuring_fee": 0, "commission": 0, "transfer_fees": 0,
+                          "bond_registration": 0, "trust_release_fee": 0, "unforseen": 0
+                          }
+
+                final_investors_list.append(insert)
+        #
+
         # sort final investors list by Category, opportunity_code, investor_acc_number
-        final_investors_list = sorted(final_investors_list, key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
+        final_investors_list = sorted(final_investors_list,
+                                      key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
 
         create_sales_forecast_file(final_investors_list, request, pledges)
         end = time.time()
-        return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
+        print("Time Taken: ", end - start)
+
+        return {"Done": True}
+        # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
 
     except Exception as e:
         print("Error:", e)
