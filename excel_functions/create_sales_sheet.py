@@ -103,7 +103,7 @@ def create_excel_array(data):
 
         row24_data.append(item['investment_interest_today'])
         row25_data.append(item['released_interest_today'])
-        row25A_data.append(0)
+        row25A_data.append(float(item['interest_to_date_still_to_be_raised']))
         # for row27_data if the item['opportunity_code'] is not equal to 'ZZUN01', take the item['deposit_date'],
         # replace '-' with '/' then convert it to datetime and add exactly two years to it and append the new date to
         # the list formatted as YYYY/MM/DD else just make it ""
@@ -114,7 +114,7 @@ def create_excel_array(data):
             row27_data.append("")
         row29_data.append(item['trust_interest_total'])
         row30_data.append(item['released_interest_total'])
-        row30A_data.append(0)
+        row30A_data.append(float(item['interest_total_still_to_be_raised']))
         row33_data.append(float(item['raising_commission']) * float(item['investment_amount']))
         row34_data.append(float(item['structuring_fee']) * float(item['investment_amount']))
         row38_data.append(item['opportunity_sale_price'])

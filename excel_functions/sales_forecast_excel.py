@@ -2,7 +2,7 @@
 # import time
 # from datetime import datetime, timedelta
 # from multiprocessing import Pool
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import PatternFill
 from openpyxl.styles.borders import Border, Side
@@ -28,7 +28,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
     wb = Workbook()
     worksheet_data, interest_on_funds_drawn, interest_on_funds_in_momentum = create_excel_array(data)
 
-
     ws = wb.active
     ws.title = sheet_name
     ws.sheet_properties.tabColor = "1072BA"
@@ -39,7 +38,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
     # loop through worksheet_data and append each item to the worksheet
     for item in worksheet_data:
         ws.append(item)
-
 
     if len(category) > 1:
         for index, item in enumerate(category):
@@ -67,7 +65,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
             col_letter = col[0].column_letter
             sheet.column_dimensions[col_letter].width = col_width
 
-
         # for rows 6 and 7, if the value in the cell from column 6 is FALSE, set the value to 'No' else set the value
         # to 'Yes'
         for index, row in enumerate(sheet.iter_rows(min_row=6, min_col=7, max_row=7, max_col=sheet.max_column)):
@@ -91,9 +88,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
 
         # splice this list into a new list starting only at column 7
         column_letters_7 = column_letters_2[5:]
-
-
-
 
         rows_to_add_formulas = [17, 23, 27, 29, 33, 34, 38, 39, 50, 51, 52, 54]
 
@@ -119,13 +113,13 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
                     sheet[f'{letter}50'] = f'={letter}41-SUM({letter}44:{letter}49)'
                 elif row == 51:
                     sheet[f'{letter}51'] = f'=SUMIFS({column_letters_7[0]}34:' \
-                                           f'{column_letters_7[len(column_letters_7)-1]}34,{column_letters_7[0]}4:' \
+                                           f'{column_letters_7[len(column_letters_7) - 1]}34,{column_letters_7[0]}4:' \
                                            f'{column_letters_7[len(column_letters_7) - 1]}4, {letter}4)'
                 elif row == 52:
                     sheet[f'{letter}52'] = f'={letter}50-{letter}51'
                     # =SUMIFS(G34: I34, G4: I4, G4)
-                # elif row == 54:
-                #     sheet[f'{letter}54'] = f'=SUM({letter}51-{letter}52)'
+                elif row == 54:
+                    sheet[f'{letter}54'] = f'=SUM({letter}51/{letter}50)'
 
         # format all rows with data except rows 1 to 11, 20 to 23, 28 and 29 as currency with 2 decimal places and
         # comma every 3 digits, bold and white font, and for row 11 as a percentage with 2 decimal places and comma
@@ -135,17 +129,18 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
                 if cell.row == 11:
                     cell.font = Font(bold=True, color='FFFFFF')
                     cell.number_format = '0.00%'
+                if cell.row == 54:
+                    cell.number_format = '0.00%'
                 elif cell.row == 20 or cell.row == 21 or cell.row == 22 or cell.row == 23 or cell.row == 28 or cell.row == 29:
                     continue
                 else:
                     cell.font = Font(bold=True, color='FFFFFF')
                     cell.number_format = 'R#,##0.00'
 
-
         # create a list of rows to format as currency
 
         rows_to_center = [5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-                          32, 33, 34, 36, 37, 38, 39, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52]
+                          32, 33, 34, 36, 37, 38, 39, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54]
         # Loop through the rows_to_format_currency list and align the cells from column 6 to the last column in the
         # centre
         for row in rows_to_center:
@@ -344,7 +339,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
         merge_end.append(merge_master[len(merge_master) - 1]['column'])
 
         # Create a dictionary to store the start and end columns for each row
-        rows_to_merge = [5, 6, 7, 13, 14, 15, 16, 17, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52]
+        rows_to_merge = [5, 6, 7, 13, 14, 15, 16, 17, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54]
         merge_dict = {}
 
         # Loop through the rows_to_merge list and populate merge_dict with start and end columns for each row
@@ -373,8 +368,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
         # for row in rows_to_merge:
         #     for index, item in enumerate(merge_start):
         #         sheet.merge_cells(start_row=row, start_column=item, end_row=row, end_column=merge_end[index])
-
-
 
         # Merge cells in row 6 and 7 in column B
         cells_to_merge = [6]
@@ -473,39 +466,19 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
                 sheet[f'D47'] = f'=D42'
                 sheet[f'E47'] = f'=E42-E46'
                 sheet[f'{column}50'] = f'=SUM({column}32)-SUM({column}35)-SUM({column}42)'
-                sheet[f'D52'] = f'=B52'
-                sheet[f'{column}53'] = ""
-                sheet[f'B53'] = f'=B38+B39'
-                sheet[f'B54'] = f'=B50+B51+B53-B52'
-                sheet[f'C54'] = f''
-                sheet[f'D54'] = f''
-                sheet[f'E54'] = f''
-
+                sheet[f'D52'] = f'=B52*0.05'
+                sheet[f'E52'] = f'=B52-D52'
+                # sheet[f'{column}53'] = ""
+                # sheet[f'B53'] = f'=B38+B39'
+                sheet[f'{column}53'] = f'=SUM({column}38)+SUM({column}39)'
+                sheet[f'{column}54'] = f'=SUM({column}50)+SUM({column}51)+SUM({column}53)-SUM({column}52)'
+                # sheet[f'B54'] = f'=B50+B51+B53-B52'
+                # sheet[f'C54'] = f''
+                # sheet[f'D54'] = f''
+                # sheet[f'E54'] = f''
 
             if index == 3:
-                # I want the following
                 sheet[f'B52'] = f"='NSST Heron Fields'!B52 + 'NSST Heron View'!B52"
-                # sheet[f'B52'] = f'=+\'{wb.worksheets[4]}\'!B52+\'{wb.worksheets[5]}\'!B52'
-                # # f'=Sheet4!B52 + Sheet5!B52'
-
-
-
-
-
-
-
-
-
-
-
-
-
-                # sheet[f'{column}51'] = f'=SUM({column}37:{column}38)'
-                # sheet[f'{column}52'] = f'={column}50-{column}49'
-                # sheet[f'{column}53'] = f''
-                # sheet[f'{column}54'] = f''
-
-                # =+B32 - B35 - B41
 
             # make column 1 30 units wide and columns 2 to 5 15 units wide
             sheet.column_dimensions['A'].width = 55
@@ -513,7 +486,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
                 sheet.column_dimensions[column].width = 18
 
             rows_to_format_as_currency = [8, 9, 10, 11, 12, 13, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 35, 36, 37,
-                                          38,39, 41, 42, 43, 44,45,46, 47, 48, 49, 50, 51, 52, 53, 54, 55]
+                                          38, 39, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]
             # Format the rows in rows_to_format_as_currency as currency from column B to F
             for row in rows_to_format_as_currency:
                 for column in gross_income_column_names:
@@ -541,7 +514,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
                 for cell in row:
                     cell.alignment = Alignment(horizontal='left')
 
-            rows_for_full_merge = [1, 2, 3, 6, 7, 14, 15, 19, 20, 33, 34,  40,41, 48, 49]
+            rows_for_full_merge = [1, 2, 3, 6, 7, 14, 15, 19, 20, 33, 34, 40, 41, 48, 49]
             # merge the cells in rows_for_full_merge from column A to E
             for row in rows_for_full_merge:
                 sheet.merge_cells(f'A{row}:E{row}')
@@ -574,8 +547,25 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
                     sheet[f'{column}{row}'].fill = PatternFill(start_color='D3D3D3', end_color='D3D3D3',
                                                                fill_type='solid')
 
+            # Make cell A1 bold, white and 30 units high and increase the font size to 20
+            sheet['A1'].font = Font(bold=True, color='FFFFFF', size=20)
+            sheet.row_dimensions[1].height = 30
+            # Make cells A7, A15, A20, A34, A41 25 units high and increase the font size to 15
+            for row in [7, 15, 20, 34, 41, 49]:
+                sheet.row_dimensions[row].height = 25
+                # sheet[f'A{row}'].font = Font(size=15)
+                # make them bold and white
+                sheet[f'A{row}'].font = Font(bold=True, color='FFFFFF', size=18)
+
+            # For all other rows make the font size 12
+            for row in range(1, 56):
+                if row not in [1, 7, 15, 20, 34, 41, 49]:
+                    sheet[f'A{row}'].font = Font(size=12)
+
             # hide row 43
             sheet.row_dimensions[43].hidden = True
 
     # SAVE TO FILE
     wb.save(f"excel_files/{filename}.xlsx")
+
+    return filename

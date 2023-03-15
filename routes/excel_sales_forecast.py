@@ -1,8 +1,8 @@
+from bson import ObjectId
 from fastapi import APIRouter, Request
 # from fastapi.responses import FileResponse
 from excel_functions.sales_forecast_excel import create_sales_forecast_file
 from config.db import db
-# import os
 import time
 from datetime import datetime
 from datetime import timedelta
@@ -13,8 +13,147 @@ excel_sales_forecast = APIRouter()
 investors = db.investors
 rates = db.rates
 opportunities = db.opportunities
+unallocated_investments = db.unallocated_investments
 sales_parameters = db.salesParameters
 rollovers = db.investorRollovers
+
+
+@excel_sales_forecast.post("/update-sales-forecast_unallocated")
+async def update_unallocated_investments(data: Request):
+    request = await data.json()
+
+    try:
+        # Update this record in the unallocated_investments collection in the database
+        unallocated_investments.update_one(
+            {"_id": ObjectId(request['id'])},
+            {
+                "$set": {
+                    "opportunity_code": request['opportunity_code'],
+                    "opportunity_amount_required": request['opportunity_amount_required'],
+                    "total_investment": request['total_investment'],
+                    "unallocated_investment": request['unallocated_investment'],
+                    "deposit_date": request['deposit_date'],
+                    "release_date": request['release_date'],
+                    "project_interest_rate": float(request['project_interest_rate']),
+                    "opportunity_end_date": request['opportunity_end_date'],
+                    "opportunity_final_transfer_date": request['opportunity_final_transfer_date'],
+                    "Category": request['Category'],
+                }
+            },
+        )
+
+        return {"message": "success"}
+
+    except Exception as e:
+        print(e)
+        results = []
+        return {"message": "error"}
+
+
+# GET UNALLOCATTED INVESTMENTS
+@excel_sales_forecast.post("/sales-forecast_unallocated")
+async def get_unallocated_investments():
+    try:
+
+        trust_list = []
+
+        investor_list = list(db.investors.find({}))
+        for investor in investor_list:
+            investor['id'] = str(investor['_id'])
+            del investor['_id']
+            for trust in investor['trust']:
+                insert = {'opportunity_code': trust['opportunity_code'],
+                          'investment_amount': float(trust['investment_amount']), 'Category': trust['Category']}
+                trust_list.append(insert)
+
+        # Filter out from trust_list where Category is not Southwark
+        trust_list = [trust for trust in trust_list if trust['Category'] != 'Southwark']
+
+        calculated_unallocated_investments_list = []
+
+        opportunities_list = list(db.opportunities.find({}))
+
+        for opportunity in opportunities_list:
+            # if opportunity['opportunity_end_date'] exists then use it else make it equal to ""
+            if 'opportunity_end_date' in opportunity:
+                opportunity['opportunity_end_date'] = opportunity['opportunity_end_date']
+            else:
+                opportunity['opportunity_end_date'] = ""
+            # Do the same for opportunity_final_transfer_date
+            if 'opportunity_final_transfer_date' in opportunity:
+                opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_final_transfer_date']
+            else:
+                opportunity['opportunity_final_transfer_date'] = ""
+
+            opportunity['id'] = str(opportunity['_id'])
+            del opportunity['_id']
+
+            # In a new list filter trust_list where opportunity_code is equal to opportunity['opportunity_code']
+            # using list comprehension
+            opportunity_trust_list = [trust for trust in trust_list if
+                                      trust['opportunity_code'] == opportunity['opportunity_code']]
+
+            # if len(opportunity_trust_list) > 0 sum the investment_amounts as a variable
+            if len(opportunity_trust_list) > 0:
+                total_investment_amount = sum([float(trust['investment_amount']) for trust in opportunity_trust_list])
+            else:
+                total_investment_amount = float(0)
+            if float(opportunity['opportunity_amount_required']) > total_investment_amount:
+                insert = {}
+                insert['opportunity_code'] = opportunity['opportunity_code']
+                insert['opportunity_amount_required'] = opportunity['opportunity_amount_required']
+                insert['total_investment'] = total_investment_amount
+                insert['unallocated_investment'] = float(
+                    opportunity['opportunity_amount_required']) - total_investment_amount
+                insert['deposit_date'] = ""
+                insert['release_date'] = ""
+                insert['project_interest_rate'] = 0
+                insert['Category'] = opportunity['Category']
+                insert['opportunity_end_date'] = opportunity['opportunity_end_date']
+                insert['opportunity_final_transfer_date'] = opportunity['opportunity_final_transfer_date']
+                calculated_unallocated_investments_list.append(insert)
+
+        unallocated_investments_list = list(db.unallocated_investments.find({}))
+        for unallocated_investment in unallocated_investments_list:
+            unallocated_investment['id'] = str(unallocated_investment['_id'])
+            del unallocated_investment['_id']
+
+        for item in calculated_unallocated_investments_list:
+            # filter unallocated_investments_list where opportunity_code is equal to item['opportunity_code']
+            # using list comprehension
+            unallocated_investment_to_be_processed = [unallocated_investment for unallocated_investment in
+                                                      unallocated_investments_list if
+                                                      unallocated_investment['opportunity_code'] == item[
+                                                          'opportunity_code']]
+            # If unalocated_investment_to_be_processed is not empty then update the item with the deposit_date,
+            # release_date and project_interest_rate
+            if len(unallocated_investment_to_be_processed) > 0:
+                item['deposit_date'] = unallocated_investment_to_be_processed[0]['deposit_date']
+                item['release_date'] = unallocated_investment_to_be_processed[0]['release_date']
+                item['project_interest_rate'] = unallocated_investment_to_be_processed[0]['project_interest_rate']
+
+        # Sort calculated_unallocated_investments_list by Category and opportunity_code
+        # Filter out where Category is Southwark
+        calculated_unallocated_investments_list = [item for item in calculated_unallocated_investments_list if
+                                                   item['Category'] != 'Southwark']
+        calculated_unallocated_investments_list = sorted(calculated_unallocated_investments_list,
+                                                         key=lambda k: (k['Category'], k['opportunity_code']))
+
+        # in Mongo delete all from unallocated_investments
+        db.unallocated_investments.delete_many({})
+        # In Mongo, insert all from calculated_unallocated_investments_list
+        db.unallocated_investments.insert_many(calculated_unallocated_investments_list)
+
+        unallocated_investments_list = list(db.unallocated_investments.find({}))
+        for unallocated_investment in unallocated_investments_list:
+            unallocated_investment['id'] = str(unallocated_investment['_id'])
+            del unallocated_investment['_id']
+
+        return unallocated_investments_list
+
+    except Exception as e:
+        print("Error", e)
+        return e
 
 
 @excel_sales_forecast.post("/sales-forecast")
@@ -230,7 +369,8 @@ async def get_sales_info(data: Request):
                           "opportunity_sale_price": float(item['opportunity_sale_price']),
                           "investment_interest_today": 0, "released_interest_today": 0, "trust_interest_total": 0,
                           "released_interest_total": 0,
-                          "opportunity_transferred": item["opportunity_transferred"]
+                          "opportunity_transferred": item["opportunity_transferred"],
+                          "interest_to_date_still_to_be_raised": 0, "interest_total_still_to_be_raised": 0,
                           }
 
                 final_investors_list.append(insert)
@@ -251,6 +391,8 @@ async def get_sales_info(data: Request):
                     invest["opportunity_amount_required"] = float(item['opportunity_amount_required'])
                     invest["opportunity_sale_price"] = float(item['opportunity_sale_price'])
                     invest['opportunity_transferred'] = item["opportunity_transferred"]
+                    invest["interest_to_date_still_to_be_raised"] = 0
+                    invest["interest_total_still_to_be_raised"] = 0
                     final_investors_list.append(invest)
 
         # Convert Rates_list Efective_date to datetime
@@ -265,13 +407,17 @@ async def get_sales_info(data: Request):
             investment["investment_interest_rate"] = investment["investment_interest_rate"] if investment[
                                                                                                    "investment_interest_rate"] != "" else 15.5
 
+            # if investment["opportunity_code"] is equal to "HFB313" and the investment['investor_acc_number'] is equal to "ZCON01" then set investment["release_date"] equal to investment['deposit_date']
+            if investment["opportunity_code"] == "HFB313" and investment['investor_acc_number'] == "ZCON01":
+                investment["release_date"] = investment['deposit_date']
+
             for sales_parameter in sales_parameters_list:
                 for item in sales_parameter:
                     if item == "Description":
                         investment[sales_parameter[item]] = sales_parameter['rate']
 
-            # If investment["opportunity_final_transfer_date"]
-            # if investment['opportunity_end_date'] does not exist then set it to investment['opportunity_occupation_date']
+            # If investment["opportunity_final_transfer_date"] if investment['opportunity_end_date'] does not exist
+            # then set it to investment['opportunity_occupation_date']
             investment['opportunity_end_date'] = investment[
                 'opportunity_end_date'] if 'opportunity_end_date' in investment else investment[
                 'opportunity_occupation_date']
@@ -390,7 +536,7 @@ async def get_sales_info(data: Request):
                 investment['rollover_amount'] = 0
                 investment['rollover_date'] = ""
 
-        ## LOOP THROUGH AND FILL OPPORTUNITIES
+        # LOOP THROUGH AND FILL OPPORTUNITIES
         for opportunity in opportunities_list:
             # Filter final_investors_list where opportunity_code is equal to opportunity['opportunity_code']
             # using list comprehension
@@ -401,7 +547,7 @@ async def get_sales_info(data: Request):
 
             # sum the investment_amounts in filtered_investors list using list comprehension
             opportunity_invested = sum(float(investor['investment_amount']) for investor in filtered_investors)
-            if opportunity_invested > 0 and opportunity_invested < opportunity_required:
+            if 0 < opportunity_invested < opportunity_required:
                 insert = {"investor_surname": "UnAllocated", "investor_name": "",
                           "investor_acc_number": "ZZUN01",
                           "investment_amount": 0, "deposit_date": "",
@@ -421,21 +567,110 @@ async def get_sales_info(data: Request):
                           "released_interest_total": 0,
                           "opportunity_transferred": opportunity["opportunity_transferred"],
                           "raising_commission": 0, "structuring_fee": 0, "commission": 0, "transfer_fees": 0,
-                          "bond_registration": 0, "trust_release_fee": 0, "unforseen": 0
+                          "bond_registration": 0, "trust_release_fee": 0, "unforseen": 0,
+                          "interest_to_date_still_to_be_raised": 0, "interest_total_still_to_be_raised": 0,
                           }
 
                 final_investors_list.append(insert)
-        #
+
+        # if the investor_acc_number = "ZCAM01" and the opportunity_code = "HFA101" and the investment_amount =
+        # 400000.0 then filter this record out of final_investors_list
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZCAM01" and investor[
+                                    'opportunity_code'] == "HFA101" and investor['investment_amount'] == 400000.0)]
+
+        # get unallocated_investments from mongo db where the request['Category'] is in the Category in the DB
+        unallocated_investments_list = list(db.unallocated_investments.find(
+            {"Category": {"$in": request['Category']}}))
+
+        for unallocated_investment in unallocated_investments_list:
+            unallocated_investment['id'] = str(unallocated_investment['_id'])
+            del unallocated_investment['_id']
+            # THE BELOW IS FOR TESTING ONLY
+            # if unallocated_investment['opportunity_code'] == "EA203":
+            #     unallocated_investment['deposit_date'] = "2022/01/01"
+            #     unallocated_investment['release_date'] = "2022/01/15"
+            #     unallocated_investment['planned_release_date'] = "2022/01/15"
+            #     unallocated_investment['project_interest_rate'] = float(15)
+
+        # Filter unallocated_investments_list where deposit_date = "" using list comprehension
+        unallocated_investments_list = [unallocated_investment for unallocated_investment in
+                                        unallocated_investments_list if
+                                        unallocated_investment['deposit_date'] != ""]
+
+        for investor in final_investors_list:
+            # Filter unallocated_investments_list where opportunity_code is equal to investor['opportunity_code'] and
+            # investor_acc_number is equal to 'ZZUN01' using list comprehension
+            if investor['investor_acc_number'] == "ZZUN01":
+                filtered_unallocated_investments = [unallocated_investment for unallocated_investment in
+                                                    unallocated_investments_list if
+                                                    unallocated_investment['opportunity_code'] == investor[
+                                                        'opportunity_code']]
+
+                if len(filtered_unallocated_investments) > 0:
+
+                    investor['deposit_date'] = str(filtered_unallocated_investments[0]['deposit_date'])
+                    investor['release_date'] = str(filtered_unallocated_investments[0]['release_date'])
+                    investor['planned_release_date'] = str(filtered_unallocated_investments[0]['release_date'])
+
+                    # investor['project_interest_rate'] = float(filtered_unallocated_investments[0][
+                    # 'project_interest_rate'])
+                    investor['project_interest_rate'] = float(
+                        filtered_unallocated_investments[0]['project_interest_rate'])
+
+                    interest_to_be_raised_for_momentum = 0
+                    interest_to_be_raised_for_released = 0
+                    # Do Interest Calcs
+                    deposit_date = investor['deposit_date'].replace("-", "/")
+                    deposit_date = datetime.strptime(deposit_date, "%Y/%m/%d")
+
+                    int_release_date = investor['release_date'].replace("-", "/")
+                    int_release_date = datetime.strptime(int_release_date, "%Y/%m/%d")
+
+                    int_planned_release_date = investor['planned_release_date'].replace("-", "/")
+                    int_planned_release_date = datetime.strptime(int_planned_release_date, "%Y/%m/%d")
+
+                    # todays_date = request['date'].replace("-", "/")
+                    # todays_date = datetime.strptime(todays_date, "%Y/%m/%d")
+
+                    # convert investor['opportunity_final_transfer_date'] to datetime
+                    opportunity_final_transfer_date = investor['opportunity_final_transfer_date'].replace("-", "/")
+                    opportunity_final_transfer_date = datetime.strptime(opportunity_final_transfer_date, "%Y/%m/%d")
+
+                    # add 1 day to deposit date
+                    deposit_date = deposit_date + timedelta(days=1)
+                    while deposit_date <= int_planned_release_date:
+                        # get rate from rate_list as a float where date less than or equal to deposit_date
+                        rate = float([rate for rate in rates_list if rate['Efective_date'] <= deposit_date][0]['rate'])
+
+                        interest_to_be_raised_for_momentum += (filtered_unallocated_investments[0][
+                                                                   'unallocated_investment'] * rate / 100) / 365
+
+                        deposit_date = deposit_date + timedelta(days=1)
+
+                    # add 1 day to release date
+                    int_planned_release_date = int_planned_release_date + timedelta(days=1)
+                    while int_planned_release_date <= opportunity_final_transfer_date:
+                        interest_to_be_raised_for_released += (filtered_unallocated_investments[0][
+                                                                   'unallocated_investment'] * investor[
+                                                                   'project_interest_rate'] / 100) / 365
+
+                        # add a day to int_planned_release_date
+                        int_planned_release_date = int_planned_release_date + timedelta(days=1)
+
+                    # investor["interest_to_date_still_to_be_raised"] = 4000
+                    investor[
+                        "interest_total_still_to_be_raised"] = interest_to_be_raised_for_released + interest_to_be_raised_for_momentum
 
         # sort final investors list by Category, opportunity_code, investor_acc_number
         final_investors_list = sorted(final_investors_list,
                                       key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
 
-        create_sales_forecast_file(final_investors_list, request, pledges)
+        filename = create_sales_forecast_file(final_investors_list, request, pledges)
         end = time.time()
         print("Time Taken: ", end - start)
 
-        return {"Done": True}
+        return {"filename": filename}
         # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
 
     except Exception as e:
