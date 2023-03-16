@@ -1,7 +1,5 @@
-
 # CREATE HELPER FUNCTIONS
 from datetime import datetime, timedelta
-
 
 
 def create_excel_array(data):
@@ -126,7 +124,6 @@ def create_excel_array(data):
         row44_data.append(float(item['trust_release_fee']))
         row45_data.append(float(item['unforseen']) * float(item['opportunity_sale_price']))
         row46_data.append(0)
-
 
     worksheet_data += [row4_data, row5_data, row2_data, row2_data, row4_data, row5_data, [], row7_data, row8_data,
                        row9_data, [], row13_data, row14_data, row15_data, row16_data, row17_data, [], row19_data,

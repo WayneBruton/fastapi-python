@@ -37,7 +37,8 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append(["INVESTMENTS"])
     nsst_data.append(["No. of Capital Investments received", f'=+\'{worksheets[index]}\'!B3'])
     nsst_data.append(["No. Investments exited to date", f'=+\'{worksheets[index]}\'!D3'])
-    nsst_data.append(["No. Investments still in Development", f'=+\'{worksheets[index]}\'!B3-\'{worksheets[index]}\'!D3'])
+    nsst_data.append(
+        ["No. Investments still in Development", f'=+\'{worksheets[index]}\'!B3-\'{worksheets[index]}\'!D3'])
     nsst_data.append([])
     nsst_data.append(["GROSS INCOME"])
     nsst_data.append(["", "Total", "Transferred", "Sold", "Remaining"])
@@ -71,22 +72,25 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append(["Transfer Income", ""])
     nsst_data.append([])
     nsst_data.append(["CAPITAL"])
-    nsst_data.append(["Total Capital Available to be raised", f'=+\'{worksheets[index]}\'!B13', f'=+\'{worksheets[index]}\'!D13',
-                      f'=+\'{worksheets[index]}\'!E13', f'=+\'{worksheets[index]}\'!F13'])
+    nsst_data.append(
+        ["Total Capital Available to be raised", f'=+\'{worksheets[index]}\'!B13', f'=+\'{worksheets[index]}\'!D13',
+         f'=+\'{worksheets[index]}\'!E13', f'=+\'{worksheets[index]}\'!F13'])
 
     nsst_data.append(["Capital Drawn down", f'=+\'{worksheets[index]}\'!B15', f'=+\'{worksheets[index]}\'!D15',
                       f'=+\'{worksheets[index]}\'!E15', f'=+\'{worksheets[index]}\'!F15'])
-    nsst_data.append(["Current Capital deployed", 0,0,0,0])
-    nsst_data.append(["Capital Available for deployment", f'=+\'{worksheets[index]}\'!B16', f'=+\'{worksheets[index]}\'!D16',
-                      f'=+\'{worksheets[index]}\'!E16', f'=+\'{worksheets[index]}\'!F16'])
-    nsst_data.append(["Available security for Capital to be raised", f'=+\'{worksheets[index]}\'!B17', f'=+\'{worksheets[index]}\'!D17',
+    nsst_data.append(["Current Capital deployed", 0, 0, 0, 0])
+    nsst_data.append(
+        ["Capital Available for deployment", f'=+\'{worksheets[index]}\'!B16', f'=+\'{worksheets[index]}\'!D16',
+         f'=+\'{worksheets[index]}\'!E16', f'=+\'{worksheets[index]}\'!F16'])
+    nsst_data.append(["Available security for Capital to be raised", f'=+\'{worksheets[index]}\'!B17',
+                      f'=+\'{worksheets[index]}\'!D17',
                       f'=+\'{worksheets[index]}\'!E17', f'=+\'{worksheets[index]}\'!F17'])
     nsst_data.append([])
     nsst_data.append(["INTEREST"])
     nsst_data.append(["Total Interest", f'=+\'{worksheets[index]}\'!B33', f'=+\'{worksheets[index]}\'!D33',
                       f'=+\'{worksheets[index]}\'!E33', f'=+\'{worksheets[index]}\'!F33'])
     nsst_data.append(["Capital Repaid", 0, f'=+\'{worksheets[index]}\'!D33',
-                      0,0])
+                      0, 0])
     nsst_data.append(["Interest on Capital Drawn to estimated Exit date", f'=+\'{worksheets[index]}\'!B31',
                       f'=+\'{worksheets[index]}\'!D31',
                       f'=+\'{worksheets[index]}\'!E31', f'=+\'{worksheets[index]}\'!F31'])
@@ -97,7 +101,8 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
         ["Interest on Capital to be raised", f'=+\'{worksheets[index]}\'!B32', f'=+\'{worksheets[index]}\'!D32',
          f'=+\'{worksheets[index]}\'!E32', f'=+\'{worksheets[index]}\'!F32'])
     nsst_data.append(
-        ["Interest due to estimated exit dates", 0, 0,f'=+\'{worksheets[index]}\'!E33', f'=+\'{worksheets[index]}\'!F33-\'{worksheets[index]}\'!F46'])
+        ["Interest due to estimated exit dates", 0, 0, f'=+\'{worksheets[index]}\'!E33',
+         f'=+\'{worksheets[index]}\'!F33-\'{worksheets[index]}\'!F46'])
     nsst_data.append([])
     nsst_data.append(["PROJECTED GROSS PROFIT"])
     nsst_data.append(["Income after repayment of Capital & Interest", 0, 0, 0, 0])
@@ -105,10 +110,5 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append(["Cost to complete funding requirement", 0, 0, 0, 0])
     nsst_data.append(["Capital available for funding", 0, 0, 0, 0])
     nsst_data.append(["Balance after funding utilization_Gross Profit", 0, 0, 0, 0])
-    # nsst_data.append(["", 0, 0, 0, 0])
-    # nsst_data.append(["", 0, 0, 0, 0])
-    # nsst_data.append(["Variance", 0, 0, 0, 0])
-    # nsst_data.append(["Projected Gross Profit", 0, 0, 0, 0])
-
 
     return nsst_data

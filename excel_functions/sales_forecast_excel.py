@@ -468,14 +468,9 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
                 sheet[f'{column}50'] = f'=SUM({column}32)-SUM({column}35)-SUM({column}42)'
                 sheet[f'D52'] = f'=B52*0.05'
                 sheet[f'E52'] = f'=B52-D52'
-                # sheet[f'{column}53'] = ""
-                # sheet[f'B53'] = f'=B38+B39'
                 sheet[f'{column}53'] = f'=SUM({column}38)+SUM({column}39)'
                 sheet[f'{column}54'] = f'=SUM({column}50)+SUM({column}51)+SUM({column}53)-SUM({column}52)'
-                # sheet[f'B54'] = f'=B50+B51+B53-B52'
-                # sheet[f'C54'] = f''
-                # sheet[f'D54'] = f''
-                # sheet[f'E54'] = f''
+
 
             if index == 3:
                 sheet[f'B52'] = f"='NSST Heron Fields'!B52 + 'NSST Heron View'!B52"

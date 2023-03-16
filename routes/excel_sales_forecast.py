@@ -1,6 +1,8 @@
+import os
+
 from bson import ObjectId
 from fastapi import APIRouter, Request
-# from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse
 from excel_functions.sales_forecast_excel import create_sales_forecast_file
 from config.db import db
 import time
@@ -46,7 +48,6 @@ async def update_unallocated_investments(data: Request):
 
     except Exception as e:
         print(e)
-        results = []
         return {"message": "error"}
 
 
@@ -160,6 +161,7 @@ async def get_unallocated_investments():
 async def get_sales_info(data: Request):
     start = time.time()
     request = await data.json()
+    print("request", request)
 
     # Get Investors and Manipulate accordingly
     investments = []
@@ -670,9 +672,46 @@ async def get_sales_info(data: Request):
         end = time.time()
         print("Time Taken: ", end - start)
 
-        return {"filename": filename}
+        return {"filename": f'excel_files/{filename}.xlsx'}
         # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
 
     except Exception as e:
         print("Error:", e)
         return []
+
+
+# create a route to return the file in filename above to the user
+
+@excel_sales_forecast.get("/get_sales_forecast")
+async def sales_forecast(sales_forecast_name):
+    print("file_name", sales_forecast_name)
+    file_name = sales_forecast_name.replace('$', '&').split('/')[1]
+    dir_path = "excel_files"
+    dir_list = os.listdir(dir_path)
+    print("dir_list", dir_list)
+    if file_name in dir_list:
+        return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
+    else:
+        return {"ERROR": "File does not exist!!"}
+
+
+
+
+
+
+
+
+
+
+
+
+# @excel_sales_forecast.get("/get_sales_forecast")
+# async def get_file_to_return(file_name):
+#
+#     print("file_name",file_name)# File Name incl path.
+#     is_exists = os.path.exists(file_name)
+#     print("is_exists",is_exists)
+#     if is_exists:
+#         return FileResponse(f"{file_name}", media_type="multipart/form-data")
+#     else:
+#         return {"ERROR": "File does not exist!!"}
