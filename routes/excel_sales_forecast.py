@@ -686,7 +686,7 @@ async def get_sales_info(data: Request):
 async def sales_forecast(sales_forecast_name):
     print("file_name", sales_forecast_name)
     file_name = sales_forecast_name
-    
+
     dir_path = "excel_files"
     dir_list = os.listdir(dir_path)
     print("dir_list", dir_list)
