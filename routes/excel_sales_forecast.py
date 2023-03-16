@@ -672,7 +672,7 @@ async def get_sales_info(data: Request):
         end = time.time()
         print("Time Taken: ", end - start)
 
-        return {"filename": f'excel_files/{filename}.xlsx'}
+        return {"filename": f'{filename}.xlsx'}
         # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
 
     except Exception as e:
@@ -685,7 +685,8 @@ async def get_sales_info(data: Request):
 @excel_sales_forecast.get("/get_sales_forecast")
 async def sales_forecast(sales_forecast_name):
     print("file_name", sales_forecast_name)
-    file_name = sales_forecast_name.replace('$', '&').split('/')[1]
+    file_name = sales_forecast_name
+    
     dir_path = "excel_files"
     dir_list = os.listdir(dir_path)
     print("dir_list", dir_list)
