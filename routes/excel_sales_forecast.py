@@ -108,7 +108,7 @@ async def get_unallocated_investments():
                     opportunity['opportunity_amount_required']) - total_investment_amount
                 insert['deposit_date'] = ""
                 insert['release_date'] = ""
-                insert['project_interest_rate'] = 0
+                insert['project_interest_rate'] = 18
                 insert['Category'] = opportunity['Category']
                 insert['opportunity_end_date'] = opportunity['opportunity_end_date']
                 insert['opportunity_final_transfer_date'] = opportunity['opportunity_final_transfer_date']
@@ -684,12 +684,9 @@ async def get_sales_info(data: Request):
 
 @excel_sales_forecast.get("/get_sales_forecast")
 async def sales_forecast(sales_forecast_name):
-    print("file_name", sales_forecast_name)
     file_name = sales_forecast_name
-
     dir_path = "excel_files"
     dir_list = os.listdir(dir_path)
-    print("dir_list", dir_list)
     if file_name in dir_list:
         return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
     else:
