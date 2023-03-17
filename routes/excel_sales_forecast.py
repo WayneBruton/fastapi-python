@@ -1,7 +1,7 @@
 import os
 
 from bson import ObjectId
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, BackgroundTasks
 from fastapi.responses import FileResponse
 from excel_functions.sales_forecast_excel import create_sales_forecast_file
 from config.db import db
@@ -158,10 +158,24 @@ async def get_unallocated_investments():
 
 
 @excel_sales_forecast.post("/sales-forecast")
-async def get_sales_info(data: Request):
+async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
     start = time.time()
     request = await data.json()
     print("request", request)
+
+    developments = request['Category']
+
+    if len(developments) > 1:
+        filename = f'excel_files/Sales Forecast{developments[0].split(" ")[0]}.xlsx'
+    else:
+        filename = f'excel_files/Sales Forecast{developments[0]}.xlsx'
+
+    print("filename", filename)
+    if os.path.exists(filename):
+        os.remove(filename)
+        print("File Removed!")
+    else:
+        print("The file does not exist")
 
     # Get Investors and Manipulate accordingly
     investments = []
@@ -668,16 +682,31 @@ async def get_sales_info(data: Request):
         final_investors_list = sorted(final_investors_list,
                                       key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
 
-        filename = create_sales_forecast_file(final_investors_list, request, pledges)
+        # filename = create_sales_forecast_file(final_investors_list, request, pledges)
+        background_tasks.add_task(create_sales_forecast_file, final_investors_list, request, pledges)
+        # filename = create_sales_forecast_file(final_investors_list, request, pledges)
         end = time.time()
         print("Time Taken: ", end - start)
 
-        return {"filename": f'{filename}.xlsx'}
+        return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
+        # return {"filename": f'{filename}.xlsx'}
         # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
 
     except Exception as e:
         print("Error:", e)
         return []
+
+
+@excel_sales_forecast.post("/check_if_file_exists")
+async def check_if_file_exists(data: Request):
+    request = await data.json()
+
+    filename = request['filename'].split("/")[1]
+
+    if os.path.exists(request['filename']):
+        return {"filename": filename}
+    else:
+        return {"Exists": False}
 
 
 # create a route to return the file in filename above to the user
