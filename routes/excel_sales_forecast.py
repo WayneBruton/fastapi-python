@@ -691,25 +691,3 @@ async def sales_forecast(sales_forecast_name):
         return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
     else:
         return {"ERROR": "File does not exist!!"}
-
-
-
-
-
-
-
-
-
-
-
-
-# @excel_sales_forecast.get("/get_sales_forecast")
-# async def get_file_to_return(file_name):
-#
-#     print("file_name",file_name)# File Name incl path.
-#     is_exists = os.path.exists(file_name)
-#     print("is_exists",is_exists)
-#     if is_exists:
-#         return FileResponse(f"{file_name}", media_type="multipart/form-data")
-#     else:
-#         return {"ERROR": "File does not exist!!"}
