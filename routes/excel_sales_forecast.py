@@ -3,7 +3,7 @@ import os
 from bson import ObjectId
 from fastapi import APIRouter, Request, BackgroundTasks
 from fastapi.responses import FileResponse
-from excel_functions.sales_forecast_excel import create_sales_forecast_file
+from excel_sf_functions.sales_forecast_excel import create_sales_forecast_file
 from config.db import db
 import time
 from datetime import datetime
@@ -183,6 +183,28 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
     trust_list = []
 
     try:
+
+        # db.investors.aggregate([
+        #     {
+        # $project: {
+        #     name: 1,
+        #     email: 1,
+        #     investments: {
+        # $filter: {
+        #     input: "$investments",
+        # as: "investment",
+        # cond: { $ in: ["$$investment.category", ["Category A", "Category B"]]}
+        # }
+        # }
+        # }
+        # },
+        # {
+        # $match: {
+        #     "investments.0": { $exists: true}
+        # }
+        # }
+        # ])
+
 
         investor_list = list(db.investors.find({}))
         for investor in investor_list:
