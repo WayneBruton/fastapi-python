@@ -80,4 +80,5 @@ async def update_valuation_status(data: Request):
 
         print("results", result)
 
-    return "Done"
+    # return "Done"
+    return {"result": result}

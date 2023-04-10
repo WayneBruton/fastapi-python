@@ -65,6 +65,15 @@ def create_excel_array(data):
     row47_data = ["Transfer Income", "", "", "", "", ""]
     row48_data = ["Due to Investors", "", "", "", "", ""]
     row49_data = ["Profit / Loss", "", "", "", "", ""]
+    row49A_data = []
+
+    row50_data = ["Early Released", "", "", "", "", ""]
+    row51_data = ["Rollover Date", "", "", "", "", ""]
+    row52_data = ["Rollover Amount", "", "", "", "", ""]
+    row53_data = ["Early Exit", "", "", "", "", ""]
+    row54_data = ["Transfer Income", "", "", "", "", ""]
+    row55_data = ["Due to Investors (Adjusted)", "", "", "", "", ""]
+    row56_data = ["Profit / Loss (Adjusted)", "", "", "", "", ""]
 
     for item in data:
         row2_data.append(item['opportunity_code'])
@@ -124,6 +133,7 @@ def create_excel_array(data):
         row44_data.append(float(item['trust_release_fee']))
         row45_data.append(float(item['unforseen']) * float(item['opportunity_sale_price']))
         row46_data.append(0)
+        row50_data.append(item['early_release'])
 
     worksheet_data += [row4_data, row5_data, row2_data, row2_data, row4_data, row5_data, [], row7_data, row8_data,
                        row9_data, [], row13_data, row14_data, row15_data, row16_data, row17_data, [], row19_data,
@@ -131,7 +141,8 @@ def create_excel_array(data):
                        row27_data, row28_data, row29_data, row30_data, row30A_data, row31_data, row31A_data, [],
                        row33_data, row34_data, row35_data, row36_data, [], row38_data, row39_data, row40_data,
                        row41_data, row42_data, row43_data, row44_data, row45_data, row46_data, row47_data, row48_data,
-                       row49_data, row4A_data]
+                       row49_data, row4A_data, row49A_data, row49A_data, row49A_data, row50_data, row51_data,
+                       row52_data, row53_data, row54_data, row55_data, row56_data]
 
     merge_start = []
     merge_end = []

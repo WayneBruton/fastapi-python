@@ -1,7 +1,7 @@
 import os
 # from operator import add, sub, mul, truediv
-# import smtplib
-# from email.message import EmailMessage
+import smtplib
+from email.message import EmailMessage
 from zipfile import ZipFile
 from typing import Union
 from io import BytesIO, FileIO, BufferedReader, BufferedWriter
@@ -86,3 +86,30 @@ def create_final_loan_agreement(linked_unit, investor, investor2, nsst, project,
 
 
 # MY SANDBOX OR PLAY AREA
+
+# Kolyo K.
+# Here are the SMTP settings you need to use:
+#
+# ###SECURE SSL/TLS SETTINGS###
+# Username: Use the full email address.
+# Password: Use the email account’s password.
+# Outgoing Server: depro8.fcomet.com
+# SMTP Port: 465
+
+# print("email app started")
+#
+# msg = EmailMessage()
+# msg['Subject'] = 'Test email'
+# msg['From'] = 'omh-app@opportunitymanagement.co.za'
+# msg['To'] = 'waynebruton@icloud.com'
+# msg.set_content('This is a test email')
+# # MyServer = smtplib.SMTP_SSL('depro8.fcomet.com', 465)
+# with smtplib.SMTP_SSL('depro8.fcomet.com', 465) as MyServer:
+#     MyServer.ehlo()
+#     MyServer.login('omh-app@opportunitymanagement.co.za', '12071994Wb!')
+#     MyServer.send_message(msg)
+#     MyServer.quit()
+#
+# print("email sent")
+
+
