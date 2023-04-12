@@ -67,6 +67,7 @@ def create_final_loan_agreement(linked_unit, investor, investor2, nsst, project,
     file_list.append("annexures/Annexure B - Ground Floor.pdf")
     file_list.append("annexures/Annexure B - First Floor.pdf")
     file_list.append("annexures/Annexure B - Second Floor.pdf")
+    file_list.append("annexures/Annexure B - Third Floor.pdf")
     file_list.append(annexure_C)
 
     # ZIP ALL FILES INTO ONE FILE - THIS USES THE HELPER FUNCTION ABOVE
