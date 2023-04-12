@@ -74,13 +74,13 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append([])
     nsst_data.append(["CAPITAL"])
     nsst_data.append(
-        ["Total Capital Available to be raised", f'=+\'{worksheets[index]}\'!B13-B37', f'=+\'{worksheets[index]}\'!D13',
+        ["Total Capital Available to be raised", f'=+\'{worksheets[index]}\'!B13', f'=+\'{worksheets[index]}\'!D13',
          f'=+\'{worksheets[index]}\'!E13', f'=+\'{worksheets[index]}\'!F13'])
 
     nsst_data.append(["Capital Drawn down", f'=+\'{worksheets[index]}\'!B15', f'=+\'{worksheets[index]}\'!D15',
                       f'=+\'{worksheets[index]}\'!E15', f'=+\'{worksheets[index]}\'!F15'])
 
-    nsst_data.append(["Capital - Early repayment", f'=+\'{worksheets[index]}\'!B66', 0,0, 0])
+    nsst_data.append(["Capital - Early Exit", f'=+\'{worksheets[index]}\'!B66', 0,0, 0])
 
     nsst_data.append(["Current Capital deployed", 0, 0, 0, 0])
     nsst_data.append(
@@ -91,7 +91,7 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
                       f'=+\'{worksheets[index]}\'!E17', f'=+\'{worksheets[index]}\'!F17'])
     nsst_data.append([])
     nsst_data.append(["INTEREST"])
-    nsst_data.append(["Total Interest", f'=+\'{worksheets[index]}\'!B33+B46', f'=+\'{worksheets[index]}\'!D33',
+    nsst_data.append(["Total Interest", f'=+\'{worksheets[index]}\'!B33', f'=+\'{worksheets[index]}\'!D33',
                       f'=+\'{worksheets[index]}\'!E33', f'=+\'{worksheets[index]}\'!F33'])
     nsst_data.append(["Capital Repaid", 0, f'=+\'{worksheets[index]}\'!D33',
                       0, 0])
@@ -99,7 +99,7 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
                       f'=+\'{worksheets[index]}\'!D31',
                       f'=+\'{worksheets[index]}\'!E31', f'=+\'{worksheets[index]}\'!F31'])
 
-    nsst_data.append(["Interest - Early Repayments", f'=+\'{worksheets[index]}\'!B67', 0, 0, 0])
+    nsst_data.append(["Interest - Early Exits", f'=+\'{worksheets[index]}\'!B67', 0, 0, 0])
 
     nsst_data.append(["Interest on Capital to Be Drawn from Momentum", f'=+\'{worksheets[index]}\'!B30',
                       f'=+\'{worksheets[index]}\'!D30',
