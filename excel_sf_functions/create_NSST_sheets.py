@@ -56,7 +56,7 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append(
         ["Gross", f'=+\'{worksheets[index]}\'!B43', f'=+\'{worksheets[index]}\'!D43', f'=+\'{worksheets[index]}\'!E43',
          f'=+\'{worksheets[index]}\'!F43'])
-    nsst_data.append(["Commission (5 %)", f'=+\'{worksheets[index]}\'!B44', f'=+\'{worksheets[index]}\'!D44',
+    nsst_data.append(["Commission (5.75 %)", f'=+\'{worksheets[index]}\'!B44', f'=+\'{worksheets[index]}\'!D44',
                       f'=+\'{worksheets[index]}\'!E44', f'=+\'{worksheets[index]}\'!F44'])
     nsst_data.append(
         ["Transfer Fees", f'=+\'{worksheets[index]}\'!B45', f'=+\'{worksheets[index]}\'!D45',

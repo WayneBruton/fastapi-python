@@ -465,9 +465,26 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 deposit_date = investment["deposit_date"].replace('-', '/')
                 deposit_date = deposit_date.split(" ")[0]
                 deposit_date = datetime.strptime(deposit_date, '%Y/%m/%d')
+                # if investment["investment_end_date"] != "" replace '/' with '-' in investment[
+                # "investment_end_date"] and do the exact same for investment["opportunity_final_transfer_date"]
+
                 if investment["investment_end_date"] != "":
-                    investment["opportunity_final_transfer_date"] = investment["investment_end_date"]
-                    investment['early_release'] = True
+                    investment["investment_end_date"] = investment["investment_end_date"].replace('/', '-')
+                    investment["opportunity_final_transfer_date"] = investment[
+                        "opportunity_final_transfer_date"].replace(
+                        '/', '-')
+                    if investment["opportunity_transferred"]:
+                        # investment["opportunity_final_transfer_date"] = investment["investment_end_date"]
+                        investment['early_release'] = False
+                    # else if investment["investment_end_date"] as a date is before investment[
+                    # "opportunity_final_transfer_date"] as a date then set investment['early_release'] to True
+                    elif datetime.strptime(investment["investment_end_date"], '%Y-%m-%d') < datetime.strptime(
+                            investment["opportunity_final_transfer_date"], '%Y-%m-%d'):
+                        investment["opportunity_final_transfer_date"] = investment["investment_end_date"]
+                        investment['early_release'] = True
+
+                    # investment["opportunity_final_transfer_date"] = investment["investment_end_date"]
+                    # investment['early_release'] = True
                 else:
                     investment["opportunity_final_transfer_date"] = investment["opportunity_final_transfer_date"]
                     investment['early_release'] = False
@@ -598,6 +615,48 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
                 final_investors_list.append(insert)
 
+        # # print(sales_parameters_list[0])
+        # print(final_investors_list[0])
+        for investment in final_investors_list:
+            # filter sales_parameters_list where Development is equal to investment['Category'] using list comprehension
+
+            if investment['raising_commission'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'raising_commission']
+                investment['raising_commission'] = filtered_sales_parameters[0]['rate']
+            if investment['structuring_fee'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'structuring_fee']
+                investment['structuring_fee'] = filtered_sales_parameters[0]['rate']
+
+            if investment['commission'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'commission']
+                investment['commission'] = filtered_sales_parameters[0]['rate']
+            if investment['transfer_fees'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'transfer_fees']
+                investment['transfer_fees'] = filtered_sales_parameters[0]['rate']
+            if investment['bond_registration'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'bond_registration']
+                investment['bond_registration'] = filtered_sales_parameters[0]['rate']
+            if investment['trust_release_fee'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'trust_release_fee']
+                investment['trust_release_fee'] = filtered_sales_parameters[0]['rate']
+            if investment['unforseen'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'unforseen']
+                investment['unforseen'] = filtered_sales_parameters[0]['rate']
+
         # if the investor_acc_number = "ZCAM01" and the opportunity_code = "HFA101" and the investment_amount =
         # 400000.0 then filter this record out of final_investors_list
 
@@ -689,9 +748,9 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         end = time.time()
         print("Time Taken: ", end - start)
 
-        return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
+        # return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
         # return {"filename": f'{filename}.xlsx'}
-        # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
+        return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
 
     except Exception as e:
         print("Error:", e)
