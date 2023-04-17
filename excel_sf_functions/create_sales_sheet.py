@@ -102,9 +102,12 @@ def create_excel_array(data):
         row19_data.append(item['investment_amount'])
         row20_data.append(item['deposit_date'])
         row21_data.append(item['planned_release_date'])
-        # row22_data.append(item['opportunity_final_transfer_date'])
+
         if item['opportunity_code'] != "ZZUN01":
-            row22_data.append(item['opportunity_final_transfer_date'])
+            if item['early_release'] == True:
+                row22_data.append(item['investment_end_date'])
+            else:
+                row22_data.append(item['opportunity_final_transfer_date'])
         else:
             row22_data.append("")
 

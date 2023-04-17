@@ -6,6 +6,7 @@ from routes.excel_sales_forecast import excel_sales_forecast
 from routes.sales import sales
 from routes.audit_trail import audit
 from routes.payment_advice import advices
+from routes.portal_routes import portal_info
 
 if not os.path.isdir("sales_documents"):
     os.makedirs("sales_documents")
@@ -18,6 +19,9 @@ if not os.path.isdir("split_pdf_files"):
 
 if not os.path.isdir("excel_files"):
     os.makedirs("excel_files")
+
+if not os.path.isdir("portal_statements"):
+    os.makedirs("portal_statements")
 
 app = FastAPI()
 
@@ -36,3 +40,4 @@ app.include_router(excel_sales_forecast)
 app.include_router(sales)
 app.include_router(audit)
 app.include_router(advices)
+app.include_router(portal_info)

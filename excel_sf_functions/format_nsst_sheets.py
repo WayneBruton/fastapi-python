@@ -14,7 +14,7 @@ def format_nsst(num_sheets, index, sheet):
         # row 43, add row 35 and deduct rows 38 to 42 for the column names in gross_income_column_names
         for column in gross_income_column_names:
             sheet[f'{column}32'] = f'=SUM({column}23)-SUM({column}26:{column}31)'
-            sheet[f'B38'] = f'=SUM(B36)-SUM(C36)'
+            sheet[f'B38'] = f'=SUM(B36)-SUM(C36)-B37'
             sheet[f'C38'] = f'=0'
             sheet[f'D38'] = f'=D36'
             sheet[f'E38'] = f'=E36'
@@ -115,4 +115,4 @@ def format_nsst(num_sheets, index, sheet):
                 sheet[f'A{row}'].font = Font(size=12)
 
         # hide row 43
-        sheet.row_dimensions[44].hidden = True
+        # sheet.row_dimensions[44].hidden = True

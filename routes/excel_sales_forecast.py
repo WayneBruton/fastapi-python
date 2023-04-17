@@ -183,8 +183,11 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
         investor_list = list(db.investors.find({}))
         for investor in investor_list:
+
             investor['id'] = str(investor['_id'])
             del investor['_id']
+
+
 
             # Filter Pledges, Investments and Trust by request['Category'] items only using list comprehension
             investor['pledges'] = [pledge for pledge in investor['pledges'] if
@@ -193,6 +196,13 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                        investment['Category'] in request['Category']]
             investor['trust'] = [trust for trust in investor['trust'] if trust['Category'] in request['Category']]
 
+
+            # if investor['investor_acc_number'] == "ZVER02":
+            #     print("XXXXXXXX",investor['investments'])
+            #     print()
+            #     print()
+            #     print()
+            #     print()
             # CREATE INSERT DICT TO INSERT INTO RELEVANT LISTS
 
             if len(investor['pledges']):
@@ -233,6 +243,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     for item in trust_item:
                         insert[item] = trust_item[item]
                     trust_list.append(insert)
+
+
 
         # Get Opportunities and Manipulate accordingly
         opportunities_list = list(db.opportunities.find({}))
@@ -334,6 +346,14 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             if len(final_investment):
                 insert['investment_interest_rate'] = final_investment[0]["investment_interest_rate"]
                 insert['investment_end_date'] = final_investment[0]["end_date"]
+                # if final_investment[0]['early_release'] exists, then set insert['early_release'] to equal final_investment[0]['early_release'] else set it to False
+                if 'early_release' in final_investment[0]:
+                    insert['early_release'] = final_investment[0]['early_release']
+                else:
+                    insert['early_release'] = False
+
+
+
 
             interim_investors_list.append(insert)
 
@@ -412,6 +432,9 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     invest['opportunity_transferred'] = item["opportunity_transferred"]
                     invest["interest_to_date_still_to_be_raised"] = 0
                     invest["interest_total_still_to_be_raised"] = 0
+
+
+
                     final_investors_list.append(invest)
 
         # Convert Rates_list Efective_date to datetime
@@ -461,10 +484,18 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 investment["planned_release_date"] = investment["release_date"]
                 # investment["planned_release_date"] = ""
 
+            # if investment["investor_acc_number"] == "ZVER02":
+            #     print(investment)
+
             if investment["investor_acc_number"] != "ZZUN01":
                 deposit_date = investment["deposit_date"].replace('-', '/')
                 deposit_date = deposit_date.split(" ")[0]
                 deposit_date = datetime.strptime(deposit_date, '%Y/%m/%d')
+
+
+
+
+
                 # if investment["investment_end_date"] != "" replace '/' with '-' in investment[
                 # "investment_end_date"] and do the exact same for investment["opportunity_final_transfer_date"]
 
@@ -473,21 +504,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     investment["opportunity_final_transfer_date"] = investment[
                         "opportunity_final_transfer_date"].replace(
                         '/', '-')
-                    if investment["opportunity_transferred"]:
-                        # investment["opportunity_final_transfer_date"] = investment["investment_end_date"]
-                        investment['early_release'] = False
-                    # else if investment["investment_end_date"] as a date is before investment[
-                    # "opportunity_final_transfer_date"] as a date then set investment['early_release'] to True
-                    elif datetime.strptime(investment["investment_end_date"], '%Y-%m-%d') < datetime.strptime(
-                            investment["opportunity_final_transfer_date"], '%Y-%m-%d'):
-                        investment["opportunity_final_transfer_date"] = investment["investment_end_date"]
-                        investment['early_release'] = True
 
-                    # investment["opportunity_final_transfer_date"] = investment["investment_end_date"]
-                    # investment['early_release'] = True
-                else:
-                    investment["opportunity_final_transfer_date"] = investment["opportunity_final_transfer_date"]
-                    investment['early_release'] = False
+
                 planned_release_date = investment["planned_release_date"].replace('-', '/')
                 planned_release_date = planned_release_date.split(" ")[0]
                 planned_release_date = datetime.strptime(planned_release_date, '%Y/%m/%d')
@@ -743,14 +761,36 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         final_investors_list = sorted(final_investors_list,
                                       key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
 
+        for investor in final_investors_list:
+            if 'early_release' not in investor:
+                investor['early_release'] = False
+            # create a variable called report date and make it the same as request['date'] as a datetime
+            report_date = datetime.strptime(request['date'], "%Y/%m/%d")
+            if investor['early_release'] == True:
+                investor['investment_end_date'] = investor['investment_end_date'].replace("-", "/")
+                # print(investor['investment_end_date'])
+                # print()
+                # if investor['investment_end_date'] != "" and investor['investment_end_date'] != None:
+
+                #     print(investor['investment_end_date'])
+                # if investor_end_date as datetime is after report_date as datetime then set investor['early_release'] to false
+                if datetime.strptime(investor['investment_end_date'], "%Y/%m/%d") >= report_date:
+                    investor['early_release'] = False
+                if investor['opportunity_transferred'] == True:
+                    investor['early_release'] = False
+                # print(investor['investor_acc_number'], investor['opportunity_code'], investor['investment_end_date'])
+
+            # print(investor['early_release'], investor['investor_acc_number'], investor['opportunity_code'],"A",
+            # investor['investment_end_date'], "B",investor['opportunity_final_transfer_date'])
+
         background_tasks.add_task(create_sales_forecast_file, final_investors_list, request, pledges)
 
         end = time.time()
         print("Time Taken: ", end - start)
 
-        return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
+        # return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
         # return {"filename": f'{filename}.xlsx'}
-        # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
+        return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
 
     except Exception as e:
         print("Error:", e)
