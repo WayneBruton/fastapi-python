@@ -788,9 +788,9 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         end = time.time()
         print("Time Taken: ", end - start)
 
-        # return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
+        return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
         # return {"filename": f'{filename}.xlsx'}
-        return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
+        # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
 
     except Exception as e:
         print("Error:", e)

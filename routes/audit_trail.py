@@ -27,48 +27,55 @@ async def add_to_audit_trail_investor(data: Request):
     task = ""
     ddiff = DeepDiff(original, current)
 
-    if ddiff.get('dictionary_item_removed') is not None:
-        del ddiff['dictionary_item_removed']
-    if ddiff.get('values_changed') is not None:
-        for item in ddiff['values_changed']:
-            task += f"{item} = {ddiff['values_changed'][item]};"
-    if ddiff.get('iterable_item_added') is not None:
-        for item in ddiff['iterable_item_added']:
-            task += f"{item} = {ddiff['iterable_item_added'][item]};"
-    if ddiff.get('iterable_item_removed') is not None:
-        for item in ddiff['iterable_item_removed']:
-            task += f"{item} = {ddiff['iterable_item_removed'][item]};"
+    try:
 
-    if task:
-        # REPLACE TEXT WITH TEXT MEANINGFUL TO THE USE
-        task = task.replace('investments', 'released')
-        task = task.replace('trust', 'investment')
-        task = task.replace('root', '')
+        if ddiff.get('dictionary_item_removed') is not None:
+            del ddiff['dictionary_item_removed']
+        if ddiff.get('values_changed') is not None:
+            for item in ddiff['values_changed']:
+                task += f"{item} = {ddiff['values_changed'][item]};"
+        if ddiff.get('iterable_item_added') is not None:
+            for item in ddiff['iterable_item_added']:
+                task += f"{item} = {ddiff['iterable_item_added'][item]};"
+        if ddiff.get('iterable_item_removed') is not None:
+            for item in ddiff['iterable_item_removed']:
+                task += f"{item} = {ddiff['iterable_item_removed'][item]};"
 
-        task_list = task.split(";")
-        # REMOVE AUTOMATIC TASKS THAT THE USER DOES NOT DO HIMSELF
-        filtered_list = [x for x in task_list if "released" not in x and ("interest" not in x or "exit_value" not in x)]
-        filtered_list = [x for x in filtered_list if "investment" not in x and ("interest" not in x or "available_date"
-                                                                                not in x)]
-        task = ""
-        for item in filtered_list:
-            if item != '':
-                item += ';'
-                task += item
-        print("filtered_list",filtered_list)
-        print()
-        print("task", task)
-        dictionary = {
-            "time_stamp": request['time_stamp'],
-            "user": request['user'],
-            "page_reference": request['page_reference'],
-            "task": task
-        }
-        posted = audit_trail.insert_one(dictionary)
-        return f"new trail item inserted: Id = {posted.inserted_id}"
+        if task:
+            # REPLACE TEXT WITH TEXT MEANINGFUL TO THE USE
+            task = task.replace('investments', 'released')
+            task = task.replace('trust', 'investment')
+            task = task.replace('root', '')
 
-    else:
-        return "No Changes made"
+            task_list = task.split(";")
+            # REMOVE AUTOMATIC TASKS THAT THE USER DOES NOT DO HIMSELF
+            filtered_list = [x for x in task_list if
+                             "released" not in x and ("interest" not in x or "exit_value" not in x)]
+            filtered_list = [x for x in filtered_list if
+                             "investment" not in x and ("interest" not in x or "available_date"
+                                                        not in x)]
+            task = ""
+            for item in filtered_list:
+                if item != '':
+                    item += ';'
+                    task += item
+            print("filtered_list", filtered_list)
+            print()
+            print("task", task)
+            dictionary = {
+                "time_stamp": request['time_stamp'],
+                "user": request['user'],
+                "page_reference": request['page_reference'],
+                "task": task
+            }
+            posted = audit_trail.insert_one(dictionary)
+            return f"new trail item inserted: Id = {posted.inserted_id}"
+
+        else:
+            return "No Changes made"
+    except Exception as e:
+        print(e)
+        return f"No Changes made: {e}"
 
 
 # GET ALL USERS THAT HAVE DONE STUFF ON APP - THIS IS FOR FIRST SELECT ON AUDIT PAGE (THIS IS TO CHOOSE THE USER)
