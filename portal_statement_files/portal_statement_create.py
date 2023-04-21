@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 from fpdf import FPDF, XPos, YPos
 import os
@@ -7,6 +7,7 @@ import os
 def create_pdf(statement_type, data):
     data1 = []
     data1 = data
+    # print(data1)
 
     filename = f"{data1[0]['investor_acc_number']}_{data1[0]['opportunity_code']}_" \
                f"{data1[0]['investment_number']}_type{statement_type}.pdf"
@@ -188,6 +189,15 @@ def create_pdf(statement_type, data):
             item['cumulative_interest'] = "R " + item['interest']
         if item['balance'] != "":
             item['balance'] = f"R {str(item['balance'])}"
+         # if item['investment_amount'] != "" then item['effective_date'] = item['effective_date'] else item['effective_date'] = the last day of the month in item['effective_date'] as a datetime and formated as a string in the format of YYYY-MM-DD
+        if item['investment_amount'] != "":
+            # item['effective_date'] = the end of the current month of item['effective_date'] as a datetime and formated as a string in the format of YYYY-MM-DD
+
+            item['interest_until'] = datetime.strptime(item['interest_until'], '%Y-%m-%d').strftime('%Y-%m-%d')
+
+
+
+
 
         pdf.set_text_color(128, 128, 128)
 
@@ -196,7 +206,7 @@ def create_pdf(statement_type, data):
         pdf.cell(18, 10, str(item['days']), border='B', align="C", fill=False)
         pdf.cell(1, 10, '', border=0, align="C", fill=False)
 
-        pdf.cell(22, 10, item['effective_date'], border='B', align="C", fill=False)
+        pdf.cell(22, 10, item['interest_until'], border='B', align="C", fill=False)
         pdf.cell(1, 10, '', border=0, align="C", fill=False)
 
         pdf.cell(22, 10, item['interest_rate'], border='B', align="C", fill=False)
@@ -215,7 +225,14 @@ def create_pdf(statement_type, data):
 
     # INVESTMENT PAGE ENDS HERE
     # START IF DISCLAIMER PAGE
-    pdf.add_page()
+    # pdf.add_page()
+
+    pdf.cell(105, 7, '', border=0)
+    pdf.cell(80, 7, "", border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C", markdown=True)
+    pdf.cell(105, 7, '', border=0)
+    pdf.cell(80, 7, "", border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C", markdown=True)
+    pdf.cell(105, 7, '', border=0)
+    pdf.cell(80, 7, "", border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C", markdown=True)
 
     if statement_type == 1:
         pdf.set_font('helvetica', size=8)
