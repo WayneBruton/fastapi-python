@@ -7,6 +7,7 @@ from routes.sales import sales
 from routes.audit_trail import audit
 from routes.payment_advice import advices
 from routes.portal_routes import portal_info
+from routes.investor_data_analysis import data_analysis
 
 if not os.path.isdir("sales_documents"):
     os.makedirs("sales_documents")
@@ -41,3 +42,4 @@ app.include_router(sales)
 app.include_router(audit)
 app.include_router(advices)
 app.include_router(portal_info)
+app.include_router(data_analysis)
