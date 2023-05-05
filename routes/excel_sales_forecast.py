@@ -161,6 +161,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
     start = time.time()
     request = await data.json()
 
+    print("request",request)
+
     developments = request['Category']
 
     if len(developments) > 1:
@@ -632,8 +634,11 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                           }
 
                 final_investors_list.append(insert)
-
-        # # print(sales_parameters_list[0])
+        print("Hello")
+        # print(sales_parameters_list)
+        for item in sales_parameters_list:
+            print(item)
+            print()
         # print(final_investors_list[0])
         for investment in final_investors_list:
             # filter sales_parameters_list where Development is equal to investment['Category'] using list comprehension
@@ -677,6 +682,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
         # if the investor_acc_number = "ZCAM01" and the opportunity_code = "HFA101" and the investment_amount =
         # 400000.0 then filter this record out of final_investors_list
+
+
 
         final_investors_list = [investor for investor in final_investors_list if
                                 not (investor['investor_acc_number'] == "ZCAM01" and investor[
@@ -787,6 +794,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
         end = time.time()
         print("Time Taken: ", end - start)
+
+        print("filename",filename)
 
         return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
         # return {"filename": f'{filename}.xlsx'}

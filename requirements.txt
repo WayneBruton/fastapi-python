@@ -2,7 +2,7 @@ aiofiles
 anyio
 boto3==1.26.53
 click
-deepdiff
+deepdiff~=6.2.3
 defusedxml
 dnspython==2.3.0
 fastapi==0.89.1
@@ -12,12 +12,12 @@ gunicorn
 h11
 httptools
 idna
-openpyxl
-pandas
+openpyxl~=3.0.10
+pandas~=2.0.0
 Pillow==9.4.0
 pydantic==1.10.4
-PyJWT
-pymongo
+PyJWT~=2.6.0
+pymongo~=4.3.3
 PyPDF2<3.0
 python-decouple==3.7
 python-dotenv
@@ -31,3 +31,8 @@ uvicorn==0.20.0
 uvloop
 watchfiles
 websockets
+
+botocore~=1.29.53
+yfinance~=0.2.18
+investpy~=1.0.8
+typing~=3.7.4.3
