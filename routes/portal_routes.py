@@ -3,13 +3,16 @@ import csv
 import os
 import secrets
 from datetime import datetime
+from random import random
+
+# from pprint import pprint
 
 from bson import ObjectId
 from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse
 from portal_statement_files.portal_statement_create import create_pdf
 import pandas_datareader.data as web
-# import pandas as pd
+import pandas as pd
 import datetime
 import yfinance as yf
 import investpy
@@ -344,6 +347,29 @@ async def investments_draws():
         return {"ERROR": "Please Try again"}
 
 
+
+@portal_info.get("/stock_market")
+async def stock_market():
+    try:
+        indexes = get_indices()
+        # print(indexes)
+        currencies = get_currency_data()
+        # print(currencies)
+        commodities = get_commodity_data()
+        # pprint(commodities)
+
+        # join the indexes, currencies and commodities lists
+        stock_market = indexes + currencies + commodities
+        # print(stock_market)
+        return {"stock_market": stock_market}
+
+    except Exception as e:
+        return {"ERROR": "Please Try again"}
+
+
+
+
+
 # GET CPI
 
 def get_cpi():
@@ -365,7 +391,6 @@ def get_stock_list():
 
 
 def get_stock_data():
-
     jse_tickers = ['AMS.JO', 'APN.JO', 'ARI.JO', 'AVI.JO', 'BAT.JO', 'BTI.JO', 'CFR.JO', 'DSY.JO',
                    'EXX.JO', 'FSR.JO', 'GFI.JO', 'GLN.JO', 'IMP.JO', 'INP.JO', 'IPF.JO', 'JSE.JO', 'KIO.JO', 'MNP.JO',
                    'MRF.JO', 'MTN.JO', 'MUR.JO', 'NPN.JO', 'NTC.JO', 'OMU.JO', 'PPC.JO', 'PRX.JO', 'RDF.JO',
@@ -379,78 +404,87 @@ def get_stock_data():
 
 def get_currency_data():
     jse_tickers2 = ['ZAR=X', 'ZARGBP=X', 'ZAREUR=X', 'ZARAUD=X', 'ZARJPY=X', 'ZARCNY=X']
+
     jse_data = yf.download(jse_tickers2)
     jse_data2 = jse_data.T
-    # print("Rates Head", jse_data2)
-    if jse_data['Close']['ZAR=X'][-1] is None or jse_data['Close']['ZAR=X'][-1] == 'nan' \
-            or jse_data['Close']['ZAR=X'][-1] == '':
+
+    if pd.isna(jse_data['Close']['ZAR=X'][-1]):
         usd_zar_rate = jse_data['Close']['ZAR=X'][-2]
     else:
-        usd_zar_rate = jse_data['Close']['ZAR=X'][-2]
-    # usd_zar_rate = 1 / usd_zar_rate
+        usd_zar_rate = jse_data['Close']['ZAR=X'][-1]
 
-    gbp_zar_rate = jse_data['Close']['ZARGBP=X'][-1]
+    if pd.isna(jse_data['Close']['ZARGBP=X'][-1]):
+        gbp_zar_rate = jse_data['Close']['ZARGBP=X'][-2]
+    else:
+        gbp_zar_rate = jse_data['Close']['ZARGBP=X'][-1]
     gbp_zar_rate = 1 / gbp_zar_rate
-    eur_zar_rate = jse_data['Close']['ZAREUR=X'][-1]
+
+    if pd.isna(jse_data['Close']['ZAREUR=X'][-1]):
+        eur_zar_rate = jse_data['Close']['ZAREUR=X'][-2]
+    else:
+        eur_zar_rate = jse_data['Close']['ZAREUR=X'][-1]
     eur_zar_rate = 1 / eur_zar_rate
-    aud_zar_rate = jse_data['Close']['ZARAUD=X'][-1]
+
+    if pd.isna(jse_data['Close']['ZARAUD=X'][-1]):
+        aud_zar_rate = jse_data['Close']['ZARAUD=X'][-2]
+    else:
+        aud_zar_rate = jse_data['Close']['ZARAUD=X'][-1]
     aud_zar_rate = 1 / aud_zar_rate
-    jpy_zar_rate = jse_data['Close']['ZARJPY=X'][-1]
+
+    if pd.isna(jse_data['Close']['ZARJPY=X'][-1]):
+        jpy_zar_rate = jse_data['Close']['ZARJPY=X'][-2]
+    else:
+        jpy_zar_rate = jse_data['Close']['ZARJPY=X'][-1]
     jpy_zar_rate = 1 / jpy_zar_rate
-    cny_zar_rate = jse_data['Close']['ZARCNY=X'][-1]
+
+    if pd.isna(jse_data['Close']['ZARCNY=X'][-1]):
+        cny_zar_rate = jse_data['Close']['ZARCNY=X'][-2]
+    else:
+        cny_zar_rate = jse_data['Close']['ZARCNY=X'][-1]
     cny_zar_rate = 1 / cny_zar_rate
 
-    print(f"USD - ZAR: {usd_zar_rate.round(4)}")
-    print(f"GBP - ZAR: {gbp_zar_rate.round(4)}")
-    print(f"EUR - ZAR: {eur_zar_rate.round(4)}")
-    print(f"AUD - ZAR: {aud_zar_rate.round(4)}")
-    print(f"JPY - ZAR: {jpy_zar_rate.round(4)}")
-    print(f"CNY - ZAR: {cny_zar_rate.round(4)}")
+    rates = [{'Description': 'USD', 'price': usd_zar_rate.round(4), 'color': 'rgb(150, 0, 0)'},
+             {'Description': 'GBP', 'price': gbp_zar_rate.round(4), 'color': 'rgb(170, 0, 0)'},
+             {'Description': 'EUR', 'price': eur_zar_rate.round(4), 'color': 'rgb(190, 0, 0)'},
+             {'Description': 'AUD', 'price': aud_zar_rate.round(4), 'color': 'rgb(210, 0, 0)'},
+             {'Description': 'JPY', 'price': jpy_zar_rate.round(4), 'color': 'rgb(230, 0, 0)'},
+             {'Description': 'CNY', 'price': cny_zar_rate.round(4), 'color': 'rgb(250, 0, 0)'}]
 
-    return usd_zar_rate, gbp_zar_rate, eur_zar_rate, aud_zar_rate, jpy_zar_rate
+    return rates
 
 
 def get_commodity_data():
-    tickers = ['GC=F', 'SI=F', 'PL=F', 'PA=F', 'BZ=F']  # Tickers for gold, silver, platinum, palladium, and Brent crude
+    tickers = ['GC=F', 'SI=F', 'PL=F', 'BZ=F']  # Tickers for gold, silver, platinum, palladium, and Brent crude
     commodities = yf.download(tickers, period='1d',
                               interval='1d')  # Download commodity data for the past day at 1-minute
 
+    # get a random number betwen 1 and 5
+    # random_number = random.randint(1, 5)
     gold_price = commodities['Close']['GC=F'][-1]
+
+    print("Gold Price", gold_price)
     silver_price = commodities['Close']['SI=F'][-1]
     platinum_price = commodities['Close']['PL=F'][-1]
-    palladium_price = commodities['Close']['PA=F'][-1]
     brent_price = commodities['Close']['BZ=F'][-1]
 
     commodities2 = commodities.T
-    # print("Commodities", commodities2)
 
-    print(f"Gold price ${gold_price:,.2f} / oz")
-    print(f"Silver price ${silver_price:,.2f} / oz")
-    print(f"Platinum price ${platinum_price:,.2f} / oz")
-    print(f"Brent Crude price ${brent_price:,.2f} / barrel")
+    commodities_collected = [{'Description': 'Gold', 'price': f"${gold_price:,.2f}", 'color': "rgb(0, 100, 0)"},
+                             {'Description': 'Silver', 'price': f"${silver_price:,.2f}", 'color': "rgb(0, 130, 0)"},
+                             {'Description': 'Platinum', 'price': f"${platinum_price:,.2f}", 'color': "rgb(0, 160, 0)"},
+                             {'Description': 'Brent Crude', 'price': f"${brent_price:,.2f}", 'color': "rgb(0, 190, 0)"}]
 
-    return f"Gold price ${gold_price:,.2f}", f"Silver price ${silver_price:,.2f}", \
-        f"Platinum price ${platinum_price:,.2f}", f"Brent Crude price ${brent_price:,.2f}"
-
-
-
+    return commodities_collected
 
 
 def get_indices():
-
-
-    # start_date = datetime.datetime(2018, 1, 1)
-    # create a variable start_date and set it equal to a datetime object representing today’s date less 30 days.
     start_date = datetime.datetime.today() - datetime.timedelta(days=30)
 
     end_date = datetime.datetime.today()
-    # Define the indices we want to retrieve
+
     indices = ['^FTSE', '^DJI', '^GSPC', '^HSI', '^IXIC', 'JSE.JO']
 
-
-    # # Define the time period for which we want to retrieve historical data
-    # start_date = '2021-01-01'
-    # end_date = '2021-12-31'
+    indices_collected = []
 
     # Retrieve the historical data for each index and store it in a dictionary
     index_data = {}
@@ -459,21 +493,63 @@ def get_indices():
         index_data[index] = data
 
     # Print the closing prices for each index
+    # range_start = 13
     for index, data in index_data.items():
-        print(f"{index}:")
-        print(data['Close'])
-        print("\n")
-        # print(data.columns)
-        # print("\n")
+        # start at a number and let it descend from say 13 to 1
         if index == 'JSE.JO':
-            print(f"JSE: {data}")
-            print(data.columns)
+            description = 'JSE'
+            color = "rgb(0, 80, 160)"
+            # color = "orange"
+
+
+        elif index == '^FTSE':
+            description = 'FTSE 100'
+            color = "rgb(0, 80, 70)"
+        elif index == '^DJI':
+            description = 'Dow Jones Industrial Average'
+            color = "rgb(0, 80, 90)"
+        elif index == '^GSPC':
+            description = 'S&P 500'
+            color = "rgb(0, 80, 120)"
+        elif index == '^HSI':
+            description = 'Hang Seng'
+            color = "rgb(0, 80, 150)"
+        elif index == '^IXIC':
+            description = 'NASDAQ'
+            color = "rgb(0, 80, 180)"
+        else:
+            description = index
+
+        change = data['Close'][-1] - data['Open'][-1]
+
+        if change > 0:
+            icon = "arrow_drop_up"
+            icon_color = "green"
+        elif change < 0:
+            icon = "arrow_drop_down"
+            icon_color = "red"
+        else:
+            icon = "minimize"
+            icon_color = "grey"
+
+        price = f"{data['Close'][-1]:,.2f}"
+
+        indices_collected.append({'index': index, 'Description': description, 'price': price, 'change': change,
+                                  'color': color, 'icon': icon, 'icon_color': icon_color})
+        # range_start -= 1
+
+    return indices_collected
 
 
 # get_stock_list()
-# get_commodity_data()
-# get_currency_data()
+
+
 # get_stock_data()
 # get_cpi()
-# get_indices()
 
+# indexes = get_indices()
+# print(indexes)
+# currencies = get_currency_data()
+# print(currencies)
+# commodities = get_commodity_data()
+# pprint(commodities)
