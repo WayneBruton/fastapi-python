@@ -30,8 +30,9 @@ portal_info = APIRouter()
 portalUsers = db.portalUsers
 investors = db.investors
 
+rates = db.rates
 
-# rates = db.rates
+
 # opportunities = db.opportunities
 # sales_parameters = db.salesParameters
 # rollovers = db.investorRollovers
@@ -344,7 +345,7 @@ async def investments_draws():
 
         return {"investments": new_list}
     except Exception as e:
-        return {"ERROR": "Please Try again"}
+        return {"ERROR": "Please Try again", "Error": e}
 
 
 @portal_info.get("/stock_market")
@@ -365,6 +366,152 @@ async def stock_market():
 
     except Exception as e:
 
+        return {"ERROR": "Please Try again", "Error": e}
+
+
+@portal_info.post("/getChartData")
+async def get_chart_data(request: Request):
+    try:
+
+        data = await request.json()
+        data = data['chartData']
+        rates_list = list(rates.find())
+
+        # loop through rates_list and delete _id field, replace '-' with '/' in Efective_date and convert Efective_date
+        # to datetime
+        for rate in rates_list:
+            rate['_id'] = str(rate['_id'])
+            rate['Efective_date'] = rate['Efective_date'].replace('-', '/')
+            rate['Efective_date'] = datetime.datetime.strptime(rate['Efective_date'], "%Y/%m/%d")
+            # convert rate['rate'] to float divide by 100
+            rate['rate'] = float(rate['rate']) / 100
+
+        # sort rates_list by Efective_date descending
+        rates_list = sorted(rates_list, key=lambda x: x['Efective_date'], reverse=True)
+
+        investments_to_chart = []
+        for investment in data:
+            insert = {
+                "opportunity_code": investment['opportunity_code'],
+                "investment_number": investment['investment_number'],
+            }
+            investments_to_chart.append(insert)
+
+        investments_to_chart_opportunity_codes = []
+        for investment in investments_to_chart:
+            investments_to_chart_opportunity_codes.append(investment['opportunity_code'])
+        # Ensure only unique opportunity codes are in the list
+        investments_to_chart_opportunity_codes = list(set(investments_to_chart_opportunity_codes))
+
+        # get info from investors collection where investor_acc_number equals data[0]['investor_acc_number'],
+        # project only the investments array
+        investors_list = list(investors.aggregate([
+            {"$match": {"investor_acc_number": data[0]['investor_acc_number']}},
+            {"$project": {"investments": 1, "trust": 1, "_id": 0}}
+        ]))[0]
+        # print("trust_list", investors_list['trust'])
+        trust_list = investors_list['trust']
+        investors_list = investors_list['investments']
+
+        # filter investors_list to only include investments where the opportunity_code is in
+        # investments_to_chart_opportunity_codes
+        investors_list = list(
+            filter(lambda x: x.get('opportunity_code', False) in investments_to_chart_opportunity_codes,
+                   investors_list))
+
+        # filter trust_list to only include investments where the opportunity_code is in
+        # investments_to_chart_opportunity_codes
+        trust_list = list(
+            filter(lambda x: x.get('opportunity_code', False) in investments_to_chart_opportunity_codes,
+                   trust_list))
+
+        # loop through investments_list
+        for investment in investors_list:
+            # filter trust_list to only include investments where the opportunity_code is equal to
+            # investment['opportunity_code'] and the investment_number is equal to investment['investment_number'] and
+            # save the result to a variable called filtered_trust_list
+            filtered_trust_list = list(
+                filter(lambda x: x.get('opportunity_code', False) == investment['opportunity_code'] and
+                                 x.get('investment_number', False) == investment['investment_number'],
+                       trust_list))
+            # make investment['deposit_date'] equal to the deposit_date of the first item in filtered_trust_list
+            investment['deposit_date'] = filtered_trust_list[0]['deposit_date']
+
+        finalised_chart_data = []
+
+        # loop through investments_to_chart
+        for investment in investments_to_chart:
+            # filter investors_list to only include investments where the opportunity_code is equal to
+            # investment['opportunity_code'] and the investment_number is equal to investment['investment_number'] and
+            # save the result to a variable called filtered_investments_list
+            filtered_investments_list = list(
+                filter(lambda x: x.get('opportunity_code', False) == investment['opportunity_code'] and
+                                 x.get('investment_number', False) == investment['investment_number'],
+                       investors_list))
+
+            # create a variable called investment_amount and assign it the value of the investment_amount in
+            # filtered_investments_list as a float
+            investment_amount = float(filtered_investments_list[0]['investment_amount'])
+
+            # create a variable called investment_interest_rate and assign it the value of the
+            # investment_interest_rate as a float divided by 100
+            investment_interest_rate = float(filtered_investments_list[0]['investment_interest_rate']) / 100
+            # convert investment['deposit_date'] to a datetime object and save it to a variable called deposit_date
+            # replace '-' with '/' in investment['deposit_date']
+
+            deposit_date = filtered_investments_list[0]['deposit_date'].replace('-', '/')
+            deposit_date = datetime.datetime.strptime(deposit_date, "%Y/%m/%d")
+
+            # do the same as above for release_date and end_date
+            release_date = filtered_investments_list[0]['release_date'].replace('-', '/')
+            release_date = datetime.datetime.strptime(release_date, "%Y/%m/%d")
+
+            end_date = filtered_investments_list[0]['end_date'].replace('-', '/')
+            end_date = datetime.datetime.strptime(end_date, "%Y/%m/%d")
+
+            momentum_interest = 0.0
+            total_days_invested = end_date - deposit_date
+
+            total_released_days = end_date - release_date
+
+            total_released_interest = investment_amount * investment_interest_rate * (total_released_days.days / 365)
+
+            # add 1 day to the deposit_date
+            deposit_date = deposit_date + datetime.timedelta(days=1)
+
+            while deposit_date <= release_date:
+                # filter rates_list to only include rates where the date is less than or equal to deposit_date
+                filtered_rates_list = list(filter(lambda x: x.get('Efective_date', False) <= deposit_date, rates_list))
+                # create a variable called rate and assign it the value of the rate of the first item in
+                # filtered_rates_list
+                rate = filtered_rates_list[0]['rate']
+                # calculate the days interest and add it to momentum_interest
+                momentum_interest += investment_amount * rate * (1 / 365)
+                # add 1 day to deposit_date
+                deposit_date = deposit_date + datetime.timedelta(days=1)
+
+            final_interest = total_released_interest + momentum_interest
+
+            # annualised_interest = final_interest / total_days_invested.days * 365
+
+            return_on_investment = final_interest / investment_amount * 100
+
+            annualised_interest_rate = return_on_investment / total_days_invested.days * 365
+            # round annualised_interest_rate to 1 decimal place
+            # annualised_interest_rate = round(annualised_interest_rate, 1)
+
+            insert = {
+                "opportunity_code": investment['opportunity_code'],
+                "investment_number": investment['investment_number'],
+                "investment_amount": investment_amount,
+                "final_interest": final_interest,
+                "return_on_investment": round(return_on_investment,1),
+                "annualised_interest_rate": round(annualised_interest_rate,1),
+            }
+            finalised_chart_data.append(insert)
+
+        return {"final_chart_data": finalised_chart_data}
+    except Exception as e:
         return {"ERROR": "Please Try again", "Error": e}
 
 
