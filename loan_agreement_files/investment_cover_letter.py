@@ -88,8 +88,9 @@ def print_investor_cover_letter(lender, lender2):
                    "**DATE: ___________________________**",
                    new_x=XPos.LMARGIN, new_y=YPos.NEXT, markdown=True,
                    align="L")
-
-    pdf.image("loan_agreement_files/Footer July.jpg", 10, 277, 190)
+    # Footer - Dec
+    # 2022
+    pdf.image("loan_agreement_files/Footer - Dec 2022.png", 10, 277, 190)
 
     pdf.output("Investment_cover_letter.pdf")
 
