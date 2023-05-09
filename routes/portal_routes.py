@@ -17,12 +17,18 @@ import datetime
 import yfinance as yf
 # import investpy
 
+
 import time
 
 import smtplib
 from email.message import EmailMessage
 
 from config.db import db
+
+import vonage
+
+API_KEY = "5f79bce5"
+API_SECRET = "dtNN0iQpgit3I6bZ"
 
 portal_info = APIRouter()
 
@@ -77,56 +83,85 @@ async def sales_forecast(investor_statement_name):
 @portal_info.post("/generate_otp")
 async def generate_otp(data: Request):
     request = await data.json()
-
+    print(request)
     pin = secrets.randbelow(10 ** 6)
     # keep repeating the above until the pin is 6 digits
     while len(str(pin)) != 6:
         pin = secrets.randbelow(10 ** 6)
-    # print(pin)
-    # print(request['email'])
-    email = request['email'].split(":")[1]
-    # trim all white spaces
-    email = email.strip()
-    print("email", email)
 
-    smtp_server = "depro8.fcomet.com"
-    port = 465  # For starttls
-    sender_email = 'omh-app@opportunitymanagement.co.za'
-    password = "12071994Wb!"
 
-    message = f"""\
-        <html>
-          <body>
-            <p>Good Day,<br> 
-            <br /><br />       
-                <strong>{pin}</strong> is your OTP to change your password on the OMH Portal. <br><br>             
-          </body>
-        </html>
-        """
 
-    msg = EmailMessage()
-    msg['Subject'] = "OMH Portal - OTP"
-    msg['From'] = sender_email
-    msg['To'] = email
-    msg.set_content(message, subtype='html')
+    if request['method'] == "email":
 
-    # with open('excel_files/Sales ForecastHeron.xlsx', 'rb') as f:
-    #     file_content = f.read()
-    # file_name = os.path.basename('Sales ForecastHeron.xlsx')
-    # msg.add_attachment(file_content, maintype='application', subtype='octet-stream', filename=file_name)
+        email = request['email'].split(":")[1]
+        # trim all white spaces
+        email = email.strip()
 
-    try:
-        with smtplib.SMTP_SSL(smtp_server, port) as server:
-            server.ehlo()
-            server.login(sender_email, password=password)
-            server.send_message(msg)
-            server.quit()
-            return {"message": "Email sent successfully", "otp": str(pin)}
-    except Exception as e:
-        print("Error:", e)
-        return {"message": "Email not sent"}
 
-    # return {"otp": str(pin)}
+        smtp_server = "depro8.fcomet.com"
+        port = 465  # For starttls
+        sender_email = 'omh-app@opportunitymanagement.co.za'
+        password = "12071994Wb!"
+
+        message = f"""\
+            <html>
+              <body>
+                <p>Good Day,<br> 
+                <br /><br />       
+                    <strong>{pin}</strong> is your OTP to change your password on the OMH Portal. <br><br>             
+              </body>
+            </html>
+            """
+
+        msg = EmailMessage()
+        msg['Subject'] = "OMH Portal - OTP"
+        msg['From'] = sender_email
+        msg['To'] = email
+        msg.set_content(message, subtype='html')
+
+        try:
+            with smtplib.SMTP_SSL(smtp_server, port) as server:
+                server.ehlo()
+                server.login(sender_email, password=password)
+                server.send_message(msg)
+                server.quit()
+                return {"message": "Email sent successfully", "otp": str(pin)}
+        except Exception as e:
+            print("Error:", e)
+            return {"message": "Email not sent"}
+
+    elif request['method'] == "SMS":
+        try:
+            to_number = request['mobile'].split(":")[1]
+            # trim all white spaces
+            to_number = to_number.strip()
+            # remove all non numeric characters, remove the first 0 and insert 27 at the beginning
+            to_number = "27" + to_number[1:]
+            # remove all spaces from to_number
+            to_number = to_number.replace(" ", "")
+            print(to_number)
+
+            client = vonage.Client(key=API_KEY, secret=API_SECRET)
+            sms = vonage.Sms(client)
+
+            responseData = sms.send_message(
+                {
+                    "from": "Vonage APIs",
+                    "to": to_number,
+                    "text": f"OMH OTP - {pin}",
+                }
+            )
+
+            if responseData["messages"][0]["status"] == "0":
+                return {"message": "SMS sent successfully", "otp": str(pin)}
+                # print("Message sent successfully.")
+                # print("RESPONSE DATA", responseData['messages'][0])
+            else:
+                print(f"Message failed with error: {responseData['messages'][0]['error-text']}")
+                return {"message": "SMS not sent XXX"}
+        except Exception as e:
+            print("Error:", e)
+            return {"message": "SMS not sent"}
 
 
 @portal_info.post("/add_investor")
@@ -505,8 +540,8 @@ async def get_chart_data(request: Request):
                 "investment_number": investment['investment_number'],
                 "investment_amount": investment_amount,
                 "final_interest": final_interest,
-                "return_on_investment": round(return_on_investment,1),
-                "annualised_interest_rate": round(annualised_interest_rate,1),
+                "return_on_investment": round(return_on_investment, 1),
+                "annualised_interest_rate": round(annualised_interest_rate, 1),
             }
             finalised_chart_data.append(insert)
 

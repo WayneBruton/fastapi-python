@@ -37,3 +37,4 @@ botocore~=1.29.53
 yfinance~=0.2.18
 investpy~=1.0.8
 typing~=3.7.4.3
+vonage~=3.4.0
