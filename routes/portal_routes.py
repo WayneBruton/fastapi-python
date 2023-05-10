@@ -83,7 +83,7 @@ async def sales_forecast(investor_statement_name):
 @portal_info.post("/generate_otp")
 async def generate_otp(data: Request):
     request = await data.json()
-    print(request)
+    # print(request)
     pin = secrets.randbelow(10 ** 6)
     # keep repeating the above until the pin is 6 digits
     while len(str(pin)) != 6:
@@ -139,14 +139,15 @@ async def generate_otp(data: Request):
             to_number = "27" + to_number[1:]
             # remove all spaces from to_number
             to_number = to_number.replace(" ", "")
-            print(to_number)
+            # print(to_number)
 
             client = vonage.Client(key=API_KEY, secret=API_SECRET)
             sms = vonage.Sms(client)
 
             responseData = sms.send_message(
                 {
-                    "from": "Vonage APIs",
+                    "from": "OMH",
+                    # "from": "Vonage APIs",
                     "to": to_number,
                     "text": f"OMH OTP - {pin}",
                 }
@@ -157,8 +158,9 @@ async def generate_otp(data: Request):
                 # print("Message sent successfully.")
                 # print("RESPONSE DATA", responseData['messages'][0])
             else:
-                print(f"Message failed with error: {responseData['messages'][0]['error-text']}")
+                # print(f"Message failed with error: {responseData['messages'][0]['error-text']}")
                 return {"message": "SMS not sent XXX"}
+            # print(responseData)
         except Exception as e:
             print("Error:", e)
             return {"message": "SMS not sent"}
