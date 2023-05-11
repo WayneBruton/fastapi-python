@@ -89,14 +89,11 @@ async def generate_otp(data: Request):
     while len(str(pin)) != 6:
         pin = secrets.randbelow(10 ** 6)
 
-
-
     if request['method'] == "email":
 
         email = request['email'].split(":")[1]
         # trim all white spaces
         email = email.strip()
-
 
         smtp_server = "depro8.fcomet.com"
         port = 465  # For starttls
@@ -586,52 +583,135 @@ async def get_chart_data(request: Request):
 
 def get_currency_data():
     try:
+
         jse_tickers2 = ['ZAR=X', 'ZARGBP=X', 'ZAREUR=X', 'ZARAUD=X', 'ZARJPY=X', 'ZARCNY=X']
 
         jse_data = yf.download(jse_tickers2)
         jse_data2 = jse_data.T
 
+        # print("Currency Data", jse_data2)
+
         if pd.isna(jse_data['Close']['ZAR=X'][-1]):
             usd_zar_rate = jse_data['Close']['ZAR=X'][-2]
+            if jse_data['Close']['ZAR=X'][-3] > jse_data['Close']['ZAR=X'][-2]:
+                icon = "arrow_drop_up"
+                icon_color = "green"
+            else:
+                icon = "arrow_drop_down"
+                icon_color = "white"
         else:
             usd_zar_rate = jse_data['Close']['ZAR=X'][-1]
+            if jse_data['Close']['ZAR=X'][-2] > jse_data['Close']['ZAR=X'][-1]:
+                icon = "arrow_drop_up"
+                icon_color = "green"
+            else:
+                icon = "arrow_drop_down"
+                icon_color = "white"
 
         if pd.isna(jse_data['Close']['ZARGBP=X'][-1]):
             gbp_zar_rate = jse_data['Close']['ZARGBP=X'][-2]
+            if jse_data['Close']['ZARGBP=X'][-3] < jse_data['Close']['ZARGBP=X'][-2]:
+                icon2 = "arrow_drop_up"
+                icon_color2 = "green"
+            else:
+                icon2 = "arrow_drop_down"
+                icon_color2 = "white"
         else:
             gbp_zar_rate = jse_data['Close']['ZARGBP=X'][-1]
+            if jse_data['Close']['ZARGBP=X'][-2] < jse_data['Close']['ZARGBP=X'][-1]:
+                icon2 = "arrow_drop_up"
+                icon_color2 = "green"
+            else:
+                icon2 = "arrow_drop_down"
+                icon_color2 = "white"
         gbp_zar_rate = 1 / gbp_zar_rate
 
         if pd.isna(jse_data['Close']['ZAREUR=X'][-1]):
             eur_zar_rate = jse_data['Close']['ZAREUR=X'][-2]
+            if jse_data['Close']['ZAREUR=X'][-3] < jse_data['Close']['ZAREUR=X'][-2]:
+                icon3 = "arrow_drop_up"
+                icon_color3 = "green"
+            else:
+                icon3 = "arrow_drop_down"
+                icon_color3 = "white"
+
         else:
             eur_zar_rate = jse_data['Close']['ZAREUR=X'][-1]
+            if jse_data['Close']['ZAREUR=X'][-2] < jse_data['Close']['ZAREUR=X'][-1]:
+                icon3 = "arrow_drop_up"
+                icon_color3 = "green"
+            else:
+                icon3 = "arrow_drop_down"
+                icon_color3 = "white"
         eur_zar_rate = 1 / eur_zar_rate
 
         if pd.isna(jse_data['Close']['ZARAUD=X'][-1]):
             aud_zar_rate = jse_data['Close']['ZARAUD=X'][-2]
+            if jse_data['Close']['ZARAUD=X'][-3] < jse_data['Close']['ZARAUD=X'][-2]:
+                icon4 = "arrow_drop_up"
+                icon_color4 = "green"
+            else:
+                icon4 = "arrow_drop_down"
+                icon_color4 = "white"
+
         else:
             aud_zar_rate = jse_data['Close']['ZARAUD=X'][-1]
+            if jse_data['Close']['ZARAUD=X'][-2] < jse_data['Close']['ZARAUD=X'][-1]:
+                icon4 = "arrow_drop_up"
+                icon_color4 = "green"
+            else:
+                icon4 = "arrow_drop_down"
+                icon_color4 = "white"
         aud_zar_rate = 1 / aud_zar_rate
 
         if pd.isna(jse_data['Close']['ZARJPY=X'][-1]):
             jpy_zar_rate = jse_data['Close']['ZARJPY=X'][-2]
+            if jse_data['Close']['ZARJPY=X'][-3] < jse_data['Close']['ZARJPY=X'][-2]:
+                icon5 = "arrow_drop_up"
+                icon_color5 = "green"
+            else:
+                icon5 = "arrow_drop_down"
+                icon_color5 = "white"
         else:
             jpy_zar_rate = jse_data['Close']['ZARJPY=X'][-1]
+            if jse_data['Close']['ZARJPY=X'][-2] < jse_data['Close']['ZARJPY=X'][-1]:
+                icon5 = "arrow_drop_up"
+                icon_color5 = "green"
+            else:
+                icon5 = "arrow_drop_down"
+                icon_color5 = "white"
         jpy_zar_rate = 1 / jpy_zar_rate
 
         if pd.isna(jse_data['Close']['ZARCNY=X'][-1]):
             cny_zar_rate = jse_data['Close']['ZARCNY=X'][-2]
+            if jse_data['Close']['ZARCNY=X'][-3] < jse_data['Close']['ZARCNY=X'][-2]:
+                icon6 = "arrow_drop_up"
+                icon_color6 = "green"
+            else:
+                icon6 = "arrow_drop_down"
+                icon_color6 = "white"
         else:
             cny_zar_rate = jse_data['Close']['ZARCNY=X'][-1]
+            if jse_data['Close']['ZARCNY=X'][-2] < jse_data['Close']['ZARCNY=X'][-1]:
+                icon6 = "arrow_drop_up"
+                icon_color6 = "green"
+            else:
+                icon6 = "arrow_drop_down"
+                icon_color6 = "white"
         cny_zar_rate = 1 / cny_zar_rate
 
-        rates = [{'Description': 'USD', 'price': usd_zar_rate.round(4), 'color': 'rgb(150, 0, 0)'},
-                 {'Description': 'GBP', 'price': gbp_zar_rate.round(4), 'color': 'rgb(170, 0, 0)'},
-                 {'Description': 'EUR', 'price': eur_zar_rate.round(4), 'color': 'rgb(190, 0, 0)'},
-                 {'Description': 'AUD', 'price': aud_zar_rate.round(4), 'color': 'rgb(210, 0, 0)'},
-                 {'Description': 'JPY', 'price': jpy_zar_rate.round(4), 'color': 'rgb(230, 0, 0)'},
-                 {'Description': 'CNY', 'price': cny_zar_rate.round(4), 'color': 'rgb(250, 0, 0)'}]
+        rates = [{'Description': 'USD', 'price': usd_zar_rate.round(4), 'color': 'rgb(150, 0, 0)', 'icon': icon,
+                  'icon_color': icon_color},
+                 {'Description': 'GBP', 'price': gbp_zar_rate.round(4), 'color': 'rgb(170, 0, 0)', 'icon': icon2,
+                  'icon_color': icon_color2},
+                 {'Description': 'EUR', 'price': eur_zar_rate.round(4), 'color': 'rgb(190, 0, 0)', 'icon': icon3,
+                  'icon_color': icon_color3},
+                 {'Description': 'AUD', 'price': aud_zar_rate.round(4), 'color': 'rgb(210, 0, 0)', 'icon': icon4,
+                  'icon_color': icon_color4},
+                 {'Description': 'JPY', 'price': jpy_zar_rate.round(4), 'color': 'rgb(230, 0, 0)', 'icon': icon5,
+                  'icon_color': icon_color5},
+                 {'Description': 'CNY', 'price': cny_zar_rate.round(4), 'color': 'rgb(250, 0, 0)', 'icon': icon6,
+                  'icon_color': icon_color6}]
 
         return rates
 
@@ -646,31 +726,62 @@ def get_commodity_data():
         commodities = yf.download(tickers, period='10d',
                                   interval='1d')  # Download commodity data for the past day at 1-minute
 
-        # pprint("commodities",commodities)
+        # print("commodities",commodities)
 
         # get a random number betwen 1 and 5
         # random_number = random.randint(1, 5)
         gold_price = commodities['Close']['GC=F'][-1]
+        if commodities['Open']['GC=F'][-1] < commodities['Close']['GC=F'][-1]:
+            icon = "arrow_drop_up"
+            icon_color = "white"
+        else:
+            icon = "arrow_drop_down"
+            icon_color = "red"
 
         # print("Gold Price", gold_price)
         silver_price = commodities['Close']['SI=F'][-1]
+        if commodities['Open']['SI=F'][-1] < commodities['Close']['SI=F'][-1]:
+            icon2 = "arrow_drop_up"
+            icon_color2 = "white"
+        else:
+            icon2 = "arrow_drop_down"
+            icon_color2 = "red"
         platinum_price = commodities['Close']['PL=F'][-1]
+        if commodities['Open']['PL=F'][-1] < commodities['Close']['PL=F'][-1]:
+            icon3 = "arrow_drop_up"
+            icon_color3 = "white"
+        else:
+            icon3 = "arrow_drop_down"
+            icon_color3 = "red"
         brent_price = commodities['Close']['BZ=F'][-1]
+        if commodities['Open']['BZ=F'][-1] < commodities['Close']['BZ=F'][-1]:
+            icon4 = "arrow_drop_up"
+            icon_color4 = "white"
+        else:
+            icon4 = "arrow_drop_down"
+            icon_color4 = "red"
 
         commodities2 = commodities.T
+        # print("commodities2", commodities2)
 
-        commodities_collected = [{'Description': 'Gold', 'price': f"${gold_price:,.2f}", 'color': "rgb(0, 100, 0)"},
-                                 {'Description': 'Silver', 'price': f"${silver_price:,.2f}", 'color': "rgb(0, 130, 0)"},
-                                 {'Description': 'Platinum', 'price': f"${platinum_price:,.2f}",
-                                  'color': "rgb(0, 160, 0)"},
-                                 {'Description': 'Brent Crude', 'price': f"${brent_price:,.2f}",
-                                  'color': "rgb(0, 190, 0)"}]
+        commodities_collected = [
+            {'Description': 'Gold', 'price': f"${gold_price:,.2f}", 'color': "rgb(0, 100, 0)", 'icon': icon,
+             'icon_color': icon_color},
+            {'Description': 'Silver', 'price': f"${silver_price:,.2f}", 'color': "rgb(0, 130, 0)", 'icon': icon2,
+             'icon_color': icon_color2},
+            {'Description': 'Platinum', 'price': f"${platinum_price:,.2f}",
+             'color': "rgb(0, 160, 0)", 'icon': icon3, 'icon_color': icon_color3},
+            {'Description': 'Brent Crude', 'price': f"${brent_price:,.2f}",
+             'color': "rgb(0, 190, 0)", 'icon': icon4, 'icon_color': icon_color4}]
 
         return commodities_collected
 
     except Exception as e:
         print("Error getting commodity data", e)
         return []
+
+
+# get_commodity_data()
 
 
 def get_indices():
