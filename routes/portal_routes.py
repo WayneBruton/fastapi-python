@@ -172,10 +172,18 @@ async def add_investor(data: Request):
         # investor_mobile field
         investor = investors.find_one({"_id": ObjectId(request['id'])}, {"investor_mobile": 1, "_id": 0})
 
+
+
         mobile = investor['investor_mobile']
+
+        # print(mobile)
 
         # create a variable called password made up of 20 random characters
         password = secrets.token_urlsafe(20)
+
+        # print(password)
+
+
 
         insert = {
             "name": request['name'],
@@ -186,13 +194,16 @@ async def add_investor(data: Request):
             "role": "INVESTOR",
             "mobile": mobile,
             # add "created_at" and "updated_at" fields to the document with the current date formatted as YYYY-MM-DD
-            "created_at": datetime.now().strftime("%Y-%m-%d"),
-            "updated_at": datetime.now().strftime("%Y-%m-%d"),
+            "created_at": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "updated_at": datetime.datetime.now().strftime("%Y-%m-%d"),
             "investor_acc_number": request['acc_number']
         }
 
+        # print(insert)
+
         # insert the document into the portalUsers collection
         response = portalUsers.insert_one(insert)
+        # print(response)
 
         # send email to the investor
         smtp_server = "depro8.fcomet.com"
@@ -410,6 +421,8 @@ async def get_chart_data(request: Request):
         data = await request.json()
         data = data['chartData']
         rates_list = list(rates.find())
+        # print(data)
+
 
         # loop through rates_list and delete _id field, replace '-' with '/' in Efective_date and convert Efective_date
         # to datetime
@@ -482,7 +495,7 @@ async def get_chart_data(request: Request):
                 filter(lambda x: x.get('opportunity_code', False) == investment['opportunity_code'] and
                                  x.get('investment_number', False) == investment['investment_number'],
                        investors_list))
-
+            # print("filtered_investments_list", filtered_investments_list)
             # create a variable called investment_amount and assign it the value of the investment_amount in
             # filtered_investments_list as a float
             investment_amount = float(filtered_investments_list[0]['investment_amount'])
@@ -545,6 +558,8 @@ async def get_chart_data(request: Request):
             finalised_chart_data.append(insert)
 
         return {"final_chart_data": finalised_chart_data}
+
+
     except Exception as e:
         return {"ERROR": "Please Try again", "Error": e}
 
