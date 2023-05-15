@@ -3,6 +3,7 @@ from bson import ObjectId
 from fastapi import APIRouter, Request, BackgroundTasks
 from fastapi.responses import FileResponse
 from excel_sf_functions.sales_forecast_excel import create_sales_forecast_file
+from excel_sf_functions.sales_forecast_excel import create_investment_list
 from config.db import db
 import time
 from datetime import datetime
@@ -161,7 +162,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
     start = time.time()
     request = await data.json()
 
-    print("request",request)
+    print("request", request)
 
     developments = request['Category']
 
@@ -189,15 +190,12 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             investor['id'] = str(investor['_id'])
             del investor['_id']
 
-
-
             # Filter Pledges, Investments and Trust by request['Category'] items only using list comprehension
             investor['pledges'] = [pledge for pledge in investor['pledges'] if
                                    pledge['Category'] in request['Category']]
             investor['investments'] = [investment for investment in investor['investments'] if
                                        investment['Category'] in request['Category']]
             investor['trust'] = [trust for trust in investor['trust'] if trust['Category'] in request['Category']]
-
 
             # if investor['investor_acc_number'] == "ZVER02":
             #     print("XXXXXXXX",investor['investments'])
@@ -245,8 +243,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     for item in trust_item:
                         insert[item] = trust_item[item]
                     trust_list.append(insert)
-
-
 
         # Get Opportunities and Manipulate accordingly
         opportunities_list = list(db.opportunities.find({}))
@@ -354,9 +350,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 else:
                     insert['early_release'] = False
 
-
-
-
             interim_investors_list.append(insert)
 
         # in interim_investors_list, in deposit_date, replace '-' with '/' using list comprehension
@@ -435,8 +428,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     invest["interest_to_date_still_to_be_raised"] = 0
                     invest["interest_total_still_to_be_raised"] = 0
 
-
-
                     final_investors_list.append(invest)
 
         # Convert Rates_list Efective_date to datetime
@@ -494,10 +485,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 deposit_date = deposit_date.split(" ")[0]
                 deposit_date = datetime.strptime(deposit_date, '%Y/%m/%d')
 
-
-
-
-
                 # if investment["investment_end_date"] != "" replace '/' with '-' in investment[
                 # "investment_end_date"] and do the exact same for investment["opportunity_final_transfer_date"]
 
@@ -506,7 +493,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     investment["opportunity_final_transfer_date"] = investment[
                         "opportunity_final_transfer_date"].replace(
                         '/', '-')
-
 
                 planned_release_date = investment["planned_release_date"].replace('-', '/')
                 planned_release_date = planned_release_date.split(" ")[0]
@@ -683,8 +669,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         # if the investor_acc_number = "ZCAM01" and the opportunity_code = "HFA101" and the investment_amount =
         # 400000.0 then filter this record out of final_investors_list
 
-
-
         final_investors_list = [investor for investor in final_investors_list if
                                 not (investor['investor_acc_number'] == "ZCAM01" and investor[
                                     'opportunity_code'] == "HFA101" and investor['investment_amount'] == 400000.0)]
@@ -775,32 +759,145 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             report_date = datetime.strptime(request['date'], "%Y/%m/%d")
             if investor['early_release'] == True:
                 investor['investment_end_date'] = investor['investment_end_date'].replace("-", "/")
-                # print(investor['investment_end_date'])
-                # print()
-                # if investor['investment_end_date'] != "" and investor['investment_end_date'] != None:
 
-                #     print(investor['investment_end_date'])
-                # if investor_end_date as datetime is after report_date as datetime then set investor['early_release'] to false
+                # print(investor['investment_end_date']) if investor_end_date as datetime is after report_date as
+                # datetime then set investor['early_release'] to false
                 if datetime.strptime(investor['investment_end_date'], "%Y/%m/%d") >= report_date:
                     investor['early_release'] = False
-                if investor['opportunity_transferred'] == True:
+                if investor['opportunity_transferred']:
                     investor['early_release'] = False
                 # print(investor['investor_acc_number'], investor['opportunity_code'], investor['investment_end_date'])
-
-            # print(investor['early_release'], investor['investor_acc_number'], investor['opportunity_code'],"A",
-            # investor['investment_end_date'], "B",investor['opportunity_final_transfer_date'])
 
         background_tasks.add_task(create_sales_forecast_file, final_investors_list, request, pledges)
 
         end = time.time()
         print("Time Taken: ", end - start)
 
-        print("filename",filename)
+        print("filename", filename)
 
         return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
         # return {"filename": f'{filename}.xlsx'}
         # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
 
+    except Exception as e:
+        print("Error:", e)
+        return []
+
+
+@excel_sales_forecast.post("/investment_status")
+async def investment_status(data: Request):
+    request = await data.json()
+
+    try:
+
+        investor_list = list(db.investors.aggregate([
+            {
+                "$match": {
+                    "investments": {
+                        "$elemMatch": {
+                            "Category": {"$in": ["Heron Fields", "Heron View"]}
+                        }
+                    }
+                }
+            },
+            {
+                "$addFields": {
+                    "investments": {
+                        "$filter": {
+                            "input": "$investments",
+                            "as": "investment",
+                            "cond": {
+                                "$in": ["$$investment.Category", ["Heron Fields", "Heron View"]]
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "$match": {
+                    "investments": {"$ne": []}
+                }
+            }
+        ]))
+
+        # print("investor_list", investor_list[0])
+
+        # Get opportunities from the database where Category is included in request['Category']
+        opportunities_list = list(db.opportunities.find({"Category": {"$in": request['Category']}}))
+
+        final_investors_list = []
+
+        for investor in investor_list:
+            investor['id'] = str(investor['_id'])
+            del investor['_id']
+            del investor['trust']
+            del investor['pledges']
+            # filter investor['investments'] where investments['Category'] is included in request['Category']
+            investor['investments'] = [investment for investment in investor['investments'] if
+                                       investment['Category'] in request['Category']]
+            for investment in investor['investments']:
+                insert = {}
+                # if  investment['investment_number'] exists then set insert['investment_number'] to
+                # investment['investment_number'] else set insert['investment_number'] to 0
+                if 'investment_number' in investment:
+                    insert['investment_number'] = investment['investment_number']
+                else:
+                    insert['investment_number'] = 0
+
+                insert['investment_name'] = investor['investment_name']
+                insert['investor_acc_number'] = investor['investor_acc_number']
+                # do the same as above for Category, opportunity_code, investment_amount, release_date and end_date
+                insert['Category'] = investment['Category']
+                insert['opportunity_code'] = investment['opportunity_code']
+                insert['investment_amount'] = investment['investment_amount']
+                insert['release_date'] = investment['release_date']
+                insert['end_date'] = investment['end_date']
+                # insert['investment_number'] = investment['investment_number']
+
+                final_investors_list.append(insert)
+
+        # filter out where investor_acc_number = "ZCAM01" and investment_number = 0
+        final_investors_list = [investment for investment in final_investors_list if
+                                not (investment['investor_acc_number'] == "ZCAM01" and investment[
+                                    'investment_number'] == 0)]
+
+        # filter out where investor_acc_number = "ZJHO01" and "investment_number": 1
+        final_investors_list = [investment for investment in final_investors_list if
+                                not (investment['investor_acc_number'] == "ZJHO01" and investment[
+                                    'investment_number'] == 1)]
+
+        # print(final_investors_list)
+        for investment in final_investors_list:
+            # filter opportunities_list where opportunity['opportunity_code'] is equal to investment['opportunity_code']
+
+            opportunity_filtered = [opportunity for opportunity in opportunities_list if
+                                    opportunity['opportunity_code'] == investment['opportunity_code']][0]
+            # print("opportunity_filtered", opportunity_filtered)
+            investment['occupation_date'] = opportunity_filtered['opportunity_occupation_date']
+            investment['estimated_transfer_date'] = opportunity_filtered['opportunity_end_date']
+            investment['final_transfer_date'] = opportunity_filtered['opportunity_final_transfer_date']
+            investment['opportunity_sold'] = opportunity_filtered['opportunity_sold']
+
+        # convert request['date'] to a datetime
+        report_date = datetime.strptime(request['date'], "%Y/%m/%d")
+
+        # filter final_investors_list where investment['release_date'] as a dateTime is greater than or equal to
+        # report_date
+        final_investors_list = [investment for investment in final_investors_list if
+                                datetime.strptime(investment['release_date'], "%Y/%m/%d") <= report_date]
+
+        for investor in final_investors_list:
+            investor['report_date'] = report_date.strftime("%Y/%m/%d")
+            # make investor['block'] equal to the 4th last character of investor['opportunity_code']
+            investor['block'] = investor['opportunity_code'][-4:3]
+
+        # sort final investors list by Category, opportunity_code, investor_acc_number
+        final_investors_list = sorted(final_investors_list,
+                                      key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
+
+        create_investment_list(final_investors_list, request)
+
+        return  final_investors_list
     except Exception as e:
         print("Error:", e)
         return []
