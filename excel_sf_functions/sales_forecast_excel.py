@@ -233,7 +233,8 @@ def create_investment_list(data, request):
     for cell in ws['L']:
         cell.number_format = '0'
 
-    # in column N, if column I is not blank, set the value to I - K formatted as integer, else set the value to H - K formatted as integer
+    # in column N, if column I is not blank, set the value to I - K formatted as integer, else set the value to H - K
+    # formatted as integer
     for row in ws.iter_rows(min_row=3):
         row[13].value = f'=IF(I{row[0].row}="",H{row[0].row}-K{row[0].row},I{row[0].row}-K{row[0].row})'
     # format column N as integer

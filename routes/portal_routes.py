@@ -172,8 +172,6 @@ async def add_investor(data: Request):
         # investor_mobile field
         investor = investors.find_one({"_id": ObjectId(request['id'])}, {"investor_mobile": 1, "_id": 0})
 
-
-
         mobile = investor['investor_mobile']
 
         # print(mobile)
@@ -182,8 +180,6 @@ async def add_investor(data: Request):
         password = secrets.token_urlsafe(20)
 
         # print(password)
-
-
 
         insert = {
             "name": request['name'],
@@ -261,6 +257,121 @@ async def add_investor(data: Request):
             return {"message": "Email not sent"}
 
         # return {"awesome": "It Works"}
+    except Exception as e:
+
+        return {"ERROR": "Please Try again"}
+
+
+@portal_info.post("/investment_termination")
+async def investment_termination(data: Request):
+    request = await data.json()
+    # print(request)
+    try:
+        # get investor from investors collection where _id = request['id'] as an objectId and project only the
+        # investor_mobile field
+        investor = investors.find_one({"_id": ObjectId(request['_id'])},
+                                      {"investor_email": 1, "investor_name": 1, "investor_surname": 1, "_id": 0})
+        #
+        #     mobile = investor['investor_mobile']
+        #
+        # print("investor", investor)
+
+        investor_name = f"{investor['investor_name']} {investor['investor_surname']}"
+
+        investor_email = f"{investor['investor_email']}, debbie@opportunity.co.za"
+
+        if request['full_exit']:
+            option_chosen = "Full Exit"
+            # variable exit_amount = request['float_balance'] formatted as currency with 2 decimal places and a space
+            # between the currency symbol and the amount. e.g. R 1 000.00
+            exit_amount = f"R {request['float_balance']:,.2f}"
+            # rollover_amount = 0 formatted as above
+            rollover_amount = f"R 0.00"
+        elif request['full_rollover']:
+            option_chosen = "Full Rollover"
+            # exit_amount = 0 formatted as above
+            exit_amount = f"R 0.00"
+            # rollover_amount = request['float_balance'] formatted as above
+            rollover_amount = f"R {request['float_balance']:,.2f}"
+        else:
+            if request['partial_exit']:
+                option_chosen = "Partial Exit"
+                # exit_amount = request['float_investment'] formatted as above
+                exit_amount = f"R {request['float_exit']:,.2f}"
+                # rollover_amount = request['float_balance'] - request['float_exit'] formatted as above
+                rollover_amount = f"R {request['float_balance'] - request['float_exit']:,.2f}"
+
+        # send email to the investor
+        smtp_server = "depro8.fcomet.com"
+        port = 465  # For starttls
+        sender_email = 'omh-app@opportunitymanagement.co.za'
+        password = "12071994Wb!"
+        #
+        message = f"""\
+        <html>
+          <body>
+            <p>Dear {investor_name},<br><br>
+            
+                We have received your prefered options when your investment in {request['opportunity_code']} is 
+                transferred.<br><br>
+                
+                Based on Today's date, your investment balance is {request['float_balance']:,.2f}.<br><br>
+                
+                <strong>Option Chosen:</strong> {option_chosen}<br><br>
+                <strong>Exit Amount:</strong> {exit_amount}<br><br>
+                <strong>Rollover Amount:</strong> {rollover_amount}<br><br>
+                
+                We will be in contact with you shortly to finalise the transfer.<br><br>
+                
+                
+                <strong>Fixed Investor Returns:</strong> The projected returns below are applicable to the next 
+                investment cycle. Please note that these are subject to change and should this occur, Opportunity 
+                will communicate this to you. <br /><br /> 
+                
+                <ol> 
+                <li>Investments of R 100 000 – R 499 000 @ 14% p.a</li> 
+                <li>Investments of R 500 000 – R 999 000 @ 16% p.a</li> 
+                <li>Investments of R 1 000 000 upwards @ 18% p.a</li>
+                </ol>
+                
+                <br /><br />
+                
+                Please do not reply to this email as it is not monitored. Any questions can be directed to Debbie 
+                Landsberg at debbie@opportunity.co.za<br /><br />
+                
+                Kind Regards<br />
+                
+                <strong>The OMH Team</strong><br />
+                
+            </p>
+          </body>
+        </html>
+        """
+
+        msg = EmailMessage()
+        msg['Subject'] = "OMH Portal - Investment Termination provisional confirmation"
+        msg['From'] = sender_email
+        msg['To'] = investor_email
+        # copy in nick@opportunity.co.za, wynand@capeprojects.co.za, debbie@opportunity.co.za and
+        # dirk@cpconstruction.co.za to the email
+        # msg['Cc'] = "nick@opportunity.co.za, wynand@capeprojects.co.za, debbie@opportunity.co.za, " \
+        #             "dirk@cpconstruction.co.za"
+
+        msg.set_content(message, subtype='html')
+
+        try:
+            with smtplib.SMTP_SSL(smtp_server, port) as server:
+                server.ehlo()
+                server.login(sender_email, password=password)
+                server.send_message(msg)
+                server.quit()
+                return {"message": "Email sent successfully"}
+        except Exception as e:
+            print("Error:", e)
+            return {"message": "Email not sent"}
+
+        return {"awesome": "It Works"}
+
     except Exception as e:
 
         return {"ERROR": "Please Try again"}
@@ -422,7 +533,6 @@ async def get_chart_data(request: Request):
         data = data['chartData']
         rates_list = list(rates.find())
         # print(data)
-
 
         # loop through rates_list and delete _id field, replace '-' with '/' in Efective_date and convert Efective_date
         # to datetime
