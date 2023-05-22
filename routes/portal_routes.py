@@ -27,8 +27,12 @@ from config.db import db
 
 import vonage
 
-API_KEY = "5f79bce5"
-API_SECRET = "dtNN0iQpgit3I6bZ"
+# API_KEY = "5f79bce5"
+# API_SECRET = "dtNN0iQpgit3I6bZ"
+
+# GET API_KEY AND API_SECRET FROM ENVIRONMENT VARIABLES
+API_KEY = os.environ.get("VONAGE_API_KEY")
+API_SECRET = os.environ.get("VONAGE_API_SECRET")
 
 portal_info = APIRouter()
 
@@ -132,7 +136,7 @@ async def generate_otp(data: Request):
             to_number = request['mobile'].split(":")[1]
             # trim all white spaces
             to_number = to_number.strip()
-            # remove all non numeric characters, remove the first 0 and insert 27 at the beginning
+            # remove all non-numeric characters, remove the first 0 and insert 27 at the beginning
             to_number = "27" + to_number[1:]
             # remove all spaces from to_number
             to_number = to_number.replace(" ", "")
@@ -199,7 +203,7 @@ async def add_investor(data: Request):
 
         # insert the document into the portalUsers collection
         response = portalUsers.insert_one(insert)
-        # print(response)
+        print(response)
 
         # send email to the investor
         smtp_server = "depro8.fcomet.com"
@@ -259,7 +263,7 @@ async def add_investor(data: Request):
         # return {"awesome": "It Works"}
     except Exception as e:
 
-        return {"ERROR": "Please Try again"}
+        return {"ERROR": f"Please Try again: {e}"}
 
 
 @portal_info.post("/investment_termination")
@@ -279,6 +283,10 @@ async def investment_termination(data: Request):
         investor_name = f"{investor['investor_name']} {investor['investor_surname']}"
 
         investor_email = f"{investor['investor_email']}, debbie@opportunity.co.za"
+
+        option_chosen = ""
+        exit_amount = ""
+        rollover_amount = ""
 
         if request['full_exit']:
             option_chosen = "Full Exit"
@@ -370,11 +378,9 @@ async def investment_termination(data: Request):
             print("Error:", e)
             return {"message": "Email not sent"}
 
-        return {"awesome": "It Works"}
-
     except Exception as e:
 
-        return {"ERROR": "Please Try again"}
+        return {"ERROR": f"Please Try again: {e}"}
 
 
 # EARLY RELEASES TO CSV
@@ -435,7 +441,7 @@ async def early_releases():
 
         return {"early_releases": early_releases_list}
     except Exception as e:
-        return {"ERROR": "Please Try again"}
+        return {"ERROR": f"Please Try again: {e}"}
 
 
 # INVESTMENTS TO CSV
@@ -515,10 +521,10 @@ async def stock_market():
         # pprint("commodities", commodities)
 
         # join the indexes, currencies and commodities lists
-        stock_market = indexes + currencies + commodities
+        stock_market_figures_retrieved = indexes + currencies + commodities
         # pprint("stock_market", stock_market)
 
-        return {"stock_market": stock_market}
+        return {"stock_market": stock_market_figures_retrieved}
 
     except Exception as e:
 
@@ -588,8 +594,8 @@ async def get_chart_data(request: Request):
             # investment['opportunity_code'] and the investment_number is equal to investment['investment_number'] and
             # save the result to a variable called filtered_trust_list
             filtered_trust_list = list(
-                filter(lambda x: x.get('opportunity_code', False) == investment['opportunity_code'] and
-                                 x.get('investment_number', False) == investment['investment_number'],
+                filter(lambda x: x.get('opportunity_code', False) == investment['opportunity_code'] and x.get(
+                    'investment_number', False) == investment['investment_number'],
                        trust_list))
             # make investment['deposit_date'] equal to the deposit_date of the first item in filtered_trust_list
             investment['deposit_date'] = filtered_trust_list[0]['deposit_date']
@@ -602,8 +608,8 @@ async def get_chart_data(request: Request):
             # investment['opportunity_code'] and the investment_number is equal to investment['investment_number'] and
             # save the result to a variable called filtered_investments_list
             filtered_investments_list = list(
-                filter(lambda x: x.get('opportunity_code', False) == investment['opportunity_code'] and
-                                 x.get('investment_number', False) == investment['investment_number'],
+                filter(lambda x: x.get('opportunity_code', False) == investment['opportunity_code'] and x.get(
+                    'investment_number', False) == investment['investment_number'],
                        investors_list))
             # print("filtered_investments_list", filtered_investments_list)
             # create a variable called investment_amount and assign it the value of the investment_amount in
@@ -669,41 +675,8 @@ async def get_chart_data(request: Request):
 
         return {"final_chart_data": finalised_chart_data}
 
-
     except Exception as e:
         return {"ERROR": "Please Try again", "Error": e}
-
-
-# GET CPI
-
-# def get_cpi():
-#     start = datetime.datetime(2018, 1, 1)
-#     end = datetime.datetime.today()
-#     cpi = web.DataReader('CPALTT01ZAM657N', 'fred', start, end)
-#     print("CPI", cpi)
-#     return cpi
-
-
-# def get_stock_list():
-#     jse_stocks = investpy.stocks.get_stocks_list(country='south africa')
-#     jse_commodities = investpy.commodities.get_commodities_list()
-#     jse_indices = investpy.indices.get_indices_list(country='south africa')
-#
-#     print("JSE Indices", jse_indices)
-#     print("JSE Stocks", jse_stocks)
-#     print("JSE Commodities", jse_commodities)
-
-
-# def get_stock_data():
-#     jse_tickers = ['AMS.JO', 'APN.JO', 'ARI.JO', 'AVI.JO', 'BAT.JO', 'BTI.JO', 'CFR.JO', 'DSY.JO',
-#                    'EXX.JO', 'FSR.JO', 'GFI.JO', 'GLN.JO', 'IMP.JO', 'INP.JO', 'IPF.JO', 'JSE.JO', 'KIO.JO', 'MNP.JO',
-#                    'MRF.JO', 'MTN.JO', 'MUR.JO', 'NPN.JO', 'NTC.JO', 'OMU.JO', 'PPC.JO', 'PRX.JO', 'RDF.JO',
-#                    'SBK.JO', 'SHP.JO', 'SOL.JO', 'SPP.JO', 'SSW.JO', 'SUI.JO', 'TKG.JO', 'VOD.JO', 'WHL.JO', 'WBO.JO',
-#                    ]
-#     jse_data = yf.download(jse_tickers, start='2023-01-01', end='2023-05-03')
-#     jse_data2 = jse_data.T
-#     print("Stock Data", jse_data2)
-#     return jse_data
 
 
 def get_currency_data():
@@ -712,7 +685,7 @@ def get_currency_data():
         jse_tickers2 = ['ZAR=X', 'ZARGBP=X', 'ZAREUR=X', 'ZARAUD=X', 'ZARJPY=X', 'ZARCNY=X']
 
         jse_data = yf.download(jse_tickers2)
-        jse_data2 = jse_data.T
+        # jse_data2 = jse_data.T
 
         # print("Currency Data", jse_data2)
 
@@ -825,20 +798,21 @@ def get_currency_data():
                 icon_color6 = "white"
         cny_zar_rate = 1 / cny_zar_rate
 
-        rates = [{'Description': 'USD', 'price': usd_zar_rate.round(4), 'color': 'rgb(150, 0, 0)', 'icon': icon,
-                  'icon_color': icon_color},
-                 {'Description': 'GBP', 'price': gbp_zar_rate.round(4), 'color': 'rgb(170, 0, 0)', 'icon': icon2,
-                  'icon_color': icon_color2},
-                 {'Description': 'EUR', 'price': eur_zar_rate.round(4), 'color': 'rgb(190, 0, 0)', 'icon': icon3,
-                  'icon_color': icon_color3},
-                 {'Description': 'AUD', 'price': aud_zar_rate.round(4), 'color': 'rgb(210, 0, 0)', 'icon': icon4,
-                  'icon_color': icon_color4},
-                 {'Description': 'JPY', 'price': jpy_zar_rate.round(4), 'color': 'rgb(230, 0, 0)', 'icon': icon5,
-                  'icon_color': icon_color5},
-                 {'Description': 'CNY', 'price': cny_zar_rate.round(4), 'color': 'rgb(250, 0, 0)', 'icon': icon6,
-                  'icon_color': icon_color6}]
+        rates_returned = [
+            {'Description': 'USD', 'price': usd_zar_rate.round(4), 'color': 'rgb(150, 0, 0)', 'icon': icon,
+             'icon_color': icon_color},
+            {'Description': 'GBP', 'price': gbp_zar_rate.round(4), 'color': 'rgb(170, 0, 0)', 'icon': icon2,
+             'icon_color': icon_color2},
+            {'Description': 'EUR', 'price': eur_zar_rate.round(4), 'color': 'rgb(190, 0, 0)', 'icon': icon3,
+             'icon_color': icon_color3},
+            {'Description': 'AUD', 'price': aud_zar_rate.round(4), 'color': 'rgb(210, 0, 0)', 'icon': icon4,
+             'icon_color': icon_color4},
+            {'Description': 'JPY', 'price': jpy_zar_rate.round(4), 'color': 'rgb(230, 0, 0)', 'icon': icon5,
+             'icon_color': icon_color5},
+            {'Description': 'CNY', 'price': cny_zar_rate.round(4), 'color': 'rgb(250, 0, 0)', 'icon': icon6,
+             'icon_color': icon_color6}]
 
-        return rates
+        return rates_returned
 
     except Exception as e:
         print("Error getting exchange rates", e)
@@ -851,10 +825,6 @@ def get_commodity_data():
         commodities = yf.download(tickers, period='10d',
                                   interval='1d')  # Download commodity data for the past day at 1-minute
 
-        # print("commodities",commodities)
-
-        # get a random number betwen 1 and 5
-        # random_number = random.randint(1, 5)
         gold_price = commodities['Close']['GC=F'][-1]
         if commodities['Open']['GC=F'][-1] < commodities['Close']['GC=F'][-1]:
             icon = "arrow_drop_up"
@@ -863,7 +833,6 @@ def get_commodity_data():
             icon = "arrow_drop_down"
             icon_color = "red"
 
-        # print("Gold Price", gold_price)
         silver_price = commodities['Close']['SI=F'][-1]
         if commodities['Open']['SI=F'][-1] < commodities['Close']['SI=F'][-1]:
             icon2 = "arrow_drop_up"
@@ -886,7 +855,7 @@ def get_commodity_data():
             icon4 = "arrow_drop_down"
             icon_color4 = "red"
 
-        commodities2 = commodities.T
+        # commodities2 = commodities.T
         # print("commodities2", commodities2)
 
         commodities_collected = [
@@ -932,7 +901,6 @@ def get_indices():
             if index == 'JSE.JO':
                 description = 'JSE'
                 color = "rgb(0, 80, 160)"
-
 
             elif index == '^FTSE':
                 description = 'FTSE 100'
@@ -989,3 +957,4 @@ def get_indices():
 # print(currencies)
 # commodities = get_commodity_data()
 # print(commodities)
+

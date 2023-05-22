@@ -75,6 +75,7 @@ def create_excel_array(data):
     row55_data = ["Due to Investors (Adjusted)", "", "", "", "", ""]
     row56_data = ["Profit / Loss (Adjusted)", "", "", "", "", ""]
 
+
     for item in data:
         row2_data.append(item['opportunity_code'])
         row4A_data.append(item['funds_in_momentum'])

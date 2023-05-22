@@ -35,7 +35,37 @@ def format_sales_forecast(sheet):
     # splice this list into a new list starting only at column 7
     column_letters_7 = column_letters_2[5:]
 
-    rows_to_add_formulas = [17, 23, 27, 29, 33, 34, 38, 39, 50, 51, 52, 54, 58, 59, 60, 61, 62, 63, 66, 67]
+    # create a list of rows to add stuff to
+    columns_to_add_text = ['A']
+    new_rows = [70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80]
+
+    for letter in columns_to_add_text:
+        for row in new_rows:
+            if row == 70:
+                sheet[f'{letter}70'] = 'EXITED REPAYABLE ON TRANSFER'
+            elif row == 71:
+                sheet[f'{letter}71'] = ' EXIT ON TRANSFER'
+            elif row == 72:
+                sheet[f'{letter}72'] = 'EXITED NOT SOLD'
+            elif row == 73:
+                sheet[f'{letter}73'] = 'STILL TO EXIT NOT SOLD'
+            elif row == 74:
+                sheet[f'{letter}74'] = 'TOTAL TO EXIT'
+            elif row == 75:
+                sheet[f'{letter}75'] = 'TOTAL TO EXIT'
+            elif row == 76:
+                sheet[f'{letter}76'] = 'UNALLOCATED'
+            elif row == 77:
+                sheet[f'{letter}77'] = 'TOTAL TO STILL EXIT'
+            elif row == 78:
+                sheet[f'{letter}78'] = 'Exit Repayments due'
+            elif row == 79:
+                sheet[f'{letter}79'] = ''
+            elif row == 80:
+                sheet[f'{letter}80'] = ''
+
+    rows_to_add_formulas = [17, 23, 27, 29, 33, 34, 38, 39, 50, 51, 52, 54, 58, 59, 60, 61, 62, 63, 66, 67, 70, 71,
+                            72, 73, 74, 75, 76, 77, 78, 80]
 
     for letter in column_letters_7:
         for row in rows_to_add_formulas:
@@ -91,6 +121,30 @@ def format_sales_forecast(sheet):
                 sheet[f'B67'] = f'=SUMIFS(G33:' \
                                 f'{column_letters_7[len(column_letters_7) - 1]}33,G57:' \
                                 f'{column_letters_7[len(column_letters_7) - 1]}57, TRUE)'
+            elif row == 70:
+                sheet[
+                    f'{letter}70'] = f'=IF({letter}$2 = TRUE, IF({letter}$3 = FALSE, IF({letter}$57 = TRUE, +{letter}$34, 0), 0), 0)'
+            elif row == 71:
+                sheet[
+                    f'{letter}71'] = f'=IF({letter}$2=TRUE,IF({letter}$3=FALSE,IF({letter}$57=FALSE,+{letter}$34,0),0),0)'
+            elif row == 72:
+                sheet[
+                    f'{letter}72'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$57=TRUE,+{letter}$34,0),0),0)'
+            elif row == 73:
+                sheet[
+                    f'{letter}73'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$57=FALSE,+{letter}$34,0),0),0)'
+            elif row == 74:
+                sheet[f'{letter}74'] = f'=SUM({letter}70:{letter}73)'
+            elif row == 75:
+                sheet[f'{letter}75'] = f'=IF({letter}3=FALSE,{letter}34,0)'
+            elif row == 76:
+                sheet[f'{letter}76'] = f'==IF({letter}2=FALSE,{letter}13-{letter}14,0)'
+            elif row == 77:
+                sheet[f'{letter}77'] = f'={letter}75-{letter}78'
+            elif row == 78:
+                sheet[f'{letter}78'] = f'=SUM({letter}70,{letter}72)'
+            elif row == 80:
+                sheet[f'{letter}80'] = f'={letter}75-{letter}74'
 
     # format all rows with data except rows 1 to 11, 20 to 23, 28 and 29 as currency with 2 decimal places and
     # comma every 3 digits, bold and white font, and for row 11 as a percentage with 2 decimal places and comma
@@ -111,7 +165,7 @@ def format_sales_forecast(sheet):
 
     rows_to_center = [5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
                       32, 33, 34, 36, 37, 38, 39, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54, 58, 59, 60, 61,
-                      62, 63]
+                      62, 63, 70, 71, 72, 73, 74, 75, 76, 77, 78, 80]
     # Loop through the rows_to_format_currency list and align the cells from column 6 to the last column in the
     # centre
     for row in rows_to_center:
@@ -206,7 +260,7 @@ def format_sales_forecast(sheet):
 
     # ROWS TO SUM
     rows_to_sum = [13, 14, 15, 16, 17, 19, 24, 25, 26, 27, 30, 31, 32, 33, 34, 36, 37, 38, 39, 41, 42, 43, 44, 45,
-                   46, 47, 48, 49, 50, 51, 52, 54, 59, 60, 61, 62, 63]
+                   46, 47, 48, 49, 50, 51, 52, 54, 59, 60, 61, 62, 63, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80]
     # for each row in rows_to_sum, sum the cells from column 6 to the last column in the sheet in insert the
     # formula in column 'B', with white font and bold and format the cell as currency with 2 decimal places and
     # comma every 3 digits
@@ -237,6 +291,10 @@ def format_sales_forecast(sheet):
                     sheet[f'{column}{row}'].number_format = '0.00%'
                     sheet[f'{column}{row}'].font = Font(bold=True, color='000000')
 
+                elif row >= 70:
+                    sheet[
+                        f'{column}{row}'] = ""
+
                 else:
                     sheet[
                         f'{column}{row}'] = f'=SUMIFS($G{row}:${get_column_letter(sheet.max_column)}{row},' \
@@ -256,6 +314,10 @@ def format_sales_forecast(sheet):
                         f'{column}{row}'] = f'=IFERROR(+E51/E50,0)'
                     sheet[f'{column}{row}'].number_format = '0.00%'
                     sheet[f'{column}{row}'].font = Font(bold=True, color='000000')
+
+                elif row >= 70:
+                    sheet[
+                        f'{column}{row}'] = ""
                 else:
                     sheet[
                         f'{column}{row}'] = f'=SUMIFS($G{row}:${get_column_letter(sheet.max_column)}{row},' \
@@ -265,8 +327,12 @@ def format_sales_forecast(sheet):
                                             f'TRUE)'
 
             if column == 'F':
-                sheet[
-                    f'{column}{row}'] = f'=B{row}-D{row}-E{row}'
+                if row >= 70:
+                    sheet[
+                        f'{column}{row}'] = ""
+                else:
+                    sheet[
+                        f'{column}{row}'] = f'=B{row}-D{row}-E{row}'
 
     # Join rows_to_add_formulas,rows_to_format_currency,rows_to_center and rows_to_sum as one new list ordered
     # and only unique values all_rows_to_format = list(set(rows_to_add_formulas + rows_to_format_currency +
