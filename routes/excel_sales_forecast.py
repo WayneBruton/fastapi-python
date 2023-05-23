@@ -1305,6 +1305,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 @excel_sales_forecast.post("/investment_status")
 async def investment_status(data: Request):
     request = await data.json()
+    print(request)
 
     try:
 
@@ -1313,7 +1314,7 @@ async def investment_status(data: Request):
                 "$match": {
                     "investments": {
                         "$elemMatch": {
-                            "Category": {"$in": ["Heron Fields", "Heron View"]}
+                            "Category": {"$in": request['Category']}
                         }
                     }
                 }
@@ -1325,7 +1326,7 @@ async def investment_status(data: Request):
                             "input": "$investments",
                             "as": "investment",
                             "cond": {
-                                "$in": ["$$investment.Category", ["Heron Fields", "Heron View"]]
+                                "$in": ["$$investment.Category", request['Category']]
                             }
                         }
                     }

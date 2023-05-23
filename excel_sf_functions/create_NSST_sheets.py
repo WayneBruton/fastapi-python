@@ -6,7 +6,6 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     # total_pledges to 0
     total_pledges = sum([float(item['investment_amount']) for item in pledges]) if pledges else 0
 
-
     # deep copy category list so that changes to the copy do not affect the original
     category_new = copy.deepcopy(category)
     # if index == 0 and category length equals 2 then insert f"{category[0]} and {category[1]}" into the begining of
@@ -80,7 +79,8 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append(["Capital Drawn down", f'=+\'{worksheets[index]}\'!B15', f'=+\'{worksheets[index]}\'!D15',
                       f'=+\'{worksheets[index]}\'!E15', f'=+\'{worksheets[index]}\'!F15'])
 
-    nsst_data.append(["Developer Capital - Early Investor Exit", f'=+\'{worksheets[index]}\'!B66', 0,0, 0])
+    nsst_data.append(["Developer Capital - Early Investor Exit", f'=+\'{worksheets[index]}\'!B66', 0,
+                      f'=+\'{worksheets[index]}\'!B85', f'=+\'{worksheets[index]}\'!B82'])
 
     nsst_data.append(["Current Capital deployed", 0, 0, 0, 0])
     nsst_data.append(
@@ -99,7 +99,9 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
                       f'=+\'{worksheets[index]}\'!D31',
                       f'=+\'{worksheets[index]}\'!E31', f'=+\'{worksheets[index]}\'!F31'])
 
-    nsst_data.append(["Investor Early Exit interest", f'=+\'{worksheets[index]}\'!B67', 0, 0, 0])
+    nsst_data.append(
+        ["Investor Early Exit interest", f'=+\'{worksheets[index]}\'!B67', 0, f'=+\'{worksheets[index]}\'!B86',
+         f'=+\'{worksheets[index]}\'!B83'])
 
     nsst_data.append(["Interest on Capital to Be Drawn from Momentum", f'=+\'{worksheets[index]}\'!B30',
                       f'=+\'{worksheets[index]}\'!D30',

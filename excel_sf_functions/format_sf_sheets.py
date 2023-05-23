@@ -37,7 +37,7 @@ def format_sales_forecast(sheet):
 
     # create a list of rows to add stuff to
     columns_to_add_text = ['A']
-    new_rows = [70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80]
+    new_rows = [70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 82, 83, 85, 86]
 
     for letter in columns_to_add_text:
         for row in new_rows:
@@ -63,9 +63,17 @@ def format_sales_forecast(sheet):
                 sheet[f'{letter}79'] = ''
             elif row == 80:
                 sheet[f'{letter}80'] = ''
+            elif row == 82:
+                sheet[f'{letter}82'] = 'EXITED REPAYABLE ON TRANSFER - Capital Only'
+            elif row == 83:
+                sheet[f'{letter}83'] = 'EXITED REPAYABLE ON TRANSFER - Interest Only'
+            elif row == 85:
+                sheet[f'{letter}85'] = 'EXIT NOT SOLD - Capital Only'
+            elif row == 86:
+                sheet[f'{letter}86'] = 'EXIT NOT SOLD - Interest Only'
 
     rows_to_add_formulas = [17, 23, 27, 29, 33, 34, 38, 39, 50, 51, 52, 54, 58, 59, 60, 61, 62, 63, 66, 67, 70, 71,
-                            72, 73, 74, 75, 76, 77, 78, 80]
+                            72, 73, 74, 75, 76, 77, 78, 80, 82, 83, 85, 86]
 
     for letter in column_letters_7:
         for row in rows_to_add_formulas:
@@ -145,6 +153,19 @@ def format_sales_forecast(sheet):
                 sheet[f'{letter}78'] = f'=SUM({letter}70,{letter}72)'
             elif row == 80:
                 sheet[f'{letter}80'] = f'={letter}75-{letter}74'
+            elif row == 82:
+                sheet[
+                    f'{letter}82'] = f'=IF({letter}$2 = TRUE, IF({letter}$3 = FALSE, IF({letter}$57 = TRUE, +{letter}$19, 0), 0), 0)'
+            elif row == 83:
+                sheet[
+                    f'{letter}83'] = f'=IF({letter}$2 = TRUE, IF({letter}$3 = FALSE, IF({letter}$57 = TRUE, +{letter}$33, 0), 0), 0)'
+            elif row == 85:
+                sheet[
+                    f'{letter}85'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$57=TRUE,+{letter}$19,0),0),0)'
+            elif row == 86:
+                # =IF(G$2 = FALSE, IF(G$3 = FALSE, IF(G$57 = TRUE, +G$33, 0), 0), 0)
+                sheet[
+                    f'{letter}86'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$57=TRUE,+{letter}$33,0),0),0)'
 
     # format all rows with data except rows 1 to 11, 20 to 23, 28 and 29 as currency with 2 decimal places and
     # comma every 3 digits, bold and white font, and for row 11 as a percentage with 2 decimal places and comma
@@ -165,7 +186,7 @@ def format_sales_forecast(sheet):
 
     rows_to_center = [5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
                       32, 33, 34, 36, 37, 38, 39, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54, 58, 59, 60, 61,
-                      62, 63, 70, 71, 72, 73, 74, 75, 76, 77, 78, 80]
+                      62, 63, 70, 71, 72, 73, 74, 75, 76, 77, 78, 80, 82, 83, 85, 86]
     # Loop through the rows_to_format_currency list and align the cells from column 6 to the last column in the
     # centre
     for row in rows_to_center:
@@ -260,7 +281,8 @@ def format_sales_forecast(sheet):
 
     # ROWS TO SUM
     rows_to_sum = [13, 14, 15, 16, 17, 19, 24, 25, 26, 27, 30, 31, 32, 33, 34, 36, 37, 38, 39, 41, 42, 43, 44, 45,
-                   46, 47, 48, 49, 50, 51, 52, 54, 59, 60, 61, 62, 63, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80]
+                   46, 47, 48, 49, 50, 51, 52, 54, 59, 60, 61, 62, 63, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 82,
+                   83, 85, 86]
     # for each row in rows_to_sum, sum the cells from column 6 to the last column in the sheet in insert the
     # formula in column 'B', with white font and bold and format the cell as currency with 2 decimal places and
     # comma every 3 digits
