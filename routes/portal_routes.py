@@ -215,8 +215,8 @@ async def add_investor(data: Request):
         <html>
           <body>
             <p>Dear {request['name']},<br><br>
-               As a valued Investor, you have access to our "Portal" at <a href="https://www.eccentrictoad.com">
-               https://www.eccentrictoad.com</a>.<br><br>
+               As a valued Investor, you have access to our "Portal" at <a href="https://www.opconlineportal.co.za">
+               https://www.opconlineportal.co.za</a>.<br><br>
                
                I would strongly suggest saving the link to your favourites.<br><br>
               
@@ -282,7 +282,7 @@ async def investment_termination(data: Request):
 
         investor_name = f"{investor['investor_name']} {investor['investor_surname']}"
 
-        investor_email = f"{investor['investor_email']}, debbie@opportunity.co.za"
+        investor_email = f"{investor['investor_email']}, debbie@opportunity.co.za; leandri@opportunity.co.za"
 
         option_chosen = ""
         exit_amount = ""
@@ -323,8 +323,9 @@ async def investment_termination(data: Request):
                 We have received your prefered options when your investment in {request['opportunity_code']} is 
                 transferred.<br><br>
                 
-                Based on Today's date, your investment balance is {request['float_balance']:,.2f}.<br><br>
+                Based on Today's date, your investment balance is R {request['float_balance']:,.2f}.<br><br>
                 
+                {request['opportunity_code']}<br><br>
                 <strong>Option Chosen:</strong> {option_chosen}<br><br>
                 <strong>Exit Amount:</strong> {exit_amount}<br><br>
                 <strong>Rollover Amount:</strong> {rollover_amount}<br><br>

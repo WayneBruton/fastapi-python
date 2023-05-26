@@ -202,24 +202,24 @@ def create_pdf(statement_type, data):
         pdf.set_text_color(128, 128, 128)
 
         pdf.cell(18, 10, item['opportunity_code'], border='B', align="C", fill=False)
-        pdf.cell(1, 10, '', border=0, align="C", fill=False)
+        pdf.cell(1, 10, '', border='B', align="C", fill=False)
         pdf.cell(18, 10, str(item['days']), border='B', align="C", fill=False)
-        pdf.cell(1, 10, '', border=0, align="C", fill=False)
+        pdf.cell(1, 10, '', border='B', align="C", fill=False)
 
         pdf.cell(22, 10, item['interest_until'], border='B', align="C", fill=False)
-        pdf.cell(1, 10, '', border=0, align="C", fill=False)
+        pdf.cell(1, 10, '', border='B', align="C", fill=False)
 
         pdf.cell(22, 10, item['interest_rate'], border='B', align="C", fill=False)
-        pdf.cell(1, 10, '', border=0, align="C", fill=False)
+        pdf.cell(1, 10, '', border='B', align="C", fill=False)
 
         pdf.cell(22, 10, item['investment_amount'], border='B', align="R", fill=False)
-        pdf.cell(1, 10, '', border=0, align="C", fill=False)
+        pdf.cell(1, 10, '', border='B', align="C", fill=False)
 
         pdf.cell(22, 10, item['interest'], border='B', align="R", fill=False)
-        pdf.cell(1, 10, '', border=0, align="C", fill=False)
+        pdf.cell(1, 10, '', border='B', align="C", fill=False)
 
         pdf.cell(27, 10, item['cumulative_interest'], border='B', align="R", fill=False)
-        pdf.cell(1, 10, '', border=0, align="C", fill=False)
+        pdf.cell(1, 10, '', border='B', align="C", fill=False)
 
         pdf.cell(22, 10, item['balance'], border='B', align="R", fill=False, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 

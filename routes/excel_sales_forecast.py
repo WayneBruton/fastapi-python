@@ -1307,119 +1307,133 @@ async def investment_status(data: Request):
     request = await data.json()
     print(request)
 
-    try:
+    # try:
 
-        investor_list = list(db.investors.aggregate([
-            {
-                "$match": {
-                    "investments": {
-                        "$elemMatch": {
-                            "Category": {"$in": request['Category']}
-                        }
+    investor_list = list(db.investors.aggregate([
+        {
+            "$match": {
+                "investments": {
+                    "$elemMatch": {
+                        "Category": {"$in": request['Category']}
                     }
-                }
-            },
-            {
-                "$addFields": {
-                    "investments": {
-                        "$filter": {
-                            "input": "$investments",
-                            "as": "investment",
-                            "cond": {
-                                "$in": ["$$investment.Category", request['Category']]
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                "$match": {
-                    "investments": {"$ne": []}
                 }
             }
-        ]))
+        },
+        {
+            "$addFields": {
+                "investments": {
+                    "$filter": {
+                        "input": "$investments",
+                        "as": "investment",
+                        "cond": {
+                            "$in": ["$$investment.Category", request['Category']]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "$match": {
+                "investments": {"$ne": []}
+            }
+        }
+    ]))
 
-        # print("investor_list", investor_list[0])
+    # opportunity_list = list(db.opportunities.find({"Category": {"$in": request['Category']}}))
+    # print("opportunity_list", opportunity_list[0])
 
-        # Get opportunities from the database where Category is included in request['Category']
-        opportunities_list = list(db.opportunities.find({"Category": {"$in": request['Category']}}))
 
-        final_investors_list = []
+    # print("investor_list", investor_list[0])
 
-        for investor in investor_list:
-            investor['id'] = str(investor['_id'])
-            del investor['_id']
-            del investor['trust']
-            del investor['pledges']
-            # filter investor['investments'] where investments['Category'] is included in request['Category']
-            investor['investments'] = [investment for investment in investor['investments'] if
-                                       investment['Category'] in request['Category']]
-            for investment in investor['investments']:
-                insert = {}
-                # if  investment['investment_number'] exists then set insert['investment_number'] to
-                # investment['investment_number'] else set insert['investment_number'] to 0
-                if 'investment_number' in investment:
-                    insert['investment_number'] = investment['investment_number']
-                else:
-                    insert['investment_number'] = 0
+    # Get opportunities from the database where Category is included in request['Category']
+    opportunities_list = list(db.opportunities.find({"Category": {"$in": request['Category']}}))
 
-                insert['investment_name'] = investor['investment_name']
-                insert['investor_acc_number'] = investor['investor_acc_number']
-                # do the same as above for Category, opportunity_code, investment_amount, release_date and end_date
-                insert['Category'] = investment['Category']
-                insert['opportunity_code'] = investment['opportunity_code']
-                insert['investment_amount'] = investment['investment_amount']
-                insert['release_date'] = investment['release_date']
-                insert['end_date'] = investment['end_date']
-                # insert['investment_number'] = investment['investment_number']
+    final_investors_list = []
 
-                final_investors_list.append(insert)
+    for investor in investor_list:
+        investor['id'] = str(investor['_id'])
+        del investor['_id']
+        del investor['trust']
+        del investor['pledges']
+        # filter investor['investments'] where investments['Category'] is included in request['Category']
+        investor['investments'] = [investment for investment in investor['investments'] if
+                                   investment['Category'] in request['Category']]
+        for investment in investor['investments']:
+            if investor['investor_acc_number'] == "ZKRU01":
+                print(investment)
 
-        # filter out where investor_acc_number = "ZCAM01" and investment_number = 0
-        final_investors_list = [investment for investment in final_investors_list if
-                                not (investment['investor_acc_number'] == "ZCAM01" and investment[
-                                    'investment_number'] == 0)]
+            insert = {}
+            # if  investment['investment_number'] exists then set insert['investment_number'] to
+            # investment['investment_number'] else set insert['investment_number'] to 0
+            if 'investment_number' in investment:
+                insert['investment_number'] = investment['investment_number']
+            else:
+                insert['investment_number'] = 0
 
-        # filter out where investor_acc_number = "ZJHO01" and "investment_number": 1
-        final_investors_list = [investment for investment in final_investors_list if
-                                not (investment['investor_acc_number'] == "ZJHO01" and investment[
-                                    'investment_number'] == 1)]
+            insert['investment_name'] = investor['investment_name']
+            insert['investor_acc_number'] = investor['investor_acc_number']
+            # do the same as above for Category, opportunity_code, investment_amount, release_date and end_date
+            insert['Category'] = investment['Category']
+            insert['opportunity_code'] = investment['opportunity_code']
+            insert['investment_amount'] = investment['investment_amount']
+            insert['release_date'] = investment['release_date']
+            insert['end_date'] = investment['end_date']
+            if 'exit_value' in investment:
+                insert['exit_value'] = float(investment['exit_value'].replace(" ", ""))
+            else:
+                insert['exit_value'] = 0
 
-        # print(final_investors_list)
-        for investment in final_investors_list:
-            # filter opportunities_list where opportunity['opportunity_code'] is equal to investment['opportunity_code']
+            # insert['investment_number'] = investment['investment_number']
 
-            opportunity_filtered = [opportunity for opportunity in opportunities_list if
-                                    opportunity['opportunity_code'] == investment['opportunity_code']][0]
-            # print("opportunity_filtered", opportunity_filtered)
-            investment['occupation_date'] = opportunity_filtered['opportunity_occupation_date']
-            investment['estimated_transfer_date'] = opportunity_filtered['opportunity_end_date']
-            investment['final_transfer_date'] = opportunity_filtered['opportunity_final_transfer_date']
-            investment['opportunity_sold'] = opportunity_filtered['opportunity_sold']
+            final_investors_list.append(insert)
 
-        # convert request['date'] to a datetime
-        report_date = datetime.strptime(request['date'], "%Y/%m/%d")
+    # filter out where investor_acc_number = "ZCAM01" and investment_number = 0
+    final_investors_list = [investment for investment in final_investors_list if
+                            not (investment['investor_acc_number'] == "ZCAM01" and investment[
+                                'investment_number'] == 0)]
 
-        # filter final_investors_list where investment['release_date'] as a dateTime is greater than or equal to
-        # report_date
-        final_investors_list = [investment for investment in final_investors_list if
-                                datetime.strptime(investment['release_date'], "%Y/%m/%d") <= report_date]
+    # filter out where investor_acc_number = "ZJHO01" and "investment_number": 1
+    final_investors_list = [investment for investment in final_investors_list if
+                            not (investment['investor_acc_number'] == "ZJHO01" and investment[
+                                'investment_number'] == 1)]
 
-        for investor in final_investors_list:
-            investor['report_date'] = report_date.strftime("%Y/%m/%d")
-            # make investor['block'] equal to the 4th last character of investor['opportunity_code']
-            investor['block'] = investor['opportunity_code'][-4:3]
+    # print(final_investors_list)
+    for investment in final_investors_list:
+        # filter opportunities_list where opportunity['opportunity_code'] is equal to investment['opportunity_code']
 
-        # sort final investors list by Category, opportunity_code, investor_acc_number
-        final_investors_list = sorted(final_investors_list,
-                                      key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
+        opportunity_filtered = [opportunity for opportunity in opportunities_list if
+                                opportunity['opportunity_code'] == investment['opportunity_code']][0]
+        print("opportunity_filtered", opportunity_filtered)
 
-        create_investment_list(final_investors_list, request)
+        investment['occupation_date'] = opportunity_filtered['opportunity_occupation_date']
+        investment['estimated_transfer_date'] = opportunity_filtered['opportunity_end_date']
+        investment['final_transfer_date'] = opportunity_filtered['opportunity_final_transfer_date']
+        investment['opportunity_sold'] = opportunity_filtered['opportunity_sold']
 
-        return final_investors_list
-    except Exception as e:
-        print("Error:", e)
-        return []
+
+    # convert request['date'] to a datetime
+    report_date = datetime.strptime(request['date'], "%Y/%m/%d")
+
+    # filter final_investors_list where investment['release_date'] as a dateTime is greater than or equal to
+    # report_date
+    final_investors_list = [investment for investment in final_investors_list if
+                            datetime.strptime(investment['release_date'].replace("-","/"), "%Y/%m/%d") <= report_date]
+
+    for investor in final_investors_list:
+        investor['report_date'] = report_date.strftime("%Y/%m/%d")
+        # make investor['block'] equal to the 4th last character of investor['opportunity_code']
+        investor['block'] = investor['opportunity_code'][-4:3]
+
+    # sort final investors list by Category, opportunity_code, investor_acc_number
+    final_investors_list = sorted(final_investors_list,
+                                  key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
+
+    create_investment_list(final_investors_list, request)
+
+    return final_investors_list
+    # except Exception as e:
+    #     print("Error:", e)
+    #     return []
 
 
 @excel_sales_forecast.post("/check_if_file_exists")

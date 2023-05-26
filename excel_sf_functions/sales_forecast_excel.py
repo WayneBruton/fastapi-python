@@ -146,6 +146,8 @@ def create_investment_list(data, request):
 
     worksheet_data = []
 
+    print(data)
+
     report_array = request['Category']
     if len(report_array) > 1:
         sheet_name = f"Investment List Heron"
@@ -163,14 +165,14 @@ def create_investment_list(data, request):
     # loop through worksheet_data and append each item to the worksheet
     row2_data = ["Unit No", "Block", "Investor", "Capital Amount", "Fund Release Date", "Unit Sold Status",
                  "Occupation Date", "Estimated Transfer Date", "Actual Transfer Date", "Exit Deadline (712 Days)",
-                 "Current Report Date", "Time remaining (per LA)", "180 day Threshhold Warning", "Days to Exit"]
+                 "Current Report Date", "Time remaining (per LA)", "180 day Threshhold Warning", "Days to Exit", "exit_value"]
     worksheet_data.append(row2_data)
 
     for item in data:
         row_data = [item['opportunity_code'], item['block'], item['investment_name'], float(item['investment_amount']), item['release_date'],
                     item['opportunity_sold'], item['occupation_date'], item['estimated_transfer_date'],
                     item['final_transfer_date'], "", item['report_date'],
-                    "", "", ""]
+                    "", "", "", item['exit_value']]
         worksheet_data.append(row_data)
 
     for item in worksheet_data:
