@@ -130,6 +130,8 @@ def create_draw_down_file(request):
     # Make cell bold
     cell.font = Font(bold=True)
 
+    current_draw_row = ws.max_row
+
     ws.append(["", "", "", "", "", "", "", ""])
     ws.append(["", "", "", "", "", "", "", ""])
     ws.append(["", "CURRENT BALANCE", "", 0, "", "", "", ""])
@@ -177,7 +179,10 @@ def create_draw_down_file(request):
         ws.append(["", item['draw_number'], item['draw_down_amount'], item["planned_draw_date"], item["note"], "", "",
                    item["draw_down_date"]])
         current_row = ws.max_row
-        first_row = current_row
+
+        if index == 0:
+            first_row = current_row
+
         for col in range(2, 9):
             if col == 2:
                 cell = ws.cell(row=current_row, column=col)
@@ -195,6 +200,25 @@ def create_draw_down_file(request):
                 # align center
                 cell.alignment = Alignment(horizontal='center')
 
+    ws.append(["", "Current Draw", f"=+F{current_draw_row - 1}", "", "", "", "", ""])
+    current_row = ws.max_row
+    for col in range(2, 9):
+        if col == 2:
+            cell = ws.cell(row=current_row, column=col)
+            cell.border = Border(left=Side(style='medium'))
+        if col == 8:
+            cell = ws.cell(row=current_row, column=col)
+            cell.border = Border(right=Side(style='medium'))
+        if col == 3:
+            # format as currency with 2 decimal places
+            cell = ws.cell(row=current_row, column=col)
+            cell.number_format = '#,##0.00'
+        if col == 4 or col == 8:
+            # format as date
+            cell = ws.cell(row=current_row, column=col)
+            # align center
+            cell.alignment = Alignment(horizontal='center')
+
     ws.append(["", "", "", "", "", "", "", ""])
     current_row = ws.max_row
     for col in range(2, 9):
@@ -204,6 +228,7 @@ def create_draw_down_file(request):
         if col == 8:
             cell = ws.cell(row=current_row, column=col)
             cell.border = Border(right=Side(style='medium'))
+
 
     ws.append(["", "TOTAL DRAWS TO DATE", f"=sum(C{first_row}:C{current_row - 1})", "", "", "", "", ""])
     current_row = ws.max_row
@@ -221,6 +246,7 @@ def create_draw_down_file(request):
             # add a top border and make cell bold and bottom border of double line
             cell.border = Border(top=Side(style='medium'), bottom=Side(style='double'))
             cell.font = Font(bold=True)
+
 
     ws.append(["", "", "", "", "", "", "", ""])
     current_row = ws.max_row
