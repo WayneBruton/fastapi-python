@@ -320,7 +320,7 @@ async def investment_termination(data: Request):
           <body>
             <p>Dear {investor_name},<br><br>
             
-                We have received your prefered options when your investment in {request['opportunity_code']} is 
+                We have received your preferred options when your investment in {request['opportunity_code']} is 
                 transferred.<br><br>
                 
                 Based on Today's date, your investment balance is R {request['float_balance']:,.2f}.<br><br>
