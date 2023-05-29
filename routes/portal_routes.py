@@ -15,6 +15,7 @@ from portal_statement_files.portal_statement_create import create_pdf
 import pandas as pd
 import datetime
 import yfinance as yf
+from decouple import config
 # import investpy
 
 
@@ -27,12 +28,13 @@ from config.db import db
 
 import vonage
 
-# API_KEY = "5f79bce5"
-# API_SECRET = "dtNN0iQpgit3I6bZ"
 
-# GET API_KEY AND API_SECRET FROM ENVIRONMENT VARIABLES
-API_KEY = os.environ.get("VONAGE_API_KEY")
-API_SECRET = os.environ.get("VONAGE_API_SECRET")
+
+
+API_KEY = config("VONAGE_API_KEY")
+API_SECRET = config("VONAGE_API_SECRET")
+
+
 
 portal_info = APIRouter()
 
