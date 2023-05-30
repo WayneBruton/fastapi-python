@@ -45,7 +45,7 @@ def create_pdf(statement_type, data):
             "value": "Heron Projects",
         },
         {
-            "title": "**LENDOR NAME**",
+            "title": "**LENDER NAME**",
             # "value": f"{data1[0]['investor_name']} {data1[0]['investor_surname']} ({data1[0]['investor_acc_number']})",
             "value": f"{data1[0]['investment_name']}",
         },
