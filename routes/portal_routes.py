@@ -28,13 +28,8 @@ from config.db import db
 
 import vonage
 
-
-
-
 API_KEY = config("VONAGE_API_KEY")
 API_SECRET = config("VONAGE_API_SECRET")
-
-
 
 portal_info = APIRouter()
 
@@ -541,7 +536,7 @@ async def get_chart_data(request: Request):
         data = await request.json()
         data = data['chartData']
         rates_list = list(rates.find())
-        # print(data)
+        # print("Data", data)
 
         # loop through rates_list and delete _id field, replace '-' with '/' in Efective_date and convert Efective_date
         # to datetime
@@ -562,13 +557,13 @@ async def get_chart_data(request: Request):
                 "investment_number": investment['investment_number'],
             }
             investments_to_chart.append(insert)
-
+        # print("investments_to_chart", investments_to_chart)
         investments_to_chart_opportunity_codes = []
         for investment in investments_to_chart:
             investments_to_chart_opportunity_codes.append(investment['opportunity_code'])
         # Ensure only unique opportunity codes are in the list
         investments_to_chart_opportunity_codes = list(set(investments_to_chart_opportunity_codes))
-
+        # print("investments_to_chart_opportunity_codes", investments_to_chart_opportunity_codes)
         # get info from investors collection where investor_acc_number equals data[0]['investor_acc_number'],
         # project only the investments array
         investors_list = list(investors.aggregate([
@@ -578,6 +573,7 @@ async def get_chart_data(request: Request):
         # print("trust_list", investors_list['trust'])
         trust_list = investors_list['trust']
         investors_list = investors_list['investments']
+        # print("investors_list", investors_list)
 
         # filter investors_list to only include investments where the opportunity_code is in
         # investments_to_chart_opportunity_codes
@@ -960,4 +956,3 @@ def get_indices():
 # print(currencies)
 # commodities = get_commodity_data()
 # print(commodities)
-
