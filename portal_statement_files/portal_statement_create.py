@@ -88,7 +88,7 @@ def create_pdf(statement_type, data):
         pdf.cell(105, 4, '', border=0)
         pdf.cell(80, 4, f"{item['title']}", border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C", markdown=True)
         pdf.set_text_color(128, 128, 128)
-        pdf.set_font('helvetica', size=7)
+        pdf.set_font('helvetica', size=8)
         pdf.cell(105, 4, '', border=0)
         pdf.cell(80, 4, f"{item['value']}", border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT, align="C", markdown=True)
 
