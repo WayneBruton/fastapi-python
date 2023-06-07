@@ -28,7 +28,7 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append([])
     nsst_data.append(["CAPITAL"])
     nsst_data.append(["Total Investment capital to be raised (Estimated)", f'=+\'{worksheets[index]}\'!B13'])
-    nsst_data.append(["Available to be raised (Estimated)", f'=+B40'])
+    nsst_data.append(["Available to be raised (Estimated)", f'=+B41'])
     nsst_data.append(["Total Investment capital received", f'=+\'{worksheets[index]}\'!B14'])
     nsst_data.append(["Total Funds Drawn Down into Development", f'=+\'{worksheets[index]}\'!B15'])
     nsst_data.append(["Pledges Due", total_pledges])
@@ -46,29 +46,29 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
         ["Units", f'=+\'{worksheets[index]}\'!B6', f'=+\'{worksheets[index]}\'!D6', f'=+\'{worksheets[index]}\'!E6',
          f'=+\'{worksheets[index]}\'!F6'])
     nsst_data.append(
-        ["Sales Price", f'=+\'{worksheets[index]}\'!B41', f'=+\'{worksheets[index]}\'!D41',
-         f'=+\'{worksheets[index]}\'!E41',
-         f'=+\'{worksheets[index]}\'!F41'])
-    nsst_data.append(
-        ["VAT", f'=+\'{worksheets[index]}\'!B42', f'=+\'{worksheets[index]}\'!D42', f'=+\'{worksheets[index]}\'!E42',
+        ["Sales Price", f'=+\'{worksheets[index]}\'!B42', f'=+\'{worksheets[index]}\'!D42',
+         f'=+\'{worksheets[index]}\'!E42',
          f'=+\'{worksheets[index]}\'!F42'])
     nsst_data.append(
-        ["Gross", f'=+\'{worksheets[index]}\'!B43', f'=+\'{worksheets[index]}\'!D43', f'=+\'{worksheets[index]}\'!E43',
+        ["VAT", f'=+\'{worksheets[index]}\'!B43', f'=+\'{worksheets[index]}\'!D43', f'=+\'{worksheets[index]}\'!E43',
          f'=+\'{worksheets[index]}\'!F43'])
-    nsst_data.append(["Commission (5.75 %)", f'=+\'{worksheets[index]}\'!B44', f'=+\'{worksheets[index]}\'!D44',
-                      f'=+\'{worksheets[index]}\'!E44', f'=+\'{worksheets[index]}\'!F44'])
     nsst_data.append(
-        ["Transfer Fees", f'=+\'{worksheets[index]}\'!B45', f'=+\'{worksheets[index]}\'!D45',
-         f'=+\'{worksheets[index]}\'!E45',
-         f'=+\'{worksheets[index]}\'!F45'])
-    nsst_data.append(["Bond Registration", f'=+\'{worksheets[index]}\'!B46', f'=+\'{worksheets[index]}\'!D46',
-                      f'=+\'{worksheets[index]}\'!E46', f'=+\'{worksheets[index]}\'!F46'])
-    nsst_data.append(["Security Release Fee", f'=+\'{worksheets[index]}\'!B47', f'=+\'{worksheets[index]}\'!D47',
+        ["Gross", f'=+\'{worksheets[index]}\'!B44', f'=+\'{worksheets[index]}\'!D44', f'=+\'{worksheets[index]}\'!E44',
+         f'=+\'{worksheets[index]}\'!F44'])
+    nsst_data.append(["Commission (5.75 %)", f'=+\'{worksheets[index]}\'!B45', f'=+\'{worksheets[index]}\'!D45',
+                      f'=+\'{worksheets[index]}\'!E45', f'=+\'{worksheets[index]}\'!F45'])
+    nsst_data.append(
+        ["Transfer Fees", f'=+\'{worksheets[index]}\'!B46', f'=+\'{worksheets[index]}\'!D46',
+         f'=+\'{worksheets[index]}\'!E46',
+         f'=+\'{worksheets[index]}\'!F46'])
+    nsst_data.append(["Bond Registration", f'=+\'{worksheets[index]}\'!B47', f'=+\'{worksheets[index]}\'!D47',
                       f'=+\'{worksheets[index]}\'!E47', f'=+\'{worksheets[index]}\'!F47'])
-    nsst_data.append(["Unforseen (0.05%)", f'=+\'{worksheets[index]}\'!B48', f'=+\'{worksheets[index]}\'!D48',
+    nsst_data.append(["Security Release Fee", f'=+\'{worksheets[index]}\'!B48', f'=+\'{worksheets[index]}\'!D48',
                       f'=+\'{worksheets[index]}\'!E48', f'=+\'{worksheets[index]}\'!F48'])
-    nsst_data.append(["Discount", f'=+\'{worksheets[index]}\'!B49', f'=+\'{worksheets[index]}\'!D49',
+    nsst_data.append(["Unforseen (0.05%)", f'=+\'{worksheets[index]}\'!B49', f'=+\'{worksheets[index]}\'!D49',
                       f'=+\'{worksheets[index]}\'!E49', f'=+\'{worksheets[index]}\'!F49'])
+    nsst_data.append(["Discount", f'=+\'{worksheets[index]}\'!B50', f'=+\'{worksheets[index]}\'!D50',
+                      f'=+\'{worksheets[index]}\'!E50', f'=+\'{worksheets[index]}\'!F50'])
     nsst_data.append(["Transfer Income", ""])
     nsst_data.append([])
     nsst_data.append(["CAPITAL"])
@@ -79,8 +79,8 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append(["Capital Drawn down", f'=+\'{worksheets[index]}\'!B15', f'=+\'{worksheets[index]}\'!D15',
                       f'=+\'{worksheets[index]}\'!E15', f'=+\'{worksheets[index]}\'!F15'])
 
-    nsst_data.append(["Developer Capital - Early Investor Exit", f'=+\'{worksheets[index]}\'!B66', 0,
-                      f'=+\'{worksheets[index]}\'!B85', f'=+\'{worksheets[index]}\'!B82'])
+    nsst_data.append(["Developer Capital - Early Investor Exit", f'=+\'{worksheets[index]}\'!B67', 0,
+                      f'=+\'{worksheets[index]}\'!B86', f'=+\'{worksheets[index]}\'!B83'])
 
     nsst_data.append(["Current Capital deployed", 0, 0, 0, 0])
     nsst_data.append(
@@ -91,27 +91,27 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
                       f'=+\'{worksheets[index]}\'!E17', f'=+\'{worksheets[index]}\'!F17'])
     nsst_data.append([])
     nsst_data.append(["INTEREST"])
-    nsst_data.append(["Total Interest", f'=+\'{worksheets[index]}\'!B33', f'=+\'{worksheets[index]}\'!D33',
-                      f'=+\'{worksheets[index]}\'!E33', f'=+\'{worksheets[index]}\'!F33'])
-    nsst_data.append(["Interest on Capital Repaid", 0, f'=+\'{worksheets[index]}\'!D33',
+    nsst_data.append(["Total Interest", f'=+\'{worksheets[index]}\'!B34', f'=+\'{worksheets[index]}\'!D34',
+                      f'=+\'{worksheets[index]}\'!E34', f'=+\'{worksheets[index]}\'!F34'])
+    nsst_data.append(["Interest on Capital Repaid", 0, f'=+\'{worksheets[index]}\'!D34',
                       0, 0])
-    nsst_data.append(["Interest on Capital Drawn to estimated Exit date", f'=+\'{worksheets[index]}\'!B31',
-                      f'=+\'{worksheets[index]}\'!D31',
-                      f'=+\'{worksheets[index]}\'!E31', f'=+\'{worksheets[index]}\'!F31'])
+    nsst_data.append(["Interest on Capital Drawn to estimated Exit date", f'=+\'{worksheets[index]}\'!B32',
+                      f'=+\'{worksheets[index]}\'!D32',
+                      f'=+\'{worksheets[index]}\'!E32', f'=+\'{worksheets[index]}\'!F32'])
 
     nsst_data.append(
-        ["Investor Early Exit interest", f'=+\'{worksheets[index]}\'!B67', 0, f'=+\'{worksheets[index]}\'!B86',
-         f'=+\'{worksheets[index]}\'!B83'])
+        ["Investor Early Exit interest", f'=+\'{worksheets[index]}\'!B68', 0, f'=+\'{worksheets[index]}\'!B87',
+         f'=+\'{worksheets[index]}\'!B84'])
 
-    nsst_data.append(["Interest on Capital to Be Drawn from Momentum", f'=+\'{worksheets[index]}\'!B30',
-                      f'=+\'{worksheets[index]}\'!D30',
-                      f'=+\'{worksheets[index]}\'!E30', f'=+\'{worksheets[index]}\'!F30'])
+    nsst_data.append(["Interest on Capital to Be Drawn from Momentum", f'=+\'{worksheets[index]}\'!B30+\'{worksheets[index]}\'!B31',
+                      f'=+\'{worksheets[index]}\'!D30+\'{worksheets[index]}\'!D31',
+                      f'=+\'{worksheets[index]}\'!E30+\'{worksheets[index]}\'!E31', f'=+\'{worksheets[index]}\'!F30+\'{worksheets[index]}\'!F31'])
     nsst_data.append(
-        ["Interest on Capital to be raised", f'=+\'{worksheets[index]}\'!B32', f'=+\'{worksheets[index]}\'!D32',
-         f'=+\'{worksheets[index]}\'!E32', f'=+\'{worksheets[index]}\'!F32'])
+        ["Interest on Capital to be raised", f'=+\'{worksheets[index]}\'!B33', f'=+\'{worksheets[index]}\'!D33',
+         f'=+\'{worksheets[index]}\'!E33', f'=+\'{worksheets[index]}\'!F33'])
     nsst_data.append(
-        ["Interest due to estimated exit dates", 0, 0, f'=+\'{worksheets[index]}\'!E33',
-         f'=+\'{worksheets[index]}\'!F33-\'{worksheets[index]}\'!F46'])
+        ["Interest due to estimated exit dates", 0, 0, f'=+\'{worksheets[index]}\'!E34',
+         f'=+\'{worksheets[index]}\'!F34-\'{worksheets[index]}\'!F47'])
     nsst_data.append([])
     nsst_data.append(["PROJECTED GROSS PROFIT"])
     nsst_data.append(["Income after repayment of Capital & Interest", 0, 0, 0, 0])

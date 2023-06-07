@@ -1,11 +1,12 @@
 from datetime import timedelta
 
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 from openpyxl.utils import get_column_letter, column_index_from_string
 
 from openpyxl.styles import PatternFill
 from openpyxl.styles.borders import Border, Side
 from openpyxl.styles import Font, Alignment
+from openpyxl.utils import range_boundaries
 
 from excel_sf_functions.create_sales_sheet import create_excel_array
 from excel_sf_functions.create_NSST_sheets import create_nsst_sheet
@@ -15,8 +16,9 @@ import time
 import threading
 
 
-def create_sales_forecast_file(data, developmentinputdata, pledges):
+def create_sales_forecast_file(data, developmentinputdata, pledges, firstName):
     start_time = time.time()
+    # print(firstName)
     category = developmentinputdata['Category']
     worksheet_names = []
     if len(category) > 1:
@@ -70,63 +72,71 @@ def create_sales_forecast_file(data, developmentinputdata, pledges):
         t.join()
 
     # CREATE NSST SHEET
-    if len(category) > 1:
-        sheet_name = f"NSST {category[0].split(' ')[0]}"
+
+    # print(firstName)
+    if firstName == 'Wayne' or firstName == 'Wynand' or firstName == 'Nick' or firstName == 'Deric':
+        if len(category) > 1:
+            sheet_name = f"NSST {category[0].split(' ')[0]}"
+
+        else:
+            sheet_name = f"NSST {category[0]}"
+
+        worksheets = wb.sheetnames
+
+        # if len(worksheets) == 1:
+        index = 0
+
+        ws = wb.create_sheet(sheet_name)
+        # Make Tab Color of new Sheet 'Green'
+
+        ws.sheet_properties.tabColor = "539165"
+
+        # if len(worksheets) == 1:
+
+        nsst_data = create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name, worksheets)
+
+        for item in nsst_data:
+            ws.append(item)
+
+        if len(worksheets) == 3:
+            # filter pledges to only include the category[0]
+            new_pledges = [pledge for pledge in pledges if pledge['Category'] == category[0]
+                           and pledge['opportunity_code'] != 'Unallocated']
+            index = 1
+            sheet_name = f"NSST {category[0]}"
+            ws = wb.create_sheet(sheet_name)
+            # Make Tab Color of new Sheet 'Green'
+            ws.sheet_properties.tabColor = "539165"
+            nsst_data = create_nsst_sheet(category, developmentinputdata, new_pledges, index, sheet_name, worksheets)
+
+            for item in nsst_data:
+                ws.append(item)
+
+            if len(pledges):
+                new_pledges = [pledge for pledge in pledges if pledge['Category'] == category[1]
+                               and pledge['opportunity_code'] != 'Unallocated']
+            else:
+                new_pledges = []
+            index = 2
+            sheet_name = f"NSST {category[1]}"
+
+            ws = wb.create_sheet(sheet_name)
+            # Make Tab Color of new Sheet 'Green'
+            ws.sheet_properties.tabColor = "539165"
+            nsst_data = create_nsst_sheet(category, developmentinputdata, new_pledges, index, sheet_name, worksheets)
+
+            for item in nsst_data:
+                ws.append(item)
+
+        num_sheets = len(wb.sheetnames)
+
+        for index, sheet in enumerate(wb.worksheets):
+            format_nsst(num_sheets, index, sheet)
 
     else:
-        sheet_name = f"NSST {category[0]}"
-
-    worksheets = wb.sheetnames
-
-    # if len(worksheets) == 1:
-    index = 0
-
-    ws = wb.create_sheet(sheet_name)
-    # Make Tab Color of new Sheet 'Green'
-
-    ws.sheet_properties.tabColor = "539165"
-
-    # if len(worksheets) == 1:
-
-    nsst_data = create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name, worksheets)
-
-    for item in nsst_data:
-        ws.append(item)
-
-    if len(worksheets) == 3:
-        # filter pledges to only include the category[0]
-        new_pledges = [pledge for pledge in pledges if pledge['Category'] == category[0]
-                       and pledge['opportunity_code'] != 'Unallocated']
-        index = 1
-        sheet_name = f"NSST {category[0]}"
-        ws = wb.create_sheet(sheet_name)
-        # Make Tab Color of new Sheet 'Green'
-        ws.sheet_properties.tabColor = "539165"
-        nsst_data = create_nsst_sheet(category, developmentinputdata, new_pledges, index, sheet_name, worksheets)
-
-        for item in nsst_data:
-            ws.append(item)
-
-        if len(pledges):
-            new_pledges = [pledge for pledge in pledges if pledge['Category'] == category[1]
-                           and pledge['opportunity_code'] != 'Unallocated']
-        else:
-            new_pledges = []
-        index = 2
-        sheet_name = f"NSST {category[1]}"
-
-        ws = wb.create_sheet(sheet_name)
-        # Make Tab Color of new Sheet 'Green'
-        ws.sheet_properties.tabColor = "539165"
-        nsst_data = create_nsst_sheet(category, developmentinputdata, new_pledges, index, sheet_name, worksheets)
-
-        for item in nsst_data:
-            ws.append(item)
-
-    num_sheets = len(wb.sheetnames)
-
-    for index, sheet in enumerate(wb.worksheets):
-        format_nsst(num_sheets, index, sheet)
+        # loop through each sheet and delete all rows after row 40
+        for sheet in wb.worksheets:
+            sheet.delete_rows(40, 1000)
 
     # SAVE TO FILE
     wb.save(f"excel_files/{filename}.xlsx")
@@ -165,11 +175,13 @@ def create_investment_list(data, request):
     # loop through worksheet_data and append each item to the worksheet
     row2_data = ["Unit No", "Block", "Investor", "Capital Amount", "Fund Release Date", "Unit Sold Status",
                  "Occupation Date", "Estimated Transfer Date", "Actual Transfer Date", "Exit Deadline (712 Days)",
-                 "Current Report Date", "Time remaining (per LA)", "180 day Threshhold Warning", "Days to Exit", "exit_value"]
+                 "Current Report Date", "Time remaining (per LA)", "180 day Threshhold Warning", "Days to Exit",
+                 "exit_value"]
     worksheet_data.append(row2_data)
 
     for item in data:
-        row_data = [item['opportunity_code'], item['block'], item['investment_name'], float(item['investment_amount']), item['release_date'],
+        row_data = [item['opportunity_code'], item['block'], item['investment_name'], float(item['investment_amount']),
+                    item['release_date'],
                     item['opportunity_sold'], item['occupation_date'], item['estimated_transfer_date'],
                     item['final_transfer_date'], "", item['report_date'],
                     "", "", "", item['exit_value']]
@@ -182,13 +194,11 @@ def create_investment_list(data, request):
     for cell in ws['D']:
         cell.number_format = '#,##0.00'
 
-
     cols = ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
     # Make Column C 20 wide
     ws.column_dimensions['C'].width = 30
     for col in cols:
         ws.column_dimensions[col].width = 15
-
 
     # make columns D through N 15 wide
 
@@ -201,7 +211,6 @@ def create_investment_list(data, request):
                                  right=Side(border_style='thin', color='000000'),
                                  top=Side(border_style='thin', color='000000'),
                                  bottom=Side(border_style='thin', color='000000'))
-
 
         # make row 1 bold, center, fot size 14, text color white, background color blue
     for cell in ws[1]:
@@ -243,10 +252,6 @@ def create_investment_list(data, request):
     for cell in ws['N']:
         cell.number_format = '0'
 
-
-
-
-
     # in row2 set all cells to bold and wrap text
     for cell in ws[2]:
         cell.font = Font(bold=True)
@@ -256,12 +261,4 @@ def create_investment_list(data, request):
     for row in rows_for_full_merge:
         ws.merge_cells(f'A{row}:N{row}')
 
-
-
-
-
-
-
-
     wb.save(f"excel_files/{sheet_name}.xlsx")
-

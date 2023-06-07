@@ -45,7 +45,9 @@ def create_excel_array(data):
     row27_data = ["Contract End Date", "", "", "", "", ""]
     row28_data = ["Days to exit", "", "", "", "", ""]
     row29_data = ["Investment Account Interest Earned.", "", "", "", "", ""]
+    row30AA_data = ["Supplemented Interest (2.75%)", "", "", "", "", ""]
     row30_data = ["Released Interest Earned.", "", "", "", "", ""]
+
     row30A_data = ["Interest on funds to be raised", "", "", "", "", ""]
     row31_data = ["Total Interest Earned.", "", "", "", "", ""]
     row31A_data = ["Due to Investors.", "", "", "", "", ""]
@@ -123,7 +125,8 @@ def create_excel_array(data):
                 (datetime.strptime(item['deposit_date'], '%Y/%m/%d') + timedelta(days=730)).strftime('%Y/%m/%d'))
         else:
             row27_data.append("")
-        row29_data.append(item['trust_interest_total'])
+        row29_data.append(float(item['trust_interest_total']/100*(100-2.75)))
+        row30AA_data.append(float(item['trust_interest_total']/100*2.75))
         row30_data.append(item['released_interest_total'])
         row30A_data.append(float(item['interest_total_still_to_be_raised']))
         row33_data.append(float(item['raising_commission']) * float(item['investment_amount']))
@@ -142,7 +145,7 @@ def create_excel_array(data):
     worksheet_data += [row4_data, row5_data, row2_data, row2_data, row4_data, row5_data, [], row7_data, row8_data,
                        row9_data, [], row13_data, row14_data, row15_data, row16_data, row17_data, [], row19_data,
                        row20_data, row21_data, row22_data, row23_data, row24_data, row25_data, row25A_data, row26_data,
-                       row27_data, row28_data, row29_data, row30_data, row30A_data, row31_data, row31A_data, [],
+                       row27_data, row28_data, row29_data,row30AA_data, row30_data, row30A_data, row31_data, row31A_data, [],
                        row33_data, row34_data, row35_data, row36_data, [], row38_data, row39_data, row40_data,
                        row41_data, row42_data, row43_data, row44_data, row45_data, row46_data, row47_data, row48_data,
                        row49_data, row4A_data, row49A_data, row49A_data, row49A_data, row50_data, row51_data,

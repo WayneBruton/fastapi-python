@@ -37,145 +37,145 @@ def format_sales_forecast(sheet):
 
     # create a list of rows to add stuff to
     columns_to_add_text = ['A']
-    new_rows = [70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 82, 83, 85, 86]
+    new_rows = [71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 86, 87]
 
     for letter in columns_to_add_text:
         for row in new_rows:
-            if row == 70:
-                sheet[f'{letter}70'] = 'EXITED REPAYABLE ON TRANSFER'
-            elif row == 71:
-                sheet[f'{letter}71'] = ' EXIT ON TRANSFER'
+            if row == 71:
+                sheet[f'{letter}71'] = 'EXITED REPAYABLE ON TRANSFER'
             elif row == 72:
-                sheet[f'{letter}72'] = 'EXITED NOT SOLD'
+                sheet[f'{letter}72'] = ' EXIT ON TRANSFER'
             elif row == 73:
-                sheet[f'{letter}73'] = 'STILL TO EXIT NOT SOLD'
+                sheet[f'{letter}73'] = 'EXITED NOT SOLD'
             elif row == 74:
-                sheet[f'{letter}74'] = 'TOTAL TO EXIT'
+                sheet[f'{letter}74'] = 'STILL TO EXIT NOT SOLD'
             elif row == 75:
                 sheet[f'{letter}75'] = 'TOTAL TO EXIT'
             elif row == 76:
-                sheet[f'{letter}76'] = 'UNALLOCATED'
+                sheet[f'{letter}76'] = 'TOTAL TO EXIT'
             elif row == 77:
-                sheet[f'{letter}77'] = 'TOTAL TO STILL EXIT'
+                sheet[f'{letter}77'] = 'UNALLOCATED'
             elif row == 78:
-                sheet[f'{letter}78'] = 'Exit Repayments due'
+                sheet[f'{letter}78'] = 'TOTAL TO STILL EXIT'
             elif row == 79:
-                sheet[f'{letter}79'] = ''
+                sheet[f'{letter}79'] = 'Exit Repayments due'
             elif row == 80:
                 sheet[f'{letter}80'] = ''
-            elif row == 82:
-                sheet[f'{letter}82'] = 'EXITED REPAYABLE ON TRANSFER - Capital Only'
+            elif row == 81:
+                sheet[f'{letter}81'] = ''
             elif row == 83:
-                sheet[f'{letter}83'] = 'EXITED REPAYABLE ON TRANSFER - Interest Only'
-            elif row == 85:
-                sheet[f'{letter}85'] = 'EXIT NOT SOLD - Capital Only'
+                sheet[f'{letter}83'] = 'EXITED REPAYABLE ON TRANSFER - Capital Only'
+            elif row == 84:
+                sheet[f'{letter}84'] = 'EXITED REPAYABLE ON TRANSFER - Interest Only'
             elif row == 86:
-                sheet[f'{letter}86'] = 'EXIT NOT SOLD - Interest Only'
+                sheet[f'{letter}86'] = 'EXIT NOT SOLD - Capital Only'
+            elif row == 87:
+                sheet[f'{letter}87'] = 'EXIT NOT SOLD - Interest Only'
 
-    rows_to_add_formulas = [17, 23, 27, 29, 33, 34, 38, 39, 50, 51, 52, 54, 58, 59, 60, 61, 62, 63, 66, 67, 70, 71,
-                            72, 73, 74, 75, 76, 77, 78, 80, 82, 83, 85, 86]
+    rows_to_add_formulas = [17, 23, 27, 29, 34, 35, 39, 40, 51, 52, 53, 55, 59, 60, 61, 62, 63, 64, 67, 68, 71, 72,
+                            73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87]
 
     for letter in column_letters_7:
         for row in rows_to_add_formulas:
             if row == 17:
-                sheet[f'{letter}17'] = f'=SUM({letter}13-{letter}14)'
+                sheet[f'{letter}{row}'] = f'=SUM({letter}13-{letter}14)'
             elif row == 23:
-                sheet[f'{letter}23'] = f'=SUM({letter}22-{letter}21)'
+                sheet[f'{letter}{row}'] = f'=SUM({letter}22-{letter}21)'
             elif row == 27:
-                sheet[f'{letter}27'] = f'=SUM({letter}24+{letter}25+{letter}26)'
+                sheet[f'{letter}{row}'] = f'=SUM({letter}24+{letter}25+{letter}26)'
             elif row == 29:
-                sheet[f'{letter}29'] = f'=720-{letter}23'
-            elif row == 33:
-                sheet[f'{letter}33'] = f'=SUM({letter}30+{letter}31+{letter}32)'
+                sheet[f'{letter}{row}'] = f'=720-{letter}23'
             elif row == 34:
-                sheet[f'{letter}34'] = f'=SUM({letter}19+{letter}33)'
-            elif row == 38:
-                sheet[f'{letter}38'] = f'=SUM({letter}36+{letter}37)'
+                sheet[f'{letter}{row}'] = f'=SUM({letter}30+{letter}31+{letter}32+{letter}33)'
+            elif row == 35:
+                sheet[f'{letter}{row}'] = f'=SUM({letter}19+{letter}34)'
             elif row == 39:
-                sheet[f'{letter}39'] = f'=SUM({letter}19-{letter}38)'
-            elif row == 50:
-                sheet[f'{letter}50'] = f'={letter}41-SUM({letter}44:{letter}49)'
+                sheet[f'{letter}{row}'] = f'=SUM({letter}37+{letter}38)'
+            elif row == 40:
+                sheet[f'{letter}{row}'] = f'=SUM({letter}19-{letter}39)'
             elif row == 51:
-                sheet[f'{letter}51'] = f'=SUMIFS({column_letters_7[0]}34:' \
-                                       f'{column_letters_7[len(column_letters_7) - 1]}34,{column_letters_7[0]}4:' \
-                                       f'{column_letters_7[len(column_letters_7) - 1]}4, {letter}4)'
+                sheet[f'{letter}{row}'] = f'={letter}42-SUM({letter}45:{letter}50)'
             elif row == 52:
-                sheet[f'{letter}52'] = f'={letter}50-{letter}51'
-            elif row == 54:
+                sheet[f'{letter}{row}'] = f'=SUMIFS({column_letters_7[0]}35:' \
+                                       f'{column_letters_7[len(column_letters_7) - 1]}35,{column_letters_7[0]}4:' \
+                                       f'{column_letters_7[len(column_letters_7) - 1]}4, {letter}4)'
+            elif row == 53:
+                sheet[f'{letter}{row}'] = f'={letter}51-{letter}52'
+            elif row == 55:
                 # =IFERROR(+D51/D50,0)
-                sheet[f'{letter}54'] = f'=IFERROR({letter}51/{letter}50,0)'
-            elif row == 58:
-                sheet[f'{letter}58'] = f'=IF({letter}57=TRUE, {letter}22, "")'
+                sheet[f'{letter}{row}'] = f'=IFERROR({letter}52/{letter}51,0)'
             elif row == 59:
-                sheet[f'{letter}59'] = f'=IF({letter}57=TRUE, {letter}34, 0)'
+                sheet[f'{letter}{row}'] = f'=IF({letter}58=TRUE, {letter}22, "")'
             elif row == 60:
-                # =SUMIFS($G59:$KO59,$G4:$KO4, G4)
-                sheet[f'{letter}60'] = f'=SUMIFS($G59:' \
-                                       f'${column_letters_7[len(column_letters_7) - 1]}59,$G4:' \
-                                       f'${column_letters_7[len(column_letters_7) - 1]}4, {letter}4)'
+                sheet[f'{letter}{row}'] = f'=IF({letter}58=TRUE, {letter}35, 0)'
             elif row == 61:
-                sheet[f'{letter}61'] = f'=SUM({letter}50)'
+                # =SUMIFS($G59:$KO59,$G4:$KO4, G4)
+                sheet[f'{letter}{row}'] = f'=SUMIFS($G60:' \
+                                       f'${column_letters_7[len(column_letters_7) - 1]}60,$G4:' \
+                                       f'${column_letters_7[len(column_letters_7) - 1]}4, {letter}4)'
             elif row == 62:
-                sheet[f'{letter}62'] = f'=SUM({letter}51-{letter}60)'
+                sheet[f'{letter}{row}'] = f'=SUM({letter}51)'
             elif row == 63:
-                sheet[f'{letter}63'] = f'=SUM({letter}61-{letter}62)'
-            elif row == 66:
-                # =SUMIFS(G19: KO19, G57: KO57, TRUE)
-                sheet[f'B66'] = f'=SUMIFS(G19:' \
-                                f'{column_letters_7[len(column_letters_7) - 1]}19,G57:' \
-                                f'{column_letters_7[len(column_letters_7) - 1]}57, TRUE)'
+                sheet[f'{letter}{row}'] = f'=SUM({letter}52-{letter}61)'
+            elif row == 64:
+                sheet[f'{letter}{row}'] = f'=SUM({letter}62-{letter}63)'
             elif row == 67:
+                # =SUMIFS(G19: KO19, G57: KO57, TRUE)
+                sheet[f'B{row}'] = f'=SUMIFS(G19:' \
+                                f'{column_letters_7[len(column_letters_7) - 1]}19,G58:' \
+                                f'{column_letters_7[len(column_letters_7) - 1]}58, TRUE)'
+            elif row == 68:
                 # =SUMIFS(G33: KO33, G57: KO57, TRUE)
-                sheet[f'B67'] = f'=SUMIFS(G33:' \
-                                f'{column_letters_7[len(column_letters_7) - 1]}33,G57:' \
-                                f'{column_letters_7[len(column_letters_7) - 1]}57, TRUE)'
-            elif row == 70:
-                sheet[
-                    f'{letter}70'] = f'=IF({letter}$2 = TRUE, IF({letter}$3 = FALSE, IF({letter}$57 = TRUE, +{letter}$34, 0), 0), 0)'
+                sheet[f'B{row}'] = f'=SUMIFS(G34:' \
+                                f'{column_letters_7[len(column_letters_7) - 1]}34,G58:' \
+                                f'{column_letters_7[len(column_letters_7) - 1]}58, TRUE)'
             elif row == 71:
                 sheet[
-                    f'{letter}71'] = f'=IF({letter}$2=TRUE,IF({letter}$3=FALSE,IF({letter}$57=FALSE,+{letter}$34,0),0),0)'
+                    f'{letter}{row}'] = f'=IF({letter}$2 = TRUE, IF({letter}$3 = FALSE, IF({letter}$58 = TRUE, +{letter}$35, 0), 0), 0)'
             elif row == 72:
                 sheet[
-                    f'{letter}72'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$57=TRUE,+{letter}$34,0),0),0)'
+                    f'{letter}{row}'] = f'=IF({letter}$2=TRUE,IF({letter}$3=FALSE,IF({letter}$58=FALSE,+{letter}$35,0),0),0)'
             elif row == 73:
                 sheet[
-                    f'{letter}73'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$57=FALSE,+{letter}$34,0),0),0)'
+                    f'{letter}{row}'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$58=TRUE,+{letter}$35,0),0),0)'
             elif row == 74:
-                sheet[f'{letter}74'] = f'=SUM({letter}70:{letter}73)'
-            elif row == 75:
-                sheet[f'{letter}75'] = f'=IF({letter}3=FALSE,{letter}34,0)'
-            elif row == 76:
-                sheet[f'{letter}76'] = f'==IF({letter}2=FALSE,{letter}13-{letter}14,0)'
-            elif row == 77:
-                sheet[f'{letter}77'] = f'={letter}75-{letter}78'
-            elif row == 78:
-                sheet[f'{letter}78'] = f'=SUM({letter}70,{letter}72)'
-            elif row == 80:
-                sheet[f'{letter}80'] = f'={letter}75-{letter}74'
-            elif row == 82:
                 sheet[
-                    f'{letter}82'] = f'=IF({letter}$2 = TRUE, IF({letter}$3 = FALSE, IF({letter}$57 = TRUE, +{letter}$19, 0), 0), 0)'
+                    f'{letter}{row}'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$58=FALSE,+{letter}$35,0),0),0)'
+            elif row == 75:
+                sheet[f'{letter}{row}'] = f'=SUM({letter}71:{letter}74)'
+            elif row == 76:
+                sheet[f'{letter}{row}'] = f'=IF({letter}3=FALSE,{letter}35,0)'
+            elif row == 77:
+                sheet[f'{letter}{row}'] = f'==IF({letter}2=FALSE,{letter}13-{letter}14,0)'
+            elif row == 78:
+                sheet[f'{letter}{row}'] = f'={letter}76-{letter}79'
+            elif row == 79:
+                sheet[f'{letter}{row}'] = f'=SUM({letter}71,{letter}73)'
+            elif row == 81:
+                sheet[f'{letter}{row}'] = f'={letter}76-{letter}75'
             elif row == 83:
                 sheet[
-                    f'{letter}83'] = f'=IF({letter}$2 = TRUE, IF({letter}$3 = FALSE, IF({letter}$57 = TRUE, +{letter}$33, 0), 0), 0)'
-            elif row == 85:
+                    f'{letter}{row}'] = f'=IF({letter}$2 = TRUE, IF({letter}$3 = FALSE, IF({letter}$58 = TRUE, +{letter}$19, 0), 0), 0)'
+            elif row == 84:
                 sheet[
-                    f'{letter}85'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$57=TRUE,+{letter}$19,0),0),0)'
+                    f'{letter}{row}'] = f'=IF({letter}$2 = TRUE, IF({letter}$3 = FALSE, IF({letter}$58 = TRUE, +{letter}$34, 0), 0), 0)'
             elif row == 86:
+                sheet[
+                    f'{letter}{row}'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$58=TRUE,+{letter}$19,0),0),0)'
+            elif row == 87:
                 # =IF(G$2 = FALSE, IF(G$3 = FALSE, IF(G$57 = TRUE, +G$33, 0), 0), 0)
                 sheet[
-                    f'{letter}86'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$57=TRUE,+{letter}$33,0),0),0)'
+                    f'{letter}{row}'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$58=TRUE,+{letter}$34,0),0),0)'
 
     # format all rows with data except rows 1 to 11, 20 to 23, 28 and 29 as currency with 2 decimal places and
     # comma every 3 digits, bold and white font, and for row 11 as a percentage with 2 decimal places and comma
     # every 3 digits
-    for row in sheet.iter_rows(min_row=12, min_col=2, max_row=63, max_col=sheet.max_column):
+    for row in sheet.iter_rows(min_row=12, min_col=2, max_row=64, max_col=sheet.max_column):
         for cell in row:
             if cell.row == 11:
                 cell.font = Font(bold=True, color='FFFFFF')
                 cell.number_format = '0.00%'
-            if cell.row == 54:
+            if cell.row == 55:
                 cell.number_format = '0.00%'
             elif cell.row == 20 or cell.row == 21 or cell.row == 22 or cell.row == 23 or cell.row == 28 \
                     or cell.row == 29:
@@ -184,9 +184,9 @@ def format_sales_forecast(sheet):
                 cell.font = Font(bold=True, color='FFFFFF')
                 cell.number_format = 'R#,##0.00'
 
-    rows_to_center = [5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-                      32, 33, 34, 36, 37, 38, 39, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54, 58, 59, 60, 61,
-                      62, 63, 70, 71, 72, 73, 74, 75, 76, 77, 78, 80, 82, 83, 85, 86]
+    rows_to_center = [5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,31, 32,
+                      33, 34, 35, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 59, 60, 61, 62,
+                      63, 64, 71, 72, 73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87]
     # Loop through the rows_to_format_currency list and align the cells from column 6 to the last column in the
     # centre
     for row in rows_to_center:
@@ -197,9 +197,9 @@ def format_sales_forecast(sheet):
             col_number = 2
         # DARKER COLOR
 
-        if row in [9, 10, 23, 13, 19, 27, 29, 32, 33, 34, 38, 39, 43]:
+        if row in [9, 10, 23, 13, 19, 27, 29, 33, 34, 35, 39, 40, 44]:
             color_is = '3E54AC'
-        elif row in [52, 63]:
+        elif row in [53, 64]:
             color_is = 'E14D2A'
         else:
             color_is = '537FE7'
@@ -230,7 +230,7 @@ def format_sales_forecast(sheet):
                     else:
                         color_is = '3E54AC'
 
-                if row == 32:
+                if row == 33:
                     if cell.value != 0:
                         color_is = '00B7C2'
                     else:
@@ -251,22 +251,22 @@ def format_sales_forecast(sheet):
                                      top=Side(border_style='medium', color='000000'),
                                      bottom=Side(border_style='medium', color='000000'))
 
-    rows_to_hide = [2, 3, 4, 53, 57]
+    rows_to_hide = [2, 3, 4, 54, 58]
     # Loop through the rows_to_hide list and hide the rows
     for row in rows_to_hide:
         sheet.row_dimensions[row].hidden = True
 
-    true_false = [57]
+    true_false = [58]
 
     for row in true_false:
         for col in sheet.iter_cols(min_row=row, min_col=1, max_row=row, max_col=sheet.max_column):
             for cell in col:
                 # If the cell value in row 57 is True then set the color of the cell in row 58 to green
                 if cell.value:
-                    sheet[f'{get_column_letter(cell.column)}58'].fill = PatternFill(start_color='A555EC',
+                    sheet[f'{get_column_letter(cell.column)}59'].fill = PatternFill(start_color='A555EC',
                                                                                     end_color='A555EC',
                                                                                     fill_type='solid')
-                    sheet[f'{get_column_letter(cell.column)}59'].fill = PatternFill(start_color='A555EC',
+                    sheet[f'{get_column_letter(cell.column)}60'].fill = PatternFill(start_color='A555EC',
                                                                                     end_color='A555EC',
                                                                                     fill_type='solid')
                     sheet[f'{get_column_letter(cell.column)}22'].fill = PatternFill(start_color='A555EC',
@@ -280,9 +280,9 @@ def format_sales_forecast(sheet):
             cell.font = Font(bold=True)
 
     # ROWS TO SUM
-    rows_to_sum = [13, 14, 15, 16, 17, 19, 24, 25, 26, 27, 30, 31, 32, 33, 34, 36, 37, 38, 39, 41, 42, 43, 44, 45,
-                   46, 47, 48, 49, 50, 51, 52, 54, 59, 60, 61, 62, 63, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 82,
-                   83, 85, 86]
+    rows_to_sum = [13, 14, 15, 16, 17, 19, 24, 25, 26, 27, 30, 31, 32, 33, 34,35, 37, 38, 39, 42, 43, 44, 45, 46,
+                   47, 48, 49, 50, 51, 52, 53, 55, 60, 61, 62, 63, 64, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83,
+                   84, 86, 87]
     # for each row in rows_to_sum, sum the cells from column 6 to the last column in the sheet in insert the
     # formula in column 'B', with white font and bold and format the cell as currency with 2 decimal places and
     # comma every 3 digits
@@ -301,19 +301,19 @@ def format_sales_forecast(sheet):
             sheet[f'{column}{row}'].alignment = Alignment(horizontal='center')
 
             if column == 'D':
-                if row == 51:
+                if row == 52:
                     sheet[
-                        f'{column}{row}'] = f'=+D34'
-                elif row == 52:
+                        f'{column}{row}'] = f'=+D35'
+                elif row == 53:
                     sheet[
-                        f'{column}{row}'] = f'=+D50-D51'
-                elif row == 54:
+                        f'{column}{row}'] = f'=+D51-D52'
+                elif row == 55:
                     sheet[
-                        f'{column}{row}'] = f'=IFERROR(+D51/D50,0)'
+                        f'{column}{row}'] = f'=IFERROR(+D52/D51,0)'
                     sheet[f'{column}{row}'].number_format = '0.00%'
                     sheet[f'{column}{row}'].font = Font(bold=True, color='000000')
 
-                elif row >= 70:
+                elif row >= 71:
                     sheet[
                         f'{column}{row}'] = ""
 
@@ -324,20 +324,20 @@ def format_sales_forecast(sheet):
                                             f'TRUE)'
 
             if column == 'E':
-                if row == 51:
+                if row == 52:
                     sheet[
-                        f'{column}{row}'] = f'=+E34'
-                elif row == 52:
+                        f'{column}{row}'] = f'=+E35'
+                elif row == 53:
                     sheet[
-                        f'{column}{row}'] = f'=+E50-E51'
-                elif row == 54:
+                        f'{column}{row}'] = f'=+E51-E52'
+                elif row == 55:
                     # =IFERROR(+D51 / D50, 0)
                     sheet[
-                        f'{column}{row}'] = f'=IFERROR(+E51/E50,0)'
+                        f'{column}{row}'] = f'=IFERROR(+E52/E51,0)'
                     sheet[f'{column}{row}'].number_format = '0.00%'
                     sheet[f'{column}{row}'].font = Font(bold=True, color='000000')
 
-                elif row >= 70:
+                elif row >= 71:
                     sheet[
                         f'{column}{row}'] = ""
                 else:
@@ -349,7 +349,7 @@ def format_sales_forecast(sheet):
                                             f'TRUE)'
 
             if column == 'F':
-                if row >= 70:
+                if row >= 71:
                     sheet[
                         f'{column}{row}'] = ""
                 else:
@@ -373,7 +373,7 @@ def format_sales_forecast(sheet):
 
     # from column 7 to the last column in the sheet, if the value in the cell in row 2 is not equal to  0,
     # then the corresponding cell in row 19 must have a red fill and the font white
-    for col in sheet.iter_cols(min_row=53, min_col=7, max_row=53, max_col=sheet.max_column):
+    for col in sheet.iter_cols(min_row=54, min_col=7, max_row=54, max_col=sheet.max_column):
         for cell in col:
             if cell.value != 0:
                 for row in range(19, 20):
@@ -441,7 +441,7 @@ def format_sales_forecast(sheet):
     merge_end.append(merge_master[len(merge_master) - 1]['column'])
 
     # Create a dictionary to store the start and end columns for each row
-    rows_to_merge = [5, 6, 7, 13, 14, 15, 16, 17, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54, 60, 61, 62, 63]
+    rows_to_merge = [5, 6, 7, 13, 14, 15, 16, 17, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 61, 62, 63, 64]
     merge_dict = {}
 
     # Loop through the rows_to_merge list and populate merge_dict with start and end columns for each row

@@ -162,7 +162,9 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
     start = time.time()
     request = await data.json()
 
-    print("request", request)
+    # print("request", request['firstName'])
+
+    firstName = request['firstName']
 
     developments = request['Category']
 
@@ -197,12 +199,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                        investment['Category'] in request['Category']]
             investor['trust'] = [trust for trust in investor['trust'] if trust['Category'] in request['Category']]
 
-            # if investor['investor_acc_number'] == "ZVER02":
-            #     print("XXXXXXXX",investor['investments'])
-            #     print()
-            #     print()
-            #     print()
-            #     print()
+
             # CREATE INSERT DICT TO INSERT INTO RELEVANT LISTS
 
             if len(investor['pledges']):
@@ -477,8 +474,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 investment["planned_release_date"] = investment["release_date"]
                 # investment["planned_release_date"] = ""
 
-            # if investment["investor_acc_number"] == "ZVER02":
-            #     print(investment)
+
 
             if investment["investor_acc_number"] != "ZZUN01":
                 deposit_date = investment["deposit_date"].replace('-', '/')
@@ -588,8 +584,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
         for opportunity in opportunities_list:
 
-            # if opportunity['opportunity_code'] == 'HFA304':
-            #     print("opportunity", opportunity)
+
 
             opportunity['opportunity_end_date'] = opportunity['opportunity_end_date'].replace('/', '-')
             # opportunity['opportunity_end_date'] = opportunity['opportunity_end_date'].split(" ")[0]
@@ -607,10 +602,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     'opportunity_final_transfer_date'] > report_date:
                     opportunity['opportunity_transferred'] = False
 
-                # if opportunity['opportunity_code'] == 'HFA304':
-                #     print("Hello")
-                #     print("report_date", report_date)
-                #     print("opportunity", opportunity)
+
             # Filter final_investors_list where opportunity_code is equal to opportunity['opportunity_code']
             # using list comprehension
             filtered_investors = [investor for investor in final_investors_list if
@@ -646,12 +638,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                           }
 
                 final_investors_list.append(insert)
-        # print("Hello")
-        # print(sales_parameters_list)
-        # for item in sales_parameters_list:
-        #     print(item)
-        #     print()
-        # print(final_investors_list[0])
+
         for investment in final_investors_list:
             # filter sales_parameters_list where Development is equal to investment['Category'] using list comprehension
 
@@ -755,7 +742,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
                     opportunity_final_transfer_date = str(investor['opportunity_final_transfer_date']).split(" ")[0]
 
-                    print("opportunity_final_transfer_date: ", opportunity_final_transfer_date)
+
 
                     # opportunity_final_transfer_date = investor['opportunity_final_transfer_date'].replace("-", "/")
                     opportunity_final_transfer_date = datetime.strptime(opportunity_final_transfer_date, "%Y-%m-%d")
@@ -799,7 +786,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             if investor['early_release']:
                 investor['investment_end_date'] = investor['investment_end_date'].replace("-", "/")
 
-                # print(investor['investment_end_date']) if investor_end_date as datetime is after report_date as
+
                 # datetime then set investor['early_release'] to false
                 if datetime.strptime(investor['investment_end_date'], "%Y/%m/%d") >= report_date:
                     investor['early_release'] = False
@@ -810,10 +797,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
                 if investor['opportunity_transferred']:
                     investor['early_release'] = False
-                # print(investor['investor_acc_number'], investor['opportunity_code'], investor['investment_end_date'])
 
-            # if investor['investor_acc_number'] == "ZKRO01" and investor['opportunity_code'] == "HFA304":
-            #     print("ZKRO2", investor)
             for investor in final_investors_list:
                 if investor['investor_acc_number'] != "ZZUN01":
                     report_date = datetime.strptime(request['date'], "%Y/%m/%d")
@@ -857,7 +841,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     investor['released_interest_today'] = released_interest_today
                     investor['released_interest_total'] = released_interest_total
 
-        background_tasks.add_task(create_sales_forecast_file, final_investors_list, request, pledges)
+        background_tasks.add_task(create_sales_forecast_file, final_investors_list, request, pledges, firstName)
 
         end = time.time()
         print("Time Taken: ", end - start)
