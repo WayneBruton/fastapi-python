@@ -439,7 +439,7 @@ def format_sales_forecast(sheet):
                 merge_end.append(item['column'])
 
     merge_end.append(merge_master[len(merge_master) - 1]['column'])
-
+    # start_time = time.time()
     # Create a dictionary to store the start and end columns for each row
     rows_to_merge = [5, 6, 7, 13, 14, 15, 16, 17, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 61, 62, 63, 64]
     merge_dict = {}
@@ -463,6 +463,9 @@ def format_sales_forecast(sheet):
     for row, merge_cols in merge_dict.items():
         for start, end in merge_cols:
             sheet.merge_cells(start_row=row, start_column=start, end_row=row, end_column=end)
+
+    # end_time = time.time()
+    # print(f'Time taken to merge cells: {end_time - start_time}')
 
     # Merge cells in row 6 and 7 in column B
     cells_to_merge = [6]
