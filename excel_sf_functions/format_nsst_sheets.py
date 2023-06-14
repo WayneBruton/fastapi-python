@@ -3,38 +3,80 @@ from openpyxl.styles.borders import Border, Side
 from openpyxl.styles import Font, Alignment
 
 
-def format_nsst(num_sheets, index, sheet):
-    if num_sheets == 2:
-        sheet_index = [1]
+def format_nsst(num_sheets, index, sheet, list_to_filter):
+    if num_sheets == 3:
+        sheet_index = [2]
+
     else:
-        sheet_index = [3, 4, 5]
+        sheet_index = [4, 5, 6]
     if index in sheet_index:
+        # print("list_to_filter", len(list_to_filter))
+        if index == 2:
+            total = sum([x['with_interest'] for x in list_to_filter]) - sum([x['amount'] for x in list_to_filter])
+            # get total_sold like above but where 'sold' is True
+            total_sold = sum([x['with_interest'] for x in list_to_filter if x['sold']]) - sum(
+                [x['amount'] for x in list_to_filter if x['sold']])
+            # do the same for total_unsold
+            total_unsold = sum([x['with_interest'] for x in list_to_filter if not x['sold']]) - sum(
+                [x['amount'] for x in list_to_filter if not x['sold']])
+            # sheet[f'B54'] = f"='NSST Heron Fields'!B54"
+            print("total", total)
+        if index == 4:
+            total = sum([x['with_interest'] for x in list_to_filter]) - sum([x['amount'] for x in list_to_filter])
+            total_sold = sum([x['with_interest'] for x in list_to_filter if x['sold']]) - sum(
+                [x['amount'] for x in list_to_filter if x['sold']])
+            # do the same for total_unsold
+            total_unsold = sum([x['with_interest'] for x in list_to_filter if not x['sold']]) - sum(
+                [x['amount'] for x in list_to_filter if not x['sold']])
+            sheet[f'B54'] = f"='NSST Heron Fields'!B54 + 'NSST Heron View'!B54"
+            print("total", total)
+        if index == 5:
+            # filter out list_filter this whose unit do not begin with "HF"
+            list_to_filter = [x for x in list_to_filter if x['unit'][:2] == "HF"]
+            total = sum([x['with_interest'] for x in list_to_filter]) - sum([x['amount'] for x in list_to_filter])
+            total_sold = sum([x['with_interest'] for x in list_to_filter if x['sold']]) - sum(
+                [x['amount'] for x in list_to_filter if x['sold']])
+            # do the same for total_unsold
+            total_unsold = sum([x['with_interest'] for x in list_to_filter if not x['sold']]) - sum(
+                [x['amount'] for x in list_to_filter if not x['sold']])
+            print("total", total)
+        if index == 6:
+            # filter out list_filter this whose unit do not begin with "HF"
+            list_to_filter = [x for x in list_to_filter if x['unit'][:2] == "HV"]
+            total = sum([x['with_interest'] for x in list_to_filter]) - sum([x['amount'] for x in list_to_filter])
+            total_sold = sum([x['with_interest'] for x in list_to_filter if x['sold']]) - sum(
+                [x['amount'] for x in list_to_filter if x['sold']])
+            # do the same for total_unsold
+            total_unsold = sum([x['with_interest'] for x in list_to_filter if not x['sold']]) - sum(
+                [x['amount'] for x in list_to_filter if not x['sold']])
+            print("total", total)
 
         gross_income_column_names = ['B', 'C', 'D', 'E']
         # row 43, add row 35 and deduct rows 38 to 42 for the column names in gross_income_column_names
         for column in gross_income_column_names:
             sheet[f'{column}32'] = f'=SUM({column}23)-SUM({column}26:{column}31)'
             # sheet[f'D37'] = f'=B37'
-            sheet[f'B38'] = f'=SUM(B36)-SUM(C36)'
+            sheet[f'B38'] = f'=SUM(B36)-SUM(C36)-SUM(B37)'
             sheet[f'C38'] = f'=0'
             sheet[f'D38'] = f'=D36-D37'
             sheet[f'E38'] = f'=E36'
             sheet[f'D39'] = f'=B39/SUM(D22:E22)*D22'
             sheet[f'E39'] = f'=B39/SUM(D22:E22)*E22'
-            sheet[f'B40'] = f'=+D40+E40'
+            # sheet[f'B40'] = f'=+D40+E40'
             sheet[f'B44'] = f'=C43'
-            sheet[f'B49'] = f'=SUM(B43)-SUM(C43)'
+            # sheet[f'B49'] = f'=SUM(B43)-SUM(C43)'
+            sheet[f'B49'] = total
             sheet[f'C49'] = f''
-            sheet[f'D49'] = f'=D43'
-            sheet[f'E49'] = f'=E43-E46'
+            sheet[f'D49'] = total_sold
+            sheet[f'E49'] = total_unsold
             sheet[f'{column}52'] = f'=SUM({column}32)-SUM({column}35)-SUM({column}43)'
             sheet[f'D54'] = f'=B54*0.05'
             sheet[f'E54'] = f'=B54-D54'
             sheet[f'{column}55'] = f'=SUM({column}39)+SUM({column}40)'
             sheet[f'{column}56'] = f'=SUM({column}52)+SUM({column}53)+SUM({column}55)-SUM({column}54)'
 
-        if index == 3:
-            sheet[f'B54'] = f"='NSST Heron Fields'!B54 + 'NSST Heron View'!B54"
+        # if index == 4:
+        # sheet[f'B54'] = f"='NSST Heron Fields'!B54 + 'NSST Heron View'!B54"
 
         # make column 1 30 units wide and columns 2 to 5 15 units wide
         sheet.column_dimensions['A'].width = 55

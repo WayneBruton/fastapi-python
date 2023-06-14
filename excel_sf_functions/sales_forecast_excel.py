@@ -16,7 +16,7 @@ import time
 import threading
 
 
-def create_sales_forecast_file(data, developmentinputdata, pledges, firstName):
+def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, listData, request):
     start_time = time.time()
     # print(firstName)
     category = developmentinputdata['Category']
@@ -71,6 +71,196 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName):
     for t in threads:
         t.join()
 
+    ##################################
+
+    worksheet_data = []
+
+    report_array = request['Category']
+    if len(report_array) > 1:
+        sheet_name = f"Investor Exit List Heron"
+    else:
+        sheet_name = f"Investor Exit List {report_array[0]}"
+
+    ws = wb.create_sheet(sheet_name)
+
+    # ws = wb.active
+    ws.title = sheet_name
+
+    # make tab color dark red
+    ws.sheet_properties.tabColor = "B31312"
+
+    row1_data = [f"{sheet_name} - {request['date']}"]
+
+    # insert row1_data into the beginning of worksheet_data
+    worksheet_data.append(row1_data)
+    # loop through worksheet_data and append each item to the worksheet
+    row2_data = ["Total Units", "Unit No", "Block", "Investor", "Capital Amount", "Fund Release Date",
+                 "Unit Sold Status",
+                 "Occupation Date", "Estimated Transfer Date", "Actual Transfer Date", "Exit Deadline (712 Days)",
+                 "Current Report Date", "Days to Contact Exit", "180 day Threshhold Warning",
+                 "Days to Estimated Exit",
+                 "Investor Contract expiry exit", "Capital & Interest to be Exited", "Investor Exit Value On Sales",
+                 "Exited by Developer",
+                 "Date of Exit"]
+    worksheet_data.append(row2_data)
+    row3_data = ["", "", "", "Investor Capital Deployed", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+                 "",
+                 ""]
+    worksheet_data.append(row3_data)
+
+    for item in listData:
+        row_data = [item['investor_acc_number'], item['opportunity_code'], item['block'], item['investment_name'],
+                    float(item['investment_amount']),
+                    item['release_date'],
+                    item['opportunity_sold'], item['occupation_date'], item['estimated_transfer_date'],
+                    item['final_transfer_date'], "", item['report_date'],
+                    item['days_to_exit_deadline'], "", "", item['investment_interest'], item['investment_interest'],
+                    0, item['exited_by_developer'], item['date_of_exit']]
+        worksheet_data.append(row_data)
+
+    for item in worksheet_data:
+        ws.append(item)
+
+    # Format column D to currency
+    for cell in ws['E']:
+        cell.number_format = '#,##0.00'
+    for cell in ws['P']:
+        cell.number_format = '#,##0.00'
+    for cell in ws['Q']:
+        cell.number_format = '#,##0.00'
+    for cell in ws['R']:
+        cell.number_format = '#,##0.00'
+    for cell in ws['S']:
+        cell.number_format = '#,##0.00'
+
+    cols = ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T']
+    # Make Column C 20 wide
+    ws.column_dimensions['C'].width = 10
+    ws.column_dimensions['D'].width = 30
+    for col in cols:
+        ws.column_dimensions[col].width = 15
+
+    # make columns D through N 15 wide
+
+    for col in ws.iter_cols(min_col=1, max_col=20):
+        for cell in col:
+            cell.alignment = Alignment(horizontal='center')
+
+            cell.font = Font(size=10)
+            cell.border = Border(left=Side(border_style='thin', color='000000'),
+                                 right=Side(border_style='thin', color='000000'),
+                                 top=Side(border_style='thin', color='000000'),
+                                 bottom=Side(border_style='thin', color='000000'))
+
+        # make row 1 bold, center, fot size 14, text color white, background color blue
+    for cell in ws[1]:
+        cell.font = Font(bold=True, size=14, color='FFFFFF')
+        cell.alignment = Alignment(horizontal='center')
+        cell.fill = PatternFill(start_color='1072BA', end_color='1072BA', fill_type='solid')
+
+    # make row 2 bold, center, font size 12, text color black, background color light grey
+    for cell in ws[2]:
+        cell.font = Font(bold=True, size=12, color='000000')
+        cell.alignment = Alignment(horizontal='center')
+        cell.fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
+
+    # for all rows after row 2, if the value in column F is True, make the row background color light green
+    for row in ws.iter_rows(min_row=4):
+        if row[6].value == True:
+            for cell in row:
+                cell.fill = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
+
+    # for all rows after row 2, if the value in column J has a value, make the row background color light red and
+    # hide the row
+    for row in ws.iter_rows(min_row=4):
+        if row[9].value != "":
+            for cell in row:
+                cell.fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
+            ws.row_dimensions[row[0].row].hidden = True
+
+    # loop through cells in column M from row 4 to the end of the worksheet, if the value is <= 90, make the cell
+    # background color light red
+
+    # for all rows after 2, set a formula in column j to equal to column E + (365 * 2)
+    for row in ws.iter_rows(min_row=4):
+        row[10].value = f'=F{row[0].row}+730'
+    # format column J as date YYYY-MM-DD
+    for cell in ws['K']:
+        cell.number_format = 'YYYY-MM-DD'
+
+    # if cells after row 4 in column 'M' are <= 90, make the cell in colmn 'M' have a background color light red
+    for row in ws.iter_rows(min_row=4):
+        if row[12].value <= 90:
+            row[12].fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
+            if row[18].value != 0:
+                row[4].value = 0
+
+        else:
+            row[15].value = 0
+
+    # set a formula in colmn L to equal to J - K formatted as a date YYYY-MM-DD
+    for row in ws.iter_rows(min_row=4):
+        row[12].value = f'=IF(J{row[0].row}="",K{row[0].row}-L{row[0].row},0)'
+        # row[17].value = row[6].value
+        if row[6].value == True:
+            row[17].value = row[16].value
+        else:
+            row[17].value = 0
+
+    # format column L as integer
+    for cell in ws['M']:
+        cell.number_format = '0'
+
+    # in column N, if column I is not blank, set the value to I - K formatted as integer, else set the value to H - K
+    # formatted as integer
+    for row in ws.iter_rows(min_row=4):
+        row[14].value = f'=IF(J{row[0].row}="",I{row[0].row}-L{row[0].row},J{row[0].row}-L{row[0].row})'
+    for row in ws.iter_rows(min_row=3, max_row=3):
+        row[0].value = listData[0]['count_of_units']
+        row[1].value = f'=COUNTIF(B4:B{ws.max_row}, "<>")'
+        row[4].value = f'=SUMIFS(E4:E{ws.max_row}, J4:J{ws.max_row}, "")'
+        row[15].value = f'=SUM(P4:P{ws.max_row})'
+        row[16].value = f'=SUM(Q4:Q{ws.max_row})'
+        row[17].value = f'=SUM(R4:R{ws.max_row})'
+        row[18].value = f'=SUM(S4:S{ws.max_row})'
+
+    # put the contents of column B, column E and column J into a new list of dictionaries
+    list_to_filter = []
+    for row in ws.iter_rows(min_row=4):
+        list_to_filter.append(
+            {'unit': row[1].value, 'amount': row[4].value, 'date': row[9].value, 'with_interest': row[16].value, 'sold': row[6].value})
+        # filter out of list_to_filter where the value of 'date' is equal to ""
+        list_to_filter = list(filter(lambda x: x['date'] == "", list_to_filter))
+
+    # total = sum([x['with_interest'] for x in list_to_filter]) - sum([x['amount'] for x in list_to_filter])
+    # print("total", total)
+
+    # make row 3 bold, center, font size 12, text color white, background color red
+    for cell in ws[3]:
+        cell.font = Font(bold=True, size=12, color='FFFFFF')
+        cell.alignment = Alignment(horizontal='center')
+        cell.fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type='solid')
+
+    for cell in ws['O']:
+        cell.number_format = '0'
+
+    # Hide columns N & O
+    cols_to_hide = ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'N', 'T']
+    for col in cols_to_hide:
+        ws.column_dimensions[col].hidden = True
+    # ws.column_dimensions['N'].hidden = True
+    # ws.column_dimensions['O'].hidden = True
+
+    # in row2 set all cells to bold and wrap text
+    for cell in ws[2]:
+        cell.font = Font(bold=True)
+        cell.alignment = Alignment(wrap_text=True)
+
+    rows_for_full_merge = [1]
+    for row in rows_for_full_merge:
+        ws.merge_cells(f'A{row}:N{row}')
+    ##################################
+
     # CREATE NSST SHEET
 
     # print(firstName)
@@ -83,6 +273,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName):
             sheet_name = f"NSST {category[0]}"
 
         worksheets = wb.sheetnames
+        print(worksheets)
 
         # if len(worksheets) == 1:
         index = 0
@@ -99,7 +290,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName):
         for item in nsst_data:
             ws.append(item)
 
-        if len(worksheets) == 3:
+        if len(worksheets) == 4:
             # filter pledges to only include the category[0]
             new_pledges = [pledge for pledge in pledges if pledge['Category'] == category[0]
                            and pledge['opportunity_code'] != 'Unallocated']
@@ -132,7 +323,8 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName):
         num_sheets = len(wb.sheetnames)
 
         for index, sheet in enumerate(wb.worksheets):
-            format_nsst(num_sheets, index, sheet)
+            # print("index", index, "sheet", sheet)
+            format_nsst(num_sheets, index, sheet, list_to_filter)
 
     else:
         # loop through each sheet and delete all rows after row 40
@@ -157,13 +349,11 @@ def create_investment_list(data, request):
 
     worksheet_data = []
 
-    print(data)
-
     report_array = request['Category']
     if len(report_array) > 1:
-        sheet_name = f"Investment List Heron"
+        sheet_name = f"Investor Exit List Heron"
     else:
-        sheet_name = f"Investment List {report_array[0]}"
+        sheet_name = f"Investor Exit List {report_array[0]}"
 
     ws = wb.active
     ws.title = sheet_name
@@ -174,36 +364,54 @@ def create_investment_list(data, request):
     # insert row1_data into the beginning of worksheet_data
     worksheet_data.append(row1_data)
     # loop through worksheet_data and append each item to the worksheet
-    row2_data = ["Unit No", "Block", "Investor", "Capital Amount", "Fund Release Date", "Unit Sold Status",
+    row2_data = ["Total Units", "Unit No", "Block", "Investor", "Capital Amount", "Fund Release Date",
+                 "Unit Sold Status",
                  "Occupation Date", "Estimated Transfer Date", "Actual Transfer Date", "Exit Deadline (712 Days)",
-                 "Current Report Date", "Time remaining (per LA)", "180 day Threshhold Warning", "Days to Exit",
-                 "exit_value"]
+                 "Current Report Date", "Days to Contact Exit", "180 day Threshhold Warning",
+                 "Days to Estimated Exit",
+                 "Investor Contract expiry exit", "Capital & Interest to be Exited", "Investor Exit Value On Sales",
+                 "Exited by Developer",
+                 "Date of Exit"]
     worksheet_data.append(row2_data)
+    row3_data = ["", "", "", "Investor Capital Deployed", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+                 ""]
+    worksheet_data.append(row3_data)
 
     for item in data:
-        row_data = [item['opportunity_code'], item['block'], item['investment_name'], float(item['investment_amount']),
+        row_data = [item['investor_acc_number'], item['opportunity_code'], item['block'], item['investment_name'],
+                    float(item['investment_amount']),
                     item['release_date'],
                     item['opportunity_sold'], item['occupation_date'], item['estimated_transfer_date'],
                     item['final_transfer_date'], "", item['report_date'],
-                    "", "", "", item['exit_value']]
+                    item['days_to_exit_deadline'], "", "", item['investment_interest'], item['investment_interest'],
+                    0, item['exited_by_developer'], item['date_of_exit']]
         worksheet_data.append(row_data)
 
     for item in worksheet_data:
         ws.append(item)
 
     # Format column D to currency
-    for cell in ws['D']:
+    for cell in ws['E']:
+        cell.number_format = '#,##0.00'
+    for cell in ws['P']:
+        cell.number_format = '#,##0.00'
+    for cell in ws['Q']:
+        cell.number_format = '#,##0.00'
+    for cell in ws['R']:
+        cell.number_format = '#,##0.00'
+    for cell in ws['S']:
         cell.number_format = '#,##0.00'
 
-    cols = ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
+    cols = ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T']
     # Make Column C 20 wide
-    ws.column_dimensions['C'].width = 30
+    ws.column_dimensions['C'].width = 10
+    ws.column_dimensions['D'].width = 30
     for col in cols:
         ws.column_dimensions[col].width = 15
 
     # make columns D through N 15 wide
 
-    for col in ws.iter_cols(min_col=1, max_col=14):
+    for col in ws.iter_cols(min_col=1, max_col=20):
         for cell in col:
             cell.alignment = Alignment(horizontal='center')
 
@@ -226,32 +434,77 @@ def create_investment_list(data, request):
         cell.fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
 
     # for all rows after row 2, if the value in column F is True, make the row background color light green
-    for row in ws.iter_rows(min_row=3):
-        if row[5].value == True:
+    for row in ws.iter_rows(min_row=4):
+        if row[6].value == True:
             for cell in row:
                 cell.fill = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
 
+    # for all rows after row 2, if the value in column J has a value, make the row background color light red and
+    # hide the row
+    for row in ws.iter_rows(min_row=4):
+        if row[9].value != "":
+            for cell in row:
+                cell.fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
+            ws.row_dimensions[row[0].row].hidden = True
+
+    # loop through cells in column M from row 4 to the end of the worksheet, if the value is <= 90, make the cell
+    # background color light red
+
     # for all rows after 2, set a formula in column j to equal to column E + (365 * 2)
-    for row in ws.iter_rows(min_row=3):
-        row[9].value = f'=E{row[0].row}+730'
+    for row in ws.iter_rows(min_row=4):
+        row[10].value = f'=F{row[0].row}+730'
     # format column J as date YYYY-MM-DD
-    for cell in ws['J']:
+    for cell in ws['K']:
         cell.number_format = 'YYYY-MM-DD'
 
+    # if cells after row 4 in column 'M' are <= 90, make the cell in colmn 'M' have a background color light red
+    for row in ws.iter_rows(min_row=4):
+        if row[12].value <= 90:
+            row[12].fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
+            if row[18].value != 0:
+                row[4].value = 0
+
+        else:
+            row[15].value = 0
+
     # set a formula in colmn L to equal to J - K formatted as a date YYYY-MM-DD
-    for row in ws.iter_rows(min_row=3):
-        row[11].value = f'=J{row[0].row}-K{row[0].row}'
+    for row in ws.iter_rows(min_row=4):
+        row[12].value = f'=IF(J{row[0].row}="",K{row[0].row}-L{row[0].row},0)'
+        # row[17].value = row[6].value
+        if row[6].value == True:
+            row[17].value = row[16].value
+        else:
+            row[17].value = 0
+
     # format column L as integer
-    for cell in ws['L']:
+    for cell in ws['M']:
         cell.number_format = '0'
 
     # in column N, if column I is not blank, set the value to I - K formatted as integer, else set the value to H - K
     # formatted as integer
-    for row in ws.iter_rows(min_row=3):
-        row[13].value = f'=IF(I{row[0].row}="",H{row[0].row}-K{row[0].row},I{row[0].row}-K{row[0].row})'
-    # format column N as integer
-    for cell in ws['N']:
+    for row in ws.iter_rows(min_row=4):
+        row[14].value = f'=IF(J{row[0].row}="",I{row[0].row}-L{row[0].row},J{row[0].row}-L{row[0].row})'
+    for row in ws.iter_rows(min_row=3, max_row=3):
+        row[0].value = data[0]['count_of_units']
+        row[1].value = f'=COUNTIF(B4:B{ws.max_row}, "<>")'
+        row[4].value = f'=SUMIFS(E4:E{ws.max_row}, J4:J{ws.max_row}, "")'
+        row[15].value = f'=SUM(P4:P{ws.max_row})'
+        row[16].value = f'=SUM(Q4:Q{ws.max_row})'
+        row[17].value = f'=SUM(R4:R{ws.max_row})'
+        row[18].value = f'=SUM(S4:S{ws.max_row})'
+
+    # make row 3 bold, center, font size 12, text color white, background color red
+    for cell in ws[3]:
+        cell.font = Font(bold=True, size=12, color='FFFFFF')
+        cell.alignment = Alignment(horizontal='center')
+        cell.fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type='solid')
+
+    for cell in ws['O']:
         cell.number_format = '0'
+
+    # Hide columns N & O
+    ws.column_dimensions['N'].hidden = True
+    ws.column_dimensions['O'].hidden = True
 
     # in row2 set all cells to bold and wrap text
     for cell in ws[2]:

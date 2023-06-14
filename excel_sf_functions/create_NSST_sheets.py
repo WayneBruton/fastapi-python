@@ -28,7 +28,7 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append([])
     nsst_data.append(["CAPITAL"])
     nsst_data.append(["Total Investment capital to be raised (Estimated)", f'=+\'{worksheets[index]}\'!B13'])
-    nsst_data.append(["Available to be raised (Estimated)", f'=+B41'])
+    nsst_data.append(["Available to be raised (Estimated)", f'=+B40'])
     nsst_data.append(["Total Investment capital received", f'=+\'{worksheets[index]}\'!B14'])
     nsst_data.append(["Total Funds Drawn Down into Development", f'=+\'{worksheets[index]}\'!B15'])
     nsst_data.append(["Pledges Due", total_pledges])
@@ -82,7 +82,7 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append(["Developer Capital - Early Investor Exit", f'=+\'{worksheets[index]}\'!B67', 0,
                       f'=+\'{worksheets[index]}\'!B86', f'=+\'{worksheets[index]}\'!B83'])
 
-    nsst_data.append(["Current Capital deployed", 0, 0, 0, 0])
+    nsst_data.append(["Current Investor Capital deployed", 0, 0, 0, 0])
     nsst_data.append(
         ["Capital Available for deployment", f'=+\'{worksheets[index]}\'!B16', f'=+\'{worksheets[index]}\'!D16',
          f'=+\'{worksheets[index]}\'!E16', f'=+\'{worksheets[index]}\'!F16'])
@@ -95,7 +95,7 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
                       f'=+\'{worksheets[index]}\'!E34', f'=+\'{worksheets[index]}\'!F34'])
     nsst_data.append(["Interest on Capital Repaid", 0, f'=+\'{worksheets[index]}\'!D34',
                       0, 0])
-    nsst_data.append(["Interest on Capital Drawn to estimated Exit date", f'=+\'{worksheets[index]}\'!B32',
+    nsst_data.append(["Total Interest on Total Capital Drawn to estimated Exit date", f'=+\'{worksheets[index]}\'!B32',
                       f'=+\'{worksheets[index]}\'!D32',
                       f'=+\'{worksheets[index]}\'!E32', f'=+\'{worksheets[index]}\'!F32'])
 
@@ -110,7 +110,7 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
         ["Interest on Capital to be raised", f'=+\'{worksheets[index]}\'!B33', f'=+\'{worksheets[index]}\'!D33',
          f'=+\'{worksheets[index]}\'!E33', f'=+\'{worksheets[index]}\'!F33'])
     nsst_data.append(
-        ["Interest due to estimated exit dates", 0, 0, f'=+\'{worksheets[index]}\'!E34',
+        ["Interest due on deployed capital exit dates", 0, 0, f'=+\'{worksheets[index]}\'!E34',
          f'=+\'{worksheets[index]}\'!F34-\'{worksheets[index]}\'!F47'])
     nsst_data.append([])
     nsst_data.append(["PROJECTED GROSS PROFIT"])
