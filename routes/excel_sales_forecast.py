@@ -734,6 +734,12 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                 not (investor['investor_acc_number'] == "ZJHO01" and investor[
                                     'opportunity_code'] == "HFA304" and investor['investment_number'] == 1)]
 
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZPJB01" and investor[
+                                    'opportunity_code'] == "HFA205" and investor['investment_number'] == 1)]
+
+
+
         # get unallocated_investments from mongo db where the request['Category'] is in the Category in the DB
         unallocated_investments_list = list(db.unallocated_investments.find(
             {"Category": {"$in": request['Category']}}))
@@ -1004,6 +1010,10 @@ def investment_status(request):
         final_investors_list = [investment for investment in final_investors_list if
                                 not (investment['investor_acc_number'] == "ZJHO01" and investment[
                                     'investment_number'] == 1)]
+
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZPJB01" and investor[
+                                    'opportunity_code'] == "HFA205" and investor['investment_number'] == 1)]
 
         # print(final_investors_list)
         for investment in final_investors_list:
