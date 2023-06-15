@@ -69,11 +69,12 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
             sheet[f'C49'] = f''
             sheet[f'D49'] = total_sold
             sheet[f'E49'] = total_unsold
-            sheet[f'{column}52'] = f'=SUM({column}32)-SUM({column}35)-SUM({column}43)'
-            sheet[f'D54'] = f'=B54*0.05'
-            sheet[f'E54'] = f'=B54-D54'
-            sheet[f'{column}55'] = f'=SUM({column}39)+SUM({column}40)'
-            sheet[f'{column}56'] = f'=SUM({column}52)+SUM({column}53)+SUM({column}55)-SUM({column}54)'
+            sheet[f'{column}53'] = f'=SUM({column}32)-SUM({column}35)-SUM({column}43)'
+            sheet[f'B54'] = f'=SUM(B50)'
+            sheet[f'D55'] = f'=B55*0.05'
+            sheet[f'E55'] = f'=B55-D55'
+            sheet[f'{column}56'] = f'=SUM({column}39)+SUM({column}40)'
+            sheet[f'{column}57'] = f'=SUM({column}53)+SUM({column}54)+SUM({column}56)-SUM({column}55)'
 
         # if index == 4:
         # sheet[f'B54'] = f"='NSST Heron Fields'!B54 + 'NSST Heron View'!B54"
@@ -84,19 +85,19 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
             sheet.column_dimensions[column].width = 18
 
         rows_to_format_as_currency = [8, 9, 10, 11, 12, 13, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 35, 36, 37,
-                                      38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56]
+                                      38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57]
         # Format the rows in rows_to_format_as_currency as currency from column B to F
         for row in rows_to_format_as_currency:
             for column in gross_income_column_names:
                 sheet[f'{column}{row}'].number_format = 'R#,##0.00'
 
         # Center all the text from column B to F
-        for row in sheet.iter_rows(min_row=1, min_col=2, max_row=56, max_col=6):
+        for row in sheet.iter_rows(min_row=1, min_col=2, max_row=57, max_col=6):
             for cell in row:
                 cell.alignment = Alignment(horizontal='center', vertical='center')
 
         # make all the cells with values as bold
-        for row in sheet.iter_rows(min_row=1, min_col=1, max_row=56, max_col=6):
+        for row in sheet.iter_rows(min_row=1, min_col=1, max_row=57, max_col=6):
             for cell in row:
                 if cell.value is not None:
                     cell.font = Font(bold=True)
@@ -108,11 +109,11 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
                     cell.alignment = Alignment(horizontal='center')
 
         # align the cells in column A to the left
-        for row in sheet.iter_rows(min_row=1, min_col=1, max_row=56, max_col=1):
+        for row in sheet.iter_rows(min_row=1, min_col=1, max_row=57, max_col=1):
             for cell in row:
                 cell.alignment = Alignment(horizontal='left')
 
-        rows_for_full_merge = [1, 2, 3, 6, 7, 14, 15, 19, 20, 33, 34, 41, 42, 50, 51]
+        rows_for_full_merge = [1, 2, 3, 6, 7, 14, 15, 19, 20, 33, 34, 41, 42, 52]
         # merge the cells in rows_for_full_merge from column A to E
         for row in rows_for_full_merge:
             sheet.merge_cells(f'A{row}:E{row}')
@@ -130,16 +131,16 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
 
         # make rows 2,3, 6,14, 19 and 31 only 5 unit high
 
-        for row in [2, 3, 6, 14, 19, 33, 41, 50]:
+        for row in [2, 3, 6, 14, 19, 33, 41, 51]:
             sheet.row_dimensions[row].height = 1
 
         # make all rows except rows 2,3, 6,14, 19 and 31 15 unit high
-        for row in range(1, 57):
-            if row not in [2, 3, 6, 14, 19, 33, 41, 50]:
+        for row in range(1, 58):
+            if row not in [2, 3, 6, 14, 19, 33, 41, 51]:
                 sheet.row_dimensions[row].height = 20
 
         # rows to fill with a grey color from column A to E
-        rows_to_fill_with_grey = [35, 43, 52]
+        rows_to_fill_with_grey = [35, 43, 53]
         for row in rows_to_fill_with_grey:
             for column in ['A', 'B', 'C', 'D', 'E']:
                 sheet[f'{column}{row}'].fill = PatternFill(start_color='D3D3D3', end_color='D3D3D3',
@@ -149,15 +150,15 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
         sheet['A1'].font = Font(bold=True, color='FFFFFF', size=20)
         sheet.row_dimensions[1].height = 30
         # Make cells A7, A15, A20, A34, A41 25 units high and increase the font size to 15
-        for row in [7, 15, 20, 34, 42, 51]:
+        for row in [7, 15, 20, 34, 42, 52]:
             sheet.row_dimensions[row].height = 25
             # sheet[f'A{row}'].font = Font(size=15)
             # make them bold and white
             sheet[f'A{row}'].font = Font(bold=True, color='FFFFFF', size=18)
 
         # For all other rows make the font size 12
-        for row in range(1, 57):
-            if row not in [1, 7, 15, 20, 34, 42, 51]:
+        for row in range(1, 58):
+            if row not in [1, 7, 15, 20, 34, 42, 52]:
                 sheet[f'A{row}'].font = Font(size=12)
 
         # hide row 43

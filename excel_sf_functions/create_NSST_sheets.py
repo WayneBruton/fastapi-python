@@ -112,6 +112,9 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append(
         ["Interest due on deployed capital exit dates", 0, 0, f'=+\'{worksheets[index]}\'!E34',
          f'=+\'{worksheets[index]}\'!F34-\'{worksheets[index]}\'!F47'])
+    nsst_data.append(
+        ["Developer Interest earned from Investment Account", f'=+\'{worksheets[index]}\'!B30', f'=+\'{worksheets[index]}\'!D30', f'=+\'{worksheets[index]}\'!E30',
+         f'=+\'{worksheets[index]}\'!F30'])
     nsst_data.append([])
     nsst_data.append(["PROJECTED GROSS PROFIT"])
     nsst_data.append(["Income after repayment of Capital & Interest", 0, 0, 0, 0])

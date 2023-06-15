@@ -125,7 +125,7 @@ def create_excel_array(data):
                 (datetime.strptime(item['deposit_date'], '%Y/%m/%d') + timedelta(days=730)).strftime('%Y/%m/%d'))
         else:
             row27_data.append("")
-        row29_data.append(float(item['trust_interest_total']/100*(100-2.75)))
+        row29_data.append(float(item['trust_interest_total']))
         row30AA_data.append(float(item['trust_interest_total']/100*2.75))
         row30_data.append(item['released_interest_total'])
         row30A_data.append(float(item['interest_total_still_to_be_raised']))

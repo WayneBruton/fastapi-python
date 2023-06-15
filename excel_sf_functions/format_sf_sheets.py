@@ -72,7 +72,7 @@ def format_sales_forecast(sheet):
             elif row == 87:
                 sheet[f'{letter}87'] = 'EXIT NOT SOLD - Interest Only'
 
-    rows_to_add_formulas = [17, 23, 27, 29, 34, 35, 39, 40, 51, 52, 53, 55, 59, 60, 61, 62, 63, 64, 67, 68, 71, 72,
+    rows_to_add_formulas = [17, 23, 27, 29,31, 34, 35, 39, 40, 51, 52, 53, 55, 59, 60, 61, 62, 63, 64, 67, 68, 71, 72,
                             73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87]
 
     for letter in column_letters_7:
@@ -85,6 +85,9 @@ def format_sales_forecast(sheet):
                 sheet[f'{letter}{row}'] = f'=SUM({letter}24+{letter}25+{letter}26)'
             elif row == 29:
                 sheet[f'{letter}{row}'] = f'=720-{letter}23'
+            elif row == 31:
+                # =IF(G19 <> 0, G19 * 0.0275 / 365 * (G21 - G20), 0)
+                sheet[f'{letter}{row}'] = f'=IF({letter}19<>0,{letter}19*0.0275/365*({letter}21-{letter}20),0)'
             elif row == 34:
                 sheet[f'{letter}{row}'] = f'=SUM({letter}30+{letter}31+{letter}32+{letter}33)'
             elif row == 35:

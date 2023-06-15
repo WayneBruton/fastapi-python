@@ -506,7 +506,14 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 # in investment["deposit_date"] replace '-' with '/'
                 investment["deposit_date"] = investment["deposit_date"].replace('-', '/')
 
-                investment["planned_release_date"] = str(datetime.strptime(investment["deposit_date"],
+                # planned_release_date exists in investment then investment["planned_release_date"] = deposit_date + 30 days
+                # else investment["planned_release_date"] = ""
+                if "planned_release_date" in investment and investment["planned_release_date"] != "":
+                    investment["planned_release_date"] = str(datetime.strptime(investment["planned_release_date"],
+                                                                               '%Y/%m/%d')).split(" ")[0]
+                else:
+
+                    investment["planned_release_date"] = str(datetime.strptime(investment["deposit_date"],
                                                                            '%Y/%m/%d') + timedelta(days=30)).split(" ")[
                     0]
             else:
@@ -547,7 +554,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     interim_rate = float(
                         [rate for rate in rates_list if rate['Efective_date'] <= deposit_date][0]['rate'])
                     investment_interest_total = investment_interest_total + (
-                            float(investment["investment_amount"]) * interim_rate / 100 / 365)
+                            float(investment["investment_amount"]) * (interim_rate - 2.75) / 100 / 365)
                     deposit_date = deposit_date + timedelta(days=1)
                 investment["trust_interest_total"] = round(investment_interest_total, 2)
 
