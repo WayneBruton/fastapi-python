@@ -188,6 +188,50 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
         # investor_list = list(db.investors.find({}))
 
+        # pipeline = [
+        #     {
+        #         "$match": {
+        #             "trust.Category": {"$in": request['Category']}
+        #         }
+        #     },
+        #     {
+        #         "$project": {
+        #             "_id": 1,
+        #             "investor_acc_number": 1,
+        #             "investor_name": 1,
+        #             "investor_surname": 1,
+        #             "pledges": 1,
+        #             "trust": {
+        #                 "$filter": {
+        #                     "input": "$trust",
+        #                     "as": "item",
+        #                     "cond": {"$in": ["$$item.Category", request['Category']]}
+        #                 }
+        #             },
+        #             "investments": {
+        #                 "$filter": {
+        #                     "input": "$investments",
+        #                     "as": "item",
+        #                     "cond": {"$in": ["$$item.Category", request['Category']]}
+        #                 }
+        #             }
+        #         }
+        #     },
+        #     {
+        #         "$match": {
+        #             "trust": {"$ne": []}
+        #         }
+        #     }
+        # ]
+        #
+        # investor_list = list(db.investors.aggregate(pipeline))
+        # opportunities_list = list(db.opportunities.find( {"Category": {"$in": request['Category']}}))
+        # sales_parameters_list = list(db.salesParameters.find({}))
+        # rollovers_list = list(db.investorRollovers.find( {"Category": {"$in": request['Category']}}))
+        # rates_list = list(db.rates.find({}))
+        # unallocated_investments_list = list(db.unallocated_investments.find(
+        #     {"Category": {"$in": request['Category']}}))
+
         pipeline = [
             {
                 "$match": {
@@ -200,7 +244,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     "investor_acc_number": 1,
                     "investor_name": 1,
                     "investor_surname": 1,
-                    "pledges": 1,
+                    # "pledges": 1,
                     "trust": {
                         "$filter": {
                             "input": "$trust",
@@ -214,7 +258,15 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                             "as": "item",
                             "cond": {"$in": ["$$item.Category", request['Category']]}
                         }
-                    }
+                    },
+                    "pledges": {
+                        "$filter": {
+                            "input": "$pledges",
+                            "as": "item",
+                            "cond": {"$in": ["$$item.Category", request['Category']]}
+                        }
+                    },
+
                 }
             },
             {
@@ -223,20 +275,31 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 }
             }
         ]
+        # query_start = time.time()
+        result = {
+            "investor_list": list(db.investors.aggregate(pipeline)),
+            "opportunities_list": list(db.opportunities.find({"Category": {"$in": request['Category']}})),
+            "sales_parameters_list": list(db.salesParameters.find({"Development": {"$in": request['Category']}})),
+            "rollovers_list": list(db.investorRollovers.find({"Category": {"$in": request['Category']}})),
+            "rates_list": list(db.rates.find({})),
+            "unallocated_investments_list": list(
+                db.unallocated_investments.find({"Category": {"$in": request['Category']}}))
+        }
 
-        investor_list = list(db.investors.aggregate(pipeline))
+        investor_list = result['investor_list']
+        opportunities_list = result['opportunities_list']
+        sales_parameters_list = result['sales_parameters_list']
+        rollovers_list = result['rollovers_list']
+        rates_list = result['rates_list']
+        unallocated_investments_list = result['unallocated_investments_list']
+
+        # query_end = time.time()
+        # print("Query Time", query_end - query_start)
 
         for investor in investor_list:
 
             investor['id'] = str(investor['_id'])
             del investor['_id']
-
-            # Filter Pledges, Investments and Trust by request['Category'] items only using list comprehension
-            # investor['pledges'] = [pledge for pledge in investor['pledges'] if
-            #                        pledge['Category'] in request['Category']]
-            # investor['investments'] = [investment for investment in investor['investments'] if
-            #                            investment['Category'] in request['Category']]
-            # investor['trust'] = [trust for trust in investor['trust'] if trust['Category'] in request['Category']]
 
             # CREATE INSERT DICT TO INSERT INTO RELEVANT LISTS
 
@@ -280,25 +343,22 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     trust_list.append(insert)
 
         # Get Opportunities and Manipulate accordingly
-        opportunities_list = list(db.opportunities.find({}))
+
+        # for opportunity in opportunities_list:
+        #     opportunity['id'] = str(opportunity['_id'])
+        #     del opportunity['_id']
+
+        # using list comprehension to filter out opportunities that are not in the request['Category'] list
+        # opportunities_list = [opportunity for opportunity in opportunities_list if
+        #                       opportunity['Category'] in request['Category']]
+
         for opportunity in opportunities_list:
             opportunity['id'] = str(opportunity['_id'])
             del opportunity['_id']
-
-        # using list comprehension to filter out opportunities that are not in the request['Category'] list
-        opportunities_list = [opportunity for opportunity in opportunities_list if
-                              opportunity['Category'] in request['Category']]
-
-        for opportunity in opportunities_list:
             if opportunity["opportunity_final_transfer_date"] != "":
                 opportunity["opportunity_transferred"] = True
             else:
                 opportunity["opportunity_transferred"] = False
-            if not opportunity["opportunity_sold"]:
-                opportunity["opportunity_transferred"] = False
-
-            if opportunity['opportunity_final_transfer_date'] == '':
-                # if  opportunity['opportunity_end_date'] != '' or does not exist
                 if 'opportunity_end_date' in opportunity:
                     if opportunity['opportunity_end_date'] != '':
                         opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_end_date']
@@ -307,26 +367,39 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 else:
                     opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_occupation_date']
 
+            if not opportunity["opportunity_sold"]:
+                opportunity["opportunity_transferred"] = False
+
+            # if opportunity['opportunity_final_transfer_date'] == '':
+            #     # if  opportunity['opportunity_end_date'] != '' or does not exist
+            #     if 'opportunity_end_date' in opportunity:
+            #         if opportunity['opportunity_end_date'] != '':
+            #             opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_end_date']
+            #         else:
+            #             opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_occupation_date']
+            #     else:
+            #         opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_occupation_date']
+
         # Get Sales Parameters and Manipulate accordingly
-        sales_parameters_list = list(db.salesParameters.find({}))
+
         for sales_parameter in sales_parameters_list:
             sales_parameter['id'] = str(sales_parameter['_id'])
             del sales_parameter['_id']
         # Using list comprehension to filter out sales parameters that are not in the request['Category'] list
-        sales_parameters_list = [sales_parameter for sales_parameter in sales_parameters_list if
-                                 sales_parameter['Development'] in request['Category']]
+        # sales_parameters_list = [sales_parameter for sales_parameter in sales_parameters_list if
+        #                          sales_parameter['Development'] in request['Category']]
 
         # Get Rollovers and Manipulate accordingly
-        rollovers_list = list(db.investorRollovers.find({}))
+
         for rollover in rollovers_list:
             rollover['id'] = str(rollover['_id'])
             del rollover['_id']
         # Using list comprehension to filter out rollovers that are not in the request['Category'] list
-        rollovers_list = [rollover for rollover in rollovers_list if
-                          rollover['Category'] in request['Category']]
+        # rollovers_list = [rollover for rollover in rollovers_list if
+        #                   rollover['Category'] in request['Category']]
 
         # Get Rates and Manipulate accordingly
-        rates_list = list(db.rates.find({}))
+
         for rate in rates_list:
             del rate['_id']
         # replace '/' with '-' in Efective_date
@@ -506,16 +579,17 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 # in investment["deposit_date"] replace '-' with '/'
                 investment["deposit_date"] = investment["deposit_date"].replace('-', '/')
 
-                # planned_release_date exists in investment then investment["planned_release_date"] = deposit_date + 30 days
-                # else investment["planned_release_date"] = ""
+                # planned_release_date exists in investment then investment["planned_release_date"] = deposit_date +
+                # 30 days else investment["planned_release_date"] = ""
                 if "planned_release_date" in investment and investment["planned_release_date"] != "":
                     investment["planned_release_date"] = str(datetime.strptime(investment["planned_release_date"],
                                                                                '%Y/%m/%d')).split(" ")[0]
                 else:
 
                     investment["planned_release_date"] = str(datetime.strptime(investment["deposit_date"],
-                                                                           '%Y/%m/%d') + timedelta(days=30)).split(" ")[
-                    0]
+                                                                               '%Y/%m/%d') + timedelta(days=30)).split(
+                        " ")[
+                        0]
             else:
                 investment["planned_release_date"] = investment["release_date"]
                 # investment["planned_release_date"] = ""
@@ -738,11 +812,15 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                 not (investor['investor_acc_number'] == "ZPJB01" and investor[
                                     'opportunity_code'] == "HFA205" and investor['investment_number'] == 1)]
 
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZERA01" and investor[
+                                    'opportunity_code'] == "EA205" and investor['investment_number'] == 3)]
 
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZVOL01" and investor[
+                                    'opportunity_code'] == "EA103" and investor['investment_number'] == 3)]
 
         # get unallocated_investments from mongo db where the request['Category'] is in the Category in the DB
-        unallocated_investments_list = list(db.unallocated_investments.find(
-            {"Category": {"$in": request['Category']}}))
 
         for unallocated_investment in unallocated_investments_list:
             unallocated_investment['id'] = str(unallocated_investment['_id'])
@@ -897,7 +975,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         end = time.time()
         print("Time Taken: ", end - start)
 
-        print("filename", filename)
+        # print("filename", filename)
 
         return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
         # return {"filename": f'{filename}.xlsx'}
@@ -910,7 +988,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
 def investment_status(request):
     # request = await data.json()
-    print(request)
+    # print(request)
 
     try:
         # start = time.time()
@@ -972,6 +1050,11 @@ def investment_status(request):
                 else:
                     insert['investment_number'] = 0
 
+                if 'early_release' in investment:
+                    insert['early_release'] = investment['early_release']
+                else:
+                    insert['early_release'] = False
+
                 insert['investment_name'] = investor['investment_name']
                 insert['investor_acc_number'] = investor['investor_acc_number']
                 # do the same as above for Category, opportunity_code, investment_amount, release_date and end_date
@@ -984,7 +1067,7 @@ def investment_status(request):
                 if 'exit_value' in investment:
                     insert['exit_value'] = float(investment['exit_value'].replace(" ", ""))
                 else:
-                    insert['exit_value'] = 0
+                    insert['exit_value'] = 0.00
 
                 # using list comprehension filter investor['trust'] where trust['opportunity_code'] is equal to
                 # investment['opportunity_code'] and trust['investment_number'] is equal to investment[
@@ -1015,6 +1098,13 @@ def investment_status(request):
                                 not (investor['investor_acc_number'] == "ZPJB01" and investor[
                                     'opportunity_code'] == "HFA205" and investor['investment_number'] == 1)]
 
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZERA01" and investor[
+                                    'opportunity_code'] == "EA205" and investor['investment_number'] == 3)]
+
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZVOL01" and investor[
+                                    'opportunity_code'] == "EA103" and investor['investment_number'] == 3)]
         # print(final_investors_list)
         for investment in final_investors_list:
             # filter opportunities_list where opportunity['opportunity_code'] is equal to investment['opportunity_code']
@@ -1060,7 +1150,16 @@ def investment_status(request):
                 days_to_exit_deadline = exit_deadline - report_date
                 investor['days_to_exit_deadline'] = days_to_exit_deadline.days
             else:
-                investor['days_to_exit_deadline'] = 0
+                if datetime.strptime(investor['final_transfer_date'].replace("-", "/"), "%Y/%m/%d") > report_date:
+                    investor['final_transfer_date'] = ""
+                    exit_deadline = datetime.strptime(investor['release_date'].replace("-", "/"), "%Y/%m/%d")
+                    # add 730 days to exit_deadline
+                    exit_deadline = exit_deadline + timedelta(days=730)
+                    # print("report_date", report_date)
+                    days_to_exit_deadline = exit_deadline - report_date
+                    investor['days_to_exit_deadline'] = days_to_exit_deadline.days
+                else:
+                    investor['days_to_exit_deadline'] = 0
 
             if (investor["final_transfer_date"] is None or investor["final_transfer_date"] == "") and (
                     investor["end_date"] == "" or investor["end_date"] is None):
@@ -1126,14 +1225,37 @@ def investment_status(request):
         # using list comprehension loop through final_investors_list and append investment['opportunity_code'] to
         # count_of_units if investment['final_transfer_date'] is equal to and then only keep unique values and append
         # to count_of_units
-        count_of_units = [investment['opportunity_code'] for investment in final_investors_list if
-                          investment['final_transfer_date'] == investor['final_transfer_date']]
+        # count_of_units = [investment['opportunity_code'] for investment in final_investors_list if
+        #                   investment['final_transfer_date'] == investor['final_transfer_date']]
+        # count_of_units = len(list(set(count_of_units)))
+        # print("count_of_units", count_of_units)
+
+        # print("final_investors_list", final_investors_list[0])
+
+        count_of_units = []
+        for investment in final_investors_list:
+            if investment['final_transfer_date'] == "":
+                # print(investment)
+                # print()
+                count_of_units.append(investment['opportunity_code'])
+
         count_of_units = len(list(set(count_of_units)))
-        print("count_of_units", count_of_units)
+        # print("count_of_units", count_of_units)
 
         # sort final investors list by Category, opportunity_code, investor_acc_number
         final_investors_list = sorted(final_investors_list,
                                       key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
+
+        # if row[9].value != "":
+        #     reportDate = datetime.strptime(request['date'], '%Y/%m/%d')
+        #     exitDate = datetime.strptime(row[9].value, '%Y-%m-%d')
+        #     print("reportDate", reportDate)
+        #     print("exitDate", exitDate)
+        #     if exitDate > reportDate:
+        #         row[9].value = ""
+
+        # print("final_investors_list", final_investors_list[0])
+        # for investment in final_investors_list:
 
         # add count_of_units to final_investors_list[0]
         final_investors_list[0]['count_of_units'] = count_of_units

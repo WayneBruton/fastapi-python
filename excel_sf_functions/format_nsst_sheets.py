@@ -20,7 +20,7 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
             total_unsold = sum([x['with_interest'] for x in list_to_filter if not x['sold']]) - sum(
                 [x['amount'] for x in list_to_filter if not x['sold']])
             # sheet[f'B54'] = f"='NSST Heron Fields'!B54"
-            print("total", total)
+            # print("total", total)
         if index == 4:
             total = sum([x['with_interest'] for x in list_to_filter]) - sum([x['amount'] for x in list_to_filter])
             total_sold = sum([x['with_interest'] for x in list_to_filter if x['sold']]) - sum(
@@ -29,7 +29,7 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
             total_unsold = sum([x['with_interest'] for x in list_to_filter if not x['sold']]) - sum(
                 [x['amount'] for x in list_to_filter if not x['sold']])
             sheet[f'B54'] = f"='NSST Heron Fields'!B54 + 'NSST Heron View'!B54"
-            print("total", total)
+            # print("total", total)
         if index == 5:
             # filter out list_filter this whose unit do not begin with "HF"
             list_to_filter = [x for x in list_to_filter if x['unit'][:2] == "HF"]
@@ -39,7 +39,7 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
             # do the same for total_unsold
             total_unsold = sum([x['with_interest'] for x in list_to_filter if not x['sold']]) - sum(
                 [x['amount'] for x in list_to_filter if not x['sold']])
-            print("total", total)
+            # print("total", total)
         if index == 6:
             # filter out list_filter this whose unit do not begin with "HF"
             list_to_filter = [x for x in list_to_filter if x['unit'][:2] == "HV"]
@@ -49,7 +49,7 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
             # do the same for total_unsold
             total_unsold = sum([x['with_interest'] for x in list_to_filter if not x['sold']]) - sum(
                 [x['amount'] for x in list_to_filter if not x['sold']])
-            print("total", total)
+            # print("total", total)
 
         gross_income_column_names = ['B', 'C', 'D', 'E']
         # row 43, add row 35 and deduct rows 38 to 42 for the column names in gross_income_column_names

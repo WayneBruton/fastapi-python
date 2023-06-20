@@ -1,3 +1,5 @@
+import time
+
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import PatternFill
 from openpyxl.styles.borders import Border, Side
@@ -72,7 +74,7 @@ def format_sales_forecast(sheet):
             elif row == 87:
                 sheet[f'{letter}87'] = 'EXIT NOT SOLD - Interest Only'
 
-    rows_to_add_formulas = [17, 23, 27, 29,31, 34, 35, 39, 40, 51, 52, 53, 55, 59, 60, 61, 62, 63, 64, 67, 68, 71, 72,
+    rows_to_add_formulas = [17, 23, 27, 29, 31, 34, 35, 39, 40, 51, 52, 53, 55, 59, 60, 61, 62, 63, 64, 67, 68, 71, 72,
                             73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87]
 
     for letter in column_letters_7:
@@ -100,8 +102,8 @@ def format_sales_forecast(sheet):
                 sheet[f'{letter}{row}'] = f'={letter}42-SUM({letter}45:{letter}50)'
             elif row == 52:
                 sheet[f'{letter}{row}'] = f'=SUMIFS({column_letters_7[0]}35:' \
-                                       f'{column_letters_7[len(column_letters_7) - 1]}35,{column_letters_7[0]}4:' \
-                                       f'{column_letters_7[len(column_letters_7) - 1]}4, {letter}4)'
+                                          f'{column_letters_7[len(column_letters_7) - 1]}35,{column_letters_7[0]}4:' \
+                                          f'{column_letters_7[len(column_letters_7) - 1]}4, {letter}4)'
             elif row == 53:
                 sheet[f'{letter}{row}'] = f'={letter}51-{letter}52'
             elif row == 55:
@@ -114,8 +116,8 @@ def format_sales_forecast(sheet):
             elif row == 61:
                 # =SUMIFS($G59:$KO59,$G4:$KO4, G4)
                 sheet[f'{letter}{row}'] = f'=SUMIFS($G60:' \
-                                       f'${column_letters_7[len(column_letters_7) - 1]}60,$G4:' \
-                                       f'${column_letters_7[len(column_letters_7) - 1]}4, {letter}4)'
+                                          f'${column_letters_7[len(column_letters_7) - 1]}60,$G4:' \
+                                          f'${column_letters_7[len(column_letters_7) - 1]}4, {letter}4)'
             elif row == 62:
                 sheet[f'{letter}{row}'] = f'=SUM({letter}51)'
             elif row == 63:
@@ -125,13 +127,13 @@ def format_sales_forecast(sheet):
             elif row == 67:
                 # =SUMIFS(G19: KO19, G57: KO57, TRUE)
                 sheet[f'B{row}'] = f'=SUMIFS(G19:' \
-                                f'{column_letters_7[len(column_letters_7) - 1]}19,G58:' \
-                                f'{column_letters_7[len(column_letters_7) - 1]}58, TRUE)'
+                                   f'{column_letters_7[len(column_letters_7) - 1]}19,G58:' \
+                                   f'{column_letters_7[len(column_letters_7) - 1]}58, TRUE)'
             elif row == 68:
                 # =SUMIFS(G33: KO33, G57: KO57, TRUE)
                 sheet[f'B{row}'] = f'=SUMIFS(G34:' \
-                                f'{column_letters_7[len(column_letters_7) - 1]}34,G58:' \
-                                f'{column_letters_7[len(column_letters_7) - 1]}58, TRUE)'
+                                   f'{column_letters_7[len(column_letters_7) - 1]}34,G58:' \
+                                   f'{column_letters_7[len(column_letters_7) - 1]}58, TRUE)'
             elif row == 71:
                 sheet[
                     f'{letter}{row}'] = f'=IF({letter}$2 = TRUE, IF({letter}$3 = FALSE, IF({letter}$58 = TRUE, +{letter}$35, 0), 0), 0)'
@@ -187,7 +189,7 @@ def format_sales_forecast(sheet):
                 cell.font = Font(bold=True, color='FFFFFF')
                 cell.number_format = 'R#,##0.00'
 
-    rows_to_center = [5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,31, 32,
+    rows_to_center = [5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
                       33, 34, 35, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 59, 60, 61, 62,
                       63, 64, 71, 72, 73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87]
     # Loop through the rows_to_format_currency list and align the cells from column 6 to the last column in the
@@ -283,7 +285,7 @@ def format_sales_forecast(sheet):
             cell.font = Font(bold=True)
 
     # ROWS TO SUM
-    rows_to_sum = [13, 14, 15, 16, 17, 19, 24, 25, 26, 27, 30, 31, 32, 33, 34,35, 37, 38, 39, 42, 43, 44, 45, 46,
+    rows_to_sum = [13, 14, 15, 16, 17, 19, 24, 25, 26, 27, 30, 31, 32, 33, 34, 35, 37, 38, 39, 42, 43, 44, 45, 46,
                    47, 48, 49, 50, 51, 52, 53, 55, 60, 61, 62, 63, 64, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83,
                    84, 86, 87]
     # for each row in rows_to_sum, sum the cells from column 6 to the last column in the sheet in insert the
@@ -417,6 +419,7 @@ def format_sales_forecast(sheet):
                             sheet[f'{cell.column_letter}{row1}'].font = Font(color='FFFFFF')
 
     # MERGE CELLS
+    # merge_start_time = time.time()
 
     merge_master = []
     merge_start = []
@@ -466,9 +469,6 @@ def format_sales_forecast(sheet):
     for row, merge_cols in merge_dict.items():
         for start, end in merge_cols:
             sheet.merge_cells(start_row=row, start_column=start, end_row=row, end_column=end)
-
-    # end_time = time.time()
-    # print(f'Time taken to merge cells: {end_time - start_time}')
 
     # Merge cells in row 6 and 7 in column B
     cells_to_merge = [6]

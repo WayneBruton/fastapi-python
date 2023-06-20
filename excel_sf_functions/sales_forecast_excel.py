@@ -1,12 +1,13 @@
-from datetime import timedelta
+# from datetime import timedelta
+from datetime import datetime
 
-from openpyxl import Workbook, load_workbook
-from openpyxl.utils import get_column_letter, column_index_from_string
+from openpyxl import Workbook
+# from openpyxl.utils import get_column_letter, column_index_from_string
 
 from openpyxl.styles import PatternFill
 from openpyxl.styles.borders import Border, Side
 from openpyxl.styles import Font, Alignment
-from openpyxl.utils import range_boundaries
+# from openpyxl.utils import range_boundaries
 
 from excel_sf_functions.create_sales_sheet import create_excel_array
 from excel_sf_functions.create_NSST_sheets import create_nsst_sheet
@@ -101,11 +102,11 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                  "Days to Estimated Exit",
                  "Investor Contract expiry exit", "Capital & Interest to be Exited", "Investor Exit Value On Sales",
                  "Exited by Developer",
-                 "Date of Exit"]
+                 "Date of Exit", "Early Release", "Investor pay Back On transfer"]
     worksheet_data.append(row2_data)
     row3_data = ["", "", "", "Investor Capital Deployed", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
                  "",
-                 ""]
+                 "", "", ""]
     worksheet_data.append(row3_data)
 
     for item in listData:
@@ -115,7 +116,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                     item['opportunity_sold'], item['occupation_date'], item['estimated_transfer_date'],
                     item['final_transfer_date'], "", item['report_date'],
                     item['days_to_exit_deadline'], "", "", item['investment_interest'], item['investment_interest'],
-                    0, item['exited_by_developer'], item['date_of_exit']]
+                    0, item['exited_by_developer'], item['date_of_exit'], item['early_release'], ""]
         worksheet_data.append(row_data)
 
     for item in worksheet_data:
@@ -132,8 +133,10 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         cell.number_format = '#,##0.00'
     for cell in ws['S']:
         cell.number_format = '#,##0.00'
+    for cell in ws['V']:
+        cell.number_format = '#,##0.00'
 
-    cols = ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T']
+    cols = ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V']
     # Make Column C 20 wide
     ws.column_dimensions['C'].width = 10
     ws.column_dimensions['D'].width = 30
@@ -142,7 +145,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
     # make columns D through N 15 wide
 
-    for col in ws.iter_cols(min_col=1, max_col=20):
+    for col in ws.iter_cols(min_col=1, max_col=22):
         for cell in col:
             cell.alignment = Alignment(horizontal='center')
 
@@ -166,14 +169,16 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
     # for all rows after row 2, if the value in column F is True, make the row background color light green
     for row in ws.iter_rows(min_row=4):
-        if row[6].value == True:
+        if row[6].value:
             for cell in row:
                 cell.fill = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
 
     # for all rows after row 2, if the value in column J has a value, make the row background color light red and
     # hide the row
     for row in ws.iter_rows(min_row=4):
+
         if row[9].value != "":
+
             for cell in row:
                 cell.fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
             ws.row_dimensions[row[0].row].hidden = True
@@ -184,51 +189,64 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     # for all rows after 2, set a formula in column j to equal to column E + (365 * 2)
     for row in ws.iter_rows(min_row=4):
         row[10].value = f'=F{row[0].row}+730'
+        if row[6].value == True and row[20].value == True and row[9].value == "":
+            row[21].value = row[18].value
+        else:
+            row[21].value = 0
     # format column J as date YYYY-MM-DD
     for cell in ws['K']:
         cell.number_format = 'YYYY-MM-DD'
+
+    for cell in ws['M']:
+        cell.number_format = '0'
 
     # if cells after row 4 in column 'M' are <= 90, make the cell in colmn 'M' have a background color light red
     for row in ws.iter_rows(min_row=4):
         if row[12].value <= 90:
             row[12].fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
+
             if row[18].value != 0:
                 row[4].value = 0
 
         else:
             row[15].value = 0
+        if row[18].value != 0:
+            row[4].value = 0
 
     # set a formula in colmn L to equal to J - K formatted as a date YYYY-MM-DD
     for row in ws.iter_rows(min_row=4):
         row[12].value = f'=IF(J{row[0].row}="",K{row[0].row}-L{row[0].row},0)'
         # row[17].value = row[6].value
-        if row[6].value == True:
+        if row[6].value:
             row[17].value = row[16].value
         else:
             row[17].value = 0
 
+        # DO SOMETHING HERE
+
     # format column L as integer
-    for cell in ws['M']:
-        cell.number_format = '0'
+
 
     # in column N, if column I is not blank, set the value to I - K formatted as integer, else set the value to H - K
     # formatted as integer
     for row in ws.iter_rows(min_row=4):
         row[14].value = f'=IF(J{row[0].row}="",I{row[0].row}-L{row[0].row},J{row[0].row}-L{row[0].row})'
     for row in ws.iter_rows(min_row=3, max_row=3):
+        row[1].value = f'=COUNTIFS(B4:B{ws.max_row},"<>",J4:J{ws.max_row},"=")'
         row[0].value = listData[0]['count_of_units']
-        row[1].value = f'=COUNTIF(B4:B{ws.max_row}, "<>")'
         row[4].value = f'=SUMIFS(E4:E{ws.max_row}, J4:J{ws.max_row}, "")'
         row[15].value = f'=SUM(P4:P{ws.max_row})'
         row[16].value = f'=SUM(Q4:Q{ws.max_row})'
         row[17].value = f'=SUM(R4:R{ws.max_row})'
         row[18].value = f'=SUM(S4:S{ws.max_row})'
+        row[21].value = f'=SUM(V4:V{ws.max_row})'
 
     # put the contents of column B, column E and column J into a new list of dictionaries
     list_to_filter = []
     for row in ws.iter_rows(min_row=4):
         list_to_filter.append(
-            {'unit': row[1].value, 'amount': row[4].value, 'date': row[9].value, 'with_interest': row[16].value, 'sold': row[6].value})
+            {'unit': row[1].value, 'amount': row[4].value, 'date': row[9].value, 'with_interest': row[16].value,
+             'sold': row[6].value})
         # filter out of list_to_filter where the value of 'date' is equal to ""
         list_to_filter = list(filter(lambda x: x['date'] == "", list_to_filter))
 
@@ -245,7 +263,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         cell.number_format = '0'
 
     # Hide columns N & O
-    cols_to_hide = ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'N', 'T']
+    cols_to_hide = ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'N', 'T', 'U']
     for col in cols_to_hide:
         ws.column_dimensions[col].hidden = True
     # ws.column_dimensions['N'].hidden = True
@@ -254,7 +272,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     # in row2 set all cells to bold and wrap text
     for cell in ws[2]:
         cell.font = Font(bold=True)
-        cell.alignment = Alignment(wrap_text=True)
+        cell.alignment = Alignment(wrap_text=True, vertical='center', horizontal='center')
 
     rows_for_full_merge = [1]
     for row in rows_for_full_merge:
@@ -273,7 +291,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
             sheet_name = f"NSST {category[0]}"
 
         worksheets = wb.sheetnames
-        print(worksheets)
+        # print(worksheets)
 
         # if len(worksheets) == 1:
         index = 0
@@ -282,8 +300,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         # Make Tab Color of new Sheet 'Green'
 
         ws.sheet_properties.tabColor = "539165"
-
-        # if len(worksheets) == 1:
 
         nsst_data = create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name, worksheets)
 
@@ -435,7 +451,7 @@ def create_investment_list(data, request):
 
     # for all rows after row 2, if the value in column F is True, make the row background color light green
     for row in ws.iter_rows(min_row=4):
-        if row[6].value == True:
+        if row[6].value:
             for cell in row:
                 cell.fill = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
 
@@ -471,7 +487,7 @@ def create_investment_list(data, request):
     for row in ws.iter_rows(min_row=4):
         row[12].value = f'=IF(J{row[0].row}="",K{row[0].row}-L{row[0].row},0)'
         # row[17].value = row[6].value
-        if row[6].value == True:
+        if row[6].value:
             row[17].value = row[16].value
         else:
             row[17].value = 0
@@ -485,8 +501,11 @@ def create_investment_list(data, request):
     for row in ws.iter_rows(min_row=4):
         row[14].value = f'=IF(J{row[0].row}="",I{row[0].row}-L{row[0].row},J{row[0].row}-L{row[0].row})'
     for row in ws.iter_rows(min_row=3, max_row=3):
-        row[0].value = data[0]['count_of_units']
-        row[1].value = f'=COUNTIF(B4:B{ws.max_row}, "<>")'
+        # =SUM(--(LEN(UNIQUE(FILTER(B4:B192, J4:J192="", ""))) > 0))
+        row[0].value = f'=SUM(--(LEN(UNIQUE(FILTER(B4:B{ws.max_row}, J4:J{ws.max_row}, ""))) > 0))'
+        # =COUNTIFS($B$4:$B$192, "<>",$J$4:$J$192, "=")
+        row[1].value = f'=COUNTIF(B4:B{ws.max_row}, "<>", J4:J{ws.max_row}, "=")'
+
         row[4].value = f'=SUMIFS(E4:E{ws.max_row}, J4:J{ws.max_row}, "")'
         row[15].value = f'=SUM(P4:P{ws.max_row})'
         row[16].value = f'=SUM(Q4:Q{ws.max_row})'

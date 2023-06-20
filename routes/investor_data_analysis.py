@@ -2,11 +2,11 @@ from datetime import datetime
 
 import pandas as pd
 
-from fastapi import APIRouter, Request
-from fastapi.responses import FileResponse
-from portal_statement_files.portal_statement_create import create_pdf
+from fastapi import APIRouter
+# from fastapi.responses import FileResponse
+# from portal_statement_files.portal_statement_create import create_pdf
 from config.db import db
-from bson import ObjectId
+# from bson import ObjectId
 
 data_analysis = APIRouter()
 
@@ -35,7 +35,7 @@ def get_all_investors_to_analyse():
                 investment['Category'] = investment['Category']
                 # convert investment_amount to float
                 investment['investment_amount'] = float(investment['investment_amount'])
-                # convert deposit_date and release_date to datetime if they are not equal to "", if the are equal to
+                # convert deposit_date and release_date to datetime if they are not equal to "", if they are equal to
                 # "" then set them to None
                 if investment['deposit_date'] != "":
                     # replace "/" with "-" in deposit_date

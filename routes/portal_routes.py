@@ -84,7 +84,7 @@ async def sales_forecast(investor_statement_name):
 @portal_info.post("/generate_otp")
 async def generate_otp(data: Request):
     request = await data.json()
-    # print(request)
+    print(request)
     pin = secrets.randbelow(10 ** 6)
     # keep repeating the above until the pin is 6 digits
     while len(str(pin)) != 6:
@@ -150,6 +150,17 @@ async def generate_otp(data: Request):
                     "text": f"OMH OTP - {pin}",
                 }
             )
+
+            # responseData = client.messages.send_message(
+            #     {
+            #         "channel": "whatsapp",
+            #         "message_type": "text",
+            #         "to": to_number,
+            #         "from": to_number,
+            #         "text": "This is a WhatsApp text message sent using the Vonage Messages API",
+            #     }
+            # )
+
 
             if responseData["messages"][0]["status"] == "0":
                 return {"message": "SMS sent successfully", "otp": str(pin)}
