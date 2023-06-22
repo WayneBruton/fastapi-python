@@ -356,7 +356,15 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             opportunity['id'] = str(opportunity['_id'])
             del opportunity['_id']
             if opportunity["opportunity_final_transfer_date"] != "":
-                opportunity["opportunity_transferred"] = True
+                tfr_date = datetime.strptime(opportunity["opportunity_final_transfer_date"].replace("-", "/"),
+                                             "%Y/%m/%d")
+                report_date = datetime.strptime(request['date'].replace("-","/"), "%Y/%m/%d")
+                # print("tfr_date", tfr_date)
+                # print("report_date", report_date)
+                if tfr_date > report_date:
+                    opportunity["opportunity_transferred"] = False
+                else:
+                    opportunity["opportunity_transferred"] = True
             else:
                 opportunity["opportunity_transferred"] = False
                 if 'opportunity_end_date' in opportunity:
@@ -1030,6 +1038,8 @@ def investment_status(request):
 
         final_investors_list = []
 
+        report_date = datetime.strptime(request['date'], "%Y/%m/%d")
+
         for investor in investor_list:
             investor['id'] = str(investor['_id'])
             del investor['_id']
@@ -1039,6 +1049,10 @@ def investment_status(request):
             investor['investments'] = [investment for investment in investor['investments'] if
                                        investment['Category'] in request['Category']]
             for investment in investor['investments']:
+                # if investment['end_date'] != "":
+                #     end_date = datetime.strptime(investment['end_date'].replace("-", "/"), "%Y/%m/%d")
+                #     if end_date > report_date:
+                #         investment['end_date'] = ""
                 # if investor['investor_acc_number'] == "ZKRU01":
                 #     print(investment)
 
@@ -1260,8 +1274,6 @@ def investment_status(request):
         # add count_of_units to final_investors_list[0]
         final_investors_list[0]['count_of_units'] = count_of_units
 
-        # create_investment_list(final_investors_list, request)
-
         # end = time.time()
 
         # return {"done": True, "time_taken": end - start}
@@ -1269,6 +1281,126 @@ def investment_status(request):
     except Exception as e:
         print("Error:", e)
         return []
+
+
+@excel_sales_forecast.post("/create_cashflow")
+async def create_cashflow(data: Request):
+    request = await data.json()
+    # print("request", request)
+    investor_list = list(db.investors.aggregate([
+        {
+            "$match": {
+                "investments": {
+                    "$elemMatch": {
+                        "Category": {"$in": request['Category']}
+                    }
+                },
+                "trust": {
+                    "$elemMatch": {
+                        "Category": {"$in": request['Category']}
+                    }
+                }
+            }
+        },
+        {
+            "$addFields": {
+                "investments": {
+                    "$filter": {
+                        "input": "$investments",
+                        "as": "investment",
+                        "cond": {
+                            "$in": ["$$investment.Category", request['Category']]
+                        }
+                    }
+                },
+                "trust": {
+                    "$filter": {
+                        "input": "$trust",
+                        "as": "trust",
+                        "cond": {
+                            "$in": ["$$trust.Category", request['Category']]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "$match": {
+                "investments": {"$ne": []}
+            }
+        }
+    ]))
+
+    sales_parameter_list = list(db.salesParameters.find({"Development": {"$in": request['Category']}}))
+
+    opportunities_list = list(db.opportunities.find({"Category": {"$in": request['Category']}}))
+    # filter out where opportunity_final_transfer_date is not equal to ""
+    opportunities_list = list(
+        filter(lambda opportunity_toGet: opportunity_toGet['opportunity_final_transfer_date'] == "",
+               opportunities_list))
+
+    for opportunity in opportunities_list:
+        for sale in sales_parameter_list:
+            opportunity[sale['Description']] = sale['rate']
+        opportunity['nett'] = float(opportunity['opportunity_sale_price']) - \
+                              (((float(opportunity['opportunity_sale_price']) / 1.15) * opportunity['commission']) +
+                               ((float(opportunity['opportunity_sale_price'])) * opportunity['unforseen']) +
+                               opportunity['transfer_fees'] + opportunity['bond_registration'] +
+                               opportunity['trust_release_fee'])
+
+    rates = list(db.rates.find({}))
+    for rate in rates:
+        rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace("-", "/"), "%Y/%m/%d")
+        rate['rate'] = float(rate['rate'])
+    # sort rates by Efective_date desc
+    rates = sorted(rates, key=lambda k: k['Efective_date'], reverse=True)
+
+    investments = []
+    for investment in investor_list:
+        for inv in investment['investments']:
+            if 'investment_number' not in inv:
+                inv['investment_number'] = 0
+            if inv['end_date'] == "":
+                trust = list(filter(lambda trust: trust['opportunity_code'] == inv['opportunity_code'] and
+                                                  trust['investment_number'] == inv['investment_number'],
+                                    investment['trust']))
+                # create variable from opportunity_list where opportunity_code is equal to inv['opportunity_code']
+                opportunity = list(
+                    filter(lambda opportunity: opportunity['opportunity_code'] == inv['opportunity_code'],
+                           opportunities_list))
+                if len(trust) > 0 and len(opportunity) > 0:
+                    inv['deposit_date'] = trust[0]['deposit_date']
+                    inv['interest_end_date'] = opportunity[0]['opportunity_end_date']
+                    investment_amount = float(inv['investment_amount'])
+                    deposit_date = datetime.strptime(inv['deposit_date'].replace("-", "/"), "%Y/%m/%d")
+                    # add one day to deposit_date
+                    deposit_date = deposit_date + timedelta(days=1)
+                    release_date = datetime.strptime(inv['release_date'].replace("-", "/"), "%Y/%m/%d")
+                    interest_end_date = datetime.strptime(inv['interest_end_date'].replace("-", "/"), "%Y/%m/%d")
+                    # one day to interest_end_date
+                    interest_end_date = interest_end_date + timedelta(days=1)
+                    momentum_interest = 0
+                    released_interest = 0
+                    while deposit_date <= release_date:
+                        rate = list(filter(lambda rate: rate['Efective_date'] <= deposit_date, rates))[0]['rate']
+                        momentum_interest += investment_amount * rate / 100 / 365
+                        # add one day to deposit_date
+                        deposit_date = deposit_date + timedelta(days=1)
+
+                    investment_interest_rate = float(inv['investment_interest_rate'])
+                    days = (interest_end_date - deposit_date).days
+                    released_interest = investment_amount * investment_interest_rate / 100 / 365 * days
+                    inv['final_amount_due_to_investor'] = momentum_interest + released_interest + investment_amount
+
+                    investments.append(inv)
+
+    print("investments", len(investments))
+    print("investments", investments[0])
+
+    # print()
+    # print("trust", trust)
+
+    return request
 
 
 @excel_sales_forecast.post("/check_if_file_exists")

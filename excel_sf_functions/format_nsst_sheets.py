@@ -65,10 +65,10 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
             # sheet[f'B40'] = f'=+D40+E40'
             sheet[f'B44'] = f'=C43'
             # sheet[f'B49'] = f'=SUM(B43)-SUM(C43)'
-            sheet[f'B49'] = total
+            # sheet[f'B49'] = total
             sheet[f'C49'] = f''
-            sheet[f'D49'] = total_sold
-            sheet[f'E49'] = total_unsold
+            # sheet[f'D49'] = total_sold
+            sheet[f'E49'] = f'=B49-D49'
             sheet[f'{column}53'] = f'=SUM({column}32)-SUM({column}35)-SUM({column}43)'
             sheet[f'B54'] = f'=SUM(B50)'
             sheet[f'D55'] = f'=B55*0.05'

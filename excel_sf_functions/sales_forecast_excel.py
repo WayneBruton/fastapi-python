@@ -7,6 +7,8 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill
 from openpyxl.styles.borders import Border, Side
 from openpyxl.styles import Font, Alignment
+from openpyxl.utils import get_column_letter
+
 # from openpyxl.utils import range_boundaries
 
 from excel_sf_functions.create_sales_sheet import create_excel_array
@@ -103,6 +105,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                  "Investor Contract expiry exit", "Capital & Interest to be Exited", "Investor Exit Value On Sales",
                  "Exited by Developer",
                  "Date of Exit", "Early Release", "Investor pay Back On transfer"]
+    # print(row2_data[16])
     worksheet_data.append(row2_data)
     row3_data = ["", "", "", "Investor Capital Deployed", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
                  "",
@@ -117,6 +120,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                     item['final_transfer_date'], "", item['report_date'],
                     item['days_to_exit_deadline'], "", "", item['investment_interest'], item['investment_interest'],
                     0, item['exited_by_developer'], item['date_of_exit'], item['early_release'], ""]
+        # print(row_data[16], row_data[17], row_data[18])
         worksheet_data.append(row_data)
 
     for item in worksheet_data:
@@ -213,14 +217,32 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         if row[18].value != 0:
             row[4].value = 0
 
+    sheet1 = wb.sheetnames[0]
+    # print("sheets", sheet1)
+    ws2 = wb[sheet1]
+    # print("ws", ws2)
+    # get the column name, for example 'A' or 'B' etc of the last column of ws2
+    last_col = get_column_letter(ws2.max_column)
+    # print("last_col", last_col)
+
+
+
+
+
     # set a formula in colmn L to equal to J - K formatted as a date YYYY-MM-DD
     for row in ws.iter_rows(min_row=4):
-        row[12].value = f'=IF(J{row[0].row}="",K{row[0].row}-L{row[0].row},0)'
+        # get row number and print it
+        # print("row", row[0].row)
+
+        # =IF(S20 <> 0, 0, IF(J20="", K20 - L20, 0))
+        row[12].value = f'=IF(S{row[0].row}<>0,0,IF(J{row[0].row}="",K{row[0].row}-L{row[0].row},0))'
+        row[15].value = f'=IF(M{row[0].row}<90,+Q{row[0].row},0)'
         # row[17].value = row[6].value
         if row[6].value:
             row[17].value = row[16].value
         else:
             row[17].value = 0
+
 
         # DO SOMETHING HERE
 
@@ -261,6 +283,20 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
     for cell in ws['O']:
         cell.number_format = '0'
+
+    for row in ws.iter_rows(min_row=4):
+        # print("row", row[0].row)
+        row[16].value = f"=IF(A{row[0].row}&B{row[0].row}<>A{row[0].row - 1}&B{row[0].row - 1},SUMIFS('{sheet1}'!$G$78:${last_col}$78, '{sheet1}'!$G$10:${last_col}$10,A{row[0].row}, '{sheet1}'!$G$4:${last_col}$4, B{row[0].row}),0)"
+        # =IF(A20 <> A19, IF(Q20 <> 0, SUMIFS(
+        #     'SF Endulini'!$G$19:$HE$19, 'SF Endulini'!$G$10:$HE$10, A20, 'SF Endulini'!$G$4:$HE$4, B20), 0), 0)
+        row[4].value = f"=IF(A{row[0].row}&B{row[0].row}<>A{row[0].row - 1}&B{row[0].row - 1},IF(Q{row[0].row},SUMIFS('{sheet1}'!$G$19:${last_col}$19, '{sheet1}'!$G$10:${last_col}$10,A{row[0].row}, '{sheet1}'!$G$4:${last_col}$4, B{row[0].row}),0),0)"
+        row[18].value = f"=IF(A{row[0].row}<>A{row[0].row - 1},SUMIFS('{sheet1}'!$G$60:${last_col}$60, '{sheet1}'!$G$10:${last_col}$10,A{row[0].row}, '{sheet1}'!$G$4:${last_col}$4, B{row[0].row}),0)"
+        # if row[16].value != 0:
+        #     row[15].value = row[16].value
+        # print("row[18].value", row[18].value)
+        # if row[18].value != 0:
+        #     row[12].value = 0
+
 
     # Hide columns N & O
     cols_to_hide = ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'N', 'T', 'U']
@@ -485,7 +521,8 @@ def create_investment_list(data, request):
 
     # set a formula in colmn L to equal to J - K formatted as a date YYYY-MM-DD
     for row in ws.iter_rows(min_row=4):
-        row[12].value = f'=IF(J{row[0].row}="",K{row[0].row}-L{row[0].row},0)'
+        # =IF(S112 <> 0, 0, IF(J112="", K112 - L112, 0))
+        row[12].value = f'=IF(S{row[0].row}<>0,0,IF(J{row[0].row}="",K{row[0].row}-L{row[0].row},0))'
         # row[17].value = row[6].value
         if row[6].value:
             row[17].value = row[16].value

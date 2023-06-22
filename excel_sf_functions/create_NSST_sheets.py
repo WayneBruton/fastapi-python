@@ -4,6 +4,58 @@ import copy
 def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name, worksheets):
     # if pledges is not empty, then get the total of all the investment_amounts in the pledges list else set
     # total_pledges to 0
+
+    index_for_investor_report = len(worksheets) - 1
+    # ='Investor Exit List Endulini Sbe'!Q3 - 'Investor Exit List Endulini Sbe'!E3
+
+    if index == 0:
+        totalFigure = f'=+\'{worksheets[index_for_investor_report]}\'!Q3-\'{worksheets[index_for_investor_report]}\'!E3'
+        soldFigure = f'=+sumifs(\'{worksheets[index_for_investor_report]}\'!Q4:Q1000,' \
+                     f'\'{worksheets[index_for_investor_report]}\'!G4:G1000, True,' \
+                     f'\'{worksheets[index_for_investor_report]}\'!J4:J1000, "=")' \
+                     f'-sumifs(\'{worksheets[index_for_investor_report]}\'!E4:E1000,' \
+                     f'\'{worksheets[index_for_investor_report]}\'!G4:G1000, True,' \
+                     f'\'{worksheets[index_for_investor_report]}\'!J4:J1000, "=")'
+
+    elif index == 1:
+        # WORKING ON THIS
+
+        totalFigure = f'=+SUMIFS(\'{worksheets[index_for_investor_report]}\'!Q4: Q1000, ' \
+                      f'\'{worksheets[index_for_investor_report]}\'!J4: J1000, "=",' \
+                      f'\'{worksheets[index_for_investor_report]}\'!C4: C1000, "A")' \
+                      f'+SUMIFS(\'{worksheets[index_for_investor_report]}\'!Q4: Q1000, ' \
+                      f'\'{worksheets[index_for_investor_report]}\'!J4: J1000, "=", ' \
+                      f'\'{worksheets[index_for_investor_report]}\'!C4: C1000, "B")' \
+                      f'-SUMIFS(\'{worksheets[index_for_investor_report]}\'!E4: E1000, ' \
+                      f'\'{worksheets[index_for_investor_report]}\'!J4: J1000, "=", ' \
+                      f'\'{worksheets[index_for_investor_report]}\'!C4: C1000, "A")' \
+                      f'-SUMIFS(\'{worksheets[index_for_investor_report]}\'!E4: E1000, ' \
+                      f'\'{worksheets[index_for_investor_report]}\'!J4: J1000, "=", ' \
+                      f'\'{worksheets[index_for_investor_report]}\'!C4: C1000, "B")'
+
+        soldFigure = f'=+SUMIFS(\'{worksheets[index_for_investor_report]}\'!Q4: Q1000,' \
+                     f' \'{worksheets[index_for_investor_report]}\'!J4: J1000, "=", ' \
+                     f'\'{worksheets[index_for_investor_report]}\'!C4: C1000, "A",' \
+                     f'\'{worksheets[index_for_investor_report]}\'!G4:G1000, TRUE)' \
+                     f'+SUMIFS(\'{worksheets[index_for_investor_report]}\'!Q4: Q1000, ' \
+                     f'\'{worksheets[index_for_investor_report]}\'!J4: J1000, "=", ' \
+                     f'\'{worksheets[index_for_investor_report]}\'!C4: C1000, "B",' \
+                     f'\'{worksheets[index_for_investor_report]}\'!G4:G1000, TRUE)' \
+                     f'-SUMIFS(\'{worksheets[index_for_investor_report]}\'!E4: E1000, ' \
+                     f'\'{worksheets[index_for_investor_report]}\'!J4: J1000, "=", ' \
+                     f'\'{worksheets[index_for_investor_report]}\'!C4: C1000, "A",' \
+                     f'\'{worksheets[index_for_investor_report]}\'!G4:G1000, TRUE)' \
+                     f'-SUMIFS(\'{worksheets[index_for_investor_report]}\'!E4: E1000, ' \
+                     f'\'{worksheets[index_for_investor_report]}\'!J4: J1000, "=", ' \
+                     f'\'{worksheets[index_for_investor_report]}\'!C4: C1000, "B",' \
+                     f'\'{worksheets[index_for_investor_report]}\'!G4:G1000, TRUE)'
+
+    elif index == 2:
+        'NSST Heron'
+        'NSST Heron Fields'
+        totalFigure = f"='NSST Heron'!B49 - 'NSST Heron Fields'!B49"
+        soldFigure = f"='NSST Heron'!D49 - 'NSST Heron Fields'!D49"
+
     total_pledges = sum([float(item['investment_amount']) for item in pledges]) if pledges else 0
 
     # deep copy category list so that changes to the copy do not affect the original
@@ -103,17 +155,20 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
         ["Investor Early Exit interest", f'=+\'{worksheets[index]}\'!B68', 0, f'=+\'{worksheets[index]}\'!B87',
          f'=+\'{worksheets[index]}\'!B84'])
 
-    nsst_data.append(["Interest on Capital to Be Drawn from Momentum", f'=+\'{worksheets[index]}\'!B30+\'{worksheets[index]}\'!B31',
-                      f'=+\'{worksheets[index]}\'!D30+\'{worksheets[index]}\'!D31',
-                      f'=+\'{worksheets[index]}\'!E30+\'{worksheets[index]}\'!E31', f'=+\'{worksheets[index]}\'!F30+\'{worksheets[index]}\'!F31'])
+    nsst_data.append(
+        ["Interest on Capital to Be Drawn from Momentum", f'=+\'{worksheets[index]}\'!B30+\'{worksheets[index]}\'!B31',
+         f'=+\'{worksheets[index]}\'!D30+\'{worksheets[index]}\'!D31',
+         f'=+\'{worksheets[index]}\'!E30+\'{worksheets[index]}\'!E31',
+         f'=+\'{worksheets[index]}\'!F30+\'{worksheets[index]}\'!F31'])
     nsst_data.append(
         ["Interest on Capital to be raised", f'=+\'{worksheets[index]}\'!B33', f'=+\'{worksheets[index]}\'!D33',
          f'=+\'{worksheets[index]}\'!E33', f'=+\'{worksheets[index]}\'!F33'])
     nsst_data.append(
-        ["Interest due on deployed capital exit dates", 0, 0, f'=+\'{worksheets[index]}\'!E34',
+        ["Interest due on deployed capital exit dates", totalFigure, 0, soldFigure,
          f'=+\'{worksheets[index]}\'!F34-\'{worksheets[index]}\'!F47'])
     nsst_data.append(
-        ["Developer Interest earned from Investment Account", f'=+\'{worksheets[index]}\'!B30', f'=+\'{worksheets[index]}\'!D30', f'=+\'{worksheets[index]}\'!E30',
+        ["Developer Interest earned from Investment Account", f'=+\'{worksheets[index]}\'!B30',
+         f'=+\'{worksheets[index]}\'!D30', f'=+\'{worksheets[index]}\'!E30',
          f'=+\'{worksheets[index]}\'!F30'])
     nsst_data.append([])
     nsst_data.append(["PROJECTED GROSS PROFIT"])
