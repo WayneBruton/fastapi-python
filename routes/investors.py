@@ -1,10 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse
 from config.db import db
 import os
 from pydantic import BaseModel
 import loan_agreement_files.lender as l1
 from main import create_final_loan_agreement
+import smtplib
+from email.message import EmailMessage
 
 
 # from verify_token import verify_jwt_token
@@ -36,6 +38,66 @@ async def get_all_investors():
     return result
 
 
+@investor.post("/email_investor_re_release")
+async def email_investor_re_release(data: Request):
+    request = await data.json()
+
+    # convert the request['investment_amount'] to currency format and assign it to a variable called amount
+    amount = "{:,.2f}".format(float(request['investment_amount']))
+
+    # send email to the investor
+    smtp_server = "depro8.fcomet.com"
+    port = 465  # For starttls
+    sender_email = 'omh-app@opportunitymanagement.co.za'
+    password = "12071994Wb!"
+
+    message = f"""\
+            <html>
+              <body>
+                <p>Dear {request['name']},<br><br>
+                
+                We are pleased to inform you that your investment of R {amount} in {request['Category']} 
+                ({request['opportunity_code']}) has been released into the project on the following date:
+                {request['release_date']}.<br><br>
+                
+                As a result, the interest on your investment will be calculated at the higher rate.
+                   
+
+                      <br><br>
+                      <u>Please do not reply to this email as it is not monitored</u>.<br><br>
+                      <br /><br />
+                      Regards<br />
+                      <strong>The OPC Team</strong><br />
+                </p>
+              </body>
+            </html>
+            """
+
+    msg = EmailMessage()
+    msg['Subject'] = f"Funds Released - {request['Category']} ({request['opportunity_code']})"
+    msg['From'] = sender_email
+    msg['To'] = f"{request['email']}"
+    # msg['To'] = f"{request['email']}, debbie@opportunity.co.za, nick@opportunity.co.za"
+    # copy in nick@opportunity.co.za, wynand@capeprojects.co.za, debbie@opportunity.co.za and
+    # dirk@cpconstruction.co.za to the email
+    # msg['Cc'] = "nick@opportunity.co.za, wynand@capeprojects.co.za, debbie@opportunity.co.za, " \
+    #             "dirk@cpconstruction.co.za"
+
+    msg.set_content(message, subtype='html')
+
+    try:
+        with smtplib.SMTP_SSL(smtp_server, port) as server:
+            server.ehlo()
+            server.login(sender_email, password=password)
+            server.send_message(msg)
+            server.quit()
+            return {"message": "Email sent successfully"}
+    except Exception as e:
+        print(e)
+        return {"message": "Email failed to send"}
+    return request
+
+
 # GET LOAN AGREEMENT INFO FROM MONGO & CREATE PHYSICAL PDF DOCUMENT ACCORDINGLY
 @investor.post("/investorloanagreement")
 async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber):
@@ -51,13 +113,15 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
             result_loan = list(investors.aggregate(
                 [{"$match": {"investor_acc_number": investor_acc_number.investor_acc_number}}, {"$unwind": "$pledges"},
                  {"$match": {"pledges.opportunity_code": investor_acc_number.opportunity_code}}, {
-                     "$project": {"investor_name": 1, "investor_surname": 1, "investor_id_number": 1, "investor_email": 1,
+                     "$project": {"investor_name": 1, "investor_surname": 1, "investor_id_number": 1,
+                                  "investor_email": 1,
                                   "investor_name2": 1, "investor_surname2": 1, "investor_id_number2": 1,
                                   "investor_mobile": 1, "investor_landline": 1, "investor_physical_street": 1,
                                   "investor_physical_suburb": 1, "investor_physical_city": 1,
                                   "investor_physical_province": 1,
                                   "investor_physical_country": 1, "investor_physical_postal_code": 1,
-                                  "investor_postal_street_box": 1, "investor_postal_suburb": 1, "investor_postal_city": 1,
+                                  "investor_postal_street_box": 1, "investor_postal_suburb": 1,
+                                  "investor_postal_city": 1,
                                   "investor_postal_province": 1, "investor_postal_country": 1,
                                   "investor_postal_postal_code": 1,
                                   "registered_company_name": 1, "bank_account_holder": 1, "bank_account_type": 1,

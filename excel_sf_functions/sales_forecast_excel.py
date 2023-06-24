@@ -225,10 +225,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     last_col = get_column_letter(ws2.max_column)
     # print("last_col", last_col)
 
-
-
-
-
     # set a formula in colmn L to equal to J - K formatted as a date YYYY-MM-DD
     for row in ws.iter_rows(min_row=4):
         # get row number and print it
@@ -243,11 +239,9 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         else:
             row[17].value = 0
 
-
         # DO SOMETHING HERE
 
     # format column L as integer
-
 
     # in column N, if column I is not blank, set the value to I - K formatted as integer, else set the value to H - K
     # formatted as integer
@@ -286,17 +280,19 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
     for row in ws.iter_rows(min_row=4):
         # print("row", row[0].row)
-        row[16].value = f"=IF(A{row[0].row}&B{row[0].row}<>A{row[0].row - 1}&B{row[0].row - 1},SUMIFS('{sheet1}'!$G$78:${last_col}$78, '{sheet1}'!$G$10:${last_col}$10,A{row[0].row}, '{sheet1}'!$G$4:${last_col}$4, B{row[0].row}),0)"
+        row[
+            16].value = f"=IF(A{row[0].row}&B{row[0].row}<>A{row[0].row - 1}&B{row[0].row - 1},SUMIFS('{sheet1}'!$G$78:${last_col}$78, '{sheet1}'!$G$10:${last_col}$10,A{row[0].row}, '{sheet1}'!$G$4:${last_col}$4, B{row[0].row}),0)"
         # =IF(A20 <> A19, IF(Q20 <> 0, SUMIFS(
         #     'SF Endulini'!$G$19:$HE$19, 'SF Endulini'!$G$10:$HE$10, A20, 'SF Endulini'!$G$4:$HE$4, B20), 0), 0)
-        row[4].value = f"=IF(A{row[0].row}&B{row[0].row}<>A{row[0].row - 1}&B{row[0].row - 1},IF(Q{row[0].row},SUMIFS('{sheet1}'!$G$19:${last_col}$19, '{sheet1}'!$G$10:${last_col}$10,A{row[0].row}, '{sheet1}'!$G$4:${last_col}$4, B{row[0].row}),0),0)"
-        row[18].value = f"=IF(A{row[0].row}<>A{row[0].row - 1},SUMIFS('{sheet1}'!$G$60:${last_col}$60, '{sheet1}'!$G$10:${last_col}$10,A{row[0].row}, '{sheet1}'!$G$4:${last_col}$4, B{row[0].row}),0)"
+        row[
+            4].value = f"=IF(A{row[0].row}&B{row[0].row}<>A{row[0].row - 1}&B{row[0].row - 1},IF(Q{row[0].row},SUMIFS('{sheet1}'!$G$19:${last_col}$19, '{sheet1}'!$G$10:${last_col}$10,A{row[0].row}, '{sheet1}'!$G$4:${last_col}$4, B{row[0].row}),0),0)"
+        row[
+            18].value = f"=IF(A{row[0].row}<>A{row[0].row - 1},SUMIFS('{sheet1}'!$G$60:${last_col}$60, '{sheet1}'!$G$10:${last_col}$10,A{row[0].row}, '{sheet1}'!$G$4:${last_col}$4, B{row[0].row}),0)"
         # if row[16].value != 0:
         #     row[15].value = row[16].value
         # print("row[18].value", row[18].value)
         # if row[18].value != 0:
         #     row[12].value = 0
-
 
     # Hide columns N & O
     cols_to_hide = ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'N', 'T', 'U']
@@ -572,3 +568,128 @@ def create_investment_list(data, request):
         ws.merge_cells(f'A{row}:N{row}')
 
     wb.save(f"excel_files/{sheet_name}.xlsx")
+
+
+def create_cash_flow(data, request, other_data):
+    # print("data", data)
+    # print("request", request)
+
+    worksheet_data = []
+
+    if len(request['Category']) > 1:
+        heading = 'Heron'
+    else:
+        heading = request['Category'][0]
+
+    wb = Workbook()
+
+    ws = wb.active
+    ws.title = "Cash Flow"
+
+    row1_data = [f"Weekly Cashflow ({heading}) - {request['date']}","",""]
+
+    row2_data = ["","",""]
+
+    row3_data = ["Date", "Amount", "Units"]
+
+    worksheet_data.append(row1_data)
+    worksheet_data.append(row2_data)
+    worksheet_data.append(row3_data)
+    worksheet_data.append(row2_data)
+
+    for item in data:
+        row_data = [item['date'], item['total_cashflow'], item['units']]
+        worksheet_data.append(row_data)
+
+    for item in worksheet_data:
+        # print(item)
+        ws.append(item)
+
+    # format column B as currency
+    for cell in ws['B']:
+        cell.number_format = 'R#,##0.00'
+
+    # format column A as date
+    for cell in ws['A']:
+        cell.number_format = 'YYYY-MM-DD'
+
+    # set column B width to 20
+    ws.column_dimensions['B'].width = 20
+    ws.column_dimensions['A'].width = 15
+
+    # add a worksheet
+    ws2 = wb.create_sheet("Cash Flow Summary")
+
+    worksheet_data = []
+    row1_data = ["Date", "Amount", "Units"]
+    worksheet_data.append(row1_data)
+
+    for item in other_data:
+        row_data = [item['opportunity_end_date'], item['nett_cashflow'], item['opportunity_code']]
+        worksheet_data.append(row_data)
+
+    for item in worksheet_data:
+        # print(item)
+        ws2.append(item)
+
+
+
+    for cell in ws2['B']:
+        cell.number_format = 'R#,##0.00'
+
+    # format column A as date
+    for cell in ws2['A']:
+        cell.number_format = 'YYYY-MM-DD'
+
+    # set column B width to 20
+    ws2.column_dimensions['B'].width = 20
+    ws2.column_dimensions['A'].width = 15
+
+
+
+    wb.save(f"excel_files/Cashflow {heading}.xlsx")
+
+    return f"Cashflow {heading}.xlsx"
+
+
+# create_cash_flow([{
+#     "date": "2023/06/25",
+#     "total_cashflow": 1520710.5982950684,
+#     "units": "HVC102,HVC106,HVC105,HVC103,HVC101,HVC104"
+# },
+#     {
+#         "date": "2023/06/27",
+#         "total_cashflow": 58374.981506849406,
+#         "units": "HFB214"
+#     },
+#     {
+#         "date": "2023/07/18",
+#         "total_cashflow": 2381304.6562584257,
+#         "units": "HVC305,HVC205,HVC302,HVC204,HVC301,HVC206,HVC304,HVC303,HVC306,HVC201,HVC202,HVC203"
+#     },
+#     {
+#         "date": "2023/08/19",
+#         "total_cashflow": 4305378.80258411,
+#         "units": "HVP101,HVP102,HVP201,HVP103,HVP203,HVP301,HVP302,HVP303,HVP202"
+#     },
+#     {
+#         "date": "2023/09/19",
+#         "total_cashflow": 1311740.05,
+#         "units": "HFB315"
+#     },
+#     {
+#         "date": "2023/11/07",
+#         "total_cashflow": 2547835.3119508224,
+#         "units": "HVD101,HVD102,HVD103,HVD104,HVD202,HVD201,HVD203,HVD204,HVD301,HVD302,HVD303,HVD304"
+#     },
+#     {
+#         "date": "2023/12/05",
+#         "total_cashflow": 3449508.8032786306,
+#         "units": "HVN101,HVN102,HVN103,HVN104,HVN201,HVN202,HVN203,HVN204,HVN301,HVN302,HVN303,HVN304"
+#     }],
+#     {
+#         "Category": ["Heron Fields", "Heron View"],
+#         "date": "2023/05/31",
+#         "firstName": "Wayne"
+#     }
+# )
