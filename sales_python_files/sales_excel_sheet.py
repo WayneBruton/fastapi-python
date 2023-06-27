@@ -224,4 +224,4 @@ def create_excel_file(data, file_name):
             cell.fill = PatternFill(start_color='D3D3D3', end_color='D3D3D3', fill_type='solid')
 
     # SAVE THE EXCEL FILE
-    wb.save(file_name)
+    wb.save(f"excel_files/{file_name}")

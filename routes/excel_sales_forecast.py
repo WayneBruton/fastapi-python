@@ -1473,6 +1473,7 @@ async def create_cashflow(data: Request):
         return {"ERROR": "Something went wrong!!"}
     # return investments
 
+
 @excel_sales_forecast.get("/get_cashflow")
 async def get_cashflow(cashflow_name):
     file_name = cashflow_name
@@ -1482,7 +1483,6 @@ async def get_cashflow(cashflow_name):
         return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
     else:
         return {"ERROR": "File does not exist!!"}
-
 
 
 @excel_sales_forecast.post("/check_if_file_exists")

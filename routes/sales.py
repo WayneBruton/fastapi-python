@@ -65,6 +65,12 @@ async def get_developments_for_sales():
     result_developments = list(opportunityCategories.aggregate([{"$project": {
         "id2": {'$toString': "$_id"}, "_id": 0, "Description": 1, "blocked": 1
     }}]))
+
+    # filter out if Descrption = 'Southwark' or blocked = 1
+    result_developments = [x for x in result_developments if x['Description'] != 'Southwark' and x['blocked'] != 1]
+
+    # for development in result_developments:
+    #     print(development)
     get_files_required_for_sales()
     return result_developments
 
@@ -73,19 +79,33 @@ async def get_developments_for_sales():
 @sales.post("/getUnitsForSales")
 async def get_units_for_sales(data: Request):
     request = await data.json()
-    print(request)
+    # print(request)
     result = list(opportunities.aggregate([
         {
             '$match': {
-                'Category': request['development']
+                'Category': request['development'],
+                'opportunity_sold': False
             }
-        }, {
+        },
+        {
             '$project': {
                 '_id': 0,
-                'opportunity_code': 1
+                'opportunity_code': 1,
+                'opportunity_sale_price': 1,
+                'opportunity_name': 1,
+                'opportunity_sold': 1,
+
             }
         }
     ]))
+    # in result, format the opportunity_sale_price as currency with two decimal places and an R in front and a
+    # thousand separator
+    for unit in result:
+        unit['opportunity_sale_price'] = float(unit['opportunity_sale_price'])
+        unit['opportunity_sale_price'] = f"R{unit['opportunity_sale_price']:,.2f}"
+
+    # print(result)
+    # print(len(result))
     return result
 
 
@@ -93,7 +113,7 @@ async def get_units_for_sales(data: Request):
 @sales.post("/get_units_sold")
 async def get_all_units_sold(data: Request):
     request = await data.json()
-    print(request)
+    # print(request)
     response = list(sales_processed.aggregate([
         {
             '$match': {
@@ -110,7 +130,7 @@ async def get_all_units_sold(data: Request):
             }
         }
     ]))
-    print(response)
+    # print(response)
 
     return response
 
@@ -174,7 +194,7 @@ async def delete_sale(data: Request):
     request = await data.json()
     obj_instance = ObjectId(request['id'])
     result = sales_processed.delete_one({"_id": obj_instance})
-    print(result)
+    # print(result)
     unit = request['unit']
     list_of_filenames = os.listdir("sales_documents")
     # DO AWS REMOVE FILE
@@ -200,7 +220,7 @@ async def get_sold_unit(data: Request):
 @sales.post("/upload_file")
 async def upload_file(data: Request):
     form = await data.form()
-    print("form", form)
+    # print("form", form)
     filename = form['fileName']
     contents = await form['doc'].read()
     with open(f"sales_documents/{filename}", 'wb') as f:
@@ -222,35 +242,56 @@ async def upload_file(data: Request):
 # DELETE AN UPLOADED DOCUMENT
 @sales.post("/delete_uploaded_file")
 async def delete_uploaded_file(data: Request):
-    request = await data.json()
-    print(request)
-    is_exists = os.path.exists(request['fileToDelete'])
-    print(is_exists)
-    if is_exists:
-        os.remove(request['fileToDelete'])
-        return {"file_deleted": True}
-    else:
+    try:
+        request = await data.json()
+        # print(request)
+        is_exists = os.path.exists(request['fileToDelete'])
+        # print(is_exists)
+        if is_exists:
+            os.remove(request['fileToDelete'])
+            return {"file_deleted": True}
+        else:
+            return {"file_deleted": False}
+    except Exception as err:
+        print(err)
         return {"file_deleted": False}
 
 
 # RETRIEVE AN UPLOADED DOCUMENT
 @sales.get("/get_uploaded_document")
-async def get_uploaded_file(file_name):  # File Name incl path.
-    is_exists = os.path.exists(file_name)
-    if is_exists:
-        return FileResponse(f"{file_name}", media_type="application/pdf")
-    else:
+async def get_uploaded_file(file_name):
+    try:  # File Name incl path.
+        is_exists = os.path.exists(file_name)
+        if is_exists:
+            return FileResponse(f"{file_name}", media_type="application/pdf")
+        else:
+            return {"ERROR": "File does not exist!!"}
+    except Exception as err:
+        print(err)
         return {"ERROR": "File does not exist!!"}
 
 
 # GET ALL SALES and when returning ensure _id is a string and project all fields, then call create_excel_file
 @sales.get("/get_all_sales")
 async def get_all_sales():
-    result = list(sales_processed.find())
+    try:
 
-    for item in result:
-        item['_id'] = str(item['_id'])
+        # if excel_files/unit_sales.xlsx exists, delete it
+        is_exists = os.path.exists("excel_files/unit_sales.xlsx")
+        if is_exists:
+            os.remove("excel_files/unit_sales.xlsx")
+            print("file deleted")
+        else:
+            print("file does not exist")
 
-    create_excel_file(result, "sales.xlsx")
-    return result
-    # return {"done": "done"}
+        result = list(sales_processed.find())
+
+        for item in result:
+            item['_id'] = str(item['_id'])
+
+        create_excel_file(result, "unit_sales.xlsx")
+        # return result
+        return {"done": "done"}
+    except Exception as err:
+        print(err)
+        return {"error": "error"}
