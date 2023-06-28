@@ -126,11 +126,74 @@ async def get_all_units_sold(data: Request):
                 'development': 1,
                 'opportunity_code': 1,
                 'opportunity_firstname': 1,
-                'opportunity_lastname': 1
+                'opportunity_lastname': 1,
+                'opportunity_otp': 1,
+                'opportunity_deposite_date': 1,
+                'opportunity_bond_instruction_date': 1,
+                'opportunity_actual_lodgement': 1,
+                'opportunity_actual_reg_date': 1,
             }
         }
     ]))
-    # print(response)
+
+    for sale in response:
+        if sale['opportunity_otp'] is None:
+            sale['reserved'] = True
+        else:
+            sale['reserved'] = False
+        if sale['opportunity_deposite_date'] == '0':
+            sale['pending'] = True
+        else:
+            sale['pending'] = False
+        if sale['opportunity_deposite_date'] != '0':
+            sale['sold'] = True
+        else:
+            sale['sold'] = False
+        if  sale['opportunity_bond_instruction_date'] is not None:
+            sale['bond_approval'] = True
+        else:
+            sale['bond_approval'] = False
+        if  sale['opportunity_actual_lodgement'] is not None:
+            sale['lodged'] = True
+        else:
+            sale['lodged'] = False
+        if  sale['opportunity_actual_reg_date'] is not None:
+            sale['registered'] = True
+        else:
+            sale['registered'] = False
+
+        # if sale['registered']:
+        #     sale['lodged'] = True
+        #     sale['bond_approval'] = True
+        #     sale['sold'] = True
+        #     sale['pending'] = True
+        #     sale['reserved'] = True
+        # if sale['lodged']:
+        #     sale['bond_approval'] = True
+        #     sale['sold'] = True
+        #     sale['pending'] = True
+        #     sale['reserved'] = True
+        # if sale['bond_approval']:
+        #     sale['sold'] = True
+        #     sale['pending'] = True
+        #     sale['reserved'] = True
+        # if sale['sold']:
+        #     sale['pending'] = True
+        #     sale['reserved'] = True
+        # if sale['pending']:
+        #     sale['reserved'] = True
+
+
+
+        del sale['opportunity_otp']
+        del sale['opportunity_deposite_date']
+        del sale['opportunity_bond_instruction_date']
+        del sale['opportunity_actual_lodgement']
+        del sale['opportunity_actual_reg_date']
+
+
+    # print(response[0])
+
 
     return response
 
