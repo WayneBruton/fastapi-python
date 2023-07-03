@@ -17,6 +17,7 @@ opportunityCategories = db.opportunityCategories
 opportunities = db.opportunities
 sales_parameters = db.salesParameters
 sales_processed = db.sales_processed
+sales_agents = db.sales_agents
 
 # AWS BUCKET INFO - ENSURE IN VARIABLES ON HEROKU
 AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
@@ -367,10 +368,61 @@ async def get_all_sales():
 
         for item in result:
             item['_id'] = str(item['_id'])
+            if 'opportunity_bond_amount' not in item:
+                item['opportunity_bond_amount'] = 0
+            if 'opportunity_parking_cost' not in item:
+                item['opportunity_parking_cost'] = 0
+
+            if 'opportunity_stove_cost' not in item:
+                item['opportunity_stove_cost'] = 0
+
+            if 'opportunity_pay_type' not in item:
+                item['opportunity_pay_type'] = ""
+        # print(result)
 
         create_excel_file(result, "unit_sales.xlsx")
         # return result
-        return {"done": "done"}
+        return {"done": "excel_files/unit_sales.xlsx"}
     except Exception as err:
         print(err)
         return {"error": "error"}
+
+@sales.get("/get_salesFile")
+async def get_uploaded_file(file_name):
+    print(file_name)
+
+    try:  # File Name incl path.
+        is_exists = os.path.exists(file_name)
+        print(is_exists)
+        if is_exists:
+            return FileResponse(f"{file_name}", filename=file_name)
+        else:
+            return {"ERROR": "File does not exist!!"}
+    except Exception as err:
+        print(err)
+        return {"ERROR": "File does not exist!!"}
+
+@sales.post("/get_salesAgents")
+async def get_salesAgents():
+    try:
+        result = list(sales_agents.find())
+        for item in result:
+            item['_id'] = str(item['_id'])
+            
+
+        return result
+    except Exception as err:
+        print(err)
+        return {"error": "error"}
+
+@sales.post("/post_newAgent")
+async def post_newAgent(data: Request):
+    request = await data.json()
+    print(request)
+    try:
+        sales_agents.insert_one(request)
+        return {"done": True}
+    except Exception as err:
+        print(err)
+        return {"done": False}
+    # return {"done": True}
