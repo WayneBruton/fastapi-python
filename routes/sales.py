@@ -35,28 +35,31 @@ s3 = boto3.client(
 def get_files_required_for_sales():
     file_list_items = []
     results = list(sales_processed.find(({})))
-    for result in results:
-        file_list_items.append(result['opportunity_otp'])
-        file_list_items.append(result['opportunity_uploadId'])
-        file_list_items.append(result['opportunity_addressproof'])
-        file_list_items.append(result['opportunity_uploadId_sec'])
-        file_list_items.append(result['opportunity_addressproof_sec'])
-        file_list_items.append(result['opportunity_upload_deposite'])
-        file_list_items.append(result['opportunity_upload_statement'])
-    file_list_items = [x.split("/")[1] for x in file_list_items if type(x) == str]
-    list_of_filenames = os.listdir("sales_documents")
-    final_list_to_download = [x for x in file_list_items if x not in list_of_filenames]
-    if final_list_to_download:
-        for file in final_list_to_download:
-            try:
-                s3.download_file(AWS_BUCKET_NAME, file, f"./sales_documents/{file}")
-            except ClientError as err:
-                print("Credentials are incorrect")
-                print(err)
-            except Exception as err:
-                print(err)
-    else:
-        print("List is empty")
+    try:
+        for result in results:
+            file_list_items.append(result['opportunity_otp'])
+            file_list_items.append(result['opportunity_uploadId'])
+            file_list_items.append(result['opportunity_addressproof'])
+            file_list_items.append(result['opportunity_uploadId_sec'])
+            file_list_items.append(result['opportunity_addressproof_sec'])
+            file_list_items.append(result['opportunity_upload_deposite'])
+            file_list_items.append(result['opportunity_upload_statement'])
+        file_list_items = [x.split("/")[1] for x in file_list_items if type(x) == str]
+        list_of_filenames = os.listdir("sales_documents")
+        final_list_to_download = [x for x in file_list_items if x not in list_of_filenames]
+        if final_list_to_download:
+            for file in final_list_to_download:
+                try:
+                    s3.download_file(AWS_BUCKET_NAME, file, f"./sales_documents/{file}")
+                except ClientError as err:
+                    print("Credentials are incorrect")
+                    print(err)
+                except Exception as err:
+                    print(err)
+        else:
+            print("List is empty")
+    except Exception as err:
+        print(err)
 
 
 # GET DEVELOPMENTS
@@ -79,14 +82,16 @@ async def get_developments_for_sales():
 @sales.post("/getUnitsForSales")
 async def get_units_for_sales(data: Request):
     request = await data.json()
-    # print(request)
+    print(request)
     result = list(opportunities.aggregate([
+
         {
             '$match': {
-                'Category': request['development'],
+                'Category': {"$in": request['development']},
                 'opportunity_sold': False
             }
         },
+
         {
             '$project': {
                 '_id': 0,
@@ -98,6 +103,7 @@ async def get_units_for_sales(data: Request):
             }
         }
     ]))
+    print(len(result))
     # in result, format the opportunity_sale_price as currency with two decimal places and an R in front and a
     # thousand separator
     for unit in result:
@@ -117,7 +123,7 @@ async def get_all_units_sold(data: Request):
     response = list(sales_processed.aggregate([
         {
             '$match': {
-                'development': request['development']
+                'development':  {"$in": request['development']}
             }
         }, {
             '$project': {
@@ -135,6 +141,18 @@ async def get_all_units_sold(data: Request):
             }
         }
     ]))
+    # print(response)
+    for sale in response:
+        if 'opportunity_otp' not in sale:
+            sale['opportunity_otp'] = None
+        if 'opportunity_deposite_date' not in sale:
+            sale['opportunity_deposite_date'] = None
+        if 'opportunity_bond_instruction_date' not in sale:
+            sale['opportunity_bond_instruction_date'] = None
+        if 'opportunity_actual_lodgement' not in sale:
+            sale['opportunity_actual_lodgement'] = None
+        if 'opportunity_actual_reg_date' not in sale:
+            sale['opportunity_actual_reg_date'] = None
 
     for sale in response:
         if sale['opportunity_otp'] is None:
@@ -149,41 +167,18 @@ async def get_all_units_sold(data: Request):
             sale['sold'] = True
         else:
             sale['sold'] = False
-        if  sale['opportunity_bond_instruction_date'] is not None:
+        if sale['opportunity_bond_instruction_date'] is not None:
             sale['bond_approval'] = True
         else:
             sale['bond_approval'] = False
-        if  sale['opportunity_actual_lodgement'] is not None:
+        if sale['opportunity_actual_lodgement'] is not None:
             sale['lodged'] = True
         else:
             sale['lodged'] = False
-        if  sale['opportunity_actual_reg_date'] is not None:
+        if sale['opportunity_actual_reg_date'] is not None:
             sale['registered'] = True
         else:
             sale['registered'] = False
-
-        # if sale['registered']:
-        #     sale['lodged'] = True
-        #     sale['bond_approval'] = True
-        #     sale['sold'] = True
-        #     sale['pending'] = True
-        #     sale['reserved'] = True
-        # if sale['lodged']:
-        #     sale['bond_approval'] = True
-        #     sale['sold'] = True
-        #     sale['pending'] = True
-        #     sale['reserved'] = True
-        # if sale['bond_approval']:
-        #     sale['sold'] = True
-        #     sale['pending'] = True
-        #     sale['reserved'] = True
-        # if sale['sold']:
-        #     sale['pending'] = True
-        #     sale['reserved'] = True
-        # if sale['pending']:
-        #     sale['reserved'] = True
-
-
 
         del sale['opportunity_otp']
         del sale['opportunity_deposite_date']
@@ -191,14 +186,21 @@ async def get_all_units_sold(data: Request):
         del sale['opportunity_actual_lodgement']
         del sale['opportunity_actual_reg_date']
 
-
     # print(response[0])
-
 
     return response
 
 
-# GET LINKED INVESTORS
+@sales.post("/deleteSale")
+async def delete_sale(data: Request):
+    request = await data.json()
+    print(request)
+    result = sales_processed.delete_one({"opportunity_code": request['opportunity_code']})
+    print(result.deleted_count)
+
+    return {"message": "success"}
+
+
 @sales.post("/getLinkedInvestors")
 async def get_investors_linked_to_sale(data: Request):
     request = await data.json()
@@ -239,6 +241,7 @@ async def get_investors_linked_to_sale(data: Request):
 @sales.post("/saveSale")
 async def save_sale(data: Request):
     request = await data.json()
+    # print(request)
     if request['formData']['id'] != "":
         id_to_update = request['formData']['id']
         obj_instance = ObjectId(id_to_update)
@@ -252,20 +255,20 @@ async def save_sale(data: Request):
 
 
 # DELETE A SALE AND ASSOCIATED UPLOADED DOCUMENTS
-@sales.post("/delete_sale")
-async def delete_sale(data: Request):
-    request = await data.json()
-    obj_instance = ObjectId(request['id'])
-    result = sales_processed.delete_one({"_id": obj_instance})
-    # print(result)
-    unit = request['unit']
-    list_of_filenames = os.listdir("sales_documents")
-    # DO AWS REMOVE FILE
-    for file in list_of_filenames:
-        length = len(unit)
-        if file[:length] == unit:
-            os.remove(f"sales_documents/{file}")
-    return "Deleted"
+# @sales.post("/delete_sale")
+# async def delete_sale(data: Request):
+#     request = await data.json()
+#     obj_instance = ObjectId(request['id'])
+#     result = sales_processed.delete_one({"_id": obj_instance})
+#     # print(result)
+#     unit = request['unit']
+#     list_of_filenames = os.listdir("sales_documents")
+#     # DO AWS REMOVE FILE
+#     for file in list_of_filenames:
+#         length = len(unit)
+#         if file[:length] == unit:
+#             os.remove(f"sales_documents/{file}")
+#     return "Deleted"
 
 
 # RETRIEVE AN ALREADY SOLD UNIT
@@ -275,6 +278,7 @@ async def get_sold_unit(data: Request):
     result = sales_processed.find_one(
         {"opportunity_code": request['opportunity_code'], "development": request['development']})
     if result:
+        result["id"] = str(result["_id"])
         del result["_id"]
     return result
 
