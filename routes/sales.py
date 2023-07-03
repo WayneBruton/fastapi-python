@@ -123,7 +123,7 @@ async def get_all_units_sold(data: Request):
     response = list(sales_processed.aggregate([
         {
             '$match': {
-                'development':  {"$in": request['development']}
+                'development': {"$in": request['development']}
             }
         }, {
             '$project': {
@@ -138,6 +138,7 @@ async def get_all_units_sold(data: Request):
                 'opportunity_bond_instruction_date': 1,
                 'opportunity_actual_lodgement': 1,
                 'opportunity_actual_reg_date': 1,
+                'opportunity_bond_originator': 1,
             }
         }
     ]))
@@ -159,15 +160,15 @@ async def get_all_units_sold(data: Request):
             sale['reserved'] = True
         else:
             sale['reserved'] = False
-        if sale['opportunity_deposite_date'] == '0':
+        if sale['opportunity_deposite_date'] is None:
             sale['pending'] = True
         else:
             sale['pending'] = False
-        if sale['opportunity_deposite_date'] != '0':
+        if sale['opportunity_deposite_date'] is not None:
             sale['sold'] = True
         else:
             sale['sold'] = False
-        if sale['opportunity_bond_instruction_date'] is not None:
+        if sale['opportunity_bond_instruction_date'] is not None or sale['opportunity_bond_originator'] == 'Cash':
             sale['bond_approval'] = True
         else:
             sale['bond_approval'] = False
@@ -175,7 +176,7 @@ async def get_all_units_sold(data: Request):
             sale['lodged'] = True
         else:
             sale['lodged'] = False
-        if sale['opportunity_actual_reg_date'] is not None:
+        if sale['opportunity_actual_reg_date'] is not None and sale['opportunity_actual_reg_date'] != "":
             sale['registered'] = True
         else:
             sale['registered'] = False
@@ -185,6 +186,17 @@ async def get_all_units_sold(data: Request):
         del sale['opportunity_bond_instruction_date']
         del sale['opportunity_actual_lodgement']
         del sale['opportunity_actual_reg_date']
+
+        if sale['registered']:
+            sale['lodged'] = True
+        if sale['lodged']:
+            sale['bond_approval'] = True
+        if sale['bond_approval']:
+            sale['sold'] = True
+        if sale['sold']:
+            sale['pending'] = True
+        if sale['pending']:
+            sale['reserved'] = True
 
     # print(response[0])
 
