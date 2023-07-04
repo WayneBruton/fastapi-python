@@ -18,6 +18,7 @@ opportunities = db.opportunities
 sales_parameters = db.salesParameters
 sales_processed = db.sales_processed
 sales_agents = db.sales_agents
+mortgage_brokers = db.sales_mortgage_brokers
 
 # AWS BUCKET INFO - ENSURE IN VARIABLES ON HEROKU
 AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
@@ -387,6 +388,7 @@ async def get_all_sales():
         print(err)
         return {"error": "error"}
 
+
 @sales.get("/get_salesFile")
 async def get_uploaded_file(file_name):
     print(file_name)
@@ -402,13 +404,25 @@ async def get_uploaded_file(file_name):
         print(err)
         return {"ERROR": "File does not exist!!"}
 
+
 @sales.post("/get_salesAgents")
 async def get_salesAgents():
     try:
         result = list(sales_agents.find())
         for item in result:
             item['_id'] = str(item['_id'])
-            
+
+        return result
+    except Exception as err:
+        print(err)
+        return {"error": "error"}
+
+@sales.post("/get_morgtage_brokers")
+async def get_morgtage_brokers():
+    try:
+        result = list(mortgage_brokers.find())
+        for item in result:
+            item['_id'] = str(item['_id'])
 
         return result
     except Exception as err:
@@ -426,3 +440,40 @@ async def post_newAgent(data: Request):
         print(err)
         return {"done": False}
     # return {"done": True}
+
+
+@sales.post("/post_new_broker")
+async def post_new_broker(data: Request):
+    request = await data.json()
+    print(request)
+    try:
+        mortgage_brokers.insert_one(request)
+        return {"done": True}
+    except Exception as err:
+        print(err)
+        return {"done": False}
+    # return {"done": True}
+
+@sales.post("/delete_agent")
+async def delete_agent(data: Request):
+    request = await data.json()
+    print(request)
+    # return {"done": True}
+    try:
+        sales_agents.delete_one({"_id": ObjectId(request['_id'])})
+        return {"done": True}
+    except Exception as err:
+        print(err)
+        return {"done": False}
+
+@sales.post("/delete_broker")
+async def delete_broker(data: Request):
+    request = await data.json()
+    print(request)
+    # return {"done": True}
+    try:
+        mortgage_brokers.delete_one({"_id": ObjectId(request['_id'])})
+        return {"done": True}
+    except Exception as err:
+        print(err)
+        return {"done": False}
