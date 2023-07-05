@@ -1,11 +1,12 @@
 import os
 import boto3
 from botocore.exceptions import ClientError
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, UploadFile, Form, File
 from fastapi.responses import FileResponse
 from config.db import db
 from bson.objectid import ObjectId
 from decouple import config
+from typing import Annotated
 
 from sales_python_files.sales_excel_sheet import create_excel_file
 
@@ -37,31 +38,45 @@ s3 = boto3.client(
 def get_files_required_for_sales():
     file_list_items = []
     results = list(sales_processed.find(({})))
+
     try:
         for result in results:
-            file_list_items.append(result['opportunity_otp'])
-            file_list_items.append(result['opportunity_uploadId'])
-            file_list_items.append(result['opportunity_addressproof'])
-            file_list_items.append(result['opportunity_uploadId_sec'])
-            file_list_items.append(result['opportunity_addressproof_sec'])
-            file_list_items.append(result['opportunity_upload_deposite'])
-            file_list_items.append(result['opportunity_upload_statement'])
+            if 'opportunity_otp' in result:
+                file_list_items.append(result['opportunity_otp'])
+            if 'opportunity_uploadId' in result:
+                file_list_items.append(result['opportunity_uploadId'])
+            if 'opportunity_addressproof' in result:
+                file_list_items.append(result['opportunity_addressproof'])
+            if 'opportunity_uploadId_sec' in result:
+                file_list_items.append(result['opportunity_uploadId_sec'])
+            if 'opportunity_addressproof_sec' in result:
+                file_list_items.append(result['opportunity_addressproof_sec'])
+            if 'opportunity_upload_deposite' in result:
+                file_list_items.append(result['opportunity_upload_deposite'])
+            if 'opportunity_upload_statement' in result:
+                file_list_items.append(result['opportunity_upload_statement'])
+
+        file_list_items = [x for x in file_list_items if x is not None]
+        file_list_items = [x for x in file_list_items if x != '']
         file_list_items = [x.split("/")[1] for x in file_list_items if type(x) == str]
+
         list_of_filenames = os.listdir("sales_documents")
+
         final_list_to_download = [x for x in file_list_items if x not in list_of_filenames]
+
         if final_list_to_download:
             for file in final_list_to_download:
                 try:
                     s3.download_file(AWS_BUCKET_NAME, file, f"./sales_documents/{file}")
                 except ClientError as err:
                     print("Credentials are incorrect")
-                    print(err)
+                    print("XX", err)
                 except Exception as err:
-                    print(err)
+                    print("YY", err)
         else:
             print("List is empty")
     except Exception as err:
-        print(err)
+        print("ZZ", err)
 
 
 # GET DEVELOPMENTS
@@ -70,7 +85,7 @@ async def get_developments_for_sales():
     result_developments = list(opportunityCategories.aggregate([{"$project": {
         "id2": {'$toString': "$_id"}, "_id": 0, "Description": 1, "blocked": 1
     }}]))
-
+    # print("Hello")
     # filter out if Descrption = 'Southwark' or blocked = 1
     result_developments = [x for x in result_developments if x['Description'] != 'Southwark' and x['blocked'] != 1]
 
@@ -298,10 +313,10 @@ async def get_sold_unit(data: Request):
 
 
 # UPLOAD A DOCUMENT
-@sales.post("/upload_file")
+@sales.post("/upload_sales_file")
 async def upload_file(data: Request):
     form = await data.form()
-    # print("form", form)
+    print("form", form['fileName'])
     filename = form['fileName']
     contents = await form['doc'].read()
     with open(f"sales_documents/{filename}", 'wb') as f:
@@ -417,6 +432,7 @@ async def get_salesAgents():
         print(err)
         return {"error": "error"}
 
+
 @sales.post("/get_morgtage_brokers")
 async def get_morgtage_brokers():
     try:
@@ -428,6 +444,7 @@ async def get_morgtage_brokers():
     except Exception as err:
         print(err)
         return {"error": "error"}
+
 
 @sales.post("/post_newAgent")
 async def post_newAgent(data: Request):
@@ -454,6 +471,7 @@ async def post_new_broker(data: Request):
         return {"done": False}
     # return {"done": True}
 
+
 @sales.post("/delete_agent")
 async def delete_agent(data: Request):
     request = await data.json()
@@ -465,6 +483,7 @@ async def delete_agent(data: Request):
     except Exception as err:
         print(err)
         return {"done": False}
+
 
 @sales.post("/delete_broker")
 async def delete_broker(data: Request):
