@@ -315,7 +315,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
     # print(firstName)
     if firstName == 'Wayne' or firstName == 'Wynand' or firstName == 'Nick' or firstName == 'Deric' or \
-            firstName == 'Debbie':
+            firstName == 'Debbie' or firstName == 'Leandri':
         if len(category) > 1:
             sheet_name = f"NSST {category[0].split(' ')[0]}"
 
