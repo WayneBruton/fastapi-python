@@ -247,7 +247,8 @@ async def get_all_units_sold(data: Request):
             sale['reserved'] = False
         else:
             sale['pending'] = False
-        if sale['opportunity_deposite_date'] is not None and sale['opportunity_deposite_date'] != "" and sale['pending']:
+        if sale['opportunity_deposite_date'] is not None and sale['opportunity_deposite_date'] != "" and sale[
+            'pending']:
             sale['sold'] = True
         else:
             sale['sold'] = False
@@ -289,11 +290,17 @@ async def get_all_units_sold(data: Request):
 @sales.post("/deleteSale")
 async def delete_sale(data: Request):
     request = await data.json()
-    print(request)
-    result = sales_processed.delete_one({"opportunity_code": request['opportunity_code']})
-    print(result.deleted_count)
+    try:
+        print(request)
+        result = sales_processed.delete_one({"opportunity_code": request['opportunity_code']})
+        result2 = opportunities.update_one({"opportunity_code": request['opportunity_code']},
+                                           {"$set": {"opportunity_sold": False, "opportunity_final_transfer_date": ""}})
+        # print(result.deleted_count)
 
-    return {"message": "success"}
+        return {"message": "success"}
+    except Exception as e:
+        print(e)
+        return {"message": "error"}
 
 
 @sales.post("/getLinkedInvestors")
@@ -335,18 +342,53 @@ async def get_investors_linked_to_sale(data: Request):
 # SAVE A SALE
 @sales.post("/saveSale")
 async def save_sale(data: Request):
-    request = await data.json()
-    # print(request)
-    if request['formData']['id'] != "":
-        id_to_update = request['formData']['id']
-        obj_instance = ObjectId(id_to_update)
-        sales_processed.update_one({"_id": obj_instance}, {"$set": request['formData']})
-        return {"updated": "Success"}
+    try:
+        request = await data.json()
+        # print(request)
 
-    else:
-        obj_instance = sales_processed.insert_one(request['formData']).inserted_id
-        sales_processed.update_one({"_id": obj_instance}, {"$set": {"id": str(obj_instance)}})
-        return {"id": str(obj_instance)}
+        # Update the opportunities collection
+        opportunity_code = request['formData']['opportunity_code']
+        # print(opportunity_code)
+        opportunity = opportunities.find_one({"opportunity_code": opportunity_code})
+
+        opportunity_sold = False
+        # print("opportunity", opportunity)
+
+        if request['formData']['opportunity_actual_reg_date'] != "" and request['formData'][
+            'opportunity_actual_reg_date'] is not None:
+            opportunity_sold = True
+            result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
+                "opportunity_sold": opportunity_sold,
+                "opportunity_final_transfer_date": request['formData']['opportunity_actual_reg_date']}})
+        elif (request['formData']['opportunity_actual_lodgement'] != "" and
+              request['formData']['opportunity_actual_lodgement'] is not None) or (
+                request['formData']['opportunity_actual_lodgement'] != "" and
+                request['formData']['opportunity_actual_lodgement'] is not None) or (
+                request['formData']['opportunity_bond_instruction_date'] != "" and
+                request['formData']['opportunity_bond_instruction_date'] is not None) or (
+                request['formData']['opportunity_deposite_date'] != ""
+                and request['formData']['opportunity_deposite_date'] is not None):
+            opportunity_sold = True
+            result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
+                "opportunity_sold": opportunity_sold, 'opportunity_final_transfer_date': ""}})
+        else:
+            opportunity_sold = False
+            result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
+                "opportunity_sold": opportunity_sold, 'opportunity_final_transfer_date': ""}})
+
+        if request['formData']['id'] != "":
+            id_to_update = request['formData']['id']
+            obj_instance = ObjectId(id_to_update)
+            sales_processed.update_one({"_id": obj_instance}, {"$set": request['formData']})
+            return {"updated": "Success"}
+
+        else:
+            obj_instance = sales_processed.insert_one(request['formData']).inserted_id
+            sales_processed.update_one({"_id": obj_instance}, {"$set": {"id": str(obj_instance)}})
+            return {"id": str(obj_instance)}
+    except Exception as e:
+        print(e)
+        return {"error": str(e)}
 
 
 # DELETE A SALE AND ASSOCIATED UPLOADED DOCUMENTS
