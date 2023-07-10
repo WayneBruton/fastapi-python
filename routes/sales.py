@@ -53,8 +53,44 @@ def get_files_required_for_sales():
                 file_list_items.append(result['opportunity_addressproof_sec'])
             if 'opportunity_upload_deposite' in result:
                 file_list_items.append(result['opportunity_upload_deposite'])
-            if 'opportunity_upload_statement' in result:
-                file_list_items.append(result['opportunity_upload_statement'])
+            if 'opportunity_uploadId_3rd' in result:
+                file_list_items.append(result['opportunity_uploadId_3rd'])
+            if 'opportunity_uploadId_4th' in result:
+                file_list_items.append(result['opportunity_uploadId_4th'])
+            if 'opportunity_uploadId_5th' in result:
+                file_list_items.append(result['opportunity_uploadId_5th'])
+            if 'opportunity_uploadId_6th' in result:
+                file_list_items.append(result['opportunity_uploadId_6th'])
+            if 'opportunity_uploadId_7th' in result:
+                file_list_items.append(result['opportunity_uploadId_7th'])
+            if 'opportunity_uploadId_8th' in result:
+                file_list_items.append(result['opportunity_uploadId_8th'])
+            if 'opportunity_uploadId_9th' in result:
+                file_list_items.append(result['opportunity_uploadId_9th'])
+            if 'opportunity_uploadId_10th' in result:
+                file_list_items.append(result['opportunity_uploadId_10th'])
+            if 'opportunity_addressproof_3rd' in result:
+                file_list_items.append(result['opportunity_addressproof_3rd'])
+            if 'opportunity_addressproof_4th' in result:
+                file_list_items.append(result['opportunity_addressproof_4th'])
+            if 'opportunity_addressproof_5th' in result:
+                file_list_items.append(result['opportunity_addressproof_5th'])
+            if 'opportunity_addressproof_6th' in result:
+                file_list_items.append(result['opportunity_addressproof_6th'])
+            if 'opportunity_addressproof_7th' in result:
+                file_list_items.append(result['opportunity_addressproof_7th'])
+            if 'opportunity_addressproof_8th' in result:
+                file_list_items.append(result['opportunity_addressproof_8th'])
+            if 'opportunity_addressproof_9th' in result:
+                file_list_items.append(result['opportunity_addressproof_9th'])
+            if 'opportunity_addressproof_10th' in result:
+                file_list_items.append(result['opportunity_addressproof_10th'])
+            if 'opportunity_upload_annexure' in result:
+                file_list_items.append(result['opportunity_upload_annexure'])
+            if 'opportunity_upload_company_docs' in result:
+                file_list_items.append(result['opportunity_upload_company_docs'])
+            if 'opportunity_upload_company_addressproof' in result:
+                file_list_items.append(result['opportunity_upload_company_addressproof'])
 
         file_list_items = [x for x in file_list_items if x is not None]
         file_list_items = [x for x in file_list_items if x != '']
@@ -95,11 +131,25 @@ async def get_developments_for_sales():
     return result_developments
 
 
+@sales.post("/get_new_sale_info")
+async def get_new_sale_info(data: Request):
+    request = await data.json()
+    # print(request)
+    result = list(opportunities.aggregate([
+        {'$match': {'opportunity_code': request['opportunity_code']}}
+    ])
+    )
+    for item in result:
+        item['_id'] = str(item['_id'])
+    # print(result)
+    return result
+
+
 # GET UNITS FOR SALE
 @sales.post("/getUnitsForSales")
 async def get_units_for_sales(data: Request):
     request = await data.json()
-    print(request)
+    # print(request)
     result = list(opportunities.aggregate([
 
         {
@@ -120,7 +170,7 @@ async def get_units_for_sales(data: Request):
             }
         }
     ]))
-    print(len(result))
+    # print(len(result))
     # in result, format the opportunity_sale_price as currency with two decimal places and an R in front and a
     # thousand separator
     for unit in result:
@@ -129,6 +179,19 @@ async def get_units_for_sales(data: Request):
 
     # print(result)
     # print(len(result))
+    return result
+
+
+@sales.get("/sales_agents")
+async def get_sales_agents():
+    result = list(sales_agents.aggregate([
+        {
+            '$project': {
+                '_id': 0,
+                'agent_name': 1,
+            }
+        }
+    ]))
     return result
 
 
@@ -173,15 +236,18 @@ async def get_all_units_sold(data: Request):
             sale['opportunity_actual_reg_date'] = None
 
     for sale in response:
-        if sale['opportunity_otp'] is None:
+        if sale['opportunity_otp'] is None or sale['opportunity_otp'] == "":
             sale['reserved'] = True
         else:
             sale['reserved'] = False
-        if sale['opportunity_deposite_date'] is None:
+
+        if (sale['opportunity_deposite_date'] is None or sale['opportunity_deposite_date'] == "") and \
+                sale['reserved'] is False:
             sale['pending'] = True
+            sale['reserved'] = False
         else:
             sale['pending'] = False
-        if sale['opportunity_deposite_date'] is not None:
+        if sale['opportunity_deposite_date'] is not None and sale['opportunity_deposite_date'] != "" and sale['pending']:
             sale['sold'] = True
         else:
             sale['sold'] = False
@@ -189,7 +255,7 @@ async def get_all_units_sold(data: Request):
             sale['bond_approval'] = True
         else:
             sale['bond_approval'] = False
-        if sale['opportunity_actual_lodgement'] is not None:
+        if sale['opportunity_actual_lodgement'] is not None and sale['opportunity_actual_lodgement'] != "":
             sale['lodged'] = True
         else:
             sale['lodged'] = False
@@ -210,10 +276,10 @@ async def get_all_units_sold(data: Request):
             sale['bond_approval'] = True
         if sale['bond_approval']:
             sale['sold'] = True
-        if sale['sold']:
-            sale['pending'] = True
-        if sale['pending']:
-            sale['reserved'] = True
+        # if sale['sold']:
+        #     sale['pending'] = True
+        # if sale['pending']:
+        #     sale['reserved'] = True
 
     # print(response[0])
 
@@ -306,6 +372,7 @@ async def get_sold_unit(data: Request):
     request = await data.json()
     result = sales_processed.find_one(
         {"opportunity_code": request['opportunity_code'], "development": request['development']})
+    # print(result)
     if result:
         result["id"] = str(result["_id"])
         del result["_id"]
