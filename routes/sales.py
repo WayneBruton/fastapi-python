@@ -1,14 +1,15 @@
 import os
 import boto3
 from botocore.exceptions import ClientError
-from fastapi import APIRouter, Request, UploadFile, Form, File
+from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse
 from config.db import db
 from bson.objectid import ObjectId
 from decouple import config
-from typing import Annotated
+# from typing import Annotated
 
 from sales_python_files.sales_excel_sheet import create_excel_file
+from sales_client_onboarding_creation_file.onboarding import print_onboarding_pdf
 
 sales = APIRouter()
 
@@ -218,12 +219,42 @@ async def get_all_units_sold(data: Request):
                 'opportunity_bond_instruction_date': 1,
                 'opportunity_actual_lodgement': 1,
                 'opportunity_actual_reg_date': 1,
+
                 'opportunity_bond_originator': 1,
+                'opportunity_pay_type': 1,
+                'opportunity_client_type': 1,
+                'opportunity_client_no': 1,
+
+                'opportunity_uploadId': 1,
+                'opportunity_uploadId_sec': 1,
+                'opportunity_uploadId_3rd': 1,
+                'opportunity_uploadId_4th': 1,
+                'opportunity_uploadId_5th': 1,
+                'opportunity_uploadId_6th': 1,
+                'opportunity_uploadId_7th': 1,
+                'opportunity_uploadId_8th': 1,
+                'opportunity_uploadId_9th': 1,
+                'opportunity_uploadId_10th': 1,
+                'opportunity_addressproof': 1,
+                'opportunity_addressproof_sec': 1,
+                'opportunity_addressproof_3rd': 1,
+                'opportunity_addressproof_4th': 1,
+                'opportunity_addressproof_5th': 1,
+                'opportunity_addressproof_6th': 1,
+                'opportunity_addressproof_7th': 1,
+                'opportunity_addressproof_8th': 1,
+                'opportunity_addressproof_9th': 1,
+                'opportunity_addressproof_10th': 1,
+                'opportunity_upload_deposite': 1,
+                'opportunity_upload_annexure': 1,
+                'opportunity_upload_company_docs': 1,
+                'opportunity_upload_company_addressproof': 1,
             }
         }
     ]))
     # print(response)
     for sale in response:
+
         if 'opportunity_otp' not in sale:
             sale['opportunity_otp'] = None
         if 'opportunity_deposite_date' not in sale:
@@ -234,8 +265,140 @@ async def get_all_units_sold(data: Request):
             sale['opportunity_actual_lodgement'] = None
         if 'opportunity_actual_reg_date' not in sale:
             sale['opportunity_actual_reg_date'] = None
+        if 'opportunity_uploadId' not in sale:
+            sale['opportunity_uploadId'] = None
+        if 'opportunity_uploadId_sec' not in sale:
+            sale['opportunity_uploadId_sec'] = None
+        if 'opportunity_uploadId_3rd' not in sale:
+            sale['opportunity_uploadId_3rd'] = None
+        if 'opportunity_uploadId_4th' not in sale:
+            sale['opportunity_uploadId_4th'] = None
+        if 'opportunity_uploadId_5th' not in sale:
+            sale['opportunity_uploadId_5th'] = None
+        if 'opportunity_uploadId_6th' not in sale:
+            sale['opportunity_uploadId_6th'] = None
+        if 'opportunity_uploadId_7th' not in sale:
+            sale['opportunity_uploadId_7th'] = None
+        if 'opportunity_uploadId_8th' not in sale:
+            sale['opportunity_uploadId_8th'] = None
+        if 'opportunity_uploadId_9th' not in sale:
+            sale['opportunity_uploadId_9th'] = None
+        if 'opportunity_uploadId_10th' not in sale:
+            sale['opportunity_uploadId_10th'] = None
+        if 'opportunity_addressproof' not in sale:
+            sale['opportunity_addressproof'] = None
+        if 'opportunity_addressproof_sec' not in sale:
+            sale['opportunity_addressproof_sec'] = None
+        if 'opportunity_addressproof_3rd' not in sale:
+            sale['opportunity_addressproof_3rd'] = None
+        if 'opportunity_addressproof_4th' not in sale:
+            sale['opportunity_addressproof_4th'] = None
+        if 'opportunity_addressproof_5th' not in sale:
+            sale['opportunity_addressproof_5th'] = None
+        if 'opportunity_addressproof_6th' not in sale:
+            sale['opportunity_addressproof_6th'] = None
+        if 'opportunity_addressproof_7th' not in sale:
+            sale['opportunity_addressproof_7th'] = None
+        if 'opportunity_addressproof_8th' not in sale:
+            sale['opportunity_addressproof_8th'] = None
+        if 'opportunity_addressproof_9th' not in sale:
+            sale['opportunity_addressproof_9th'] = None
+        if 'opportunity_addressproof_10th' not in sale:
+            sale['opportunity_addressproof_10th'] = None
+        if 'opportunity_upload_deposite' not in sale:
+            sale['opportunity_upload_deposite'] = None
+        if 'opportunity_upload_annexure' not in sale:
+            sale['opportunity_upload_annexure'] = None
+        if 'opportunity_upload_company_docs' not in sale:
+            sale['opportunity_upload_company_docs'] = None
+        if 'opportunity_upload_company_addressproof' not in sale:
+            sale['opportunity_upload_company_addressproof'] = None
+        if 'opportunity_pay_type' not in sale:
+            sale['opportunity_pay_type'] = None
 
     for sale in response:
+        if sale['opportunity_client_type'] == 'Company':
+            total_docs_required = 9
+        elif int(sale['opportunity_client_no'].split(" ")[0]) == 1:
+            total_docs_required = 5
+        elif int(sale['opportunity_client_no'].split(" ")[0]) == 2:
+            total_docs_required = 7
+        elif int(sale['opportunity_client_no'].split(" ")[0]) == 3:
+            total_docs_required = 9
+        elif int(sale['opportunity_client_no'].split(" ")[0]) == 4:
+            total_docs_required = 11
+        elif int(sale['opportunity_client_no'].split(" ")[0]) == 5:
+            total_docs_required = 13
+        elif int(sale['opportunity_client_no'].split(" ")[0]) == 6:
+            total_docs_required = 15
+        elif int(sale['opportunity_client_no'].split(" ")[0]) == 7:
+            total_docs_required = 17
+        elif int(sale['opportunity_client_no'].split(" ")[0]) == 8:
+            total_docs_required = 19
+        elif int(sale['opportunity_client_no'].split(" ")[0]) == 9:
+            total_docs_required = 21
+        elif int(sale['opportunity_client_no'].split(" ")[0]) == 10:
+            total_docs_required = 23
+
+        if sale['opportunity_bond_originator'] == 'Cash' or sale['opportunity_pay_type'] == 'Cash':
+            total_docs_required -= 1
+
+        total_docs_uploaded = 0
+        if sale['opportunity_otp'] is not None and sale['opportunity_otp'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_uploadId'] is not None and sale['opportunity_uploadId'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_uploadId_sec'] is not None and sale['opportunity_uploadId_sec'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_uploadId_3rd'] is not None and sale['opportunity_uploadId_3rd'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_uploadId_4th'] is not None and sale['opportunity_uploadId_4th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_uploadId_5th'] is not None and sale['opportunity_uploadId_5th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_uploadId_6th'] is not None and sale['opportunity_uploadId_6th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_uploadId_7th'] is not None and sale['opportunity_uploadId_7th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_uploadId_8th'] is not None and sale['opportunity_uploadId_8th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_uploadId_9th'] is not None and sale['opportunity_uploadId_9th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_uploadId_10th'] is not None and sale['opportunity_uploadId_10th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_addressproof'] is not None and sale['opportunity_addressproof'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_addressproof_sec'] is not None and sale['opportunity_addressproof_sec'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_addressproof_3rd'] is not None and sale['opportunity_addressproof_3rd'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_addressproof_4th'] is not None and sale['opportunity_addressproof_4th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_addressproof_5th'] is not None and sale['opportunity_addressproof_5th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_addressproof_6th'] is not None and sale['opportunity_addressproof_6th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_addressproof_7th'] is not None and sale['opportunity_addressproof_7th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_addressproof_8th'] is not None and sale['opportunity_addressproof_8th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_addressproof_9th'] is not None and sale['opportunity_addressproof_9th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_addressproof_10th'] is not None and sale['opportunity_addressproof_10th'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_upload_deposite'] is not None and sale['opportunity_upload_deposite'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_upload_annexure'] is not None and sale['opportunity_upload_annexure'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_upload_company_docs'] is not None and sale['opportunity_upload_company_docs'] != "":
+            total_docs_uploaded += 1
+        if sale['opportunity_upload_company_addressproof'] is not None and sale[
+            'opportunity_upload_company_addressproof'] != "":
+            total_docs_uploaded += 1
+
+        sale['total_docs_required'] = total_docs_required
+        sale['total_docs_uploaded'] = total_docs_uploaded
+
         if sale['opportunity_otp'] is None or sale['opportunity_otp'] == "":
             sale['reserved'] = True
         else:
@@ -270,6 +433,30 @@ async def get_all_units_sold(data: Request):
         del sale['opportunity_bond_instruction_date']
         del sale['opportunity_actual_lodgement']
         del sale['opportunity_actual_reg_date']
+        del sale['opportunity_upload_company_addressproof']
+        del sale['opportunity_upload_company_docs']
+        del sale['opportunity_upload_annexure']
+        del sale['opportunity_upload_deposite']
+        del sale['opportunity_addressproof_10th']
+        del sale['opportunity_addressproof_9th']
+        del sale['opportunity_addressproof_8th']
+        del sale['opportunity_addressproof_7th']
+        del sale['opportunity_addressproof_6th']
+        del sale['opportunity_addressproof_5th']
+        del sale['opportunity_addressproof_4th']
+        del sale['opportunity_addressproof_3rd']
+        del sale['opportunity_addressproof_sec']
+        del sale['opportunity_addressproof']
+        del sale['opportunity_uploadId_10th']
+        del sale['opportunity_uploadId_9th']
+        del sale['opportunity_uploadId_8th']
+        del sale['opportunity_uploadId_7th']
+        del sale['opportunity_uploadId_6th']
+        del sale['opportunity_uploadId_5th']
+        del sale['opportunity_uploadId_4th']
+        del sale['opportunity_uploadId_3rd']
+        del sale['opportunity_uploadId_sec']
+        del sale['opportunity_uploadId']
 
         if sale['registered']:
             sale['lodged'] = True
@@ -350,9 +537,9 @@ async def save_sale(data: Request):
         opportunity_code = request['formData']['opportunity_code']
 
         if (request['formData']['opportunity_pay_type'] == "Cash" or request['formData']['opportunity_bank'] == "Cash"
-            or request['formData']['opportunity_bond_originator'] == "Cash"
-            or (request['formData']['opportunity_bond_instruction_date'] != ""
-                and request['formData']['opportunity_bond_instruction_date'] is not None)):
+                or request['formData']['opportunity_bond_originator'] == "Cash"
+                or (request['formData']['opportunity_bond_instruction_date'] != ""
+                    and request['formData']['opportunity_bond_instruction_date'] is not None)):
             opportunity_sold = True
             result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
                 "opportunity_sold": opportunity_sold}})
@@ -362,7 +549,7 @@ async def save_sale(data: Request):
                 "opportunity_sold": opportunity_sold}})
 
         if request['formData']['opportunity_actual_reg_date'] != "" and request['formData'][
-                'opportunity_actual_reg_date'] is not None:
+            'opportunity_actual_reg_date'] is not None:
             opportunity_sold = True
             result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
                 "opportunity_sold": opportunity_sold,
@@ -600,3 +787,43 @@ async def delete_broker(data: Request):
     except Exception as err:
         print(err)
         return {"done": False}
+
+
+@sales.post("/print_onboarding_doc")
+async def print_onboarding_doc(data: Request):
+    request = await data.json()
+    newData = request['data']
+
+    doc_name = f"sales_client_onboarding_docs/{newData['opportunity_code']}-onboarding.pdf"
+    is_exists = os.path.exists(doc_name)
+
+    if is_exists:
+        os.remove(doc_name)
+        print("Successfully Removed")
+    else:
+        print("No such Document")
+
+    try:
+        result = print_onboarding_pdf(newData)
+
+        # print("RESULT", result)
+        return {"fileName": result}
+    except Exception as err:
+        print(err)
+        return {"done": False}
+
+@sales.get("/get_onboarding_doc")
+async def get_uploaded_file(file_name):
+    print(file_name)
+
+    try:  # File Name incl path.
+        is_exists = os.path.exists(f"sales_client_onboarding_docs/{file_name}")
+        print(is_exists)
+        if is_exists:
+            return FileResponse(f"sales_client_onboarding_docs/{file_name}", filename=file_name)
+        else:
+            return {"ERROR": "File does not exist!!"}
+    except Exception as err:
+        print(err)
+        return {"ERROR": "File does not exist!!"}
+
