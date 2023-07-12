@@ -24,6 +24,9 @@ if not os.path.isdir("excel_files"):
 if not os.path.isdir("portal_statements"):
     os.makedirs("portal_statements")
 
+if not os.path.isdir("sales_client_onboarding_docs"):
+    os.makedirs("sales_client_onboarding_docs")
+
 app = FastAPI()
 
 origins = ["*"]
