@@ -223,8 +223,8 @@ async def add_investor(data: Request):
         <html>
           <body>
             <p>Dear {request['name']},<br><br>
-               As a valued Investor, you have access to our "Portal" at <a href="https://www.opconlineportal.co.za">
-               https://www.opconlineportal.co.za</a>.<br><br>
+               As a valued Investor, you have access to our "Portal" at <a href="https://www.opponlineportal.co.za">
+               https://www.opponlineportal.co.za</a>.<br><br>
                
                I would strongly suggest saving the link to your favourites.<br><br>
               
