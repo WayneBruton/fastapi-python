@@ -470,7 +470,7 @@ def print_onboarding_pdf(data):
         data['opportunity_specials'] = []
     print("TEST")
 
-    if data['opportunity_specials'] != None and len(data['opportunity_specials']) > 0:
+    if data['opportunity_specials'] is not None and len(data['opportunity_specials']) > 0:
 
         for index, special in enumerate(data['opportunity_specials'], 1):
             pdf.cell(0, 3, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
@@ -483,8 +483,6 @@ def print_onboarding_pdf(data):
 
     if 'opportunity_notes' not in data:
         data['opportunity_notes'] = None
-
-
 
     pdf.cell(0, 3, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(90, 5, f"**Notes: **", markdown=True,

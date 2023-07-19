@@ -153,8 +153,9 @@ def format_sales_forecast(sheet):
             elif row == 77:
                 sheet[f'{letter}{row}'] = f'==IF({letter}2=FALSE,{letter}13-{letter}14,0)'
             elif row == 78:
-                # IF(G10 <> "ZZUN01", IF(G25 <> 0, G76 - G79, 0), 0)
-                sheet[f'{letter}{row}'] = f'=IF({letter}10<>"ZZUN01",IF({letter}25<>0,{letter}76-{letter}79,0),0)'
+                # =IF(G10 <> "ZZUN01", IF(G25 <> 0, G76 - G79, IF(G21=$B$1, G76 - G79, 0)), 0)
+
+                sheet[f'{letter}{row}'] = f'=IF({letter}10<>"ZZUN01",IF({letter}25<>0,{letter}76-{letter}79,IF({letter}21=$B$1,{letter}76-{letter}79,0)),0)'
                 # sheet[f'{letter}{row}'] = f'={letter}76-{letter}79'
             elif row == 79:
                 sheet[f'{letter}{row}'] = f'=SUM({letter}71,{letter}73)'

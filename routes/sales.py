@@ -10,6 +10,7 @@ from decouple import config
 
 from sales_python_files.sales_excel_sheet import create_excel_file
 from sales_client_onboarding_creation_file.onboarding import print_onboarding_pdf
+from sales_client_onboarding_creation_file.offer_to_purchase import print_otp_pdf
 
 sales = APIRouter()
 
@@ -812,6 +813,7 @@ async def print_onboarding_doc(data: Request):
         print(err)
         return {"done": False}
 
+
 @sales.get("/get_onboarding_doc")
 async def get_uploaded_file(file_name):
     print(file_name)
@@ -827,3 +829,27 @@ async def get_uploaded_file(file_name):
         print(err)
         return {"ERROR": "File does not exist!!"}
 
+
+@sales.post("/print_otp_doc")
+async def print_otp_doc(data: Request):
+    request = await data.json()
+    newData = request['data']
+
+    doc_name = f"sales_client_onboarding_docs/{newData['opportunity_code']}-OTP.pdf"
+    print("doc_name", doc_name)
+    is_exists = os.path.exists(doc_name)
+
+    if is_exists:
+        os.remove(doc_name)
+        print("Successfully Removed")
+    else:
+        print("No such Document")
+
+    # try:
+    result = print_otp_pdf(newData)
+
+    print("RESULT", result)
+    return {"fileName": result}
+    # except Exception as err:
+    #     print("XXXXX", err)
+    #     return {"done": False}

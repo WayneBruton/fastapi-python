@@ -40,7 +40,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     ws.title = sheet_name
     ws.sheet_properties.tabColor = "1072BA"
 
-    row1_data = [f"{sheet_name} - {developmentinputdata['date']}"]
+    row1_data = [f"{sheet_name} - {developmentinputdata['date']}", f"{developmentinputdata['date']}"]
     # insert row1_data into the beginning of worksheet_data
     worksheet_data.insert(0, row1_data)
     # loop through worksheet_data and append each item to the worksheet

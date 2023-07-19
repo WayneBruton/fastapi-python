@@ -131,8 +131,12 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append(["Capital Drawn down", f'=+\'{worksheets[index]}\'!B15', f'=+\'{worksheets[index]}\'!D15',
                       f'=+\'{worksheets[index]}\'!E15', f'=+\'{worksheets[index]}\'!F15'])
 
+    nsst_data.append(["Total Capital to be Drawn Down", 0, 0,0,0])
+
     nsst_data.append(["Developer Capital - Early Investor Exit", f'=+\'{worksheets[index]}\'!B67', 0,
                       f'=+\'{worksheets[index]}\'!B86', f'=+\'{worksheets[index]}\'!B83'])
+
+    nsst_data.append(["Developer Capital Input", 0, 0, 0, 0])
 
     nsst_data.append(["Current Investor Capital deployed", 0, 0, 0, 0])
     nsst_data.append(
