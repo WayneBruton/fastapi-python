@@ -71,12 +71,14 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
             sheet[f'C51'] = f''
             # sheet[f'D49'] = total_sold
             sheet[f'E51'] = f'=B51-D51'
-            sheet[f'{column}55'] = f'=SUM({column}32)-SUM({column}36)-SUM({column}45)'
-            # =B38 + B39 + B48 + B52
-            sheet[f'B56'] = f'=SUM(B52) + SUM(B38) + SUM(B39) + SUM(B48)'
-            sheet[f'C56'] = f'=SUM(C52) + SUM(C38) + SUM(C39) + SUM(C48)'
-            sheet[f'D56'] = f'=SUM(D52) + SUM(D38) + SUM(D39) + SUM(D48)'
-            sheet[f'E56'] = f'=SUM(E52) + SUM(E38) + SUM(E39) + SUM(E48)'
+            # =SUM(B32) - SUM(B37) - SUM(B45)
+            sheet[f'{column}55'] = f'=SUM({column}32)-SUM({column}37)-SUM({column}45)'
+
+            # =SUM(B52) + SUM(B38) + SUM(B39)
+            sheet[f'B56'] = f'=SUM(B52) + SUM(B38) + SUM(B39)'
+            sheet[f'C56'] = f'=SUM(C52) + SUM(C38) + SUM(C39)'
+            sheet[f'D56'] = f'=SUM(D52) + SUM(D38) + SUM(D39)'
+            sheet[f'E56'] = f'=SUM(E52) + SUM(E38) + SUM(E39)'
             sheet[f'D57'] = f'=B57*0.05'
             sheet[f'E57'] = f'=B57-D57'
             sheet[f'{column}57'] = f'=SUM({column}41)+SUM({column}42)'
