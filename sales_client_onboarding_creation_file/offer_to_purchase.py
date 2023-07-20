@@ -11,6 +11,7 @@ class PDF(FPDF):
         self.data = data
         self.unit = 'mm'
         self.format = 'A4'
+
     def footer(self):
         self.set_y(-15)
         self.set_font('helvetica', 'B', 6)
@@ -21,21 +22,34 @@ class PDF(FPDF):
         self.cell(90, 10, f"Page {self.page_no()}/{{nb}}", align="C")
 
         # add an "initial" block on the bottom right of the footer with a border around it
-        if self.page_no() > 1:
-            self.set_font('helvetica', '', 8)
-            # make the font color light gray
-            self.set_text_color(211, 211, 211)
-            self.cell(0, 10, f"INITIAL                 ", align="R")
-            self.set_line_width(0.5)
-            # make the rectangle lines light gray
-            self.set_draw_color(211, 211, 211)
+        # if self.page_no() > 1:
+        self.set_font('helvetica', '', 8)
+        # make the font color light gray
+        self.set_text_color(211, 211, 211)
+        self.cell(0, 10, f"INITIAL                 ", align="R")
+        self.set_line_width(0.5)
+        # make the rectangle lines light gray
+        self.set_draw_color(211, 211, 211)
 
-            self.rect(165, 282, 30, 10)
+        self.rect(165, 282, 30, 10)
 
         # put a bold line above the footer
         self.set_draw_color(0, 0, 0)
         self.set_line_width(0.5)
         self.line(5, self.get_y() - 2, 200, self.get_y() - 2)
+
+    def cell_with_padding(self, w, h, txt, border=0, ln=0, align='', fill=False):
+        # Add padding
+        padding_left = 0  # Set your desired left padding value
+        padding_right = 0  # Set your desired right padding value
+        padding_top = 4  # Set your desired top padding value
+        padding_bottom = 0  # Set your desired bottom padding value
+
+        # Adjust cell size to include padding
+        w += padding_left + padding_right
+        h += padding_top + padding_bottom
+
+        self.cell(w, h, txt, border, ln, align, fill)
 
 
 def print_otp_pdf(data):
@@ -359,11 +373,11 @@ def print_otp_pdf(data):
 
     pdf.add_page()
 
-    pdf.cell(0, 10, "**INFORMATION SCHEDULE**",align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 10, "**INFORMATION SCHEDULE**", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
     pdf.cell(20, 7, "**A**", align="C", markdown=True, border=1)
-    pdf.cell(50, 7, "**SELLER**", align="L", markdown=True, border=1)
-    pdf.cell(120, 7, "", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+    pdf.cell(50, 7, "**Seller**", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, "**Details**", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
     pdf.cell(20, 7, "A1", align="C", markdown=True, border=1)
     pdf.cell(50, 7, "Full Name", align="L", markdown=True, border=1)
@@ -371,12 +385,15 @@ def print_otp_pdf(data):
 
     pdf.cell(20, 7, "A2", align="C", markdown=True, border=1)
     pdf.cell(50, 7, "Registration Number", align="L", markdown=True, border=1)
-    pdf.cell(120, 7, f"**{company_reg_no.split('REGISTRATION NUMBER ')[1]}**", align="L", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+    pdf.cell(120, 7, f"**{company_reg_no.split('REGISTRATION NUMBER ')[1]}**", align="L", markdown=True,
+             new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
     pdf.cell(20, 10, "A3", align="C", markdown=True, border=1)
-    pdf.cell(50, 10, "Street Address", align="L", markdown=True, border=1)
-    pdf.multi_cell(120, 5, f"**Office 2, First Floor 251 Durban Rd, Bo-Oakdale, Bellville, 7530, PO Box 1807 Bellville 7536**", align="L", markdown=True,
-             new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+    pdf.cell(50, 10, "Address (Street & Postal)", align="L", markdown=True, border=1)
+    pdf.multi_cell(120, 5,
+                   f"**Office 2, First Floor 251 Durban Rd, Bo-Oakdale, Bellville, 7530 & PO Box 1807 Bellville 7536**",
+                   align="L", markdown=True,
+                   new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
     pdf.cell(20, 7, "A4", align="C", markdown=True, border=1)
     pdf.cell(50, 7, "Telephone", align="L", markdown=True, border=1)
@@ -394,10 +411,6 @@ def print_otp_pdf(data):
 
     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-    pdf.cell(20, 7, "**B**", align="C", markdown=True, border=1)
-    pdf.cell(50, 7, "**PURCHASER**", align="L", markdown=True, border=1)
-    pdf.cell(120, 7, "DETAILS", align="L", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
-
     ##########################################
     # Purchaser Details
     if data['opportunity_client_type'] == 'Company':
@@ -406,29 +419,321 @@ def print_otp_pdf(data):
             b1_value = data['opportunity_companyname']
             b2_label = 'Company Registration Number'
             b2_value = data['opportunity_companyregistrationNo']
-            # opportunity_company_postal_address
-            # opportunity_company_residential_address
+            b6_value = "Director"
+
         else:
             b1_label = 'Trust Name'
             b1_value = data['opportunity_companyname']
             b2_label = 'Trust Number'
             b2_value = data['opportunity_companyregistrationNo']
+            b6_value = "Trustee"
 
-    pdf.cell(20, 7, "B1", align="C", markdown=True, border=1)
-    pdf.cell(50, 7, f"{b1_label}", align="L", markdown=True, border=1)
-    pdf.cell(120, 7, f"**{b1_value}**", align="L", markdown=True,
-             new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+        pdf.cell(20, 7, "**B**", align="C", markdown=True, border=1)
+        pdf.cell(50, 7, "**Purchaser**", align="L", markdown=True, border=1)
+        pdf.cell(120, 7, "**Details**", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
-    pdf.cell(20, 7, "B2", align="C", markdown=True, border=1)
-    pdf.cell(50, 7, f"{b2_label}", align="L", markdown=True, border=1)
-    pdf.cell(120, 7, f"**{b2_value}**", align="L", markdown=True,
-             new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+        pdf.cell(20, 7, "B1", align="C", markdown=True, border=1)
+        pdf.cell(50, 7, f"{b1_label}", align="L", markdown=True, border=1)
+        pdf.cell(120, 7, f"**{b1_value}**", align="L", markdown=True,
+                 new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
-    ##########################################
+        pdf.cell(20, 7, "B2", align="C", markdown=True, border=1)
+        pdf.cell(50, 7, f"{b2_label}", align="L", markdown=True, border=1)
+        pdf.cell(120, 7, f"**{b2_value}**", align="L", markdown=True,
+                 new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
+        pdf.cell(20, 10, "B3", align="C", markdown=True, border=1)
+        pdf.cell(50, 10, "Address (Street & Postal)", align="L", markdown=True, border=1)
+        pdf.multi_cell(120, 5, f"**{data['opportunity_company_residential_address']}** **&** "
+                               f"**{data['opportunity_company_postal_address']}**", align="L", markdown=True,
+                       new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
+        pdf.cell(20, 7, "B4", align="C", markdown=True, border=1)
+        pdf.cell(50, 7, "Telehpone", align="L", markdown=True, border=1)
+        pdf.cell(120, 7, f"**{data['opportunity_company_contact']}**", align="L", markdown=True,
+                 new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
+        pdf.cell(20, 7, "B5", align="C", markdown=True, border=1)
+        pdf.cell(50, 7, "E-mail", align="L", markdown=True, border=1)
+        pdf.set_text_color(0, 0, 255)
+        pdf.cell(120, 7, f"**{data['opportunity_company_email']}**", align="L", markdown=True,
+                 new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+        pdf.set_text_color(0, 0, 0)
 
+        pdf.cell(20, 7, "B6", align="C", border=1)
+        pdf.cell(50, 7, "Signatory for Purchaser", align="L", markdown=True, border=1)
+        pdf.cell(120, 7,
+                 f"**{data['opportunity_firstname']} {data['opportunity_lastname']} - (Resolution/s to be attached)**",
+                 align="L", markdown=True,
+                 new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+        pdf.cell(20, 7, "B7", align="C", markdown=True, border=1)
+        pdf.cell(50, 7, "Capacity", align="L", markdown=True, border=1)
+        pdf.cell(120, 7, f"**{b6_value}**", align="L",
+                 markdown=True,
+                 new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    else:
+        purchaser_details = []
+        if number_of_purchasers >= 1:
+            insert = {
+                "header": "Purchaser",
+                "label_b1": "Full Name",
+                "value_b1": f"{data['opportunity_firstname']} {data['opportunity_lastname']}",
+                "label_b2": "ID Number",
+                "value_b2": data['opportunity_id'],
+                "label_b3": "Address (Street & Postal)",
+                "value_b3": f"{data['opportunity_residental_address']} & {data['opportunity_postal_address']}",
+                "label_b4": "Marital Status",
+                "value_b4": data['opportunity_martial_status'],
+                "label_b5": "Telephone",
+                "value_b5": data['opportunity_landline'],
+                "label_b6": "Mobile",
+                "value_b6": data['opportunity_mobile'],
+                "label_b7": "E-mail",
+                "value_b7": data['opportunity_email'],
+            }
+            purchaser_details.append(insert)
+
+        if number_of_purchasers >= 2:
+            insert = {
+                "header": "2nd Purchaser",
+                "label_b1": "Full Name",
+                "value_b1": f"{data['opportunity_firstname_sec']} {data['opportunity_lastname_sec']}",
+                "label_b2": "ID Number",
+                "value_b2": data['opportunity_id_sec'],
+                "label_b3": "Address (Street & Postal)",
+                "value_b3": f"{data['opportunity_residental_address_sec']} & {data['opportunity_postal_address_sec']}",
+                "label_b4": "Marital Status",
+                "value_b4": data['opportunity_martial_status_sec'],
+                "label_b5": "Telephone",
+                "value_b5": data['opportunity_landline_sec'],
+                "label_b6": "Mobile",
+                "value_b6": data['opportunity_mobile_sec'],
+                "label_b7": "E-mail",
+                "value_b7": data['opportunity_email_sec'],
+            }
+            purchaser_details.append(insert)
+
+        if number_of_purchasers >= 3:
+            insert = {
+                "header": "3rd Purchaser",
+                "label_b1": "Full Name",
+                "value_b1": f"{data['opportunity_firstname_3rd']} {data['opportunity_lastname_3rd']}",
+                "label_b2": "ID Number",
+                "value_b2": data['opportunity_id_3rd'],
+                "label_b3": "Address (Street & Postal)",
+                "value_b3": f"{data['opportunity_residental_address_3rd']} & {data['opportunity_postal_address_3rd']}",
+                "label_b4": "Marital Status",
+                "value_b4": data['opportunity_martial_status_3rd'],
+                "label_b5": "Telephone",
+                "value_b5": data['opportunity_landline_3rd'],
+                "label_b6": "Mobile",
+                "value_b6": data['opportunity_mobile_3rd'],
+                "label_b7": "E-mail",
+                "value_b7": data['opportunity_email_3rd'],
+            }
+            purchaser_details.append(insert)
+
+        if number_of_purchasers >= 4:
+            insert = {
+                "header": "4th Purchaser",
+                "label_b1": "Full Name",
+                "value_b1": f"{data['opportunity_firstname_4th']} {data['opportunity_lastname_4th']}",
+                "label_b2": "ID Number",
+                "value_b2": data['opportunity_id_4th'],
+                "label_b3": "Address (Street & Postal)",
+                "value_b3": f"{data['opportunity_residental_address_4th']} & {data['opportunity_postal_address_4th']}",
+                "label_b4": "Marital Status",
+                "value_b4": data['opportunity_martial_status_4th'],
+                "label_b5": "Telephone",
+                "value_b5": data['opportunity_landline_4th'],
+                "label_b6": "Mobile",
+                "value_b6": data['opportunity_mobile_4th'],
+                "label_b7": "E-mail",
+                "value_b7": data['opportunity_email_4th'],
+            }
+            purchaser_details.append(insert)
+
+        if number_of_purchasers >= 5:
+            insert = {
+                "header": "5th Purchaser",
+                "label_b1": "Full Name",
+                "value_b1": f"{data['opportunity_firstname_5th']} {data['opportunity_lastname_5th']}",
+                "label_b2": "ID Number",
+                "value_b2": data['opportunity_id_5th'],
+                "label_b3": "Address (Street & Postal)",
+                "value_b3": f"{data['opportunity_residental_address_5th']} & {data['opportunity_postal_address_5th']}",
+                "label_b4": "Marital Status",
+                "value_b4": data['opportunity_martial_status_5th'],
+                "label_b5": "Telephone",
+                "value_b5": data['opportunity_landline_5th'],
+                "label_b6": "Mobile",
+                "value_b6": data['opportunity_mobile_5th'],
+                "label_b7": "E-mail",
+                "value_b7": data['opportunity_email_5th'],
+            }
+            purchaser_details.append(insert)
+
+        if number_of_purchasers >= 6:
+            insert = {
+                "header": "6th Purchaser",
+                "label_b1": "Full Name",
+                "value_b1": f"{data['opportunity_firstname_6th']} {data['opportunity_lastname_6th']}",
+                "label_b2": "ID Number",
+                "value_b2": data['opportunity_id_6th'],
+                "label_b3": "Address (Street & Postal)",
+                "value_b3": f"{data['opportunity_residental_address_6th']} & {data['opportunity_postal_address_6th']}",
+                "label_b4": "Marital Status",
+                "value_b4": data['opportunity_martial_status_6th'],
+                "label_b5": "Telephone",
+                "value_b5": data['opportunity_landline_6th'],
+                "label_b6": "Mobile",
+                "value_b6": data['opportunity_mobile_6th'],
+                "label_b7": "E-mail",
+                "value_b7": data['opportunity_email_6th'],
+            }
+            purchaser_details.append(insert)
+
+        if number_of_purchasers >= 7:
+            insert = {
+                "header": "7th Purchaser",
+                "label_b1": "Full Name",
+                "value_b1": f"{data['opportunity_firstname_7th']} {data['opportunity_lastname_7th']}",
+                "label_b2": "ID Number",
+                "value_b2": data['opportunity_id_7th'],
+                "label_b3": "Address (Street & Postal)",
+                "value_b3": f"{data['opportunity_residental_address_7th']} & {data['opportunity_postal_address_7th']}",
+                "label_b4": "Marital Status",
+                "value_b4": data['opportunity_martial_status_7th'],
+                "label_b5": "Telephone",
+                "value_b5": data['opportunity_landline_7th'],
+                "label_b6": "Mobile",
+                "value_b6": data['opportunity_mobile_7th'],
+                "label_b7": "E-mail",
+                "value_b7": data['opportunity_email_7th'],
+            }
+            purchaser_details.append(insert)
+
+        if number_of_purchasers >= 8:
+            insert = {
+                "header": "8th Purchaser",
+                "label_b1": "Full Name",
+                "value_b1": f"{data['opportunity_firstname_8th']} {data['opportunity_lastname_8th']}",
+                "label_b2": "ID Number",
+                "value_b2": data['opportunity_id_8th'],
+                "label_b3": "Address (Street & Postal)",
+                "value_b3": f"{data['opportunity_residental_address_8th']} & {data['opportunity_postal_address_8th']}",
+                "label_b4": "Marital Status",
+                "value_b4": data['opportunity_martial_status_8th'],
+                "label_b5": "Telephone",
+                "value_b5": data['opportunity_landline_8th'],
+                "label_b6": "Mobile",
+                "value_b6": data['opportunity_mobile_8th'],
+                "label_b7": "E-mail",
+                "value_b7": data['opportunity_email_8th'],
+            }
+            purchaser_details.append(insert)
+
+        if number_of_purchasers >= 9:
+            insert = {
+                "header": "9th Purchaser",
+                "label_b1": "Full Name",
+                "value_b1": f"{data['opportunity_firstname_9th']} {data['opportunity_lastname_9th']}",
+                "label_b2": "ID Number",
+                "value_b2": data['opportunity_id_9th'],
+                "label_b3": "Address (Street & Postal)",
+                "value_b3": f"{data['opportunity_residental_address_9th']} & {data['opportunity_postal_address_9th']}",
+                "label_b4": "Marital Status",
+                "value_b4": data['opportunity_martial_status_9th'],
+                "label_b5": "Telephone",
+                "value_b5": data['opportunity_landline_9th'],
+                "label_b6": "Mobile",
+                "value_b6": data['opportunity_mobile_9th'],
+                "label_b7": "E-mail",
+                "value_b7": data['opportunity_email_9th'],
+            }
+            purchaser_details.append(insert)
+
+        if number_of_purchasers >= 10:
+            insert = {
+                "header": "10th Purchaser",
+                "label_b1": "Full Name",
+                "value_b1": f"{data['opportunity_firstname_10th']} {data['opportunity_lastname_10th']}",
+                "label_b2": "ID Number",
+                "value_b2": data['opportunity_id_10th'],
+                "label_b3": "Address (Street & Postal)",
+                "value_b3": f"{data['opportunity_residental_address_10th']} & {data['opportunity_postal_address_10th']}",
+                "label_b4": "Marital Status",
+                "value_b4": data['opportunity_martial_status_10th'],
+                "label_b5": "Telephone",
+                "value_b5": data['opportunity_landline_10th'],
+                "label_b6": "Mobile",
+                "value_b6": data['opportunity_mobile_10th'],
+                "label_b7": "E-mail",
+                "value_b7": data['opportunity_email_10th'],
+            }
+            purchaser_details.append(insert)
+
+        ##########################################
+
+        # Add the purchaser details to the pdf
+        for purchaser in purchaser_details:
+            pdf.cell(20, 7, f"**B**", align="C", markdown=True, border=1)
+            pdf.cell(50, 7, f"**{purchaser['header']}**", align="L", markdown=True, border=1)
+            pdf.cell(120, 7, "**Details**", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+            pdf.cell(20, 7, "B1", align="C", markdown=True, border=1)
+            pdf.cell(50, 7, f"{purchaser['label_b1']}", align="L", markdown=True, border=1)
+            pdf.cell(120, 7, f"**{purchaser['value_b1']}**", align="L", markdown=True,
+                     new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+            pdf.cell(20, 7, "B2", align="C", markdown=True, border=1)
+            pdf.cell(50, 7, f"{purchaser['label_b2']}", align="L", markdown=True, border=1)
+            pdf.cell(120, 7, f"**{purchaser['value_b2']}**", align="L", markdown=True,
+                     new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+            pdf.cell(20, 10, "B3", align="C", markdown=True, border=1)
+            pdf.cell(50, 10, f"{purchaser['label_b3']}", align="L", markdown=True, border=1)
+            pdf.multi_cell(120, 5, f"**{purchaser['value_b3']}**", align="L", markdown=True,
+                           new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+            pdf.cell(20, 7, "B4", align="C", markdown=True, border=1)
+            pdf.cell(50, 7, f"{purchaser['label_b4']}", align="L", markdown=True, border=1)
+            pdf.cell(120, 7, f"**{purchaser['value_b4']}**", align="L", markdown=True,
+                     new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+            pdf.cell(20, 7, "B5", align="C", markdown=True, border=1)
+            pdf.cell(50, 7, f"{purchaser['label_b5']}", align="L", markdown=True, border=1)
+            pdf.cell(120, 7, f"**{purchaser['value_b5']}**", align="L", markdown=True,
+                     new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+            pdf.cell(20, 7, "B6", align="C", markdown=True, border=1)
+            pdf.cell(50, 7, f"{purchaser['label_b6']}", align="L", markdown=True, border=1)
+            pdf.cell(120, 7, f"**{purchaser['value_b6']}**", align="L", markdown=True,
+                     new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+            pdf.cell(20, 7, "B7", align="C", markdown=True, border=1)
+            pdf.cell(50, 7, f"{purchaser['label_b7']}", align="L", markdown=True, border=1)
+            pdf.cell(120, 7, f"**{purchaser['value_b7']}**", align="L", markdown=True,
+                     new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+            pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    pdf.add_page()
+
+    pdf.cell(20, 7, f"**C**", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"**The Property**", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, "", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(20, 15, f"C1", align="C", markdown=True, border=1)
+    pdf.cell(50, 15, f"Unit", align="L", markdown=True, border=1)
+    pdf.multi_cell(120, 5,
+                   f"**Unit No:**{door_no} having an approximate floor area of .......... Square Metre's as "
+                   f"reflected on the Development and Unit Plans annexed hereto (marked \"**A & B**\")",
+                   align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    # if data['opportunity_gardenNumber'] != "":
 
     pdf.output(f"sales_client_onboarding_docs/{data['opportunity_code']}-OTP.pdf")
 

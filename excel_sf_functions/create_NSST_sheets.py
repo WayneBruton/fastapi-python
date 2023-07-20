@@ -80,7 +80,7 @@ def create_nsst_sheet(category, developmentinputdata, pledges, index, sheet_name
     nsst_data.append([])
     nsst_data.append(["CAPITAL"])
     nsst_data.append(["Total Investment capital to be raised (Estimated)", f'=+\'{worksheets[index]}\'!B13'])
-    nsst_data.append(["Available to be raised (Estimated)", f'=+B40'])
+    nsst_data.append(["Available to be raised (Estimated)", f'=+B42'])
     nsst_data.append(["Total Investment capital received", f'=+\'{worksheets[index]}\'!B14'])
     nsst_data.append(["Total Funds Drawn Down into Development", f'=+\'{worksheets[index]}\'!B15'])
     nsst_data.append(["Pledges Due", total_pledges])

@@ -846,6 +846,7 @@ async def print_otp_doc(data: Request):
         print("No such Document")
 
     # try:
+    # print("newData", newData)
     result = print_otp_pdf(newData)
 
     print("RESULT", result)

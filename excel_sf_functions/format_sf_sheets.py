@@ -296,7 +296,8 @@ def format_sales_forecast(sheet):
     # comma every 3 digits
 
     sheet['B3'] = f'=COUNTIF({get_column_letter(7)}10:{get_column_letter(sheet.max_column)}10,"<>ZZUN01")'
-    sheet['D3'] = f'=COUNTIF({get_column_letter(7)}3:{get_column_letter(sheet.max_column)}3,TRUE)'
+    # =COUNTIFS(G3: FM3, TRUE, G10: FM10, "<>ZZUN01")
+    sheet['D3'] = f'=COUNTIFS({get_column_letter(7)}3:{get_column_letter(sheet.max_column)}3,TRUE,{get_column_letter(7)}10:{get_column_letter(sheet.max_column)}10,"<>ZZUN01")'
     sheet['A54'] = f'LTV'
 
     columns_to_format = ['B', 'C', 'D', 'E', 'F']
