@@ -80,7 +80,8 @@ def format_sales_forecast(sheet):
     for letter in column_letters_7:
         for row in rows_to_add_formulas:
             if row == 17:
-                sheet[f'{letter}{row}'] = f'=SUM({letter}13-{letter}14)'
+                # =IF(G3=FALSE, +G13 - G14, 0)
+                sheet[f'{letter}{row}'] = f'=if({letter}3=FALSE,SUM({letter}13-{letter}14),0)'
             elif row == 23:
                 sheet[f'{letter}{row}'] = f'=SUM({letter}22-{letter}21)'
             elif row == 27:

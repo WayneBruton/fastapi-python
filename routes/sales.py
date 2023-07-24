@@ -394,7 +394,7 @@ async def get_all_units_sold(data: Request):
         if sale['opportunity_upload_company_docs'] is not None and sale['opportunity_upload_company_docs'] != "":
             total_docs_uploaded += 1
         if sale['opportunity_upload_company_addressproof'] is not None and sale[
-            'opportunity_upload_company_addressproof'] != "":
+                'opportunity_upload_company_addressproof'] != "":
             total_docs_uploaded += 1
 
         sale['total_docs_required'] = total_docs_required
@@ -412,7 +412,7 @@ async def get_all_units_sold(data: Request):
         else:
             sale['pending'] = False
         if sale['opportunity_deposite_date'] is not None and sale['opportunity_deposite_date'] != "" and sale[
-            'pending']:
+                'pending']:
             sale['sold'] = True
         else:
             sale['sold'] = False
@@ -550,7 +550,7 @@ async def save_sale(data: Request):
                 "opportunity_sold": opportunity_sold}})
 
         if request['formData']['opportunity_actual_reg_date'] != "" and request['formData'][
-            'opportunity_actual_reg_date'] is not None:
+                'opportunity_actual_reg_date'] is not None:
             opportunity_sold = True
             result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
                 "opportunity_sold": opportunity_sold,

@@ -1,5 +1,5 @@
-import copy
-import os
+# import copy
+# import os
 
 from fpdf import FPDF, XPos, YPos
 
@@ -38,19 +38,6 @@ class PDF(FPDF):
         self.set_line_width(0.5)
         self.line(5, self.get_y() - 2, 200, self.get_y() - 2)
 
-    def cell_with_padding(self, w, h, txt, border=0, ln=0, align='', fill=False):
-        # Add padding
-        padding_left = 0  # Set your desired left padding value
-        padding_right = 0  # Set your desired right padding value
-        padding_top = 4  # Set your desired top padding value
-        padding_bottom = 0  # Set your desired bottom padding value
-
-        # Adjust cell size to include padding
-        w += padding_left + padding_right
-        h += padding_top + padding_bottom
-
-        self.cell(w, h, txt, border, ln, align, fill)
-
 
 def print_otp_pdf(data):
     # pdf = PDF('P', 'mm', 'A4')
@@ -70,9 +57,17 @@ def print_otp_pdf(data):
     if data['development'] == 'Heron View' or data['development'] == 'Heron Fields':
         company = 'HERON PROJECTS PROPRIETARY LIMITED'
         company_reg_no = 'REGISTRATION NUMBER 2020/495056/07'
+        if data['development'] == 'Heron View':
+            street_address = 'Crystal Way, Langeberg Ridge'
+            estimated_levy = 'R 1 200.00'
+        if data['development'] == 'Heron Fields':
+            street_address = 'Cnr of Langeberg & Ridge Road, Langeberg Ridge'
+            estimated_levy = 'R 1 200.00'
     elif data['development'] == 'Endulini':
         company = 'ENDULINI PROJECTS PROPRIETARY LIMITED'
         company_reg_no = 'REGISTRATION NUMBER 2020/495057/07'
+        street_address = 'Cnr of Kruis Street & Crammix Street, Brackenfell'
+        estimated_levy = 'R 1 200.00'
     ############################################
 
     pdf.cell(0, 5, f"**Section/Door No. {data['section']}/{door_no}**", align='R', fill=False, new_x=XPos.LMARGIN,
@@ -663,7 +658,8 @@ def print_otp_pdf(data):
                 "label_b2": "ID Number",
                 "value_b2": data['opportunity_id_10th'],
                 "label_b3": "Address (Street & Postal)",
-                "value_b3": f"{data['opportunity_residental_address_10th']} & {data['opportunity_postal_address_10th']}",
+                "value_b3": f"{data['opportunity_residental_address_10th']} & "
+                            f"{data['opportunity_postal_address_10th']}",
                 "label_b4": "Marital Status",
                 "value_b4": data['opportunity_martial_status_10th'],
                 "label_b5": "Telephone",
@@ -715,12 +711,14 @@ def print_otp_pdf(data):
 
             pdf.cell(20, 7, "B7", align="C", markdown=True, border=1)
             pdf.cell(50, 7, f"{purchaser['label_b7']}", align="L", markdown=True, border=1)
+            pdf.set_text_color(0, 0, 255)
             pdf.cell(120, 7, f"**{purchaser['value_b7']}**", align="L", markdown=True,
                      new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+            pdf.set_text_color(0, 0, 0)
 
             pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-    pdf.add_page()
+    # pdf.add_page()
 
     pdf.cell(20, 7, f"**C**", align="C", markdown=True, border=1)
     pdf.cell(50, 7, f"**The Property**", align="L", markdown=True, border=1)
@@ -729,11 +727,246 @@ def print_otp_pdf(data):
     pdf.cell(20, 15, f"C1", align="C", markdown=True, border=1)
     pdf.cell(50, 15, f"Unit", align="L", markdown=True, border=1)
     pdf.multi_cell(120, 5,
-                   f"**Unit No:**{door_no} having an approximate floor area of .......... Square Metre's as "
+                   f"**Unit No:** {door_no} having an approximate floor area of .......... Square Metre's as "
                    f"reflected on the Development and Unit Plans annexed hereto (marked \"**A & B**\")",
                    align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
-    # if data['opportunity_gardenNumber'] != "":
+    ##############################################
+
+    garden_number = 0
+    garden_size = 0
+
+    if data['opportunity_gardenNumber'] != 0 and data['opportunity_gardenNumber'] is not None:
+        garden_number = data['opportunity_gardenNumber']
+        garden_size = data['opportunity_gardenSize']
+
+    aditional_parking_bays = data['opportunity_additional_bay']
+    allocated_parking_bay = data['opportunity_originalBayNo']
+    second_parking_bay = data['opportunity_parking_base']
+    third_parking_bay = data['opportunity_parking_base2']
+
+    line_item = 1
+
+    if garden_number != "0":
+        pdf.cell(20, 20, f"C2", align="C", markdown=True, border="LTR")
+        pdf.cell(50, 20, f"Exclusive Use Area's", align="L", markdown=True, border="LTR")
+        pdf.multi_cell(120, 5,
+                       f"**{line_item}. Garden G {garden_number}** having an area of approximately {garden_size} "
+                       f"square metres and shall be allocated to the Purchaser in terms of Section 27A of the "
+                       f"Sectional Titles Act.  The Garden is indicated on the Exclusive Use Area Plan annexed hereto "
+                       f"(marked **\"A\")**.",
+                       align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border="LTR")
+
+        line_item += 1
+        if aditional_parking_bays != 0:
+            border = "LR"
+        else:
+            border = "LBR"
+
+        pdf.cell(20, 20, f"", align="C", markdown=True, border=border)
+        pdf.cell(50, 20, f"", align="L", markdown=True, border=border)
+        pdf.multi_cell(120, 5,
+                       f"**{line_item}. Parking P {allocated_parking_bay}** having an area of approximately .........."
+                       f".. square metres and shall be allocated to the Purchaser in terms of Section 27A of the "
+                       f"Sectional Titles Act.  The Parking is indicated on the Exclusive Use Area Plan annexed "
+                       f"hereto (marked **\"A\"**).",
+                       align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=border)
+
+        line_item += 1
+        if aditional_parking_bays == 1:
+            border = "LBR"
+
+        elif aditional_parking_bays == 2:
+            border = "LR"
+
+        if aditional_parking_bays >= 1:
+            pdf.cell(20, 20, f"", align="C", markdown=True, border=border)
+            pdf.cell(50, 20, f"", align="L", markdown=True, border=border)
+            pdf.multi_cell(120, 5,
+                           f"**{line_item}. Additional Parking P {second_parking_bay}** having an area of approximately"
+                           f" ............ square metres and shall be allocated to the Purchaser in terms of Section "
+                           f"27A of the Sectional Titles Act.  The Parking is indicated on the Exclusive Use Area "
+                           f"Plan annexed hereto (marked **\"A\"**).",
+                           align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=border)
+
+        if aditional_parking_bays == 2:
+            line_item += 1
+            border = "LBR"
+            pdf.cell(20, 20, f"", align="C", markdown=True, border=border)
+            pdf.cell(50, 20, f"", align="L", markdown=True, border=border)
+            pdf.multi_cell(120, 5,
+                           f"**{line_item}. Additional Parking P {third_parking_bay}** having an area of approximately "
+                           f"............ square metres and shall be allocated to the Purchaser in terms of Section "
+                           f"27A of the Sectional Titles Act.  The Parking is indicated on the Exclusive Use Area "
+                           f"Plan annexed hereto (marked **\"A\"**).",
+                           align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=border)
+
+    else:
+        line_item = 1
+        if aditional_parking_bays != 0:
+            border = "LR"
+        else:
+            border = "LBR"
+
+        pdf.cell(20, 20, f"C2", align="C", markdown=True, border=border)
+        pdf.cell(50, 20, f"Exclusive Use Area's", align="L", markdown=True, border=border)
+        pdf.multi_cell(120, 5,
+                       f"**{line_item}. Parking P {allocated_parking_bay}** having an area of approximately .........."
+                       f".. square metres and shall be allocated to the Purchaser in terms of Section 27A of the "
+                       f"Sectional Titles Act.  The Parking is indicated on the Exclusive Use Area Plan annexed "
+                       f"hereto (marked **\"A\"**).",
+                       align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=border)
+
+        line_item += 1
+        if aditional_parking_bays == 1:
+            border = "LBR"
+
+        elif aditional_parking_bays == 2:
+            border = "LR"
+
+        if aditional_parking_bays >= 1:
+            pdf.cell(20, 20, f"", align="C", markdown=True, border=border)
+            pdf.cell(50, 20, f"", align="L", markdown=True, border=border)
+            pdf.multi_cell(120, 5,
+                           f"**{line_item}. Additional Parking P {second_parking_bay}** having an area of approximately "
+                           f"............ square metres and shall be allocated to the Purchaser in terms of Section "
+                           f"27A of the Sectional Titles Act.  The Parking is indicated on the Exclusive Use Area "
+                           f"Plan annexed hereto (marked **\"A\"**).",
+                           align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=border)
+
+        if aditional_parking_bays == 2:
+            line_item += 1
+            border = "LBR"
+            pdf.cell(20, 20, f"", align="C", markdown=True, border=border)
+            pdf.cell(50, 20, f"", align="L", markdown=True, border=border)
+            pdf.multi_cell(120, 5,
+                           f"**{line_item}. Additional Parking P {third_parking_bay}** having an area of approximately "
+                           f"............ square metres and shall be allocated to the Purchaser in terms of Section "
+                           f"27A of the Sectional Titles Act.  The Parking is indicated on the Exclusive Use Area "
+                           f"Plan annexed hereto (marked **\"A\"**).",
+                           align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=border)
+
+    ##############################################
+
+    pdf.cell(20, 7, f"C3", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"Street Address", align="L", markdown=True, border=1)
+    pdf.multi_cell(120, 7,
+                   f"**Unit No.** {door_no}, {data['development']}, {street_address}",
+                   align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(0, 3, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    pdf.cell(20, 8, f"**D**", align="C", markdown=True, border=1)
+    pdf.cell(50, 8, f"**Estimated Occupation**", align="L", markdown=True, border=1)
+    pdf.multi_cell(120, 4,
+                   f"**As per and subject to Clause 11.13 of the Agreement Estimated to be on or around:............",
+                   align="L", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(0, 3, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"**E**", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"**Purchase Price**", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, "", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(20, 7, "E1", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"Purchase Price (VAT Inclusive)", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, f"   **R {data['opportunity_contract_price']:,.2f}**", align="L", markdown=True,
+             new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(20, 10, "E2", align="C", markdown=True, border=1)
+    pdf.cell(50, 10, f"Deposit", align="L", markdown=True, border=1)
+    pdf.multi_cell(120, 5, f"**R {float(data['opportunity_deposite']):,.2f} (Note: Minimum of R30,000.00 deposit "
+                           f"payable within 3 days of Signature Date to secure)**", align="J", markdown=True,
+                   new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(20, 7, "E3", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"Bond or Balance if Cash", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, f"   **R {float(0):,.2f} **", align="L", markdown=True,
+             new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(0, 3, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    pdf.cell(20, 15, "**G**", align="C", markdown=True, border=1)
+    pdf.cell(50, 15, f"**Bond Costs**", align="L", markdown=True, border=1)
+    pdf.multi_cell(120, 5, f"**The Purchaser will be liable for payment of initiation and/or valuation "
+                           f"(bank administration) fees as may be charged by the bank, and as further set out herein**",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(0, 3, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"**G**", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"**Selling Details**", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, "", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(20, 7, "G1", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"Selling Agency", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, f"**OPPORTUNITY GLOBAL INVESTMENT PROPERTY (PTY) LTD**", align="L", markdown=True,
+             new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(20, 7, "G2", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"Sales Agent", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, f"**{data['opportunity_sale_agreement']}**", align="L", markdown=True,
+             new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(0, 3, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"**G**", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"**Estimated Monthly Levy**", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, f"**TBC By Managing Agent (Payable by Purchaser)** Approx {estimated_levy}", align="L",
+             markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(0, 3, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"**H**", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"**Electricity Deposit**", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, f"**R1200.00 Payable upon Registration to the Transfer Attorneys", align="L",
+             markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    pdf.cell(0, 3, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"**I**", align="C", markdown=True, border=1)
+    pdf.cell(50, 7, f"**Mortgage Originator**", align="L", markdown=True, border=1)
+    pdf.cell(120, 7, f"{data['opportunity_bond_originator']}", align="L",
+             markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+
+    # extras
+    print(data['opportunity_extras_not_listed'][1:])
+    # notes
+    print(data['opportunity_notes'])
+    # Gas
+    print(data['opportunity_stove_option'])
+    # specials
+    print(data['opportunity_specials'])
+
+    pdf.cell(0, 5, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    # make font larger
+    pdf.set_font('helvetica', '', 14)
+
+    pdf.cell(0, 7, f"**Additional Conditions & Notes:**", align="L", markdown=True, border=0,  new_x=XPos.LMARGIN,
+             new_y=YPos.NEXT)
+
+    pdf.cell(0, 5, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    # Revert font size
+    pdf.set_font('helvetica', '', 11)
+
+    pdf.cell(0, 7, f"**Inclusions and choices:**", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
+             new_y=YPos.NEXT)
+
+    ###################################
+
+    if len(data['opportunity_specials']) > 0:
+        for special in data['opportunity_specials']:
+            pdf.cell(0, 7, f"{special}", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
+                     new_y=YPos.NEXT)
+
+
+
+
+
+
+
 
     pdf.output(f"sales_client_onboarding_docs/{data['opportunity_code']}-OTP.pdf")
 
