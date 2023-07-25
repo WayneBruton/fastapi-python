@@ -881,7 +881,7 @@ def print_otp_pdf(data):
 
     pdf.cell(20, 7, "E3", align="C", markdown=True, border=1)
     pdf.cell(50, 7, f"Bond or Balance if Cash", align="L", markdown=True, border=1)
-    pdf.cell(120, 7, f"   **R {float(0):,.2f} **", align="L", markdown=True,
+    pdf.cell(120, 7, f"   **R**", align="L", markdown=True,
              new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
     pdf.cell(0, 3, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
@@ -943,7 +943,7 @@ def print_otp_pdf(data):
     # make font larger
     pdf.set_font('helvetica', '', 14)
 
-    pdf.cell(0, 7, f"**Additional Conditions & Notes:**", align="L", markdown=True, border=0,  new_x=XPos.LMARGIN,
+    pdf.cell(0, 7, f"**Additional Conditions & Notes:**", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
              new_y=YPos.NEXT)
 
     pdf.cell(0, 5, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
@@ -960,6 +960,395 @@ def print_otp_pdf(data):
         for special in data['opportunity_specials']:
             pdf.cell(0, 7, f"{special}", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
                      new_y=YPos.NEXT)
+
+    if data['opportunity_stove_option'] == 'Gas':
+        pdf.cell(0, 7, f"Gas Stove Option chosen", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
+                 new_y=YPos.NEXT)
+
+    pdf.cell(0, 7, f"**Notes:**", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
+             new_y=YPos.NEXT)
+
+    if data['opportunity_notes'] != "":
+        pdf.cell(0, 7, f"{data['opportunity_notes']}", align="L", markdown=True, border="B", new_x=XPos.LMARGIN,
+                 new_y=YPos.NEXT)
+
+    for x in range(0, 5):
+        pdf.cell(0, 7, f"", align="L", markdown=True, border="B", new_x=XPos.LMARGIN,
+                 new_y=YPos.NEXT)
+
+    pdf.set_font('helvetica', '', 8)
+    # make the font color light gray
+    pdf.set_text_color(211, 211, 211)
+
+    pdf.cell(0, 10, f"INITIAL                 ", align="R")
+    # get the current x and y position
+
+    pdf.set_line_width(0.5)
+    # make the rectangle lines light gray
+    pdf.set_draw_color(211, 211, 211)
+    # draw the rectangle for the initials
+    x = pdf.get_x() - 35
+    y = pdf.get_y() + 1
+    # draw a rectangle
+    pdf.rect(x, y, 30, 10)
+
+    # pdf.rect(165, 282, 30, 10)
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('helvetica', '', 9)
+
+    pdf.cell(0, 7, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 7, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 7, f"**Summary of Annexures**", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 7, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(80, 7, f"**Annexure A**", align="L", markdown=True, border=0)
+    pdf.cell(110, 7, f"Site Layout Plan", align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(80, 7, f"**Annexure B**", align="L", markdown=True, border=0)
+    pdf.cell(110, 7, f"SDP & Parking Correlation", align="L", markdown=True, border=0,
+             new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(80, 7, f"**Annexure C**", align="L", markdown=True, border=0)
+    pdf.cell(110, 7, f"Unit Plan", align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(80, 7, f"**Annexure D**", align="L", markdown=True, border=0)
+    pdf.cell(110, 7, f"Finishes Schedule", align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(80, 7, f"**Annexure E**", align="L", markdown=True, border=0)
+    pdf.cell(110, 7, f"Specifications of Finishes", align="L", markdown=True, border=0,
+             new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(80, 7, f"**Annexure F**", align="L", markdown=True, border=0)
+    pdf.cell(110, 7, f"Consent in terms of the Protection of Personal Information Act",
+             align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    pdf.add_page()
+
+    pdf.cell(0, 7, f"**STANDARD TERMS AND CONDITIONS**", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+    pdf.cell(0, 7, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN,
+             new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"1.", align="C", markdown=True, border=0)
+    pdf.cell(50, 7, f"**PREAMBLE**", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
+             new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"1.1", align="C", markdown=True, border=0)
+    pdf.multi_cell(150, 5, f"The Seller has agreed to sell, and the Purchaser has agreed to purchase the Property in C"
+                           f" of the Information Schedule, to be established in the Sectional Title Scheme to be "
+                           f"known as **\"{data['development'].upper()}\"** in terms of the Sectional Titles Act.",
+                     align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"1.2", align="C", markdown=True, border=0)
+    pdf.multi_cell(150, 5, f"The Sale is subject to the fulfilment of the condition's precedent recorded "
+                           f"in this Agreement.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
+
+    pdf.cell(20, 7, f"2.", align="C", markdown=True, border=0)
+    pdf.cell(50, 7, f"**INTERPRETATION**", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
+             new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1", align="C", markdown=True, border=0)
+    pdf.multi_cell(150, 5, f"In this Agreement, unless the context otherwise indicates:",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.1", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5, f"**\"Architect\"** means any registered architect as may be appointed by the Seller "
+                           f"from time to time.", align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.2", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5, f"**\"Beneficial Occupation\"** means the Property has water, power, sewerage, access and "
+                           f"is thus liveable and ready for physical occupation.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.3", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5, f"**\"Body Corporate\"** means the controlling body of the Scheme as contemplated in terms"
+                           f" of Section 36 of the Sectional Titles Act, which will come into existence with the"
+                           f" transfer of the first Unit from the Seller to a Purchaser in this Scheme.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.4", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5, f"**\"Building\"** means the building/s to be constructed on the Land.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.5", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5, f"**\"Chief Ombud\"** means Chief Ombud as defined in Section 1 of the Community Schemes Ombud Service Act, 2010.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.6", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Completion Date\"** means the date upon which the building inspector employed by the local authority or Architect issues an Occupation Certificate in respect of the Unit to the effect that the Unit is fit for Beneficial Occupation, or the date of handover of the keys of the Unit to the Purchaser, whichever date is earlier, subject to the provision that in the event of a dispute, the Completion Date shall be certified as such by the Architect, whose decision as to that date shall be final and binding on the parties.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.7", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Common Property\"** means common property as defined in the Sectional Titles Act.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.8", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Developer\"** means the party described as Seller in the Information Schedule.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.9", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Development Period\"** means the period from the establishment of the Body Corporate to the transfer of the last saleable sectional title unit in the Scheme or a period not exceeding twenty years from date of establishment of the Body Corporate, whichever is the longest.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.10", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Exclusive Use Areas\"** means such parts of the Common Property reserved for the exclusive use and enjoyment of the registered owner for the time being of the Unit, in terms of Section 27A of the Sectional Titles Act which includes the Garden and Parking.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.11", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"FICA\"** means the Financial Intelligence Centre Act, Act 38 of 2001, as amended from time to time.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.12", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Happy Letter\"** means a formal document prepared in a format acceptable to the bank or other recognised financial institution providing a bond to the Purchaser as provided for in Clause 19 hereunder and signed by the Purchaser (or his Agent/Proxy) at the instance of the bank or other recognised financial institution providing a bond, or in the case of a cash purchase, a Happy Letter document provided by the Seller, to be signed by the Purchaser.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.13", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Information Schedule\"** means the Information Schedule set out on pages 3, 4 and 5 hereof which shall be deemed to be incorporated in this Agreement and shall be an integral part thereof.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.14", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Land\"** means the land on which the Scheme is to be developed being Erf 41409 Kraaifontein, (previously known as the Remainder of Portion 18 of the Farm Langeberg Number 311.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.15", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Occupation Certificate\"** means a certificate issued by the City of Cape Town confirming that the Unit is ready for Beneficial Occupation.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.16", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Occupation Date\"** means the date on which the Seller hands over the keys of the Unit to the Purchaser, or Transfer Date, whichever is the earliest.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.add_page()
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.17", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Prime Rate\"** means a rate of interest per annum which is equal to the published minimum lending rate of interest per annum, compounded monthly in arrear, charged by ABSA Bank Limited on the unsecured overdrawn current accounts of its most favoured corporate clients in the private sector from time to time.  (In the case of a dispute as to the rate so payable, the rate may be certified by any manager or assistant manager of any branch of the said bank, whose decision shall be final and binding on the parties.)",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.18", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Property\"** means the Property as described in C of the Information Schedule.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.19", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Purchaser\"** means the party/ies described as such in B of the Information Schedule.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.20", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Rules\"** means the Management and Conduct Rules as Amended for the **\"{data['development'].upper()}\"**  Sectional Title Scheme as prescribed in terms of Section 10(2)(a) and (b) of the Sectional Titles Schemes Management Act No. 8 of 2011, subject to the approval the Chief Ombud, and shall include any substituting rules, available on request from the Agent or Seller.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.21", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Scheme\"** means the **\"{data['development'].upper()}\"** Sectional Title Development to be established on the Land, comprising of sectional title residential Units and Exclusive Use Areas, which development may take place in phases and which is situated on the Land as depicted on the Locality, Development, Unit and Exclusive Use Area Plans, Annexure's **\"A,B & C\"** hereto",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.22", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Sectional Titles Act\"** means the Sectional Titles Act No 95 of 1986 (or any statutory modification or re-enactment thereof) and includes the regulations made thereunder from time to time.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.23", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Sectional Plan\"** means the sectional plan/s prepared and registered in respect of the Scheme and includes extension plans to be registered in respect of the Scheme.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.24", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Sectional Titles Schemes Management Act\"** means the Sectional Titles Schemes Management Act No. 8 of 2011 (or any statutory modification or re-enactment thereof) and includes the regulations made thereunder from time to time.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.25", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Seller\"** means the party described in the Information Schedule. \n**\"Seller's attorneys\"** means Ilismi du Toit of LAÄS & SCHOLTZ INC, Queen Street Chambers, 33 Queen Street, Durbanville, 7550, Tel (021) 975 0802 \nEmail: ilismi@lslaw.co.za, LAÄS & SCHOLTZ INC Attorneys Trust Bank Account details;  \nBank:  Standard Bank; Account Number: 272255505;  Branch Code: 051001; (Ref: Unit Number / {data['development'].upper()})",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.26", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Signature Date\"** means the date upon which this Agreement is signed by the party who signs same last in time.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.27", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Snags\"** means aesthetic and detail finishing items not affecting the Beneficial Occupation of the Property.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.28", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Defects List\"** means a list furnished by the Seller to the Purchaser on Occupation Date, which list is to be completed by the Purchaser within 10 days after the Occupation Date, where the Purchaser may identify construction items inside the Property that are to be attended to by the Seller.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.29", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Transfer Date\"** means the date of registration of transfer of the Unit in the name of the Purchaser in the deeds office.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.30", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Unit\"** means the residential Sectional Title Unit to be constructed by the Seller on the Land for and on behalf of the Purchaser as envisaged herein.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.31", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"VAT\"** means value-added tax at the applicable rate in terms of the Value Added Tax Act No 89 of 1991 or any statutory re-enactment or amendment thereof.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.1.32", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"**\"Works\"** means all the activities which are required to be undertaken to erect a residential Unit on the Land for purposes of handover and transfer to the Purchaser.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.2", align="C", markdown=True, border=0)
+    pdf.multi_cell(150, 5, f"The headnotes to the paragraphs in this Agreement are inserted for reference purposes only and shall not affect the interpretation of any of the provisions to which they relate.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.3", align="C", markdown=True, border=0)
+    pdf.multi_cell(150, 5,
+                   f"Words importing the singular shall include the plural, and vice versa, and words importing the masculine gender shall include the feminine and neuter genders, and vice versa, and words importing persons shall include partnerships, trusts and bodies corporate, and *vice versa*.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
+
+
+    pdf.add_page()
+
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"2.4", align="C", markdown=True, border=0)
+    pdf.multi_cell(150, 5,
+                   f"If any provision in the Information Schedule, clause 1 and/or this clause 2 is a substantive provision conferring rights or imposing obligations on any party, then notwithstanding that such provision is contained in the Information Schedule, Clause 1 and/or this Clause 2  (as the case may be) effect shall be given thereto as if such provision was a substantive provision in the body of this Agreement.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
+
+    pdf.cell(20, 7, f"3.", align="C", markdown=True, border=0)
+    pdf.cell(50, 7, f"**SALE OF THE PROPERTY**", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
+             new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.multi_cell(170, 7, f"The Seller hereby sells, and the Purchaser hereby purchases the Property, subject to and upon the terms and conditions contained in this Agreement.", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
+             new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"4.", align="C", markdown=True, border=0)
+    pdf.cell(50, 7, f"**PURCHASE PRICE AND METHOD OF PAYMENT**", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
+             new_y=YPos.NEXT)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"4.1", align="C", markdown=True, border=0)
+    pdf.multi_cell(150, 5, f"The Total purchase price of the Property shall be the amount stated in clause E1 of the Information Schedule regardless of the final extent of the Unit as reflected on the Unit Plan attached marked \"Annexure B\"",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"4.1.1", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"The Purchaser shall pay the Seller's attorneys the deposit for the Property as stated in clause E2 of the Information Schedule within 3(three) days of signature of this Agreement by the Purchaser, which deposit shall be held in trust by the Seller's attorneys and invested in an interest-bearing account in accordance with the provisions of Section 26 of the Alienation of Land Act No 68 of 1981 (as amended) with interest to accrue to the Purchaser.  The provisions of this clause 4.2 shall constitute authority to the Seller's attorneys, in terms of Section 86(4) of the Legal Practice Act, 2014(Act No. 28 of 2014), to invest the deposit for the benefit of Purchaser pending registration of transfer.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
 
 
 

@@ -379,6 +379,188 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         for sheet in wb.worksheets:
             sheet.delete_rows(40, 1000)
 
+    ws = wb.create_sheet("Per Block")
+    ws.sheet_properties.tabColor = "F11A7B"
+
+    worksheet_data = []
+
+    ws2 = wb[worksheets[0]]
+    last_col = get_column_letter(ws2.max_column)
+    criteria_range = []
+
+    AVAILABLE = []
+    DRAWN = []
+    RAISED = []
+    LEFT_TO_RAISE = []
+    TO_RAISE = []
+    transferred = []
+    # get the value from column G row 4 until the last column from ws2 and insert into criteria_range list
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=4, max_row=4):
+        for item in cell:
+            criteria_range.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=13, max_row=13):
+        for item in cell:
+            AVAILABLE.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=15, max_row=15):
+        for item in cell:
+            DRAWN.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=14, max_row=14):
+        for item in cell:
+            RAISED.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=16, max_row=16):
+        for item in cell:
+            LEFT_TO_RAISE.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=17, max_row=17):
+        for item in cell:
+            TO_RAISE.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=3, max_row=3):
+        for item in cell:
+            transferred.append(item.value)
+
+    # using list comprehension, replace None values with 0 in AVAILABLE
+    AVAILABLE = [0 if x is None else x for x in AVAILABLE]
+    # using list comprehension, replace None values with 0 in DRAWN
+    DRAWN = [0 if x is None else x for x in DRAWN]
+    # using list comprehension, replace None values with 0 in RAISED
+    RAISED = [0 if x is None else x for x in RAISED]
+    # using list comprehension, replace None values with 0 in LEFT_TO_RAISE
+    LEFT_TO_RAISE = [0 if x is None else x for x in LEFT_TO_RAISE]
+    # using list comprehension, replace None values with 0 in TO_RAISE
+    TO_RAISE = [0 if x is None else x for x in TO_RAISE]
+
+    # print("AVAILABLE",AVAILABLE)
+
+    # print("criteria_range",criteria_range) using list  utilise only the 4th last character of each item in
+    # criteria_range and insert into new list called final_criteria
+    final_criteria = [item[-4:-3] for item in criteria_range]
+    # print("final_criteria", final_criteria)
+    worksheet_data.append(final_criteria)
+    worksheet_data.append(AVAILABLE)
+    worksheet_data.append(DRAWN)
+    worksheet_data.append(RAISED)
+    worksheet_data.append(LEFT_TO_RAISE)
+    worksheet_data.append(TO_RAISE)
+    worksheet_data.append(transferred)
+
+
+    row2_data = ["BLOCK", "AVAILABLE", "DRAWN", "RAISED", "LEFT TO RAISE", "TO RAISE"]
+    worksheet_data.append(row2_data)
+
+    # ws.append(worksheet_data)
+    for item in worksheet_data:
+        ws.append(item)
+
+    last_col = get_column_letter(ws.max_column)
+
+
+
+    for col_idx, col in enumerate(ws.iter_cols(min_col=1, max_col=ws.max_column, min_row=6, max_row=6), start=1):
+        # Set the formula for each cell in the current column in row 6
+        for cell in col:
+            col_letter = get_column_letter(col_idx)
+            cell.value = f'=IF({col_letter}7=TRUE, 0, {col_letter}2 - {col_letter}4)'
+
+    # get only unique items
+    blocks = list(set(final_criteria))
+    blocks.sort()
+
+    # get max_column of ws
+    start_sum = ws.max_row + 1
+    # columns = ["A", "B", "C", "D", "E", "F"]
+    for block in blocks:
+        insert_row = []
+        # print("block", block)
+        max_row = ws.max_row + 1
+        insert_row.append(block)
+        formula = f'=SUMIFS(A2:{last_col}2, A1:{last_col}1, A{max_row})'
+        insert_row.append(formula)
+        formula = f'=SUMIFS(A3:{last_col}3, A1:{last_col}1, A{max_row})'
+        insert_row.append(formula)
+        formula = f'=SUMIFS(A4:{last_col}4, A1:{last_col}1, A{max_row})'
+        insert_row.append(formula)
+        formula = f'=SUMIFS(A5:{last_col}5, A1:{last_col}1, A{max_row})'
+        insert_row.append(formula)
+        formula = f'=SUMIFS(A6:{last_col}6, A1:{last_col}1, A{max_row})'
+        insert_row.append(formula)
+        ws.append(insert_row)
+
+    club_house = ["CLUBHOUSE", 0, 0, 0, 0, 0]
+    ws.append(club_house)
+    other = ["OTHER", 0, 0, 0, 0, 0]
+    ws.append(other)
+    # append an empty row
+    ws.append([])
+    max_row = ws.max_row
+
+    # in a new row, insert the sum of each column from start_sum to max_row for columns B through F
+    columns = ["B", "C", "D", "E", "F"]
+    insert = ["TOTAL"]
+    for col in columns:
+        # ws[f'{col}{max_row}'].value = f'=SUM({col}{start_sum}:{col}{max_row - 1})'
+        insert.append(f'=SUM({col}{start_sum}:{col}{max_row - 1})')
+    ws.append(insert)
+
+    columns = ["A", "B", "C", "D", "E", "F"]
+    rows = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28]
+    # format all cells in columns B through F to currency format for the rows in the rows list, and set the font size
+    # to 10, and set the alignment to center, and set the border to thin, and make the columns autofit
+    for col in columns:
+        for row in rows:
+            ws[f'{col}{row}'].number_format = '#,##0.00'
+            ws[f'{col}{row}'].font = Font(size=10)
+            ws[f'{col}{row}'].alignment = Alignment(horizontal='center')
+            ws[f'{col}{row}'].border = Border(left=Side(border_style='thin', color='000000'),
+                                              right=Side(border_style='thin', color='000000'),
+                                              top=Side(border_style='thin', color='000000'),
+                                              bottom=Side(border_style='thin', color='000000'))
+        ws.column_dimensions[col].auto_size = True
+
+    # for columns in columns list, set the font to bold, set the font size to 12, set the alignment to center,
+    # set the background color to light grey, and set the border to thin for row 8
+    for col in columns:
+        ws[f'{col}8'].font = Font(bold=True, size=12)
+        ws[f'{col}8'].alignment = Alignment(horizontal='center')
+        ws[f'{col}8'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
+        ws[f'{col}8'].border = Border(left=Side(border_style='thin', color='000000'),
+                                      right=Side(border_style='thin', color='000000'),
+                                      top=Side(border_style='thin', color='000000'),
+                                      bottom=Side(border_style='thin', color='000000'))
+        ws[f'{col}28'].font = Font(bold=True, size=10)
+        ws[f'{col}28'].alignment = Alignment(horizontal='center')
+        ws[f'{col}28'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
+        ws[f'{col}28'].border = Border(left=Side(border_style='thin', color='000000'),
+                                      right=Side(border_style='thin', color='000000'),
+                                      top=Side(border_style='thin', color='000000'),
+                                      bottom=Side(border_style='thin', color='000000'))
+
+    ws.column_dimensions[col].auto_size = True
+
+    # hide rows 1 through 7
+    for row in range(1, 8):
+        ws.row_dimensions[row].hidden = True
+
+
+
+
+
+    # print("max_row", max_row)
+
+    # worksheets = wb.sheetnames
+
+    # =SUMIFS(A2: UQ2, A1: UQ1, A9)
+
+    # get max column of worksheet 0
+    # ws2 = wb[worksheets[0]]
+
+    # last_col = get_column_letter(ws2.max_column)
+    # print(last_col)
+    # create variable to hold the sum of the amount of units sold for each block from row 13 to the end of the
+    # worksheet in ws2
+    # available = f'=SUMIFS(G13:{last_col}13, G4:{last_col}4, "<>")'
+
+    # for item in worksheet_data:
+    #     ws.append(item)
+
     # SAVE TO FILE
     wb.save(f"excel_files/{filename}.xlsx")
 
@@ -586,9 +768,9 @@ def create_cash_flow(data, request, other_data):
     ws = wb.active
     ws.title = "Cash Flow"
 
-    row1_data = [f"Weekly Cashflow ({heading}) - {request['date']}","",""]
+    row1_data = [f"Weekly Cashflow ({heading}) - {request['date']} ", " ", ""]
 
-    row2_data = ["","",""]
+    row2_data = [" ", " ", ""]
 
     row3_data = ["Date", "Amount", "Units"]
 
@@ -632,8 +814,6 @@ def create_cash_flow(data, request, other_data):
         # print(item)
         ws2.append(item)
 
-
-
     for cell in ws2['B']:
         cell.number_format = 'R#,##0.00'
 
@@ -645,12 +825,9 @@ def create_cash_flow(data, request, other_data):
     ws2.column_dimensions['B'].width = 20
     ws2.column_dimensions['A'].width = 15
 
-
-
     wb.save(f"excel_files/Cashflow {heading}.xlsx")
 
     return f"Cashflow {heading}.xlsx"
-
 
 # create_cash_flow([{
 #     "date": "2023/06/25",
