@@ -394,6 +394,11 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     LEFT_TO_RAISE = []
     TO_RAISE = []
     transferred = []
+    individual_capital = []
+    released_interest = []
+    investment_interest = []
+    early_release = []
+
     # get the value from column G row 4 until the last column from ws2 and insert into criteria_range list
     for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=4, max_row=4):
         for item in cell:
@@ -416,6 +421,18 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=3, max_row=3):
         for item in cell:
             transferred.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=19, max_row=19):
+        for item in cell:
+            individual_capital.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=32, max_row=32):
+        for item in cell:
+            released_interest.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=24, max_row=26):
+        for item in cell:
+            investment_interest.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=58, max_row=58):
+        for item in cell:
+            early_release.append(item.value)
 
     # using list comprehension, replace None values with 0 in AVAILABLE
     AVAILABLE = [0 if x is None else x for x in AVAILABLE]
@@ -427,12 +444,24 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     LEFT_TO_RAISE = [0 if x is None else x for x in LEFT_TO_RAISE]
     # using list comprehension, replace None values with 0 in TO_RAISE
     TO_RAISE = [0 if x is None else x for x in TO_RAISE]
+    # using list comprehension, replace None values with 0 in transferred
+    individual_capital = [0 if x is None else x for x in individual_capital]
+    # using list comprehension, replace None values with 0 in transferred
+    released_interest = [0 if x is None else x for x in released_interest]
+    # using list comprehension, replace None values with 0 in transferred
+    investment_interest = [0 if x is None else x for x in investment_interest]
+    # using list comprehension, replace None values with 0 in transferred
+    early_release = [0 if x is None else x for x in early_release]
 
     # print("AVAILABLE",AVAILABLE)
 
     # print("criteria_range",criteria_range) using list  utilise only the 4th last character of each item in
     # criteria_range and insert into new list called final_criteria
     final_criteria = [item[-4:-3] for item in criteria_range]
+    # in a new variable called development, remove the last 4 characters from each item in criteria_range and insert into development using list comprehension
+    development = [item[:-4] for item in criteria_range]
+
+    # print("development", development)
     # print("final_criteria", final_criteria)
     worksheet_data.append(final_criteria)
     worksheet_data.append(AVAILABLE)
@@ -441,9 +470,15 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     worksheet_data.append(LEFT_TO_RAISE)
     worksheet_data.append(TO_RAISE)
     worksheet_data.append(transferred)
+    worksheet_data.append([])
+    worksheet_data.append(development)
+    worksheet_data.append(individual_capital)
+    worksheet_data.append(released_interest)
+    worksheet_data.append(investment_interest)
+    worksheet_data.append(early_release)
 
-
-    row2_data = ["BLOCK", "AVAILABLE", "DRAWN", "RAISED", "LEFT TO RAISE", "TO RAISE"]
+    row2_data = ["BLOCK", "AVAILABLE", "DRAWN", "RAISED", "LEFT TO RAISE", "TO RAISE", "CAPITAL REPAID",
+                 "INTEREST REPAID"]
     worksheet_data.append(row2_data)
 
     # ws.append(worksheet_data)
@@ -451,8 +486,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         ws.append(item)
 
     last_col = get_column_letter(ws.max_column)
-
-
 
     for col_idx, col in enumerate(ws.iter_cols(min_col=1, max_col=ws.max_column, min_row=6, max_row=6), start=1):
         # Set the formula for each cell in the current column in row 6
@@ -482,26 +515,46 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         insert_row.append(formula)
         formula = f'=SUMIFS(A6:{last_col}6, A1:{last_col}1, A{max_row})'
         insert_row.append(formula)
+        # =SUMIFS($A$10:$UQ$10,$A$7:$UQ$7, "TRUE",$A$1:$UQ$1, A15)+SUMIFS($A$10:$UQ$10,$A$13:$UQ$13, "TRUE",
+        # $A$1:$UQ$1, A15)
+        formula = f'=SUMIFS(A10:{last_col}10, A7:{last_col}7, "TRUE", A1:{last_col}1, A{max_row})+SUMIFS(A10:{last_col}10, A13:{last_col}13, "TRUE", A1:{last_col}1, A{max_row})'
+        insert_row.append(formula)
+        # =SUMIFS($A$11:$UQ$11,$A$7:$UQ$7, "TRUE",$A$1:$UQ$1, A15)+SUMIFS($A$12:$UQ$12,$A$7:$UQ$7, "TRUE",$A$1:$UQ$1,
+        # A15)+SUMIFS($A$11:$UQ$11,$A$13:$UQ$13, "TRUE",$A$1:$UQ$1, A15)+SUMIFS($A$12:$UQ$12,$A$13:$UQ$13, "TRUE",
+        # $A$1:$UQ$1, A15)
+        formula = f'=SUMIFS(A11:{last_col}11, A7:{last_col}7, "TRUE", A1:{last_col}1, A{max_row})+SUMIFS(A12:{last_col}12, A7:{last_col}7, "TRUE", A1:{last_col}1, A{max_row})+SUMIFS(A11:{last_col}11, A13:{last_col}13, "TRUE", A1:{last_col}1, A{max_row})+SUMIFS(A12:{last_col}12, A13:{last_col}13, "TRUE", A1:{last_col}1, A{max_row})'
+        insert_row.append(formula)
         ws.append(insert_row)
 
-    club_house = ["CLUBHOUSE", 0, 0, 0, 0, 0]
+    club_house = ["CLUBHOUSE", 0, 0, 0, 0, 0, 0, 0]
     ws.append(club_house)
-    other = ["OTHER", 0, 0, 0, 0, 0]
+    other = ["OTHER", 0, 0, 0, 0, 0, 0, 0]
     ws.append(other)
     # append an empty row
     ws.append([])
     max_row = ws.max_row
 
     # in a new row, insert the sum of each column from start_sum to max_row for columns B through F
-    columns = ["B", "C", "D", "E", "F"]
+    columns = ["B", "C", "D", "E", "F", "G", "H"]
     insert = ["TOTAL"]
     for col in columns:
         # ws[f'{col}{max_row}'].value = f'=SUM({col}{start_sum}:{col}{max_row - 1})'
         insert.append(f'=SUM({col}{start_sum}:{col}{max_row - 1})')
     ws.append(insert)
 
-    columns = ["A", "B", "C", "D", "E", "F"]
-    rows = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28]
+    ws.append([])
+    ws.append(["Heron Fields"])
+    # for the above row, in columns B through H, add the formula + the value of the cell in row 15 and row 16
+    columns = ["B", "C", "D", "E", "F", "G", "H"]
+    for col in columns:
+        ws[f'{col}36'].value = f'=SUM({col}15+{col}16)'
+    ws.append(["Heron View"])
+    # for the above row, in columns B through H, add the value of row 34 less the value of row 15 and row 16
+    for col in columns:
+        ws[f'{col}37'].value = f'=SUM({col}34-{col}36)'
+
+    columns = ["A", "B", "C", "D", "E", "F", "G", "H"]
+    rows = [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,27, 28, 29,30,31,32, 34, 36, 37]
     # format all cells in columns B through F to currency format for the rows in the rows list, and set the font size
     # to 10, and set the alignment to center, and set the border to thin, and make the columns autofit
     for col in columns:
@@ -513,35 +566,33 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                                               right=Side(border_style='thin', color='000000'),
                                               top=Side(border_style='thin', color='000000'),
                                               bottom=Side(border_style='thin', color='000000'))
-        ws.column_dimensions[col].auto_size = True
+        # ws.column_dimensions[col].auto_size = True
 
     # for columns in columns list, set the font to bold, set the font size to 12, set the alignment to center,
     # set the background color to light grey, and set the border to thin for row 8
     for col in columns:
-        ws[f'{col}8'].font = Font(bold=True, size=12)
-        ws[f'{col}8'].alignment = Alignment(horizontal='center')
-        ws[f'{col}8'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
-        ws[f'{col}8'].border = Border(left=Side(border_style='thin', color='000000'),
+        ws[f'{col}14'].font = Font(bold=True, size=12)
+        ws[f'{col}14'].alignment = Alignment(horizontal='center')
+        ws[f'{col}14'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
+        ws[f'{col}14'].border = Border(left=Side(border_style='thin', color='000000'),
                                       right=Side(border_style='thin', color='000000'),
                                       top=Side(border_style='thin', color='000000'),
                                       bottom=Side(border_style='thin', color='000000'))
-        ws[f'{col}28'].font = Font(bold=True, size=10)
-        ws[f'{col}28'].alignment = Alignment(horizontal='center')
-        ws[f'{col}28'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
-        ws[f'{col}28'].border = Border(left=Side(border_style='thin', color='000000'),
+        ws[f'{col}34'].font = Font(bold=True, size=10)
+        ws[f'{col}34'].alignment = Alignment(horizontal='center')
+        ws[f'{col}34'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
+        ws[f'{col}34'].border = Border(left=Side(border_style='thin', color='000000'),
                                       right=Side(border_style='thin', color='000000'),
                                       top=Side(border_style='thin', color='000000'),
                                       bottom=Side(border_style='thin', color='000000'))
 
-    ws.column_dimensions[col].auto_size = True
+    # for columns in columns list, set the font to bold, set the font size to 12, set the alignment to center,
+    for col in columns:
+        ws.column_dimensions[col].auto_size = True
 
     # hide rows 1 through 7
-    for row in range(1, 8):
+    for row in range(1, 14):
         ws.row_dimensions[row].hidden = True
-
-
-
-
 
     # print("max_row", max_row)
 

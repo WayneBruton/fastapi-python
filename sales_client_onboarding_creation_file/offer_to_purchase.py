@@ -1350,6 +1350,42 @@ def print_otp_pdf(data):
                    align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
                    border=0)
 
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"4.1.2", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"Authority is hereby granted to the attorney by the Purchaser to withdraw the deposit as provided for in clause 20.4 of the Agreement.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"4.1.3", align="C", markdown=True, border=0)
+    pdf.multi_cell(130, 5,
+                   f"The Purchaser is aware that upon such withdrawal, no interest will be earned on the portion being withdrawn.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
+                   border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"4.2", align="C", markdown=True, border=0)
+    pdf.multi_cell(150, 5,
+                   f"**The Seller will not be bound to the Purchaser in terms of this Agreement until such time as the deposit referred to in clause E2 has been paid to the Sellers attorneys trust account** referred to in clause 4.1 above. The Seller shall be entitled to accept further offers acceptable to the Seller, until such time as proof of payment of the deposit is furnished to the Seller or the Seller's Attorneys, by the Purchaser, as provided for in this clause 4.2 In the event of the Seller accepting an offer to purchase the Property on terms and conditions acceptable to the Seller prior to receipt of such written notification, this Agreement shall be deemed ipso facto null and void.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"4.3", align="C", markdown=True, border=0)
+    pdf.multi_cell(150, 5,
+                   f"Within **21 (twenty one)** days after signature of this Agreement, the Purchaser shall furnish the Seller or the Seller's Attorneys, with an irrevocable guarantee issued by a registered commercial bank for the due payment of the balance of the purchase price of the Property as referred to in clause E3 of the Information Schedule, or in the event of the Purchaser requiring a mortgage bond for purposes of purchasing the Property in the amount recorded in clause E3 of the Information Schedule, within **21 (twenty one)** days of securing a mortgage bond as provided for in clause 19.1 hereunder. Should the Purchaser fail to comply with this clause 4.4, the contract will be deemed null and void.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
+
+    pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
+    pdf.cell(20, 7, f"4.4", align="C", markdown=True, border=0)
+    pdf.multi_cell(150, 5,
+                   f"Or alternatively to the delivery of the guarantee referred to in clause 4.4 above, the Purchaser shall within the same time periods as provided for in the aforesaid clause, pay into the trust account of the Seller's attorneys, the balance of the purchase price of the Property as referred to in clause E3 of the Information Schedule, to be held by such attorneys in an interest bearing trust account, interest to accrue for the benefit of the Purchaser until the date upon which payment of the relevant amount falls due to the Seller.  The Purchaser hereby irrevocably authorises the attorneys to release from the funds so received, the payments due to the Seller in terms of the provisions of this Agreement.",
+                   align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
+
+
+
 
 
 
