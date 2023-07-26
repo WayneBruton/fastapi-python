@@ -829,6 +829,21 @@ async def get_uploaded_file(file_name):
         print(err)
         return {"ERROR": "File does not exist!!"}
 
+@sales.get("/get_otp_doc")
+async def get_uploaded_otp_file(file_name):
+    print(file_name)
+
+    try:  # File Name incl path.
+        is_exists = os.path.exists(f"{file_name}")
+        print(is_exists)
+        if is_exists:
+            return FileResponse(f"{file_name}", filename=file_name)
+        else:
+            return {"ERROR": "File does not exist!!"}
+    except Exception as err:
+        print(err)
+        return {"ERROR": "File does not exist!!"}
+
 
 @sales.post("/print_otp_doc")
 async def print_otp_doc(data: Request):
@@ -845,12 +860,12 @@ async def print_otp_doc(data: Request):
     else:
         print("No such Document")
 
-    # try:
+    try:
     # print("newData", newData)
-    result = print_otp_pdf(newData)
+        result = print_otp_pdf(newData)
 
-    print("RESULT", result)
-    return {"fileName": result}
-    # except Exception as err:
-    #     print("XXXXX", err)
-    #     return {"done": False}
+        print("RESULT", result)
+        return {"fileName": result}
+    except Exception as err:
+        print("XXXXX", err)
+        return {"done": False}
