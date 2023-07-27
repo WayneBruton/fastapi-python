@@ -1504,25 +1504,31 @@ def create_standard_conditions(data):
         {
             "type": 3,
             "section": "30.1.2",
-            "text": "do and to procure the doing by other persons, and to refrain and procure that other persons will refrain from doing, all such acts; and",
+            "text": "do and to procure the doing by other persons, and to refrain and procure that other persons will "
+                    "refrain from doing, all such acts; and",
             "initial": False,
         },
         {
             "type": 3,
             "section": "30.1.3",
-            "text": "pass, and to procure the passing of all such resolutions of directors or shareholders of any company, or members of any close corporation, or trustees of any trust, as the case may be;",
+            "text": "pass, and to procure the passing of all such resolutions of directors or shareholders of any "
+                    "company, or members of any close corporation, or trustees of any trust, as the case may be;",
             "initial": False,
         },
         {
             "type": 2,
             "section": "",
-            "text": "to the extent that the same may lie within the power of such party and may be required to give effect to the import or intent of this Agreement, and any contract concluded pursuant to the provisions of this Agreement.",
+            "text": "to the extent that the same may lie within the power of such party and may be required to give "
+                    "effect to the import or intent of this Agreement, and any contract concluded pursuant to the "
+                    "provisions of this Agreement.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "30.2",
-            "text": "The Purchaser undertakes to sign all necessary transfer and bond documentation and to pay all costs relating thereto within 7 days of the date of despatch of written notice from the Seller's attorneys to do so.",
+            "text": "The Purchaser undertakes to sign all necessary transfer and bond documentation and to pay all "
+                    "costs relating thereto within 7 days of the date of despatch of written notice from the Seller's "
+                    "attorneys to do so.",
             "initial": False,
         },
         {
@@ -1534,7 +1540,9 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "31.1",
-            "text": "Each party chooses as his *domicilium citandi et executandi* his address as set out in the Information Schedule, at which address all notices and legal processes in relation to this Agreement or any action arising therefrom may be effectually delivered and served.",
+            "text": "Each party chooses as his *domicilium citandi et executandi* his address as set out in the "
+                    "Information Schedule, at which address all notices and legal processes in relation to this "
+                    "Agreement or any action arising therefrom may be effectually delivered and served.",
             "initial": False,
         },
         {
@@ -1546,25 +1554,31 @@ def create_standard_conditions(data):
         {
             "type": 3,
             "section": "31.2.1",
-            "text": "is delivered by hand to the addressee's *domicilium citandi et executandi* shall be presumed, until the contrary is proved, to have been received by the addressee on the date of delivery; or",
+            "text": "is delivered by hand to the addressee's *domicilium citandi et executandi* shall be presumed, "
+                    "until the contrary is proved, to have been received by the addressee on the date of delivery; or",
             "initial": False,
         },
         {
             "type": 3,
             "section": "31.2.2",
-            "text": "is posted by prepaid registered post from an address within the Republic of South Africa to the addressee at the addressee's *domicilium citandi et executandi* shall be presumed, until the contrary is proved, to have been received by the addressee on the fifth day after the date of posting; or",
+            "text": "is posted by prepaid registered post from an address within the Republic of South Africa to the "
+                    "addressee at the addressee's *domicilium citandi et executandi* shall be presumed, "
+                    "until the contrary is proved, to have been received by the addressee on the fifth day after the "
+                    "date of posting; or",
             "initial": False,
         },
         {
             "type": 3,
             "section": "31.2.3",
-            "text": "is delivered by fax and / or email shall be presumed, until the contrary is proved, to have been received by the addressee on the date of delivery.",
+            "text": "is delivered by fax and / or email shall be presumed, until the contrary is proved, to have been "
+                    "received by the addressee on the date of delivery.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "31.3",
-            "text": "Either party shall be entitled, on written notice to the other, to change the address of his *domicilium citandi et executandi*.",
+            "text": "Either party shall be entitled, on written notice to the other, to change the address of his "
+                    "*domicilium citandi et executandi*.",
             "initial": False,
         },
         {
@@ -1576,7 +1590,9 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "32.1",
-            "text": "In complying with the Consumer Protection Act, certain portions of the Agreement have been printed in bold. The reason for this is to specifically draw the Purchaser's attention to these paragraphs as they either: ",
+            "text": "In complying with the Consumer Protection Act, certain portions of the Agreement have been "
+                    "printed in bold. The reason for this is to specifically draw the Purchaser's attention to these "
+                    "paragraphs as they either: ",
             "initial": False,
         },
         {
@@ -1594,7 +1610,8 @@ def create_standard_conditions(data):
         {
             "type": 3,
             "section": "32.1.3",
-            "text": "impose an obligation on the Purchaser to indemnify the Seller or any other person for some cause; or",
+            "text": "impose an obligation on the Purchaser to indemnify the Seller or any other person for some "
+                    "cause; or",
             "initial": False,
         },
         {
@@ -1606,7 +1623,11 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "32.2",
-            "text": "The Purchaser, in the event of having concluded this Agreement as a result of Direct Marketing as defined in the provisions of the Consumer Protection Act No. 68 of 2008, confirms that he/she/it has been informed of his rights as provided for in Section 16 read with Section 20 (2) (a) of the aforementioned Act, to rescind a transaction, without reason or penalty, within 5 (five) business days after the later of the date on which:",
+            "text": "The Purchaser, in the event of having concluded this Agreement as a result of Direct Marketing "
+                    "as defined in the provisions of the Consumer Protection Act No. 68 of 2008, confirms that "
+                    "he/she/it has been informed of his rights as provided for in Section 16 read with Section 20 (2) "
+                    "(a) of the aforementioned Act, to rescind a transaction, without reason or penalty, "
+                    "within 5 (five) business days after the later of the date on which:",
             "initial": False,
         },
         {
@@ -1624,25 +1645,35 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "32.3",
-            "text": "Further to the provisions of clause 33.2 above, **the Purchaser hereby warrants that this Agreement has not been concluded as a result of direct marketing, and the Seller enters into this Agreement relying entirely upon such a warranty by the Purchaser**.",
+            "text": "Further to the provisions of clause 33.2 above, **the Purchaser hereby warrants that this "
+                    "Agreement has not been concluded as a result of direct marketing, and the Seller enters into "
+                    "this Agreement relying entirely upon such a warranty by the Purchaser**.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "32.4",
-            "text": "In the event of this Agreement being subject to the provisions of Section 16 read with Section 20 (2) (a) of the aforementioned Act, **it shall be deemed to be a resolutive condition to the effect that the Seller shall be entitled, in his sole discretion, to declare this Agreement null and void**, whereafter all amounts paid by the Purchaser, will be refunded and possession and occupation of the Property, will be returned to the Seller.",
+            "text": "In the event of this Agreement being subject to the provisions of Section 16 read with Section "
+                    "20 (2) (a) of the aforementioned Act, **it shall be deemed to be a resolutive condition to the "
+                    "effect that the Seller shall be entitled, in his sole discretion, to declare this Agreement null "
+                    "and void**, whereafter all amounts paid by the Purchaser, will be refunded and possession and "
+                    "occupation of the Property, will be returned to the Seller.",
             "initial": True,
         },
         {
             "type": 2,
             "section": "32.5",
-            "text": "Kindly ensure that before signing this Agreement that you have had an adequate opportunity to understand these terms.  If you do not understand these terms or if you do not appreciate their effect, please ask for an explanation and do not sign the Agreement until the terms have been explained to your satisfaction.",
+            "text": "Kindly ensure that before signing this Agreement that you have had an adequate opportunity to "
+                    "understand these terms.  If you do not understand these terms or if you do not appreciate their "
+                    "effect, please ask for an explanation and do not sign the Agreement until the terms have been "
+                    "explained to your satisfaction.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "32.6",
-            "text": "The Sale of this property therefore constitutes a 'special-order' as may be contemplated by Section 17 of the Consumer Protection Act No. 68 of 2008",
+            "text": "The Sale of this property therefore constitutes a 'special-order' as may be contemplated by "
+                    "Section 17 of the Consumer Protection Act No. 68 of 2008",
             "initial": True,
         },
         {
@@ -1654,43 +1685,54 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "33.1",
-            "text": "**Should the Purchaser commit any of the following mora interest breaches in terms of this Agreement**, and/or fails to comply with any of the provisions hereof, namely:",
+            "text": "**Should the Purchaser commit any of the following mora interest breaches in terms of this "
+                    "Agreement**, and/or fails to comply with any of the provisions hereof, namely:",
             "initial": False,
         },
         {
             "type": 3,
             "section": "33.1.1",
-            "text": "failure to pay the balance purchase price as set out in clause **E3** of the Information Schedule, in the stipulated timeframe set out in clause 4.5 of this Agreement;",
+            "text": "failure to pay the balance purchase price as set out in clause **E3** of the Information "
+                    "Schedule, in the stipulated timeframe set out in clause 4.5 of this Agreement;",
             "initial": False,
         },
         {
             "type": 3,
             "section": "33.1.2",
-            "text": "failure to attend to the signing of the required transfer and mortgage loan documents (if any) in the timeframes stipulated in clause 9.7 of this Agreement;",
+            "text": "failure to attend to the signing of the required transfer and mortgage loan documents (if any) "
+                    "in the timeframes stipulated in clause 9.7 of this Agreement;",
             "initial": False,
         },
         {
             "type": 2,
             "section": "",
-            "text": "**then *ipso facto*, i.e. automatically from the 7th day until the date on which such breach is remedied, both days inclusive the Purchaser shall be in breach of the Agreement and will be liable to pay the Seller penalty interest on the full purchase price, in addition thereto,**",
+            "text": "**then *ipso facto*, i.e. automatically from the 7th day until the date on which such breach is "
+                    "remedied, both days inclusive the Purchaser shall be in breach of the Agreement and will be "
+                    "liable to pay the Seller penalty interest on the full purchase price, in addition thereto,**",
             "initial": True,
         },
         {
             "type": 2,
             "section": "",
-            "text": "the Seller shall be entitled to give the Purchaser 7 (seven) days' notice in writing to remedy such breach and/or failure, unless otherwise stated in this Agreement, and if the Purchaser fails to comply with such notice, then the Seller shall forthwith be entitled (but not obliged) without prejudice to any other rights or remedies which the Seller may have in law, including the right to claim damages:",
+            "text": "the Seller shall be entitled to give the Purchaser 7 (seven) days' notice in writing to remedy "
+                    "such breach and/or failure, unless otherwise stated in this Agreement, and if the Purchaser "
+                    "fails to comply with such notice, then the Seller shall forthwith be entitled (but not obliged) "
+                    "without prejudice to any other rights or remedies which the Seller may have in law, "
+                    "including the right to claim damages:",
             "initial": False,
         },
         {
             "type": 3,
             "section": "(a)",
-            "text": "to cancel this Agreement (in which event the Purchaser shall forfeit all monies paid to the Seller, its attorneys or its agent(s) in terms of this Agreement); or",
+            "text": "to cancel this Agreement (in which event the Purchaser shall forfeit all monies paid to the "
+                    "Seller, its attorneys or its agent(s) in terms of this Agreement); or",
             "initial": False,
         },
         {
             "type": 3,
             "section": "(b)",
-            "text": "to claim immediate performance and/or payment of all the obligations of the Purchaser in terms of this Agreement, including payment of unpaid balance of the purchase price; or",
+            "text": "to claim immediate performance and/or payment of all the obligations of the Purchaser in terms "
+                    "of this Agreement, including payment of unpaid balance of the purchase price; or",
             "initial": False,
         },
         {
@@ -1702,13 +1744,20 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "33.2",
-            "text": "Should the Seller take steps against the Purchaser pursuant to a breach by the Purchaser of this Agreement, then without prejudice to any other rights which the Seller may have, the Seller shall be entitled to recover from the Purchaser all legal costs incurred by it including attorney/client charges, tracing fees and such collection commission as the Seller is obliged to pay to its attorneys.",
+            "text": "Should the Seller take steps against the Purchaser pursuant to a breach by the Purchaser of this "
+                    "Agreement, then without prejudice to any other rights which the Seller may have, the Seller "
+                    "shall be entitled to recover from the Purchaser all legal costs incurred by it including "
+                    "attorney/client charges, tracing fees and such collection commission as the Seller is obliged to "
+                    "pay to its attorneys.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "33.3",
-            "text": "Without prejudice to all or any of the rights of the Seller in terms of this Agreement, should the Purchaser fail to pay any amount due by the Purchaser in terms of this Agreement on due date, then the Purchaser shall pay the Seller interest thereon at the prime rate plus 2% calculated from the due date for payment until the actual date of payment, both dates inclusive.",
+            "text": "Without prejudice to all or any of the rights of the Seller in terms of this Agreement, "
+                    "should the Purchaser fail to pay any amount due by the Purchaser in terms of this Agreement on "
+                    "due date, then the Purchaser shall pay the Seller interest thereon at the prime rate plus 2% "
+                    "calculated from the due date for payment until the actual date of payment, both dates inclusive.",
             "initial": False,
         },
         {
@@ -1720,7 +1769,10 @@ def create_standard_conditions(data):
         {
             "type": 1,
             "section": "",
-            "text": "The Purchaser acknowledges that the marketing material used by the Seller, to illustrate the interior and/or exterior of the Unit/Development, are for illustrative and representative purposes only, and does it not in any way form part of this Agreement, nor the stated specifications in Annexures **B & G**.",
+            "text": "The Purchaser acknowledges that the marketing material used by the Seller, to illustrate the "
+                    "interior and/or exterior of the Unit/Development, are for illustrative and representative "
+                    "purposes only, and does it not in any way form part of this Agreement, nor the stated "
+                    "specifications in Annexures **B & G**.",
             "initial": False,
         },
         {
@@ -1732,7 +1784,11 @@ def create_standard_conditions(data):
         {
             "type": 1,
             "section": "",
-            "text": "It is recorded that this document is intended to be signed firstly by the Purchaser and thereafter by the Seller. The Purchaser acknowledges that his signature hereto constitutes an irrevocable offer by him for the purchase of the Property on the terms and conditions set out herein, which offer shall remain irrevocable until 17:00 on the 8th day commencing on date signed by the Purchaser for acceptance by the Seller at any time prior hereto.",
+            "text": "It is recorded that this document is intended to be signed firstly by the Purchaser and "
+                    "thereafter by the Seller. The Purchaser acknowledges that his signature hereto constitutes an "
+                    "irrevocable offer by him for the purchase of the Property on the terms and conditions set out "
+                    "herein, which offer shall remain irrevocable until 17:00 on the 8th day commencing on date "
+                    "signed by the Purchaser for acceptance by the Seller at any time prior hereto.",
             "initial": False,
         },
         {
@@ -1744,8 +1800,11 @@ def create_standard_conditions(data):
         {
             "type": 1,
             "section": "",
-            "text": "The Purchaser hereby consents to the Seller and/or the Agent furnishing the Mortgage Originator, the Financial Institution granting the loan, or the Transferring Attorney, with all such Personal Information of the Purchaser, as may be required to process any loan application by the Purchaser, or to attend to the transfer process.",
-            "initial": False,
+            "text": "The Purchaser hereby consents to the Seller and/or the Agent furnishing the Mortgage Originator, "
+                    "the Financial Institution granting the loan, or the Transferring Attorney, with all such "
+                    "Personal Information of the Purchaser, as may be required to process any loan application by the "
+                    "Purchaser, or to attend to the transfer process.",
+            "initial": True,
         },
     ]
     return standard_conditions

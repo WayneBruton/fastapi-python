@@ -250,10 +250,13 @@ async def get_all_units_sold(data: Request):
                 'opportunity_upload_annexure': 1,
                 'opportunity_upload_company_docs': 1,
                 'opportunity_upload_company_addressproof': 1,
+                'opportunity_best_price': 1,
+                'opportunity_base_price': 1,
             }
         }
     ]))
-    # print(response)
+    if len(response) > 0:
+        print(response[0])
     for sale in response:
 
         if 'opportunity_otp' not in sale:
@@ -402,20 +405,22 @@ async def get_all_units_sold(data: Request):
 
         if sale['opportunity_otp'] is None or sale['opportunity_otp'] == "":
             sale['reserved'] = True
-        else:
-            sale['reserved'] = False
-
-        if (sale['opportunity_deposite_date'] is None or sale['opportunity_deposite_date'] == "") and \
-                sale['reserved'] is False:
-            sale['pending'] = True
-            sale['reserved'] = False
-        else:
-            sale['pending'] = False
-        if sale['opportunity_deposite_date'] is not None and sale['opportunity_deposite_date'] != "" and sale[
-                'pending']:
-            sale['sold'] = True
-        else:
             sale['sold'] = False
+        else:
+            sale['reserved'] = False
+            sale['sold'] = True
+
+        # if (sale['opportunity_deposite_date'] is None or sale['opportunity_deposite_date'] == "") and \
+        #         sale['reserved'] is False:
+        #     sale['pending'] = True
+        #     sale['reserved'] = False
+        # else:
+        #     sale['pending'] = False
+        # if sale['opportunity_deposite_date'] is not None and sale['opportunity_deposite_date'] != "" and sale[
+        #         'pending']:
+        #     sale['sold'] = True
+        # else:
+        #     sale['sold'] = False
         if sale['opportunity_bond_instruction_date'] is not None or sale['opportunity_bond_originator'] == 'Cash':
             sale['bond_approval'] = True
         else:
