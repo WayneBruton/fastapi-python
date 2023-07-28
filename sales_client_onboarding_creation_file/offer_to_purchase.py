@@ -5,6 +5,7 @@ from fpdf import FPDF, XPos, YPos
 from sales_client_onboarding_creation_file.standard_conditions import create_standard_conditions
 from sales_client_onboarding_creation_file.number_of_purchasers import create_purchaser_details
 from sales_client_onboarding_creation_file.purchaser_signatory_details import create_signatories
+from sales_client_onboarding_creation_file.annexure_list import create_annexure_list
 
 
 class PDF(FPDF):
@@ -465,9 +466,10 @@ def print_otp_pdf(data):
 
     aditional_parking_bays = data['opportunity_additional_bay']
     allocated_parking_bay = data['opportunity_originalBayNo']
-    second_parking_bay = data['opportunity_parking_base']
-    third_parking_bay = data['opportunity_parking_base2']
-
+    # second_parking_bay = data['opportunity_parking_base']
+    second_parking_bay = data.get('opportunity_parking_base', "")
+    # third_parking_bay = data['opportunity_parking_base2']
+    third_parking_bay = data.get('opportunity_parking_base2', "")
     line_item = 1
 
     if garden_number != "0":
@@ -745,44 +747,13 @@ def print_otp_pdf(data):
     pdf.cell(0, 7, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(0, 7, f"**Summary of Annexures**", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(0, 7, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    if data['development'] == "Heron View":
-        pdf.cell(80, 7, f"**Annexure A**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Site Layout Plan", align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure B**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"SDP & Parking Correlation", align="L", markdown=True, border=0,
-                 new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure C**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Unit Plan", align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure D**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Finishes Schedule", align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure E**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Specifications of Finishes", align="L", markdown=True, border=0,
-                 new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure F**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Consent in terms of the Protection of Personal Information Act",
-                 align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-    else:
-        pdf.cell(80, 7, f"**Annexure A**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Site Development and Parking Plan", align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure B**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Unit Type Plan", align="L", markdown=True, border=0,
-                 new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure C**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Unit Building Plan", align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure D**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Unit Electrical Plan", align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure E**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Unit Kitchen Layout", align="L", markdown=True, border=0,
-                 new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure F**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Finishes Schedule",
-                 align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure G**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Specifications of Finishes",
-                 align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-        pdf.cell(80, 7, f"**Annexure H**", align="L", markdown=True, border=0)
-        pdf.cell(110, 7, f"Consent in terms of the Protection of Personal Information Act",
-                 align="L", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    annexures = create_annexure_list(data['development'])
+
+    for annexure in annexures:
+        pdf.cell(80, 7, f"{annexure['annexure']}", align="L", markdown=True, border=0)
+        pdf.cell(110, 7, f"{annexure['description']}", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
+                 new_y=YPos.NEXT)
 
     pdf.add_page()
 
