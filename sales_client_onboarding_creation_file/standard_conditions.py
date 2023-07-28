@@ -799,19 +799,26 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "9.9",
-            "text": "Approved windows and doors are used in construction, the Seller shall not be held responsible for doors and windows slamming in windy conditions or any damage caused thereby.",
+            "text": "Approved windows and doors are used in construction, the Seller shall not be held responsible "
+                    "for doors and windows slamming in windy conditions or any damage caused thereby.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "9.10",
-            "text": "No window and door is completely weatherproof during heavy wind and storm conditions. Windows and doors are manufactured to comply with certain allowable tolerances and movement that will allow these to function in a proper manner under normal conditions. The Seller is not in control of this, and therefore shall not be held responsible for wind and rain that may enter under these conditions.",
+            "text": "No window and door is completely weatherproof during heavy wind and storm conditions. Windows "
+                    "and doors are manufactured to comply with certain allowable tolerances and movement that will "
+                    "allow these to function in a proper manner under normal conditions. The Seller is not in control "
+                    "of this, and therefore shall not be held responsible for wind and rain that may enter under "
+                    "these conditions.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "9.11",
-            "text": "All warranties and undertakings given by the Seller to the Purchaser in terms of this Agreement are personal to the Purchaser who shall not be entitled to cede, assign or make over its rights thereto",
+            "text": "All warranties and undertakings given by the Seller to the Purchaser in terms of this Agreement "
+                    "are personal to the Purchaser who shall not be entitled to cede, assign or make over its rights "
+                    "thereto",
             "initial": False,
         },
         {
@@ -823,19 +830,25 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "10.1",
-            "text": "The Seller undertakes in a proper and workmanlike manner to erect the Unit and Exclusive Use Areas on the Land substantially in accordance with the Unit Plans and Specifications of Finishes attached hereto as Annexures **A to G**.",
+            "text": "The Seller undertakes in a proper and workmanlike manner to erect the Unit and Exclusive Use "
+                    "Areas on the Land substantially in accordance with the Unit Plans and Specifications of Finishes "
+                    "attached hereto as Annexures **A to G**.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "10.2",
-            "text": "The Seller will supply all material and labour required for the Scheme. In the event of any discrepancy arising between the Plans and Specifications of Finishes, the provisions of the Specifications of Finishes shall prevail.",
+            "text": "The Seller will supply all material and labour required for the Scheme. In the event of any "
+                    "discrepancy arising between the Plans and Specifications of Finishes, the provisions of the "
+                    "Specifications of Finishes shall prevail.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "10.3",
-            "text": "The Purchaser acknowledges that the Seller shall be entitled to appoint sub-contractors in respect of the whole or any part of the Scheme but shall notwithstanding such appointment remain liable to the Purchaser in terms hereof.",
+            "text": "The Purchaser acknowledges that the Seller shall be entitled to appoint sub-contractors in "
+                    "respect of the whole or any part of the Scheme but shall notwithstanding such appointment remain "
+                    "liable to the Purchaser in terms hereof.",
             "initial": False,
         },
         {
@@ -847,91 +860,138 @@ def create_standard_conditions(data):
         {
             "type": 1,
             "section": "",
-            "text": "The Seller shall erect a Unit and Scheme on the Land on the terms and conditions as provided for herein to include:-",
+            "text": "The Seller shall erect a Unit and Scheme on the Land on the terms and conditions as provided for "
+                    "herein to include:-",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.1",
-            "text": "The Unit and Scheme shall be erected and completed on the Land substantially in accordance with the Plans and Specifications annexed hereto as Annexure's **A to G** and initialled by both parties for identification purposes (\"the Unit and Scheme\").",
+            "text": "The Unit and Scheme shall be erected and completed on the Land substantially in accordance with "
+                    "the Plans and Specifications annexed hereto as Annexure's **A to G** and initialled by both "
+                    "parties for identification purposes (\"the Unit and Scheme\").",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.2",
-            "text": "Extras, variations, and omissions shall mean all work, which cannot reasonably be inferred from the Unit Plan and Specifications annexed hereto as Annexure1s **B and G**.",
+            "text": "Extras, variations, and omissions shall mean all work, which cannot reasonably be inferred from "
+                    "the Unit Plan and Specifications annexed hereto as Annexure1s **B and G**.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.3",
-            "text": "The Seller shall commence the building work within a reasonable period and shall complete the Unit as close as possible to the Estimated Occupation/Completion Date referred to in clause **D** of the Information Schedule and in accordance with the approved building plans and the Specifications.",
+            "text": "The Seller shall commence the building work within a reasonable period and shall complete the "
+                    "Unit as close as possible to the Estimated Occupation/Completion Date referred to in clause "
+                    "**D** of the Information Schedule and in accordance with the approved building plans and the "
+                    "Specifications.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.4",
-            "text": "The Purchaser will be given the opportunity to choose certain finishes from the selection to be made available by the Seller.  The Purchaser undertakes to finalise this choice of finishes within the time period granted by the Seller.  The Seller shall not guarantee the colour, texture, or availability of such finishes, and upon being advised by the Seller that the finishes selected are not available, the Purchaser shall forthwith choose alternatives thereto. **In the event that the Purchaser is unavailable to make the necessary choices, then the Seller will be authorised to make such choices in cases where delays are likely to be caused by the unavailability of the Purchaser**.",
+            "text": "The Purchaser will be given the opportunity to choose certain finishes from the selection to be "
+                    "made available by the Seller.  The Purchaser undertakes to finalise this choice of finishes "
+                    "within the time period granted by the Seller.  The Seller shall not guarantee the colour, "
+                    "texture, or availability of such finishes, and upon being advised by the Seller that the "
+                    "finishes selected are not available, the Purchaser shall forthwith choose alternatives thereto. "
+                    "**In the event that the Purchaser is unavailable to make the necessary choices, then the Seller "
+                    "will be authorised to make such choices in cases where delays are likely to be caused by the "
+                    "unavailability of the Purchaser**.",
             "initial": True,
         },
         {
             "type": 2,
             "section": "11.5",
-            "text": "In the event of the building work being delayed by non-availability for any materials, plant or labour, accident on work site for which the Seller is not responsible, bad weather, viz major or other reasonable cause the Seller shall not be liable to the Purchaser for any damages caused by the delay.",
+            "text": "In the event of the building work being delayed by non-availability for any materials, plant or "
+                    "labour, accident on work site for which the Seller is not responsible, bad weather, viz major or "
+                    "other reasonable cause the Seller shall not be liable to the Purchaser for any damages caused by "
+                    "the delay.",
             "initial": True,
         },
         {
             "type": 2,
             "section": "11.6",
-            "text": "If commencement of construction of the Unit is delayed for longer than a period of 6 months after the scheduled Commencement of Construction Date for any reason other than a reason attributable to the fault and/or omission of the Seller, then **the Seller shall be entitled in its sole discretion to resile from this Agreement**, with neither party having any further claim against one another, other than a refund to the Purchaser of the deposit paid in terms of clause **E2** of the Information Schedule, or alternatively claim an adjustment to the purchase price in accordance with any increases in the cost of material and/or labour which might in the interim have occurred.  In the event of the parties not being able to reach agreement as to the adjustment to the purchase price, then a quantity surveyor appointed by the Seller shall determine the dispute and the quantity surveyor's determination shall be final and binding on the parties",
+            "text": "If commencement of construction of the Unit is delayed for longer than a period of 6 months "
+                    "after the scheduled Commencement of Construction Date for any reason other than a reason "
+                    "attributable to the fault and/or omission of the Seller, then **the Seller shall be entitled in "
+                    "its sole discretion to resile from this Agreement**, with neither party having any further claim "
+                    "against one another, other than a refund to the Purchaser of the deposit paid in terms of clause "
+                    "**E2** of the Information Schedule, or alternatively claim an adjustment to the purchase price "
+                    "in accordance with any increases in the cost of material and/or labour which might in the "
+                    "interim have occurred.  In the event of the parties not being able to reach agreement as to the "
+                    "adjustment to the purchase price, then a quantity surveyor appointed by the Seller shall "
+                    "determine the dispute and the quantity surveyor's determination shall be final and binding on "
+                    "the parties",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.7",
-            "text": "The Seller shall endeavour to complete the Unit by the Estimated Occupation Date referred to in clause **D** of the Information Schedule, subject to the provisions of clause 11.13 below. ",
+            "text": "The Seller shall endeavour to complete the Unit by the Estimated Occupation Date referred to in "
+                    "clause **D** of the Information Schedule, subject to the provisions of clause 11.13 below. ",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.8",
-            "text": "The Seller shall give to the Purchaser not less than 20 days' notice in writing of the anticipated Completion Date of the Unit, provided, however, that the Seller shall, after having given the Purchaser notice as contemplated aforesaid, be entitled to postpone the Completion Date by giving further notice to the Purchaser to this effect within 10 days after dispatch by the Seller of the first notice mentioned herein",
+            "text": "The Seller shall give to the Purchaser not less than 20 days' notice in writing of the "
+                    "anticipated Completion Date of the Unit, provided, however, that the Seller shall, after having "
+                    "given the Purchaser notice as contemplated aforesaid, be entitled to postpone the Completion "
+                    "Date by giving further notice to the Purchaser to this effect within 10 days after dispatch by "
+                    "the Seller of the first notice mentioned herein",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.9",
-            "text": "For purposes aforesaid, the issue of an Occupancy Certificate by the building inspector employed by the relevant local authority or Architect shall constitute the Completion Date of the Unit or the day the Purchaser takes hand over of the keys, whichever is earlier as per clause 2.1.6 above.",
+            "text": "For purposes aforesaid, the issue of an Occupancy Certificate by the building inspector employed "
+                    "by the relevant local authority or Architect shall constitute the Completion Date of the Unit or "
+                    "the day the Purchaser takes hand over of the keys, whichever is earlier as per clause 2.1.6 "
+                    "above.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.10",
-            "text": "The occurrence of the event detailed in clause 11.9 above shall constitute complete proof of the satisfactory completion of the Unit by the Seller and the Seller shall be discharged completely from all obligations expressed or implied under this Agreement and any variation thereof or addition thereto and the Purchaser shall have no further claim on the Seller, save as specifically otherwise provided herein.",
+            "text": "The occurrence of the event detailed in clause 11.9 above shall constitute complete proof of the "
+                    "satisfactory completion of the Unit by the Seller and the Seller shall be discharged completely "
+                    "from all obligations expressed or implied under this Agreement and any variation thereof or "
+                    "addition thereto and the Purchaser shall have no further claim on the Seller, "
+                    "save as specifically otherwise provided herein.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.11",
-            "text": "Notwithstanding anything elsewhere provided for in this Agreement all amounts owing in terms of this Agreement which have not already been paid in terms of the provisions of this Agreement shall be forthwith payable on the Completion Date.",
+            "text": "Notwithstanding anything elsewhere provided for in this Agreement all amounts owing in terms of "
+                    "this Agreement which have not already been paid in terms of the provisions of this Agreement "
+                    "shall be forthwith payable on the Completion Date.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.12",
-            "text": "The Purchaser acknowledges that any extension of period granted by the Seller for the fulfilment of any suspensive conditions in term of this Agreement may cause a delay of the Estimated Completion Date. The Seller shall not be held liable for any delays caused by such extensions.",
+            "text": "The Purchaser acknowledges that any extension of period granted by the Seller for the fulfilment "
+                    "of any suspensive conditions in term of this Agreement may cause a delay of the Estimated "
+                    "Completion Date. The Seller shall not be held liable for any delays caused by such extensions.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.13",
-            "text": "The Estimated Completion Date is 4 to 5 months after the commencement of the construction date of this Agreement, **provided that any and/or all suspensive conditions of this Agreement has been fulfilled**, excluding any delays provided for in terms of this Agreement.",
+            "text": "The Estimated Completion Date is 4 to 5 months after the commencement of the construction date "
+                    "of this Agreement, **provided that any and/or all suspensive conditions of this Agreement has "
+                    "been fulfilled**, excluding any delays provided for in terms of this Agreement.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "11.14",
-            "text": "The Purchaser shall not be allowed on the Land, nor permitted to interfere with building operations on the Land or issue any instructions to the Seller's contractor/s or subcontractor/s during the construction period, without specific written authorization from the Seller.",
+            "text": "The Purchaser shall not be allowed on the Land, nor permitted to interfere with building "
+                    "operations on the Land or issue any instructions to the Seller's contractor/s or subcontractor/s "
+                    "during the construction period, without specific written authorization from the Seller.",
             "initial": False,
         },
         {
@@ -943,25 +1003,40 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "12.1",
-            "text": "Should it for any reason in the Seller's sole discretion be required, **the Seller shall be entitled to make the necessary changes** where it in its sole discretion considers it necessary to **alter the siting of the Unit, Exclusive Use Areas or out-buildings** from the positions shown on the Development Plan and drawings forming part of the Annexure's hereto, subject to the condition that any additional costs incurred in making these alterations shall be borne by the Seller.",
+            "text": "Should it for any reason in the Seller's sole discretion be required, **the Seller shall be "
+                    "entitled to make the necessary changes** where it in its sole discretion considers it necessary "
+                    "to **alter the siting of the Unit, Exclusive Use Areas or out-buildings** from the positions "
+                    "shown on the Development Plan and drawings forming part of the Annexure's hereto, subject to the "
+                    "condition that any additional costs incurred in making these alterations shall be borne by the "
+                    "Seller.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "12.2",
-            "text": "In the event of an error in the siting of the Unit, Exclusive Use Areas or out-buildings by the Seller such error shall not be deemed to constitute a breach of this Agreement by the Seller and the Seller shall have the right and the Purchaser hereby automatically authorises the Seller to make such amendments, alterations or modifications to the Plans and/or Specifications and/or the Unit, Exclusive Use Areas or outbuildings as may be necessary in order to legitimise the erroneous siting thereof or if necessary to re-site the same so as to comply with any law, bylaw, regulation, condition of title or the like, which would otherwise have been breached by such erroneous siting's of the Unit, Exclusive Use Areas or out-buildings.",
+            "text": "In the event of an error in the siting of the Unit, Exclusive Use Areas or out-buildings by the "
+                    "Seller such error shall not be deemed to constitute a breach of this Agreement by the Seller and "
+                    "the Seller shall have the right and the Purchaser hereby automatically authorises the Seller to "
+                    "make such amendments, alterations or modifications to the Plans and/or Specifications and/or the "
+                    "Unit, Exclusive Use Areas or outbuildings as may be necessary in order to legitimise the "
+                    "erroneous siting thereof or if necessary to re-site the same so as to comply with any law, "
+                    "bylaw, regulation, condition of title or the like, which would otherwise have been breached by "
+                    "such erroneous siting's of the Unit, Exclusive Use Areas or out-buildings.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "12.3",
-            "text": "The Purchaser shall have no claim of whatsoever nature or howsoever arising against the Seller for damages as a result of a change of or an error in the siting of the Unit, Exclusive Use Areas or out-buildings",
+            "text": "The Purchaser shall have no claim of whatsoever nature or howsoever arising against the Seller "
+                    "for damages as a result of a change of or an error in the siting of the Unit, Exclusive Use "
+                    "Areas or out-buildings",
             "initial": False,
         },
         {
             "type": 2,
             "section": "12.4",
-            "text": "The placement of any boundary wall to the Land, is determined by the Architect, accordingly such boundary wall may, or may not, form part of the Land.",
+            "text": "The placement of any boundary wall to the Land, is determined by the Architect, accordingly such "
+                    "boundary wall may, or may not, form part of the Land.",
             "initial": False,
         },
         {
@@ -973,13 +1048,22 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "13.1",
-            "text": "The Seller shall not be obliged to agree to any additional works or changes to the Unit as may be requested by the Purchaser.  Any agreed changes as may be required by the Purchaser must be paid by the Purchaser to the Seller on request, otherwise the works shall proceed as per the Specifications of Finishes and Plans.  The Seller shall not be liable for any delay in the Completion Date of the Unit should such delay be attributed to variations required by the Purchaser.  The Purchaser shall further be liable for any and all costs attributed to delays caused by the Purchaser, which delays, and costs will be communicated to the Purchaser, by the Seller, prior to commencement of such works.",
+            "text": "The Seller shall not be obliged to agree to any additional works or changes to the Unit as may "
+                    "be requested by the Purchaser.  Any agreed changes as may be required by the Purchaser must be "
+                    "paid by the Purchaser to the Seller on request, otherwise the works shall proceed as per the "
+                    "Specifications of Finishes and Plans.  The Seller shall not be liable for any delay in the "
+                    "Completion Date of the Unit should such delay be attributed to variations required by the "
+                    "Purchaser.  The Purchaser shall further be liable for any and all costs attributed to delays "
+                    "caused by the Purchaser, which delays, and costs will be communicated to the Purchaser, "
+                    "by the Seller, prior to commencement of such works.",
             "initial": False,
         },
         {
             "type": 2,
             "section": "13.2",
-            "text": "The Purchaser shall not under any circumstances be permitted to issue any instructions directly to the building contractors.  All matters related to the Unit and Scheme shall be directed to the appointed Agent of the Seller in writing.",
+            "text": "The Purchaser shall not under any circumstances be permitted to issue any instructions directly "
+                    "to the building contractors.  All matters related to the Unit and Scheme shall be directed to "
+                    "the appointed Agent of the Seller in writing.",
             "initial": False,
         },
         {
@@ -991,7 +1075,15 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "14.1",
-            "text": "The Property is sold subject to such Rules, conditions, restrictions, servitudes and other provisions set out or referred to in the Title Deed and / or approved sectional title plan of the aforementioned Scheme, and all such conditions, servitudes and /or restrictions and/or changes that may be imposed by the Seller, any professional consultant of the Seller or any local or regional authority as a condition of rezoning, subdivision or building plan approval. **The Purchaser/s hereby confirms that he/she will familiarize him/herself with the Rules, to be approved by the Ombud, and should the Purchaser not agree/accept the said Rules, the Purchaser shall address such concerns with the trustees of the Body Corporate or the Ombud once the Purchaser is a member of the Scheme**.",
+            "text": "The Property is sold subject to such Rules, conditions, restrictions, servitudes and other "
+                    "provisions set out or referred to in the Title Deed and / or approved sectional title plan of "
+                    "the aforementioned Scheme, and all such conditions, servitudes and /or restrictions and/or "
+                    "changes that may be imposed by the Seller, any professional consultant of the Seller or any "
+                    "local or regional authority as a condition of rezoning, subdivision or building plan approval. "
+                    "**The Purchaser/s hereby confirms that he/she will familiarize him/herself with the Rules, "
+                    "to be approved by the Ombud, and should the Purchaser not agree/accept the said Rules, "
+                    "the Purchaser shall address such concerns with the trustees of the Body Corporate or the Ombud "
+                    "once the Purchaser is a member of the Scheme**.",
             "initial": True,
         },
         {
