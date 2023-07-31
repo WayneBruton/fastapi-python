@@ -31,7 +31,8 @@ async def rental_developments():
                                                 "rental_levy_amount": 1, "rental_commission": 1, "rental_rates": 1,
                                                 "rental_other_expenses": 1, "rental_nett_amount": 1,
                                                 "rental_start_date": 1, "rental_end_date": 1,
-                                                "rental_income_to_date": 1, "rental_income_to_contract_end": 1}))
+                                                "rental_income_to_date": 1, "rental_income_to_contract_end": 1,
+                                                "rental_name": 1}))
     for development in developments:
         development["_id"] = str(development["_id"])
         development["rental_marked_for_rent"] = development.get("rental_marked_for_rent", False)
@@ -47,6 +48,7 @@ async def rental_developments():
         development["rental_rates"] = development.get("rental_rates", 0)
         development["rental_other_expenses"] = development.get("rental_other_expenses", 0)
         development["rental_nett_amount"] = development.get("rental_nett_amount", 0)
+        development["rental_name"] = development.get("rental_name", "")
 
     # filter out from developments where opportunity_final_transfer_date does not equal to "" or None
     developments = [development for development in developments if

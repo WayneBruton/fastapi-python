@@ -354,7 +354,7 @@ async def investment_termination(data: Request):
                 <br /><br />
                 
                 Please do not reply to this email as it is not monitored. Any questions can be directed to Debbie 
-                Landsberg at debbie@opportunity.co.za<br /><br />
+                Landsberg at debbie@opportunity.co.za or Leandri Naude at leandri@opportunity.co.za <br /><br />
                 
                 Kind Regards<br />
                 
