@@ -369,7 +369,7 @@ async def investment_termination(data: Request):
         """
 
         msg = EmailMessage()
-        msg['Subject'] = "OMH Portal - Investment Termination provisional confirmation"
+        msg['Subject'] = "OMH Portal – Investment Planning"
         msg['From'] = sender_email
         msg['To'] = investor_email
         # copy in nick@opportunity.co.za, wynand@capeprojects.co.za, debbie@opportunity.co.za and
