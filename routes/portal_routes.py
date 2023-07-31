@@ -330,20 +330,21 @@ async def investment_termination(data: Request):
             <p>Dear {investor_name},<br><br>
             
                 We have received your preferred options when your investment in {request['opportunity_code']} is 
-                transferred.<br><br>
+                due for exit.<br><br>
                 
-                Based on Today's date, your investment balance is R {request['float_balance']:,.2f}.<br><br>
+                Based on <strong>today's date</strong>, your investment balance is R {request['float_balance']:,.2f}.
+                <br><br>
                 
                 {request['opportunity_code']}<br><br>
                 <strong>Option Chosen:</strong> {option_chosen}<br><br>
                 <strong>Exit Amount:</strong> {exit_amount}<br><br>
                 <strong>Rollover Amount:</strong> {rollover_amount}<br><br>
                 
-                We will be in contact with you shortly to finalise the transfer.<br><br>
+                We will be in contact with you shortly to finalise the process.<br><br>
                 
                 
-                <strong>Fixed Investor Returns:</strong> The projected returns below are applicable to the next 
-                investment cycle. Please note that these are subject to change and should this occur, Opportunity 
+                <strong>Investor Returns:</strong> The projected returns below are applicable to the next 
+                investment cycle, and take effect once capital is deployed into the project. Please note that these are subject to change and should this occur, Opportunity 
                 will communicate this to you. <br /><br /> 
                 
                 <ol> 
@@ -354,8 +355,9 @@ async def investment_termination(data: Request):
                 
                 <br /><br />
                 
-                Please do not reply to this email as it is not monitored. Any questions can be directed to Debbie 
-                Landsberg at debbie@opportunity.co.za or Leandri Naude at leandri@opportunity.co.za <br /><br />
+                Please do not reply to this email as it is not monitored. Any questions can be directed to 
+                Leandri Naude at leandri@opportunity.co.za or failing that, to Debbie 
+                Landsberg at debbie@opportunity.co.za or  <br /><br />
                 
                 Kind Regards<br />
                 
