@@ -1366,6 +1366,10 @@ async def create_cashflow(data: Request):
                                    opportunity['transfer_fees'] + opportunity['bond_registration'] +
                                    opportunity['trust_release_fee'])
 
+        # print("opportunities_list", opportunities_list[0])
+        # print()
+
+
         rates = list(db.rates.find({}))
         for rate in rates:
             rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace("-", "/"), "%Y/%m/%d")
@@ -1374,11 +1378,18 @@ async def create_cashflow(data: Request):
         rates = sorted(rates, key=lambda k: k['Efective_date'], reverse=True)
 
         investments = []
+        # print("investor_list", investor_list[0]['investments'])
         for investment in investor_list:
             for inv in investment['investments']:
                 if 'investment_number' not in inv:
                     inv['investment_number'] = 0
+                    inv['rollover_amount'] = 0
+
+                # if inv['opportunity_code'] == "HFB214" or inv['opportunity_code'] == "HVD201":
+                #     print("inv", inv)
+                #     print()
                 if inv['end_date'] == "":
+
                     trust = list(filter(lambda trust: trust['opportunity_code'] == inv['opportunity_code'] and
                                                       trust['investment_number'] == inv['investment_number'],
                                         investment['trust']))
@@ -1414,25 +1425,47 @@ async def create_cashflow(data: Request):
 
         opportunity_end_dates = []
 
+        # for investment in investments:
+            # if investment['opportunity_code'] == 'HVD201' or investment['opportunity_code'] == 'HFB214':
+            #     print("investment", investment)
+            #     print()
+        # print("Investments",investments[1])
+        # print()
+
         for opportunity in opportunities_list:
             # Filter investments where opportunity_code is equal to opportunity['opportunity_code']
             opportunity_investments = list(
                 filter(lambda investment: investment['opportunity_code'] == opportunity['opportunity_code'],
                        investments))
+            # if opportunity['opportunity_code'] == 'HVD201' or opportunity['opportunity_code'] == 'HFB214':
+            #     print("opportunity_investments", opportunity_investments)
+            #     print()
             # if length of opportunity_investments is greater than 0, sum up final_amount_due_to_investor, else set to 0
             opportunity['total_owed_to_investors'] = sum(
                 [investment['final_amount_due_to_investor'] for investment in opportunity_investments]) if len(
                 opportunity_investments) > 0 else 0
+
+            opportunity['rollover_amount'] = sum(
+                [investment.get('rollover_amount',0) for investment in opportunity_investments]) if len(
+                opportunity_investments) > 0 else 0
+            # if opportunity['opportunity_code'] == 'HFB214':
             # opportunity['total_investments'] = round(opportunity['total_investments'], 2)
             opportunity['nett_cashflow'] = opportunity['nett'] - opportunity['total_owed_to_investors']
+            # if opportunity['opportunity_code'] == 'HVD201' or opportunity['opportunity_code'] == 'HFB214':
+            #     print("opportunity['nett_cashflow']", opportunity)
+            #     print()
             # convert opportunity['opportunity_end_date'] to datetime and add 5 days
             opportunity['opportunity_end_date'] = datetime.strptime(
                 opportunity['opportunity_end_date'].replace("-", "/"),
                 "%Y/%m/%d") + timedelta(days=5)
+            # opportunity['rollover_amount'] = 0
             # convert opportunity['opportunity_end_date'] to string showing YYYY/MM/DD
             # opportunity['opportunity_end_date'] = opportunity['opportunity_end_date'].strftime("%Y/%m/%d")
             opportunity_end_dates.append(opportunity['opportunity_end_date'])
+            # opportunity_end_dates.append(opportunity['nett_cashflow'])
 
+
+        # print("XXX",opportunity_end_dates[0])
         # only keep unique opportunity_end_dates
         opportunity_end_dates = list(set(opportunity_end_dates))
         # sort opportunity_end_dates
@@ -1451,6 +1484,9 @@ async def create_cashflow(data: Request):
             cashFlow['date'] = date
             cashFlow['total_cashflow'] = sum([opportunity['nett_cashflow'] for opportunity in opportunities_list if
                                               opportunity['opportunity_end_date'] == date])
+            cashFlow['rollover_amount'] = sum([opportunity['rollover_amount'] for opportunity in opportunities_list if
+                                                  opportunity['opportunity_end_date'] == date])
+            cashFlow['rollover_date'] = date + timedelta(days=7)
             # filter opportunities_list where opportunity_end_date is equal to date
             filtered_opportunities = list(
                 filter(lambda opportunity: opportunity['opportunity_end_date'] == date, opportunities_list))
@@ -1459,6 +1495,26 @@ async def create_cashflow(data: Request):
                 units += f"{opportunity['opportunity_code']},"
             cashFlow['units'] = units[:-1]
             final_cashFlow_list.append(cashFlow)
+
+        for opportunity in opportunities_list:
+            # create rollover_date by adding 7 days to opportunity_end_date
+            opportunity['rollover_date'] = opportunity['opportunity_end_date'] + timedelta(days=7)
+
+        # convert request['date'] to a datetime object
+        request['date'] = datetime.strptime(request['date'].replace("-", "/"), "%Y/%m/%d")
+        # filter final_cashFlow_list where date is greater than request['date']
+        final_cashFlow_list = list(
+            filter(lambda cashFlow: cashFlow['date'] > request['date'], final_cashFlow_list))
+        # do the same for opportunities_list with opportunity_end_date
+        opportunities_list = list(
+            filter(lambda opportunity: opportunity['opportunity_end_date'] > request['date'], opportunities_list))
+
+
+        print(opportunities_list[0])
+        print()
+        print(final_cashFlow_list[0])
+        print()
+        print(request)
 
         filename = create_cash_flow(final_cashFlow_list, request, opportunities_list)
 
@@ -1469,7 +1525,7 @@ async def create_cashflow(data: Request):
         return {"filename": filename}
 
     except Exception as e:
-        print(e)
+        print("XXXXC",e)
         return {"ERROR": "Something went wrong!!"}
     # return investments
 

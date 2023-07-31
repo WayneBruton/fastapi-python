@@ -427,7 +427,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=32, max_row=32):
         for item in cell:
             released_interest.append(item.value)
-    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=24, max_row=26):
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=24, max_row=24):
         for item in cell:
             investment_interest.append(item.value)
     for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=58, max_row=58):
@@ -554,7 +554,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         ws[f'{col}37'].value = f'=SUM({col}34-{col}36)'
 
     columns = ["A", "B", "C", "D", "E", "F", "G", "H"]
-    rows = [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,27, 28, 29,30,31,32, 34, 36, 37]
+    rows = [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 36, 37]
     # format all cells in columns B through F to currency format for the rows in the rows list, and set the font size
     # to 10, and set the alignment to center, and set the border to thin, and make the columns autofit
     for col in columns:
@@ -575,16 +575,16 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         ws[f'{col}14'].alignment = Alignment(horizontal='center')
         ws[f'{col}14'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
         ws[f'{col}14'].border = Border(left=Side(border_style='thin', color='000000'),
-                                      right=Side(border_style='thin', color='000000'),
-                                      top=Side(border_style='thin', color='000000'),
-                                      bottom=Side(border_style='thin', color='000000'))
+                                       right=Side(border_style='thin', color='000000'),
+                                       top=Side(border_style='thin', color='000000'),
+                                       bottom=Side(border_style='thin', color='000000'))
         ws[f'{col}34'].font = Font(bold=True, size=10)
         ws[f'{col}34'].alignment = Alignment(horizontal='center')
         ws[f'{col}34'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
         ws[f'{col}34'].border = Border(left=Side(border_style='thin', color='000000'),
-                                      right=Side(border_style='thin', color='000000'),
-                                      top=Side(border_style='thin', color='000000'),
-                                      bottom=Side(border_style='thin', color='000000'))
+                                       right=Side(border_style='thin', color='000000'),
+                                       top=Side(border_style='thin', color='000000'),
+                                       bottom=Side(border_style='thin', color='000000'))
 
     # for columns in columns list, set the font to bold, set the font size to 12, set the alignment to center,
     for col in columns:
@@ -854,27 +854,37 @@ def create_cash_flow(data, request, other_data):
     ws2 = wb.create_sheet("Cash Flow Summary")
 
     worksheet_data = []
-    row1_data = ["Date", "Amount", "Units"]
+    row1_data = ["Units", "Date", "Amount", "Rollover Date", "Rollover Amount"]
     worksheet_data.append(row1_data)
 
     for item in other_data:
-        row_data = [item['opportunity_end_date'], item['nett_cashflow'], item['opportunity_code']]
+        row_data = [item['opportunity_code'], item['opportunity_end_date'], item['nett_cashflow'],
+                    item['rollover_date'], item['rollover_amount']]
         worksheet_data.append(row_data)
 
     for item in worksheet_data:
         # print(item)
         ws2.append(item)
 
-    for cell in ws2['B']:
+    for cell in ws2['C']:
+        cell.number_format = 'R#,##0.00'
+
+    for cell in ws2['E']:
         cell.number_format = 'R#,##0.00'
 
     # format column A as date
-    for cell in ws2['A']:
+    for cell in ws2['B']:
+        cell.number_format = 'YYYY-MM-DD'
+
+    for cell in ws2['D']:
         cell.number_format = 'YYYY-MM-DD'
 
     # set column B width to 20
     ws2.column_dimensions['B'].width = 20
     ws2.column_dimensions['A'].width = 15
+    ws2.column_dimensions['D'].width = 20
+    ws2.column_dimensions['C'].width = 20
+
 
     wb.save(f"excel_files/Cashflow {heading}.xlsx")
 
