@@ -290,7 +290,8 @@ async def investment_termination(data: Request):
 
         investor_name = f"{investor['investor_name']} {investor['investor_surname']}"
 
-        investor_email = f"{investor['investor_email']}, debbie@opportunity.co.za; leandri@opportunity.co.za"
+        investor_email = (f"{investor['investor_email']},"
+                          f" debbie@opportunity.co.za, leandri@opportunity.co.za, izolda@opportunity.co.za")
 
         option_chosen = ""
         exit_amount = ""
