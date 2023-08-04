@@ -75,7 +75,7 @@ def format_sales_forecast(sheet):
                 sheet[f'{letter}87'] = 'EXIT NOT SOLD - Interest Only'
 
     rows_to_add_formulas = [17, 23, 27, 29, 31, 34, 35, 39, 40, 51, 52, 53, 55, 59, 60, 61, 62, 63, 64, 67, 68, 71, 72,
-                            73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87]
+                            73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87, 103]
 
     for letter in column_letters_7:
         for row in rows_to_add_formulas:
@@ -175,11 +175,18 @@ def format_sales_forecast(sheet):
                 # =IF(G$2 = FALSE, IF(G$3 = FALSE, IF(G$57 = TRUE, +G$33, 0), 0), 0)
                 sheet[
                     f'{letter}{row}'] = f'=IF({letter}$2=FALSE,IF({letter}$3=FALSE,IF({letter}$58=TRUE,+{letter}$34,0),0),0)'
+            elif row == 103:
+                # sheet[f'{letter}{row}'] = f'=B1-{letter}101'
+                # convert B1 to a date and convert {letter}101 to a date and subtract the two dates
+                sheet[f'{letter}{row}'] = f'=IF({letter}$2=TRUE,IF({letter}$3=FALSE,IF({letter}$58=TRUE,IF({letter}$101<>{letter}$102, {letter}$101-{letter}$102, 0),0),0),0)'
+
+
+
 
     # format all rows with data except rows 1 to 11, 20 to 23, 28 and 29 as currency with 2 decimal places and
     # comma every 3 digits, bold and white font, and for row 11 as a percentage with 2 decimal places and comma
     # every 3 digits
-    for row in sheet.iter_rows(min_row=12, min_col=2, max_row=64, max_col=sheet.max_column):
+    for row in sheet.iter_rows(min_row=12, min_col=2, max_row=104, max_col=sheet.max_column):
         for cell in row:
             if cell.row == 11:
                 cell.font = Font(bold=True, color='FFFFFF')
@@ -195,7 +202,8 @@ def format_sales_forecast(sheet):
 
     rows_to_center = [5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
                       33, 34, 35, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 59, 60, 61, 62,
-                      63, 64, 71, 72, 73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87]
+                      63, 64, 71, 72, 73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87, 92, 93, 94, 95, 96, 97, 98, 99,
+                      100, 101, 102, 103, 104]
     # Loop through the rows_to_format_currency list and align the cells from column 6 to the last column in the
     # centre
     for row in rows_to_center:
@@ -291,7 +299,7 @@ def format_sales_forecast(sheet):
     # ROWS TO SUM
     rows_to_sum = [13, 14, 15, 16, 17, 19, 24, 25, 26, 27, 30, 31, 32, 33, 34, 35, 37, 38, 39, 42, 43, 44, 45, 46,
                    47, 48, 49, 50, 51, 52, 53, 55, 60, 61, 62, 63, 64, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83,
-                   84, 86, 87]
+                   84, 86, 87,  94,95, 96,97,98, 99, 100,  103, 104]
     # for each row in rows_to_sum, sum the cells from column 6 to the last column in the sheet in insert the
     # formula in column 'B', with white font and bold and format the cell as currency with 2 decimal places and
     # comma every 3 digits
@@ -449,10 +457,50 @@ def format_sales_forecast(sheet):
             if item['value'] != merge_master[index + 1]['value']:
                 merge_end.append(item['column'])
 
+
+    # Add the last column number to the merge_end list
+    # copy row 17 and row 10 to row 130 & 131
+    for row in range(33, 34):
+        for col in sheet.iter_cols(min_row=row, min_col=7, max_row=row, max_col=sheet.max_column):
+            for cell in col:
+                sheet[f'{cell.column_letter}{row + 113}'].value = cell.value
+                sheet[f'{cell.column_letter}{row + 114}'].value = cell.value
+
+    # =IF(G4<>F4,+G146,F145)
+    # insert the above formula into row 145 from column 7 to the last column
+    for col in sheet.iter_cols(min_row=145, min_col=7, max_row=145, max_col=sheet.max_column):
+        for cell in col:
+            cell.value = f'=IF({cell.column_letter}4<>{get_column_letter(cell.column - 1)}4,' \
+                         f'+{cell.column_letter}146,{get_column_letter(cell.column - 1)}145)'
+    # =IF(AND(G20<>"", G10="ZZUN01"), +G145/G29*G23, 0)
+    # insert the above formula into row 33 from column 7 to the last column
+    for col in sheet.iter_cols(min_row=33, min_col=7, max_row=33, max_col=sheet.max_column):
+        for cell in col:
+            cell.value = f'=IF(AND({cell.column_letter}20<>"", {cell.column_letter}10="ZZUN01"), ' \
+                         f'+{cell.column_letter}145/{cell.column_letter}29*{cell.column_letter}23, 0)'
+
+    # =IFERROR(G104/(G102-G101)*($B$1-G101),0)
+    # insert the above formula into row 103 from column 7 to the last column
+    for col in sheet.iter_cols(min_row=103, min_col=7, max_row=103, max_col=sheet.max_column):
+        for cell in col:
+            cell.value = f'=IFERROR({cell.column_letter}104/({cell.column_letter}102-{cell.column_letter}101)*($B$1-' \
+                         f'{cell.column_letter}101),0)'
+
+    # from column 7 to the last column, format the cells rows 101 and 102 as date format yyyy/mm/dd if the value is not ''
+    for col in sheet.iter_cols(min_row=101, min_col=7, max_row=102, max_col=sheet.max_column):
+        for cell in col:
+            if cell.value != '':
+                cell.number_format = 'yyyy/mm/dd'
+
+
+
+
+
     merge_end.append(merge_master[len(merge_master) - 1]['column'])
     # start_time = time.time()
     # Create a dictionary to store the start and end columns for each row
-    rows_to_merge = [5, 6, 7, 13, 14, 15, 16, 17, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 61, 62, 63, 64]
+    rows_to_merge = [5, 6, 7, 13, 14, 15, 16, 17, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 61, 62, 63, 64,
+                     92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104]
     merge_dict = {}
 
     # Loop through the rows_to_merge list and populate merge_dict with start and end columns for each row

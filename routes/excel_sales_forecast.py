@@ -898,6 +898,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                                                    'unallocated_investment'] * investor[
                                                                    'project_interest_rate'] / 100) / 365
 
+
+
                         # add a day to int_planned_release_date
                         int_planned_release_date = int_planned_release_date + timedelta(days=1)
 
@@ -975,6 +977,28 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                         released_interest_total = 0
                     investor['released_interest_today'] = released_interest_today
                     investor['released_interest_total'] = released_interest_total
+
+            for investor in final_investors_list:
+                filtered_opps = [opp for opp in opportunities_list if opp['opportunity_code']
+                                 == investor['opportunity_code']]
+
+                investor["rental_marked_for_rent"] = filtered_opps[0].get("rental_marked_for_rent", False)
+                investor["rental_rented_out"] = filtered_opps[0].get("rental_rented_out", False)
+                investor["rental_start_date"] = filtered_opps[0].get("rental_start_date", "")
+                investor["rental_end_date"] = filtered_opps[0].get("rental_end_date", "")
+                investor["rental_income_to_date"] = float(filtered_opps[0].get("rental_income_to_date", 0))
+                investor["rental_income_to_contract_end"] = float(filtered_opps[0].get("rental_income_to_contract_end", 0))
+                investor["rental_gross_amount"] = float(filtered_opps[0].get("rental_gross_amount", 0))
+                investor["rental_deposit_amount"] = float(filtered_opps[0].get("rental_deposit_amount", 0))
+                investor["rental_levy_amount"] = float(filtered_opps[0].get("rental_levy_amount", 0))
+                investor["rental_commission"] = float(filtered_opps[0].get("rental_commission", 0))
+                investor["rental_rates"] = float(filtered_opps[0].get("rental_rates", 0))
+                investor["rental_other_expenses"] = float(filtered_opps[0].get("rental_other_expenses", 0))
+                investor["rental_nett_amount"] = float(filtered_opps[0].get("rental_nett_amount", 0))
+
+
+
+
 
         listData = investment_status(request)
 

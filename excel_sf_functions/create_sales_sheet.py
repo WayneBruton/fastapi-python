@@ -76,6 +76,23 @@ def create_excel_array(data):
     row54_data = ["Transfer Income", "", "", "", "", ""]
     row55_data = ["Due to Investors (Adjusted)", "", "", "", "", ""]
     row56_data = ["Profit / Loss (Adjusted)", "", "", "", "", ""]
+    rowblank_data = []
+    rowblank_1_data = ["RENTALS", "", "", "", "", ""]
+    rowblank_data = []
+    rental1_data = ["Marked for Rent", "", "", "", "", ""]
+    rental2_data = ["Rented Out", "", "", "", "", ""]
+    rental3_data = ["Deposit Held", "", "", "", "", ""]
+    rental4_data = ["Gross Rent", "", "", "", "", ""]
+    rental5_data = ["Levy", "", "", "", "", ""]
+    rental6_data = ["Commission", "", "", "", "", ""]
+    rental7_data = ["Rates", "", "", "", "", ""]
+    rental8_data = ["Other", "", "", "", "", ""]
+    rental9_data = ["Nett Rental", "", "", "", "", ""]
+    rental10_data = ["Rental Start Date", "", "", "", "", ""]
+    rental11_data = ["Rental End Date", "", "", "", "", ""]
+    rental12_data = ["Income to date", "", "", "", "", ""]
+    rental13_data = ["Rental Contract Income", "", "", "", "", ""]
+
 
 
     for item in data:
@@ -123,10 +140,11 @@ def create_excel_array(data):
         if item['opportunity_code'] != "ZZUN01" and item['deposit_date'] != "":
             row27_data.append(
                 (datetime.strptime(item['deposit_date'], '%Y/%m/%d') + timedelta(days=730)).strftime('%Y/%m/%d'))
+
         else:
             row27_data.append("")
         row29_data.append(float(item['trust_interest_total']))
-        row30AA_data.append(float(item['trust_interest_total']/100*2.75))
+        row30AA_data.append(float(item['trust_interest_total'] / 100 * 2.75))
         row30_data.append(item['released_interest_total'])
         row30A_data.append(float(item['interest_total_still_to_be_raised']))
         row33_data.append(float(item['raising_commission']) * float(item['investment_amount']))
@@ -142,14 +160,38 @@ def create_excel_array(data):
         row46_data.append(0)
         row50_data.append(item['early_release'])
 
+        rental1_data.append(item['rental_marked_for_rent'])
+        rental2_data.append(item['rental_rented_out'])
+        rental3_data.append(item['rental_deposit_amount'])
+        rental4_data.append(item['rental_gross_amount'])
+        rental5_data.append(item['rental_levy_amount'])
+        rental6_data.append(item['rental_commission'])
+        rental7_data.append(item['rental_rates'])
+        rental8_data.append(item['rental_other_expenses'])
+        rental9_data.append(item['rental_nett_amount'])
+        rental10_data.append(item['rental_start_date'])
+        rental11_data.append(item['rental_end_date'])
+        rental12_data.append(item['rental_income_to_date'])
+        rental13_data.append(item['rental_income_to_contract_end'])
+
+
+
     worksheet_data += [row4_data, row5_data, row2_data, row2_data, row4_data, row5_data, [], row7_data, row8_data,
                        row9_data, [], row13_data, row14_data, row15_data, row16_data, row17_data, [], row19_data,
                        row20_data, row21_data, row22_data, row23_data, row24_data, row25_data, row25A_data, row26_data,
-                       row27_data, row28_data, row29_data,row30AA_data, row30_data, row30A_data, row31_data, row31A_data, [],
+                       row27_data, row28_data, row29_data, row30AA_data, row30_data, row30A_data, row31_data,
+                       row31A_data, [],
                        row33_data, row34_data, row35_data, row36_data, [], row38_data, row39_data, row40_data,
                        row41_data, row42_data, row43_data, row44_data, row45_data, row46_data, row47_data, row48_data,
                        row49_data, row4A_data, row49A_data, row49A_data, row49A_data, row50_data, row51_data,
-                       row52_data, row53_data, row54_data, row55_data, row56_data]
+                       row52_data, row53_data, row54_data, row55_data, row56_data, rowblank_data, rowblank_data,
+                       rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data,
+                       rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data,
+                       rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data,
+                       rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_1_data,
+                       rowblank_data, rental1_data, rental2_data, rental3_data, rental4_data, rental5_data,
+                       rental6_data, rental7_data, rental8_data, rental9_data, rental10_data, rental11_data,
+                       rental12_data, rental13_data]
 
     merge_start = []
     merge_end = []
