@@ -94,7 +94,8 @@ def format_sales_forecast(sheet):
             elif row == 34:
                 sheet[f'{letter}{row}'] = f'=SUM({letter}30+{letter}31+{letter}32+{letter}33)'
             elif row == 35:
-                sheet[f'{letter}{row}'] = f'=SUM({letter}19+{letter}34)'
+                # =IF(AND(G19=0,G20<>""),+G34+G17,SUM(G19+G34))
+                sheet[f'{letter}{row}'] = f'=IF(AND({letter}19=0,{letter}20<>""),+{letter}34+{letter}17,SUM({letter}19+{letter}34))'
             elif row == 39:
                 sheet[f'{letter}{row}'] = f'=SUM({letter}37+{letter}38)'
             elif row == 40:
