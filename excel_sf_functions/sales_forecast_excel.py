@@ -594,23 +594,302 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     for row in range(1, 14):
         ws.row_dimensions[row].hidden = True
 
-    # print("max_row", max_row)
+    ws = wb.create_sheet("Cashflow")
+    ws.sheet_properties.tabColor = "16FF00"
 
-    # worksheets = wb.sheetnames
+    cashflow_data = []
+    row1 = ["Unit No.", "Date", "Amount"]
+    ws.append(row1)
 
-    # =SUMIFS(A2: UQ2, A1: UQ1, A9)
+    transferred = []
 
-    # get max column of worksheet 0
-    # ws2 = wb[worksheets[0]]
+    ws2 = wb[worksheets[0]]
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=3, max_row=3):
+        for item in cell:
+            transferred.append(item.value)
 
-    # last_col = get_column_letter(ws2.max_column)
-    # print(last_col)
-    # create variable to hold the sum of the amount of units sold for each block from row 13 to the end of the
-    # worksheet in ws2
-    # available = f'=SUMIFS(G13:{last_col}13, G4:{last_col}4, "<>")'
+    unit_no = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=4, max_row=4):
+        for item in cell:
+            unit_no.append(item.value)
 
-    # for item in worksheet_data:
-    #     ws.append(item)
+    investment_account = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=10, max_row=10):
+        for item in cell:
+            investment_account.append(item.value)
+
+    project_interest = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=11, max_row=11):
+        for item in cell:
+            project_interest.append(item.value)
+
+    capital_required = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=13, max_row=13):
+        for item in cell:
+            capital_required.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    capital_required = [0 if x is None else x for x in capital_required]
+
+    capital_invested = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=19, max_row=19):
+        for item in cell:
+            capital_invested.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    capital_invested = [0 if x is None else x for x in capital_invested]
+
+    momentum_deposit_date = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=20, max_row=20):
+        for item in cell:
+            momentum_deposit_date.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    momentum_deposit_date = [0 if x is None else x for x in momentum_deposit_date]
+
+    release_date = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=21, max_row=21):
+        for item in cell:
+            release_date.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    release_date = [0 if x is None else x for x in release_date]
+
+    end_date = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=22, max_row=22):
+        for item in cell:
+            end_date.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    end_date = [0 if x is None else x for x in end_date]
+
+    invest_account_interest_earned = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=30, max_row=30):
+        for item in cell:
+            invest_account_interest_earned.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    invest_account_interest_earned = [0 if x is None else x for x in invest_account_interest_earned]
+
+    released_interest_earned = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=32, max_row=32):
+        for item in cell:
+            released_interest_earned.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    released_interest_earned = [0 if x is None else x for x in released_interest_earned]
+
+    sales_price = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=42, max_row=42):
+        for item in cell:
+            sales_price.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    sales_price = [0 if x is None else x for x in sales_price]
+
+    commission = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=45, max_row=45):
+        for item in cell:
+            commission.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    commission = [0 if x is None else x for x in commission]
+
+    transfer_fees = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=46, max_row=46):
+        for item in cell:
+            transfer_fees.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    transfer_fees = [0 if x is None else x for x in transfer_fees]
+
+    bond_registration_fees = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=47, max_row=47):
+        for item in cell:
+            bond_registration_fees.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    bond_registration_fees = [0 if x is None else x for x in bond_registration_fees]
+
+    trust_release_fees = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=48, max_row=48):
+        for item in cell:
+            trust_release_fees.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    trust_release_fees = [0 if x is None else x for x in trust_release_fees]
+
+    unforseen = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=49, max_row=49):
+        for item in cell:
+            unforseen.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    unforseen = [0 if x is None else x for x in unforseen]
+
+    discount = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=50, max_row=50):
+        for item in cell:
+            discount.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    discount = [0 if x is None else x for x in discount]
+
+    early_release = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=58, max_row=58):
+        for item in cell:
+            early_release.append(item.value)
+
+    # using list comprehension, replace all None values with 0
+    early_release = [0 if x is None else x for x in early_release]
+
+    unallocated_interest = []
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=146, max_row=146):
+        for item in cell:
+            unallocated_interest.append(item.value)
+
+    merged_list = []
+
+    for index, item in enumerate(transferred):
+        insert = {}
+        insert['transferred'] = item
+        insert['unit_no'] = unit_no[index]
+        insert['investment_account'] = investment_account[index]
+        insert['project_interest'] = project_interest[index]
+        insert['capital_required'] = capital_required[index]
+        insert['capital_invested'] = capital_invested[index]
+        insert['momentum_deposit_date'] = momentum_deposit_date[index]
+        insert['release_date'] = release_date[index]
+        insert['end_date'] = end_date[index]
+        insert['invest_account_interest_earned'] = invest_account_interest_earned[index]
+        insert['released_interest_earned'] = released_interest_earned[index]
+        insert['sales_price'] = sales_price[index]
+        insert['commission'] = commission[index]
+        insert['transfer_fees'] = transfer_fees[index]
+        insert['bond_registration_fees'] = bond_registration_fees[index]
+        insert['trust_release_fees'] = trust_release_fees[index]
+        insert['unforseen'] = unforseen[index]
+        insert['discount'] = discount[index]
+        insert['early_release'] = early_release[index]
+        insert['unallocated_interest'] = unallocated_interest[index]
+
+        merged_list.append(insert)
+
+    for item in merged_list:
+        merged_filteredA = [x for x in merged_list if x['unit_no'] == item['unit_no']]
+        if item['capital_required'] == 0:
+            item['capital_required'] = merged_filteredA[0]['capital_required']
+            item['sales_price'] = merged_filteredA[0]['sales_price']
+            item['commission'] = merged_filteredA[0]['commission']
+            item['transfer_fees'] = merged_filteredA[0]['transfer_fees']
+            item['bond_registration_fees'] = merged_filteredA[0]['bond_registration_fees']
+            item['trust_release_fees'] = merged_filteredA[0]['trust_release_fees']
+            item['unforseen'] = merged_filteredA[0]['unforseen']
+            item['discount'] = merged_filteredA[0]['discount']
+        # get the sum of capital_invested for all items in merged_filteredA
+        item['total_capital_invested'] = sum(x['capital_invested'] for x in merged_filteredA)
+
+    # filter out of merged_list all items where the value of the key 'transferred' is False
+    merged_list = [x for x in merged_list if x['transferred'] == False]
+    # merged_list = [x for x in merged_list if x['early_release'] == False]
+
+    # loop through merged list and convert momentum_deposit_date, release_date and end_date to datetime objects
+    for item in merged_list:
+        # print("item", item['end_date'], type(item['end_date']), item['unit_no'])
+        if type(item['end_date']) == datetime:
+            item['end_date'] = ''
+        if item['momentum_deposit_date'] != '':
+            # replace '-' with '/' in date string
+            item['momentum_deposit_date'] = item['momentum_deposit_date'].replace('-', '/')
+            item['momentum_deposit_date'] = datetime.strptime(item['momentum_deposit_date'], '%Y/%m/%d')
+        if item['release_date'] != '':
+            item['release_date'] = item['release_date'].replace('-', '/')
+            item['release_date'] = datetime.strptime(item['release_date'], '%Y/%m/%d')
+        if item['end_date'] != '':
+            item['end_date'] = item['end_date'].replace('-', '/')
+            item['end_date'] = datetime.strptime(item['end_date'], '%Y/%m/%d')
+
+        if item['momentum_deposit_date'] != '':
+            # calculate the number of days between the momentum_deposit_date and the release_date
+            days = item['release_date'] - item['momentum_deposit_date']
+            # convert days to an integer
+            days = days.days
+            # multiply the capital_invested by the 0.0275 and divide by 365 and multiply by days
+            interest = (item['capital_invested'] * 0.0275 / 365) * days
+            item['invest_account_interest_earned2'] = interest
+        else:
+            item['invest_account_interest_earned2'] = 0
+
+        # merged_filtered = [x for x in merged_list if x['unit_no'] == item['unit_no']]
+        if item['investment_account'] == 'ZZUN01' and item['momentum_deposit_date'] != '' and item['end_date'] != '':
+            # calculate the number of days between the momentum_deposit_date and the end_date
+            days = item['end_date'] - item['release_date']
+            # convert days to an integer
+            days = 720 - days.days
+            # divide unallocated_interest by days
+            interest = item['unallocated_interest'] / days
+            # multiply interest by the number of days between release_date and momentum_deposit_date
+            interest = interest * (item['release_date'] - item['momentum_deposit_date']).days
+            # add to interest the capital_required less total_capital_invested multiplied by the project_interest divided by 365 and multiplied by the number of days between end_date and release_date
+            interest = interest + ((item['capital_required'] - item['total_capital_invested']) * item[
+                'project_interest'] / 365) * (item['end_date'] - item['release_date']).days
+            item['unallocated_interest'] = interest
+
+        item['transfer_income'] = item['sales_price'] - item['commission'] - item['transfer_fees'] - item[
+            'bond_registration_fees'] - item['trust_release_fees'] - item['unforseen'] - item['discount']
+
+        if item['investment_account'] == 'ZZUN01' and item['momentum_deposit_date'] != '' and item['end_date'] != '':
+            item['due_to_investor'] = (item['capital_required'] - item['total_capital_invested']) + item[
+                'unallocated_interest']
+        else:
+            item['due_to_investor'] = item['capital_invested'] + item['invest_account_interest_earned'] + item[
+                'invest_account_interest_earned2'] + item['released_interest_earned']
+
+        # item['profit'] = item['transfer_income'] - item['due_to_investor']
+        # if item['unit_no'] == 'HFB207':
+        #     print("HFB207 - ",item)
+
+        if item['early_release'] == True:
+            item['due_to_investor'] = 0
+
+    # create a new list variable from unit_no with only unique values using list comprehension
+    # print(unit_no)
+    # create a new list variable from unit_no with only unique values using list comprehension
+    unit_no_list = [x['unit_no'] for x in merged_list]
+    unit_no_list = list(dict.fromkeys(unit_no_list))
+
+    final_list = []
+    for unit in unit_no_list:
+        # create a new list variable from merged_list with only the items that match the unit_no
+        merged_filtered = [x for x in merged_list if x['unit_no'] == unit]
+        insert = {}
+        insert['unit_no'] = merged_filtered[0]['unit_no']
+
+        insert['date'] = merged_filtered[0]['end_date']
+        # convert date to a string
+        insert['date'] = insert['date'].strftime('%Y/%m/%d')
+        insert['amount'] = merged_filtered[0]['transfer_income'] - sum(x['due_to_investor'] for x in merged_filtered)
+        final_list.append(insert)
+
+    for item in final_list:
+        insert = []
+        insert.append(item['unit_no'])
+        insert.append(item['date'])
+        insert.append(item['amount'])
+
+        ws.append(insert)
+        # cashflow_data.append(insert)
+
+        # if item['unit_no'] == 'HVE101':
+        #     print("merged_filtered",item)
+        #     print()
+        #     print("days",days)
+
+    # print("merged_list", final_list[0:3])
+    #
+    # print("merged_list", len(final_list))
+
+    # print("early_release", early_release)
 
     # SAVE TO FILE
     wb.save(f"excel_files/{filename}.xlsx")
@@ -884,7 +1163,6 @@ def create_cash_flow(data, request, other_data):
     ws2.column_dimensions['A'].width = 15
     ws2.column_dimensions['D'].width = 20
     ws2.column_dimensions['C'].width = 20
-
 
     wb.save(f"excel_files/Cashflow {heading}.xlsx")
 

@@ -114,6 +114,8 @@ def format_sales_forecast(sheet):
             elif row == 59:
                 sheet[f'{letter}{row}'] = f'=IF({letter}58=TRUE, {letter}22, "")'
             elif row == 60:
+
+
                 sheet[f'{letter}{row}'] = f'=IF({letter}58=TRUE, {letter}35, 0)'
             elif row == 61:
                 # =SUMIFS($G59:$KO59,$G4:$KO4, G4)
@@ -375,6 +377,25 @@ def format_sales_forecast(sheet):
                     sheet[
                         f'{column}{row}'] = f'=B{row}-D{row}-E{row}'
 
+    # =SUMIFS($G60:$UW60,$G$2:$UW$2,TRUE,$G$3:$UW$3, FALSE)
+    #put the formula in the cell E60
+    sheet['E60'] = f'=SUMIFS($G60:${get_column_letter(sheet.max_column)}60,' \
+                      f'$G2:${get_column_letter(sheet.max_column)}2,TRUE,' \
+                        f'$G3:${get_column_letter(sheet.max_column)}3, FALSE)'
+    # follow the above in E61 to E64
+    sheet['E61'] = f'=SUMIFS($G61:${get_column_letter(sheet.max_column)}61,' \
+                        f'$G2:${get_column_letter(sheet.max_column)}2,TRUE,' \
+                        f'$G3:${get_column_letter(sheet.max_column)}3, FALSE)'
+    sheet['E62'] = f'=SUMIFS($G62:${get_column_letter(sheet.max_column)}62,$G2:${get_column_letter(sheet.max_column)}2,TRUE,$G3:${get_column_letter(sheet.max_column)}3, FALSE)'
+    sheet['E63'] = f'=SUMIFS($G63:${get_column_letter(sheet.max_column)}63,$G2:${get_column_letter(sheet.max_column)}2,TRUE,$G3:${get_column_letter(sheet.max_column)}3, FALSE)'
+    sheet['E64'] = f'=SUMIFS($G64:${get_column_letter(sheet.max_column)}64,$G2:${get_column_letter(sheet.max_column)}2,TRUE,$G3:${get_column_letter(sheet.max_column)}3, FALSE)'
+
+
+
+
+
+
+
     # Join rows_to_add_formulas,rows_to_format_currency,rows_to_center and rows_to_sum as one new list ordered
     # and only unique values all_rows_to_format = list(set(rows_to_add_formulas + rows_to_format_currency +
     # rows_to_center + rows_to_sum)) all_rows_to_format.sort()
@@ -474,11 +495,12 @@ def format_sales_forecast(sheet):
             cell.value = f'=IF({cell.column_letter}4<>{get_column_letter(cell.column - 1)}4,' \
                          f'+{cell.column_letter}146,{get_column_letter(cell.column - 1)}145)'
     # =IF(AND(G20<>"", G10="ZZUN01"), +G145/G29*G23, 0)
+    # =IF(AND(G20 <> "", G10="ZZUN01"), (+G145 / G29 * (G21 - G20)) + (G17 * G11 / 365 * (G22 - G21)), 0)
     # insert the above formula into row 33 from column 7 to the last column
     for col in sheet.iter_cols(min_row=33, min_col=7, max_row=33, max_col=sheet.max_column):
         for cell in col:
             cell.value = f'=IF(AND({cell.column_letter}20<>"", {cell.column_letter}10="ZZUN01"), ' \
-                         f'+{cell.column_letter}145/{cell.column_letter}29*{cell.column_letter}23, 0)'
+                         f'(+{cell.column_letter}145/{cell.column_letter}29*({cell.column_letter}21-{cell.column_letter}20)) + ({cell.column_letter}17*{cell.column_letter}11/365*({cell.column_letter}22-{cell.column_letter}21)), 0)'
 
     # =IFERROR(G104/(G102-G101)*($B$1-G101),0)
     # insert the above formula into row 103 from column 7 to the last column

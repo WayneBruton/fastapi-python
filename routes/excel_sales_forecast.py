@@ -1534,11 +1534,11 @@ async def create_cashflow(data: Request):
             filter(lambda opportunity: opportunity['opportunity_end_date'] > request['date'], opportunities_list))
 
 
-        print(opportunities_list[0])
-        print()
-        print(final_cashFlow_list[0])
-        print()
-        print(request)
+        # print(opportunities_list[0])
+        # print()
+        # print(final_cashFlow_list[0])
+        # print()
+        # print(request)
 
         filename = create_cash_flow(final_cashFlow_list, request, opportunities_list)
 
