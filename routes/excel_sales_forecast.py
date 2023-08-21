@@ -1037,8 +1037,10 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 investment_interest = (investment_amount * investment_interest_rate / 100) / 365 * days_difference
                 investor['released_interest_total'] = investment_interest
 
-                if investor['opportunity_code'] == "HVG101" and investor['investor_acc_number'] == "ZWIL02":
-                    print(investor)
+            if investor['investor_acc_number'] == "ZZUN01" and investor["investment_interest_rate"] == 0:
+                investor["investment_interest_rate"] = investor['project_interest_rate']
+
+
 
 
                 # end_date_total = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"), "%Y/%m/%d")
