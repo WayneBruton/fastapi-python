@@ -750,6 +750,8 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
     merged_list = []
 
+    # print(transferred[0])
+
     for index, item in enumerate(transferred):
         insert = {}
         insert['transferred'] = item
@@ -830,7 +832,8 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
             interest = item['unallocated_interest'] / days
             # multiply interest by the number of days between release_date and momentum_deposit_date
             interest = interest * (item['release_date'] - item['momentum_deposit_date']).days
-            # add to interest the capital_required less total_capital_invested multiplied by the project_interest divided by 365 and multiplied by the number of days between end_date and release_date
+            # add to interest the capital_required less total_capital_invested multiplied by the project_interest
+            # divided by 365 and multiplied by the number of days between end_date and release_date
             interest = interest + ((item['capital_required'] - item['total_capital_invested']) * item[
                 'project_interest'] / 365) * (item['end_date'] - item['release_date']).days
             item['unallocated_interest'] = interest
@@ -858,6 +861,8 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     unit_no_list = [x['unit_no'] for x in merged_list]
     unit_no_list = list(dict.fromkeys(unit_no_list))
 
+    # print(merged_list[0])
+
     final_list = []
     for unit in unit_no_list:
         # create a new list variable from merged_list with only the items that match the unit_no
@@ -865,10 +870,21 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         insert = {}
         insert['unit_no'] = merged_filtered[0]['unit_no']
 
-        insert['date'] = merged_filtered[0]['end_date']
+        # insert['date'] = merged_filtered[0]['opportunity_final_transfer_date']
+        datafiltered = [x for x in data if x['opportunity_code'] == insert['unit_no']]
+
+
+        insert['date'] = datafiltered[0]['opportunity_final_transfer_date']
+        # insert['date'] = merged_filtered[0]['end_date']
         # convert date to a string
-        insert['date'] = insert['date'].strftime('%Y/%m/%d')
+        # insert['date'] = insert['date'].strftime('%Y/%m/%d')
         insert['amount'] = merged_filtered[0]['transfer_income'] - sum(x['due_to_investor'] for x in merged_filtered)
+        # if insert['unit_no'] == 'EA202':
+        #     datafiltered = [x for x in data if x['opportunity_code'] == insert['unit_no']]
+        #     print("datafiltered", datafiltered[0])
+
+            # print("EA202", insert)
+            # print("merged_filtered", merged_filtered)
         final_list.append(insert)
 
     for item in final_list:

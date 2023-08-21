@@ -998,6 +998,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
 
 
+        # print("final_investors_list", final_investors_list[0])
 
 
         listData = investment_status(request)
