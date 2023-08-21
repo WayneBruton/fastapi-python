@@ -70,13 +70,13 @@ def create_excel_array(data):
     row49A_data = []
 
     row50_data = ["Early Released", "", "", "", "", ""]
-    row51_data = ["Rollover Date", "", "", "", "", ""]
-    row52_data = ["Rollover Amount", "", "", "", "", ""]
+    row51_data = ["Early Exit Date", "", "", "", "", ""]
+    row52_data = ["Early Exit Amount", "", "", "", "", ""]
     row53_data = ["Early Exit", "", "", "", "", ""]
     row54_data = ["Transfer Income", "", "", "", "", ""]
     row55_data = ["Due to Investors (Adjusted)", "", "", "", "", ""]
     row56_data = ["Profit / Loss (Adjusted)", "", "", "", "", ""]
-    rowblank_data = []
+    rowblank_tfr_data = ["Transfer Date", "", "", "", "", ""]
     rowblank_1_data = ["RENTALS", "", "", "", "", ""]
     rowblank_data = []
     rental1_data = ["Marked for Rent", "", "", "", "", ""]
@@ -131,6 +131,11 @@ def create_excel_array(data):
         else:
             row22_data.append("")
 
+        if item['opportunity_final_transfer_date'] != "":
+            rowblank_tfr_data.append(item['opportunity_end_date'])
+        else:
+            rowblank_tfr_data.append(item['opportunity_final_transfer_date'])
+
         row24_data.append(item['investment_interest_today'])
         row25_data.append(item['released_interest_today'])
         row25A_data.append(float(item['interest_to_date_still_to_be_raised']))
@@ -184,7 +189,7 @@ def create_excel_array(data):
                        row33_data, row34_data, row35_data, row36_data, [], row38_data, row39_data, row40_data,
                        row41_data, row42_data, row43_data, row44_data, row45_data, row46_data, row47_data, row48_data,
                        row49_data, row4A_data, row49A_data, row49A_data, row49A_data, row50_data, row51_data,
-                       row52_data, row53_data, row54_data, row55_data, row56_data, rowblank_data, rowblank_data,
+                       row52_data, row53_data, row54_data, row55_data, row56_data, rowblank_tfr_data, rowblank_data,
                        rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data,
                        rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data,
                        rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data,

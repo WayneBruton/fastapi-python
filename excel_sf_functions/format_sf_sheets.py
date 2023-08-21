@@ -205,7 +205,7 @@ def format_sales_forecast(sheet):
 
     rows_to_center = [5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
                       33, 34, 35, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 59, 60, 61, 62,
-                      63, 64, 71, 72, 73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87, 92, 93, 94, 95, 96, 97, 98, 99,
+                      63, 64,65, 71, 72, 73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87, 92, 93, 94, 95, 96, 97, 98, 99,
                       100, 101, 102, 103, 104]
     # Loop through the rows_to_format_currency list and align the cells from column 6 to the last column in the
     # centre
@@ -217,7 +217,7 @@ def format_sales_forecast(sheet):
             col_number = 2
         # DARKER COLOR
 
-        if row in [9, 10, 23, 13, 19, 27, 29, 33, 34, 35, 39, 40, 44]:
+        if row in [9, 10, 23, 13, 19, 27, 29, 33, 34, 35, 39, 40, 44, 65]:
             color_is = '3E54AC'
         elif row in [53, 64]:
             color_is = 'E14D2A'
@@ -523,7 +523,7 @@ def format_sales_forecast(sheet):
     # start_time = time.time()
     # Create a dictionary to store the start and end columns for each row
     rows_to_merge = [5, 6, 7, 13, 14, 15, 16, 17, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 61, 62, 63, 64,
-                     92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104]
+                     65, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104]
     merge_dict = {}
 
     # Loop through the rows_to_merge list and populate merge_dict with start and end columns for each row

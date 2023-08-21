@@ -644,6 +644,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 # Days between planned_release_date and opportunity_final_transfer_date
                 days_between = (opportunity_final_transfer_date - planned_release_date).days
 
+
+
                 released_interest_total = released_interest_total + (float(investment["investment_amount"]) * float(
                     investment["investment_interest_rate"]) / 100 / 365 * days_between)
                 investment["released_interest_total"] = round(released_interest_total, 2)
@@ -694,11 +696,15 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     investment["investment_interest_rate"]) / 100 / 365 * days_between)
                 investment["released_interest_today"] = round(released_interest_today, 2)
 
+
+
         for investment in final_investors_list:
             filtered_rollovers = [rollover for rollover in rollovers_list if
                                   rollover['investor_acc_number'] == investment['investor_acc_number']
                                   and rollover['investment_number'] == investment['investment_number']
                                   and rollover['opportunity_code'] == investment['opportunity_code']]
+
+
             if len(filtered_rollovers) > 0:
                 investment['rollover_amount'] = filtered_rollovers[0]['rollover_amount']
                 investment['rollover_date'] = filtered_rollovers[0]['end_date']
@@ -734,6 +740,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
             opportunity_required = float(opportunity['opportunity_amount_required'])
 
+
+
             # sum the investment_amounts in filtered_investors list using list comprehension
             opportunity_invested = sum(float(investor['investment_amount']) for investor in filtered_investors)
             if 0 < opportunity_invested < opportunity_required:
@@ -764,6 +772,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 final_investors_list.append(insert)
 
         for investment in final_investors_list:
+
+
             # filter sales_parameters_list where Development is equal to investment['Category'] using list comprehension
 
             if investment['raising_commission'] == 0:
@@ -803,6 +813,10 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                              sales_parameter['Description'] == 'unforseen']
                 investment['unforseen'] = filtered_sales_parameters[0]['rate']
 
+
+
+
+
         # if the investor_acc_number = "ZCAM01" and the opportunity_code = "HFA101" and the investment_amount =
         # 400000.0 then filter this record out of final_investors_list
 
@@ -841,6 +855,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                         unallocated_investment['deposit_date'] != ""]
 
         for investor in final_investors_list:
+
+
             # Filter unallocated_investments_list where opportunity_code is equal to investor['opportunity_code'] and
             # investor_acc_number is equal to 'ZZUN01' using list comprehension
             if investor['investor_acc_number'] == "ZZUN01":
@@ -900,6 +916,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
 
 
+
+
                         # add a day to int_planned_release_date
                         int_planned_release_date = int_planned_release_date + timedelta(days=1)
 
@@ -908,11 +926,18 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                         "interest_total_still_to_be_raised"] = \
                         interest_to_be_raised_for_released + interest_to_be_raised_for_momentum
 
+            # if investor['opportunity_code'] == "HVG101" and investor['investor_acc_number'] == "ZWIL02":
+            #     print(investor)
+
+
+
         # sort final investors list by Category, opportunity_code, investor_acc_number
         final_investors_list = sorted(final_investors_list,
                                       key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
 
         for investor in final_investors_list:
+            # if investor['opportunity_code'] == "HVG101" and investor['investor_acc_number'] == "ZWIL02":
+            #     print(investor)
 
             if 'early_release' not in investor:
                 investor['early_release'] = False
@@ -929,10 +954,11 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 if datetime.strptime(investor['opportunity_final_transfer_date'], "%Y/%m/%d") > report_date:
                     investor['opportunity_transferred'] = False
 
-                if investor['opportunity_transferred']:
-                    investor['early_release'] = False
+                # if investor['opportunity_transferred']:
+                #     investor['early_release'] = False
 
             for investor in final_investors_list:
+
                 if investor['investor_acc_number'] != "ZZUN01":
                     report_date = datetime.strptime(request['date'], "%Y/%m/%d")
                     if investor['release_date'] != "":
@@ -979,6 +1005,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     investor['released_interest_total'] = released_interest_total
 
             for investor in final_investors_list:
+
                 filtered_opps = [opp for opp in opportunities_list if opp['opportunity_code']
                                  == investor['opportunity_code']]
 
@@ -995,6 +1022,36 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 investor["rental_rates"] = float(filtered_opps[0].get("rental_rates", 0))
                 investor["rental_other_expenses"] = float(filtered_opps[0].get("rental_other_expenses", 0))
                 investor["rental_nett_amount"] = float(filtered_opps[0].get("rental_nett_amount", 0))
+
+
+        for investor in final_investors_list:
+            if investor['release_date'] == "" and investor['planned_release_date'] != "":
+
+                final_transfer_date = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-","/"), "%Y/%m/%d")
+                planned_release_date = datetime.strptime(investor['planned_release_date'].replace("-","/"), "%Y/%m/%d")
+
+                days_difference = (final_transfer_date - planned_release_date).days
+
+                investment_amount = float(investor['investment_amount'])
+                investment_interest_rate = float(investor['investment_interest_rate'])
+                investment_interest = (investment_amount * investment_interest_rate / 100) / 365 * days_difference
+                investor['released_interest_total'] = investment_interest
+
+                if investor['opportunity_code'] == "HVG101" and investor['investor_acc_number'] == "ZWIL02":
+                    print(investor)
+
+
+                # end_date_total = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"), "%Y/%m/%d")
+
+
+
+
+
+
+
+
+
+
 
 
 
