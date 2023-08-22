@@ -379,13 +379,15 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         for sheet in wb.worksheets:
             sheet.delete_rows(40, 1000)
 
+    ## PER BLOCK SHEET
     ws = wb.create_sheet("Per Block")
     ws.sheet_properties.tabColor = "F11A7B"
 
     worksheet_data = []
 
     ws2 = wb[worksheets[0]]
-    last_col = get_column_letter(ws2.max_column)
+    last_col_ws2 = get_column_letter(ws2.max_column)
+    sheet_formula = ws2.title
     criteria_range = []
 
     AVAILABLE = []
@@ -398,6 +400,8 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     released_interest = []
     investment_interest = []
     early_release = []
+    sales_price = []
+
 
     # get the value from column G row 4 until the last column from ws2 and insert into criteria_range list
     for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=4, max_row=4):
@@ -433,6 +437,10 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=58, max_row=58):
         for item in cell:
             early_release.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=42, max_row=42):
+        for item in cell:
+            sales_price.append(item.value)
+
 
     # using list comprehension, replace None values with 0 in AVAILABLE
     AVAILABLE = [0 if x is None else x for x in AVAILABLE]
@@ -452,6 +460,8 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     investment_interest = [0 if x is None else x for x in investment_interest]
     # using list comprehension, replace None values with 0 in transferred
     early_release = [0 if x is None else x for x in early_release]
+    # using list comprehension, replace None values with 0 in transferred
+    sales_price = [0 if x is None else x for x in sales_price]
 
     # print("AVAILABLE",AVAILABLE)
 
@@ -476,9 +486,14 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     worksheet_data.append(released_interest)
     worksheet_data.append(investment_interest)
     worksheet_data.append(early_release)
+    worksheet_data.append(sales_price)
 
     row2_data = ["BLOCK", "AVAILABLE", "DRAWN", "RAISED", "LEFT TO RAISE", "TO RAISE", "CAPITAL REPAID",
-                 "INTEREST REPAID"]
+                 "INTEREST REPAID", "UNITS", "TOTAL INCOME PER SALE AFTER EXPENSES", "FOR SALE INVESTOR REPAYMENT",
+                 "FOR SALE INCOME DUE TO COMPANY", "SOLD INVESTOR REPAYMENT", "SOLD INCOME DUE TO COMPANY",
+                 "TRANSFERRED DUE TO INVESTOR", "TRANSFERRED DUE TO COMPANY", "TOTAL INCOME DUE TO COMPANY",
+                 "ESTIMATED TOTAL REPAYMENT", "INTEREST","NET INCOME", "% DRAWN", "CTC_COST", "CTC_PROFIT", "MARGIN",
+                 "SECURITY MARGIN"]
     worksheet_data.append(row2_data)
 
     # ws.append(worksheet_data)
@@ -522,7 +537,45 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         # =SUMIFS($A$11:$UQ$11,$A$7:$UQ$7, "TRUE",$A$1:$UQ$1, A15)+SUMIFS($A$12:$UQ$12,$A$7:$UQ$7, "TRUE",$A$1:$UQ$1,
         # A15)+SUMIFS($A$11:$UQ$11,$A$13:$UQ$13, "TRUE",$A$1:$UQ$1, A15)+SUMIFS($A$12:$UQ$12,$A$13:$UQ$13, "TRUE",
         # $A$1:$UQ$1, A15)
-        formula = f'=SUMIFS(A11:{last_col}11, A7:{last_col}7, "TRUE", A1:{last_col}1, A{max_row})+SUMIFS(A12:{last_col}12, A7:{last_col}7, "TRUE", A1:{last_col}1, A{max_row})+SUMIFS(A11:{last_col}11, A13:{last_col}13, "TRUE", A1:{last_col}1, A{max_row})+SUMIFS(A12:{last_col}12, A13:{last_col}13, "TRUE", A1:{last_col}1, A{max_row})'
+
+        formula = (f'=SUMIFS(A11:{last_col}11, A7:{last_col}7, "TRUE", A1:{last_col}1, A{max_row})'
+                   f'+SUMIFS(A12:{last_col}12, A7:{last_col}7, "TRUE", A1:{last_col}1, A{max_row})'
+                   f'+SUMIFS(A11:{last_col}11, A13:{last_col}13, "TRUE", A1:{last_col}1, A{max_row})'
+                   f'+SUMIFS(A12:{last_col}12, A13:{last_col}13, "TRUE", A1:{last_col}1, A{max_row})')
+        insert_row.append(formula)
+        # =COUNTIFS($A$1:$UQ$1, A16,$A$2:$UQ$2, "<>0")
+        formula = f'=COUNTIFS(A1:{last_col}1, A{max_row}, A2:{last_col}2, "<>0")'
+        insert_row.append(formula)
+        # =SUMIFS(
+            # 'ws2'!$G$64:$UW$64, 'ws2'!$G$64:$UW$64, "<>0", 'Per Block'!$A$1:$UQ$1, 'Per Block'!A23)
+        formula = f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, "<>0", A1:{last_col}1, A{max_row})'
+        insert_row.append(formula)
+        formula = f'=SUMIFS(\'{sheet_formula}\'!G63:{last_col_ws2}63, \'{sheet_formula}\'!G63:{last_col_ws2}63, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, FALSE)'
+        insert_row.append(formula)
+        formula = f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, FALSE)'
+        insert_row.append(formula)
+        formula = f'=SUMIFS(\'{sheet_formula}\'!G63:{last_col_ws2}63, \'{sheet_formula}\'!G63:{last_col_ws2}63, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, FALSE)'
+        insert_row.append(formula)
+        formula = f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, FALSE)'
+        insert_row.append(formula)
+        formula = f'=SUMIFS(\'{sheet_formula}\'!G63:{last_col_ws2}63, \'{sheet_formula}\'!G63:{last_col_ws2}63, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, TRUE)'
+        insert_row.append(formula)
+        formula = f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, TRUE)'
+        insert_row.append(formula)
+        # =SUM(N16, L16)
+        formula = f'=SUM(N{max_row}, L{max_row})'
+        insert_row.append(formula)
+        # =SUM(M16, K16)
+        formula = f'=SUM(M{max_row}, K{max_row})'
+        insert_row.append(formula)
+        # =SUM(R16 - D16)
+        formula = f'=SUM(R{max_row} - D{max_row})'
+        insert_row.append(formula)
+        # =J16-SUM(R16)
+        formula = f'=J{max_row}-SUM(R{max_row})'
+        insert_row.append(formula)
+        # =S16 / C16
+        formula = f'=IFERROR(S{max_row} / C{max_row}, 0)'
         insert_row.append(formula)
         ws.append(insert_row)
 
@@ -535,65 +588,116 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     max_row = ws.max_row
 
     # in a new row, insert the sum of each column from start_sum to max_row for columns B through F
-    columns = ["B", "C", "D", "E", "F", "G", "H"]
+    columns = ["B", "C", "D", "E", "F", "G", "H", "I", "J", "K","L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+                "V", "W", "X","Y"]
     insert = ["TOTAL"]
     for col in columns:
         # ws[f'{col}{max_row}'].value = f'=SUM({col}{start_sum}:{col}{max_row - 1})'
-        insert.append(f'=SUM({col}{start_sum}:{col}{max_row - 1})')
+        if col != "U":
+            insert.append(f'=SUM({col}{start_sum}:{col}{max_row - 1})')
+        else:
+
+            insert.append(f'=IFERROR(S{max_row} / C{max_row}, 0)')
+
+
     ws.append(insert)
 
     ws.append([])
     ws.append(["Heron Fields"])
     # for the above row, in columns B through H, add the formula + the value of the cell in row 15 and row 16
-    columns = ["B", "C", "D", "E", "F", "G", "H"]
+    columns = ["B", "C", "D", "E", "F", "G", "H", "I", "J", "K","L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+                "V", "W", "X","Y"]
     for col in columns:
-        ws[f'{col}36'].value = f'=SUM({col}15+{col}16)'
+        if col != "U":
+            ws[f'{col}37'].value = f'=SUM({col}16+{col}17)'
+        else:
+            ws[f'{col}37'].value = f'=IFERROR(S{max_row} / C{max_row}, 0)'
     ws.append(["Heron View"])
     # for the above row, in columns B through H, add the value of row 34 less the value of row 15 and row 16
     for col in columns:
-        ws[f'{col}37'].value = f'=SUM({col}34-{col}36)'
+        if col != "U":
+            ws[f'{col}38'].value = f'=SUM({col}35-{col}37)'
+        else:
+            ws[f'{col}38'].value = f'=IFERROR(S{max_row} / C{max_row}, 0)'
 
-    columns = ["A", "B", "C", "D", "E", "F", "G", "H"]
-    rows = [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 36, 37]
+
+
+    columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K","L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+                "V", "W", "X","Y"]
+    rows = [ 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,33, 35, 37,38]
     # format all cells in columns B through F to currency format for the rows in the rows list, and set the font size
     # to 10, and set the alignment to center, and set the border to thin, and make the columns autofit
     for col in columns:
         for row in rows:
-            ws[f'{col}{row}'].number_format = '#,##0.00'
-            ws[f'{col}{row}'].font = Font(size=10)
-            ws[f'{col}{row}'].alignment = Alignment(horizontal='center')
-            ws[f'{col}{row}'].border = Border(left=Side(border_style='thin', color='000000'),
-                                              right=Side(border_style='thin', color='000000'),
-                                              top=Side(border_style='thin', color='000000'),
-                                              bottom=Side(border_style='thin', color='000000'))
+
+            if col != "U":
+                ws[f'{col}{row}'].number_format = '#,##0.00'
+                ws[f'{col}{row}'].font = Font(size=10)
+                ws[f'{col}{row}'].alignment = Alignment(horizontal='center')
+                ws[f'{col}{row}'].border = Border(left=Side(border_style='thin', color='000000'),
+                                                  right=Side(border_style='thin', color='000000'),
+                                                  top=Side(border_style='thin', color='000000'),
+                                                  bottom=Side(border_style='thin', color='000000'))
+                # ws.column_dimensions[col].auto_size = True
         # ws.column_dimensions[col].auto_size = True
+            else:
+                ws[f'{col}{row}'].number_format = '0.00%'
+                ws[f'{col}{row}'].font = Font(size=10)
+                ws[f'{col}{row}'].alignment = Alignment(horizontal='center')
+                ws[f'{col}{row}'].border = Border(left=Side(border_style='thin', color='000000'),
+                                                  right=Side(border_style='thin', color='000000'),
+                                                  top=Side(border_style='thin', color='000000'),
+                                                  bottom=Side(border_style='thin', color='000000'))
+                # ws.column_dimensions[col].auto_size = True
 
     # for columns in columns list, set the font to bold, set the font size to 12, set the alignment to center,
     # set the background color to light grey, and set the border to thin for row 8
     for col in columns:
-        ws[f'{col}14'].font = Font(bold=True, size=12)
-        ws[f'{col}14'].alignment = Alignment(horizontal='center')
-        ws[f'{col}14'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
-        ws[f'{col}14'].border = Border(left=Side(border_style='thin', color='000000'),
+        ws[f'{col}15'].font = Font(bold=True, size=12)
+        ws[f'{col}15'].alignment = Alignment(horizontal='center')
+        ws[f'{col}15'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
+        ws[f'{col}15'].border = Border(left=Side(border_style='thin', color='000000'),
                                        right=Side(border_style='thin', color='000000'),
                                        top=Side(border_style='thin', color='000000'),
                                        bottom=Side(border_style='thin', color='000000'))
-        ws[f'{col}34'].font = Font(bold=True, size=10)
-        ws[f'{col}34'].alignment = Alignment(horizontal='center')
-        ws[f'{col}34'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
-        ws[f'{col}34'].border = Border(left=Side(border_style='thin', color='000000'),
+        ws[f'{col}35'].font = Font(bold=True, size=10)
+        ws[f'{col}35'].alignment = Alignment(horizontal='center')
+        ws[f'{col}35'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
+        ws[f'{col}35'].border = Border(left=Side(border_style='thin', color='000000'),
                                        right=Side(border_style='thin', color='000000'),
                                        top=Side(border_style='thin', color='000000'),
                                        bottom=Side(border_style='thin', color='000000'))
 
-    # for columns in columns list, set the font to bold, set the font size to 12, set the alignment to center,
+    # # for columns in columns list, set the font to bold, set the font size to 12, set the alignment to center,
+    # for col in columns:
+    #     ws.column_dimensions[col].auto_size = True
+
+    # for the cells in row 15, set the font to bold, set the font size to 12, set the alignment to center, and set the
+    # background color to light grey, and set the border to thin and make the alignment word wrap
     for col in columns:
-        ws.column_dimensions[col].auto_size = True
+        ws[f'{col}15'].font = Font(bold=True, size=12)
+        ws[f'{col}15'].alignment = Alignment(horizontal='center', wrap_text=True)
+        ws[f'{col}15'].fill = PatternFill(start_color='E9E9E9', end_color='E9E9E9', fill_type='solid')
+        ws[f'{col}15'].border = Border(left=Side(border_style='thin', color='000000'),
+                                       right=Side(border_style='thin', color='000000'),
+                                       top=Side(border_style='thin', color='000000'),
+                                       bottom=Side(border_style='thin', color='000000'))
+
 
     # hide rows 1 through 7
-    for row in range(1, 14):
+    for row in range(1, 15):
         ws.row_dimensions[row].hidden = True
 
+    # make all columns have a width of 15 except for columns A
+    for col in columns:
+        ws.column_dimensions[col].width = 15
+
+
+
+
+
+
+    ## CASHFLOW SHEET
     ws = wb.create_sheet("Cashflow")
     ws.sheet_properties.tabColor = "16FF00"
 
@@ -873,7 +977,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         # insert['date'] = merged_filtered[0]['opportunity_final_transfer_date']
         datafiltered = [x for x in data if x['opportunity_code'] == insert['unit_no']]
 
-
         insert['date'] = datafiltered[0]['opportunity_final_transfer_date']
         # insert['date'] = merged_filtered[0]['end_date']
         # convert date to a string
@@ -883,8 +986,8 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         #     datafiltered = [x for x in data if x['opportunity_code'] == insert['unit_no']]
         #     print("datafiltered", datafiltered[0])
 
-            # print("EA202", insert)
-            # print("merged_filtered", merged_filtered)
+        # print("EA202", insert)
+        # print("merged_filtered", merged_filtered)
         final_list.append(insert)
 
     for item in final_list:
