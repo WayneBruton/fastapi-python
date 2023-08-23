@@ -24,6 +24,7 @@ opportunities = db.opportunities
 unallocated_investments = db.unallocated_investments
 sales_parameters = db.salesParameters
 rollovers = db.investorRollovers
+drawdowns = db.investor_Draws
 
 
 @excel_sales_forecast.post("/update-sales-forecast_unallocated")
@@ -644,8 +645,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 # Days between planned_release_date and opportunity_final_transfer_date
                 days_between = (opportunity_final_transfer_date - planned_release_date).days
 
-
-
                 released_interest_total = released_interest_total + (float(investment["investment_amount"]) * float(
                     investment["investment_interest_rate"]) / 100 / 365 * days_between)
                 investment["released_interest_total"] = round(released_interest_total, 2)
@@ -696,14 +695,11 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     investment["investment_interest_rate"]) / 100 / 365 * days_between)
                 investment["released_interest_today"] = round(released_interest_today, 2)
 
-
-
         for investment in final_investors_list:
             filtered_rollovers = [rollover for rollover in rollovers_list if
                                   rollover['investor_acc_number'] == investment['investor_acc_number']
                                   and rollover['investment_number'] == investment['investment_number']
                                   and rollover['opportunity_code'] == investment['opportunity_code']]
-
 
             if len(filtered_rollovers) > 0:
                 investment['rollover_amount'] = filtered_rollovers[0]['rollover_amount']
@@ -740,8 +736,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
             opportunity_required = float(opportunity['opportunity_amount_required'])
 
-
-
             # sum the investment_amounts in filtered_investors list using list comprehension
             opportunity_invested = sum(float(investor['investment_amount']) for investor in filtered_investors)
             if 0 < opportunity_invested < opportunity_required:
@@ -772,7 +766,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 final_investors_list.append(insert)
 
         for investment in final_investors_list:
-
 
             # filter sales_parameters_list where Development is equal to investment['Category'] using list comprehension
 
@@ -813,10 +806,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                              sales_parameter['Description'] == 'unforseen']
                 investment['unforseen'] = filtered_sales_parameters[0]['rate']
 
-
-
-
-
         # if the investor_acc_number = "ZCAM01" and the opportunity_code = "HFA101" and the investment_amount =
         # 400000.0 then filter this record out of final_investors_list
 
@@ -855,7 +844,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                         unallocated_investment['deposit_date'] != ""]
 
         for investor in final_investors_list:
-
 
             # Filter unallocated_investments_list where opportunity_code is equal to investor['opportunity_code'] and
             # investor_acc_number is equal to 'ZZUN01' using list comprehension
@@ -914,10 +902,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                                                    'unallocated_investment'] * investor[
                                                                    'project_interest_rate'] / 100) / 365
 
-
-
-
-
                         # add a day to int_planned_release_date
                         int_planned_release_date = int_planned_release_date + timedelta(days=1)
 
@@ -928,8 +912,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
             # if investor['opportunity_code'] == "HVG101" and investor['investor_acc_number'] == "ZWIL02":
             #     print(investor)
-
-
 
         # sort final investors list by Category, opportunity_code, investor_acc_number
         final_investors_list = sorted(final_investors_list,
@@ -1005,7 +987,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     investor['released_interest_total'] = released_interest_total
 
             for investor in final_investors_list:
-
                 filtered_opps = [opp for opp in opportunities_list if opp['opportunity_code']
                                  == investor['opportunity_code']]
 
@@ -1014,7 +995,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 investor["rental_start_date"] = filtered_opps[0].get("rental_start_date", "")
                 investor["rental_end_date"] = filtered_opps[0].get("rental_end_date", "")
                 investor["rental_income_to_date"] = float(filtered_opps[0].get("rental_income_to_date", 0))
-                investor["rental_income_to_contract_end"] = float(filtered_opps[0].get("rental_income_to_contract_end", 0))
+                investor["rental_income_to_contract_end"] = float(
+                    filtered_opps[0].get("rental_income_to_contract_end", 0))
                 investor["rental_gross_amount"] = float(filtered_opps[0].get("rental_gross_amount", 0))
                 investor["rental_deposit_amount"] = float(filtered_opps[0].get("rental_deposit_amount", 0))
                 investor["rental_levy_amount"] = float(filtered_opps[0].get("rental_levy_amount", 0))
@@ -1023,12 +1005,11 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 investor["rental_other_expenses"] = float(filtered_opps[0].get("rental_other_expenses", 0))
                 investor["rental_nett_amount"] = float(filtered_opps[0].get("rental_nett_amount", 0))
 
-
         for investor in final_investors_list:
             if investor['release_date'] == "" and investor['planned_release_date'] != "":
-
-                final_transfer_date = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-","/"), "%Y/%m/%d")
-                planned_release_date = datetime.strptime(investor['planned_release_date'].replace("-","/"), "%Y/%m/%d")
+                final_transfer_date = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"),
+                                                        "%Y/%m/%d")
+                planned_release_date = datetime.strptime(investor['planned_release_date'].replace("-", "/"), "%Y/%m/%d")
 
                 days_difference = (final_transfer_date - planned_release_date).days
 
@@ -1040,17 +1021,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             if investor['investor_acc_number'] == "ZZUN01" and investor["investment_interest_rate"] == 0:
                 investor["investment_interest_rate"] = investor['project_interest_rate']
 
-
-
-
                 # end_date_total = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"), "%Y/%m/%d")
-
-
-
-
-
-
-
 
         ## DEVELOPMENT UNITS
         # create a new list called development_list which includes all the records in final_investors_list where the
@@ -1062,7 +1033,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
         # print("final_investors_list", final_investors_list[0])
 
-
         listData = investment_status(request)
 
         # append development_list to listData
@@ -1070,11 +1040,9 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         for devunit in development_list:
             listData.append(devunit)
 
-
         # print("listData", listData[len(listData) - 1])
         # print()
         # print("listData", listData[len(listData) - 2])
-
 
         background_tasks.add_task(create_sales_forecast_file, final_investors_list, request, pledges, firstName,
                                   listData, request)
@@ -1142,9 +1110,6 @@ def investment_status(request):
         # development_list = [opportunity for opportunity in opportunities_list if opportunity['opportunity_code'] == "HFB215" or opportunity['opportunity_code'] == "HFB315"]
 
         # print("development_list", development_list)
-
-
-
 
         final_investors_list = []
 
@@ -1475,10 +1440,6 @@ async def create_cashflow(data: Request):
                                    opportunity['transfer_fees'] + opportunity['bond_registration'] +
                                    opportunity['trust_release_fee'])
 
-        # print("opportunities_list", opportunities_list[0])
-        # print()
-
-
         rates = list(db.rates.find({}))
         for rate in rates:
             rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace("-", "/"), "%Y/%m/%d")
@@ -1534,28 +1495,18 @@ async def create_cashflow(data: Request):
 
         opportunity_end_dates = []
 
-        # for investment in investments:
-            # if investment['opportunity_code'] == 'HVD201' or investment['opportunity_code'] == 'HFB214':
-            #     print("investment", investment)
-            #     print()
-        # print("Investments",investments[1])
-        # print()
-
         for opportunity in opportunities_list:
             # Filter investments where opportunity_code is equal to opportunity['opportunity_code']
             opportunity_investments = list(
                 filter(lambda investment: investment['opportunity_code'] == opportunity['opportunity_code'],
                        investments))
-            # if opportunity['opportunity_code'] == 'HVD201' or opportunity['opportunity_code'] == 'HFB214':
-            #     print("opportunity_investments", opportunity_investments)
-            #     print()
-            # if length of opportunity_investments is greater than 0, sum up final_amount_due_to_investor, else set to 0
+
             opportunity['total_owed_to_investors'] = sum(
                 [investment['final_amount_due_to_investor'] for investment in opportunity_investments]) if len(
                 opportunity_investments) > 0 else 0
 
             opportunity['rollover_amount'] = sum(
-                [investment.get('rollover_amount',0) for investment in opportunity_investments]) if len(
+                [investment.get('rollover_amount', 0) for investment in opportunity_investments]) if len(
                 opportunity_investments) > 0 else 0
             # if opportunity['opportunity_code'] == 'HFB214':
             # opportunity['total_investments'] = round(opportunity['total_investments'], 2)
@@ -1572,7 +1523,6 @@ async def create_cashflow(data: Request):
             # opportunity['opportunity_end_date'] = opportunity['opportunity_end_date'].strftime("%Y/%m/%d")
             opportunity_end_dates.append(opportunity['opportunity_end_date'])
             # opportunity_end_dates.append(opportunity['nett_cashflow'])
-
 
         # print("XXX",opportunity_end_dates[0])
         # only keep unique opportunity_end_dates
@@ -1594,7 +1544,7 @@ async def create_cashflow(data: Request):
             cashFlow['total_cashflow'] = sum([opportunity['nett_cashflow'] for opportunity in opportunities_list if
                                               opportunity['opportunity_end_date'] == date])
             cashFlow['rollover_amount'] = sum([opportunity['rollover_amount'] for opportunity in opportunities_list if
-                                                  opportunity['opportunity_end_date'] == date])
+                                               opportunity['opportunity_end_date'] == date])
             cashFlow['rollover_date'] = date + timedelta(days=7)
             # filter opportunities_list where opportunity_end_date is equal to date
             filtered_opportunities = list(
@@ -1618,7 +1568,6 @@ async def create_cashflow(data: Request):
         opportunities_list = list(
             filter(lambda opportunity: opportunity['opportunity_end_date'] > request['date'], opportunities_list))
 
-
         # print(opportunities_list[0])
         # print()
         # print(final_cashFlow_list[0])
@@ -1634,7 +1583,7 @@ async def create_cashflow(data: Request):
         return {"filename": filename}
 
     except Exception as e:
-        print("XXXXC",e)
+        print("XXXXC", e)
         return {"ERROR": "Something went wrong!!"}
     # return investments
 
@@ -1804,3 +1753,41 @@ async def draw_doc(file_name):
         return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
     else:
         return {"ERROR": "File does not exist!!"}
+
+
+@excel_sales_forecast.post("/process_draw")
+async def process_draw(data: Request):
+    request = await data.json()
+    request = request['planned_draws']
+
+    try:
+        for item in request:
+            item['id'] = str(item['_id'])
+            id = item['id']
+            del item['id']
+            del item['_id']
+            investor_list = list(db.investors.find({"investor_acc_number": item['investor_acc_number']}))
+            for momentum in investor_list[0]['trust']:
+                if momentum['opportunity_code'] == item['opportunity_code'] and momentum['release_date'] == "":
+                    momentum['release_date'] = item['draw_down_date']
+                    momentum['draw'] = f"Draw{item['draw_number']}."
+
+                    insert = {'investor_acc_number': item['investor_acc_number'],
+                              'opportunity_code': momentum['opportunity_code'],
+                              'investment_number': momentum['investment_number'],
+                              'investment_amount': momentum['investment_amount'], 'draw': momentum['draw'],
+                              'release_date': momentum['release_date'], 'email_sent': False, 'end_date': "",
+                              'Category': momentum['Category'], "interest": momentum['interest'],
+                              'investment_interest_rate': momentum['project_interest_rate']}
+
+                    investor_list[0]['investments'].append(insert)
+
+            db.investors.update_one({"investor_acc_number": item['investor_acc_number']},
+                                    {"$set": {"investments": investor_list[0]['investments']}})
+            db.investors.update_one({"investor_acc_number": item['investor_acc_number']},
+                                    {"$set": {"trust": investor_list[0]['trust']}})
+            db.investor_Draws.update_one({"_id": ObjectId(id)}, {"$set": item})
+        return {"message": "success"}
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Error"}

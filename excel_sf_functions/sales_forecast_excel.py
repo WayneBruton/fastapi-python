@@ -427,7 +427,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     ws2 = wb[worksheets[0]]
     last_col_ws2 = get_column_letter(ws2.max_column)
     sheet_formula = ws2.title
-    print("sheet_formula", sheet_formula)
+    # print("sheet_formula", sheet_formula)
     criteria_range = []
 
     AVAILABLE = []
