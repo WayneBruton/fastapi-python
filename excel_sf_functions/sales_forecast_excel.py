@@ -104,13 +104,21 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                  "Days to Estimated Exit",
                  "Investor Contract expiry exit", "Capital & Interest to be Exited", "Investor Exit Value On Sales",
                  "Exited by Developer",
-                 "Date of Exit", "Early Release", "Investor pay Back On transfer"]
+                 "Date of Exit", "Early Release", "Investor pay Back On transfer", "Developer & Unbonded"]
     # print(row2_data[16])
     worksheet_data.append(row2_data)
     row3_data = ["", "", "", "Investor Capital Deployed", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
                  "",
-                 "", "", ""]
+                 "", "", "", ""]
     worksheet_data.append(row3_data)
+
+    ## DEVELOPMENT UNITS
+    # remove the last 2 dictionaries from listData and insert them into a new list called development_units
+    development_units = listData[-2:]
+    # remove the last 2 dictionaries from listData
+    listData = listData[:-2]
+    # print("development_units", development_units)
+
 
     for item in listData:
         row_data = [item['investor_acc_number'], item['opportunity_code'], item['block'], item['investment_name'],
@@ -119,7 +127,19 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                     item['opportunity_sold'], item['occupation_date'], item['estimated_transfer_date'],
                     item['final_transfer_date'], "", item['report_date'],
                     item['days_to_exit_deadline'], "", "", item['investment_interest'], item['investment_interest'],
-                    0, item['exited_by_developer'], item['date_of_exit'], item['early_release'], ""]
+                    0, item['exited_by_developer'], item['date_of_exit'], item['early_release'], "",0]
+        # print(row_data[16], row_data[17], row_data[18])
+        worksheet_data.append(row_data)
+
+
+    for item in development_units:
+        row_data = [item['investor_acc_number'], item['opportunity_code'], "B", "Dev Unit",
+                    float(item['opportunity_amount_required']),
+                    "",
+                    False, "", "",
+                    "", "", "",
+                    0, "", "", 0, 0,
+                    0, 0, 0, False, "",999]
         # print(row_data[16], row_data[17], row_data[18])
         worksheet_data.append(row_data)
 
@@ -139,8 +159,10 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         cell.number_format = '#,##0.00'
     for cell in ws['V']:
         cell.number_format = '#,##0.00'
+    for cell in ws['W']:
+        cell.number_format = '#,##0.00'
 
-    cols = ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V']
+    cols = ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W']
     # Make Column C 20 wide
     ws.column_dimensions['C'].width = 10
     ws.column_dimensions['D'].width = 30
@@ -149,7 +171,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
     # make columns D through N 15 wide
 
-    for col in ws.iter_cols(min_col=1, max_col=22):
+    for col in ws.iter_cols(min_col=1, max_col=23):
         for cell in col:
             cell.alignment = Alignment(horizontal='center')
 
@@ -256,6 +278,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         row[17].value = f'=SUM(R4:R{ws.max_row})'
         row[18].value = f'=SUM(S4:S{ws.max_row})'
         row[21].value = f'=SUM(V4:V{ws.max_row})'
+        row[22].value = f'=SUM(W4:W{ws.max_row})'
 
     # put the contents of column B, column E and column J into a new list of dictionaries
     list_to_filter = []
@@ -278,6 +301,15 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     for cell in ws['O']:
         cell.number_format = '0'
 
+    # get a list of worksheets
+    ws3 = wb.sheetnames[0]
+    # get the last column of ws3
+    last_colw3 = get_column_letter(ws2.max_column)
+    # print("ws3", ws3)
+
+    # last_col_ws2 = get_column_letter(ws2.max_column)
+    # sheet_formula = ws2.title
+
     for row in ws.iter_rows(min_row=4):
         # print("row", row[0].row)
         row[
@@ -293,6 +325,13 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         # print("row[18].value", row[18].value)
         # if row[18].value != 0:
         #     row[12].value = 0
+        if row[3].value == "Dev Unit":
+            # =SUMIFS( 'SF Heron Fields & Heron View'!$G$64:$UW$64, 'SF Heron Fields & Heron View'!$G$4:$UW$4,
+            # 'Investor Exit List Heron'!B431)
+            row[22].value = f"=SUMIFS('{ws3}'!$G$64:${last_colw3}$64, '{ws3}'!$G$4:${last_colw3}$4, B{row[0].row})"
+        else:
+            row[22].value = 0
+
 
     # Hide columns N & O
     cols_to_hide = ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'N', 'T', 'U']
@@ -388,6 +427,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     ws2 = wb[worksheets[0]]
     last_col_ws2 = get_column_letter(ws2.max_column)
     sheet_formula = ws2.title
+    print("sheet_formula", sheet_formula)
     criteria_range = []
 
     AVAILABLE = []
@@ -401,7 +441,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     investment_interest = []
     early_release = []
     sales_price = []
-
 
     # get the value from column G row 4 until the last column from ws2 and insert into criteria_range list
     for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=4, max_row=4):
@@ -440,7 +479,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=42, max_row=42):
         for item in cell:
             sales_price.append(item.value)
-
 
     # using list comprehension, replace None values with 0 in AVAILABLE
     AVAILABLE = [0 if x is None else x for x in AVAILABLE]
@@ -492,7 +530,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                  "INTEREST REPAID", "UNITS", "TOTAL INCOME PER SALE AFTER EXPENSES", "FOR SALE INVESTOR REPAYMENT",
                  "FOR SALE INCOME DUE TO COMPANY", "SOLD INVESTOR REPAYMENT", "SOLD INCOME DUE TO COMPANY",
                  "TRANSFERRED DUE TO INVESTOR", "TRANSFERRED DUE TO COMPANY", "TOTAL INCOME DUE TO COMPANY",
-                 "ESTIMATED TOTAL REPAYMENT", "INTEREST","NET INCOME", "% DRAWN", "CTC_COST", "CTC_PROFIT", "MARGIN",
+                 "ESTIMATED TOTAL REPAYMENT", "INTEREST", "NET INCOME", "% DRAWN", "CTC_COST", "CTC_PROFIT", "MARGIN",
                  "SECURITY MARGIN"]
     worksheet_data.append(row2_data)
 
@@ -547,20 +585,31 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         formula = f'=COUNTIFS(A1:{last_col}1, A{max_row}, A2:{last_col}2, "<>0")'
         insert_row.append(formula)
         # =SUMIFS(
-            # 'ws2'!$G$64:$UW$64, 'ws2'!$G$64:$UW$64, "<>0", 'Per Block'!$A$1:$UQ$1, 'Per Block'!A23)
-        formula = f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, "<>0", A1:{last_col}1, A{max_row})'
+        # 'ws2'!$G$64:$UW$64, 'ws2'!$G$64:$UW$64, "<>0", 'Per Block'!$A$1:$UQ$1, 'Per Block'!A23)
+        formula = (f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, '
+                   f'"<>0", A1:{last_col}1, A{max_row})')
         insert_row.append(formula)
-        formula = f'=SUMIFS(\'{sheet_formula}\'!G63:{last_col_ws2}63, \'{sheet_formula}\'!G63:{last_col_ws2}63, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, FALSE)'
+        formula = (f'=SUMIFS(\'{sheet_formula}\'!G63:{last_col_ws2}63, \'{sheet_formula}\'!G63:{last_col_ws2}63,'
+                   f'"<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, FALSE)')
         insert_row.append(formula)
-        formula = f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, FALSE)'
+        formula = (f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, '
+                   f'"<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, FALSE)')
         insert_row.append(formula)
-        formula = f'=SUMIFS(\'{sheet_formula}\'!G63:{last_col_ws2}63, \'{sheet_formula}\'!G63:{last_col_ws2}63, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, FALSE)'
+        formula = (f'=SUMIFS(\'{sheet_formula}\'!G63:{last_col_ws2}63, \'{sheet_formula}\'!G63:{last_col_ws2}63, '
+                   f'"<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}'
+                   f'2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, FALSE)')
         insert_row.append(formula)
-        formula = f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, FALSE)'
+        formula = (f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, '
+                   f'"<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}'
+                   f'2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, FALSE)')
         insert_row.append(formula)
-        formula = f'=SUMIFS(\'{sheet_formula}\'!G63:{last_col_ws2}63, \'{sheet_formula}\'!G63:{last_col_ws2}63, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, TRUE)'
+        formula = (f'=SUMIFS(\'{sheet_formula}\'!G63:{last_col_ws2}63, \'{sheet_formula}\'!G63:{last_col_ws2}63, '
+                   f'"<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}'
+                   f'2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, TRUE)')
         insert_row.append(formula)
-        formula = f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, "<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, TRUE)'
+        formula = (f'=SUMIFS(\'{sheet_formula}\'!G64:{last_col_ws2}64, \'{sheet_formula}\'!G64:{last_col_ws2}64, '
+                   f'"<>0", A1:{last_col}1, A{max_row}, \'{sheet_formula}\'!G2:{last_col_ws2}'
+                   f'2, TRUE, \'{sheet_formula}\'!G3:{last_col_ws2}3, TRUE)')
         insert_row.append(formula)
         # =SUM(N16, L16)
         formula = f'=SUM(N{max_row}, L{max_row})'
@@ -588,8 +637,8 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     max_row = ws.max_row
 
     # in a new row, insert the sum of each column from start_sum to max_row for columns B through F
-    columns = ["B", "C", "D", "E", "F", "G", "H", "I", "J", "K","L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-                "V", "W", "X","Y"]
+    columns = ["B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+               "V", "W", "X", "Y"]
     insert = ["TOTAL"]
     for col in columns:
         # ws[f'{col}{max_row}'].value = f'=SUM({col}{start_sum}:{col}{max_row - 1})'
@@ -599,14 +648,13 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
             insert.append(f'=IFERROR(S{max_row} / C{max_row}, 0)')
 
-
     ws.append(insert)
 
     ws.append([])
     ws.append(["Heron Fields"])
     # for the above row, in columns B through H, add the formula + the value of the cell in row 15 and row 16
-    columns = ["B", "C", "D", "E", "F", "G", "H", "I", "J", "K","L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-                "V", "W", "X","Y"]
+    columns = ["B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+               "V", "W", "X", "Y"]
     for col in columns:
         if col != "U":
             ws[f'{col}37'].value = f'=SUM({col}16+{col}17)'
@@ -620,11 +668,9 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         else:
             ws[f'{col}38'].value = f'=IFERROR(S{max_row} / C{max_row}, 0)'
 
-
-
-    columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K","L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-                "V", "W", "X","Y"]
-    rows = [ 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,33, 35, 37,38]
+    columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+               "V", "W", "X", "Y"]
+    rows = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 35, 37, 38]
     # format all cells in columns B through F to currency format for the rows in the rows list, and set the font size
     # to 10, and set the alignment to center, and set the border to thin, and make the columns autofit
     for col in columns:
@@ -639,7 +685,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                                                   top=Side(border_style='thin', color='000000'),
                                                   bottom=Side(border_style='thin', color='000000'))
                 # ws.column_dimensions[col].auto_size = True
-        # ws.column_dimensions[col].auto_size = True
+            # ws.column_dimensions[col].auto_size = True
             else:
                 ws[f'{col}{row}'].number_format = '0.00%'
                 ws[f'{col}{row}'].font = Font(size=10)
@@ -668,10 +714,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                                        top=Side(border_style='thin', color='000000'),
                                        bottom=Side(border_style='thin', color='000000'))
 
-    # # for columns in columns list, set the font to bold, set the font size to 12, set the alignment to center,
-    # for col in columns:
-    #     ws.column_dimensions[col].auto_size = True
-
     # for the cells in row 15, set the font to bold, set the font size to 12, set the alignment to center, and set the
     # background color to light grey, and set the border to thin and make the alignment word wrap
     for col in columns:
@@ -683,7 +725,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                                        top=Side(border_style='thin', color='000000'),
                                        bottom=Side(border_style='thin', color='000000'))
 
-
     # hide rows 1 through 7
     for row in range(1, 15):
         ws.row_dimensions[row].hidden = True
@@ -691,11 +732,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     # make all columns have a width of 15 except for columns A
     for col in columns:
         ws.column_dimensions[col].width = 15
-
-
-
-
-
 
     ## CASHFLOW SHEET
     ws = wb.create_sheet("Cashflow")

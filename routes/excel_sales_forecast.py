@@ -1052,15 +1052,29 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
 
 
+        ## DEVELOPMENT UNITS
+        # create a new list called development_list which includes all the records in final_investors_list where the
+        # opportunity_code is equal to HB215 or HFB315
+        development_list = [opportunity for opportunity in final_investors_list if
+                            opportunity['opportunity_code'] == "HFB215" or opportunity['opportunity_code'] == "HFB315"]
 
-
-
-
+        # print("development_list", development_list)
 
         # print("final_investors_list", final_investors_list[0])
 
 
         listData = investment_status(request)
+
+        # append development_list to listData
+        # listData.append(development_list)
+        for devunit in development_list:
+            listData.append(devunit)
+
+
+        # print("listData", listData[len(listData) - 1])
+        # print()
+        # print("listData", listData[len(listData) - 2])
+
 
         background_tasks.add_task(create_sales_forecast_file, final_investors_list, request, pledges, firstName,
                                   listData, request)
@@ -1120,6 +1134,17 @@ def investment_status(request):
 
         # Get opportunities from the database where Category is included in request['Category']
         opportunities_list = list(db.opportunities.find({"Category": {"$in": request['Category']}}))
+
+        # print("opportunities_list", opportunities_list[0])
+
+        # using list comprehension filter opportunities_list where opportunity['opportunity_code'] is equal to HB215 or HFB315
+
+        # development_list = [opportunity for opportunity in opportunities_list if opportunity['opportunity_code'] == "HFB215" or opportunity['opportunity_code'] == "HFB315"]
+
+        # print("development_list", development_list)
+
+
+
 
         final_investors_list = []
 
