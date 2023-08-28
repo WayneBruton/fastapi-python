@@ -1791,3 +1791,242 @@ async def process_draw(data: Request):
     except Exception as e:
         print("Error:", e)
         return {"message": "Error"}
+
+
+@excel_sales_forecast.post("/get_unallocated_investors")
+async def get_unallocated_investors(data: Request):
+    request = await data.json()
+    # print("request", request)
+    try:
+        # get investors from db where trust['release_date'] is equal to "" and trust['Category'] is equal to
+        # request['developent']
+        investors = list(db.investors.aggregate([
+            {
+                "$match": {
+                    "trust": {
+                        "$elemMatch": {
+                            "release_date": "",
+                            "Category": request['development']
+                        }
+                    }
+                }
+            },
+            {
+                "$addFields": {
+                    "trust": {
+                        "$filter": {
+                            "input": "$trust",
+                            "as": "trust",
+                            "cond": {
+                                "$and": [
+                                    {"$eq": ["$$trust.release_date", ""]},
+                                    {"$eq": ["$$trust.Category", request['development']]}
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        ]))
+
+        # get investors from db where trust['Category'] is equal to request['developent']
+        opportunity_invested = list(db.investors.aggregate([
+            {
+                "$match": {
+                    "trust": {
+                        "$elemMatch": {
+                            "Category": request['development']
+                        }
+                    }
+                }
+            },
+            {
+                "$addFields": {
+                    "trust": {
+                        "$filter": {
+                            "input": "$trust",
+                            "as": "trust",
+                            "cond": {
+                                "$eq": ["$$trust.Category", request['development']]
+                            }
+                        }
+                    }
+                }
+            }
+        ]))
+
+        # print("opportunity_invested", opportunity_invested[0]['trust'])
+        trust_list = []
+        for item in opportunity_invested:
+            for trust_item in item['trust']:
+                insert = {}
+                insert['investment_amount'] = float(trust_item['investment_amount'])
+                insert['opportunity_code'] = trust_item['opportunity_code']
+                trust_list.append(insert)
+
+        # print("trust", trust_list[0:2])
+
+        return_list = []
+        for investor in investors:
+            investor['id'] = str(investor['_id'])
+            del investor['_id']
+            for trust in investor['trust']:
+                trust['investor_acc_number'] = investor['investor_acc_number']
+                trust['investor_name'] = investor['investor_name']
+                trust['investor_surname'] = investor['investor_surname']
+                trust['investment_name'] = investor['investment_name']
+                trust['id'] = investor['id']
+                insert = {}
+                insert['investor_acc_number'] = trust['investor_acc_number']
+                insert['investor_name'] = trust['investor_name']
+                insert['investor_surname'] = trust['investor_surname']
+                insert['investment_name'] = trust['investment_name']
+                insert['id'] = trust['id']
+                insert['opportunity_code'] = trust['opportunity_code']
+                insert['investment_amount'] = trust['investment_amount']
+                insert['investment_number'] = trust['investment_number']
+                insert['Category'] = trust['Category']
+                insert['deposit_date'] = trust['deposit_date']
+                return_list.append(insert)
+
+        # print("return_list", return_list[0:3])
+
+        # sort return_list by deposit_date, opportunity_code, investment_number
+
+        return_list = sorted(return_list,
+                             key=lambda k: (k['deposit_date'], k['opportunity_code'], k['investment_number']))
+
+        opportunities = list(db.opportunities.find({"Category": request['development']}))
+        # print("opportunities", opportunities[0:2])
+
+        not_fully_invested = []
+
+        for opportunity in opportunities:
+            # filter trust as trust_filtered where trust['opportunity_code'] is equal to opportunity['opportunity_code']
+            # print("opportunity", opportunity['opportunity_code'], opportunity['opportunity_amount_required'])
+            amount_required = float(opportunity['opportunity_amount_required'])
+            # using list comprehension filter the trust list where trust['opportunity_code'] is equal to opportunity[
+            # 'opportunity_code']
+            trust_filtered = [trust for trust in trust_list if
+                              trust['opportunity_code'] == opportunity['opportunity_code']]
+            if trust_filtered:
+                # print("trust_filtered:", trust_filtered[0])
+                # sum the investment_amount in trust_filtered
+                amount_invested = sum([trust['investment_amount'] for trust in trust_filtered])
+
+            else:
+                amount_invested = 0
+
+            # print("amount_invested", amount_invested, amount_required)
+            if amount_invested < amount_required:
+                insert = {'opportunity_code': opportunity['opportunity_code'],
+                          'opportunity_shortfall': amount_required - amount_invested,
+                          'opportunity_amount_required': amount_required,
+                          'opportunity_invested_to_date': amount_invested,
+                          'opportunity_end_date': opportunity['opportunity_end_date'],
+                          'opportunity_release_date': "", 'opportunity_deposit_date': "",
+                          'Category': opportunity['Category'],
+                          'opportunity_end_date': opportunity['opportunity_end_date'],
+                          'opportunity_final_transfer_date': opportunity['opportunity_final_transfer_date'],
+                          'opportunity_interest_rate': float(opportunity['opportunity_interest_rate'])}
+
+                not_fully_invested.append(insert)
+
+        # print("not_fully_invested", not_fully_invested[0:2])
+
+        # print("investors", investors[0:2])
+
+        # sort not_fully_invested by opportunity_end_date, opprtunity_shortfall, opportunity_code
+        not_fully_invested = sorted(not_fully_invested,
+                                    key=lambda k: (k['opportunity_end_date'], k['opportunity_shortfall'],
+                                                   k['opportunity_code']))
+
+        list_to_return = {
+            "not Drawn": return_list,
+            "not fully invested": not_fully_invested,
+            "success": "success message"
+        }
+        return list_to_return
+        # return return_list
+
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Error"}
+
+
+@excel_sales_forecast.post("/process_unallocated_investors")
+async def process_unallocated_investors(data: Request):
+    request = await data.json()
+    # print("request", request['draws'][-2:])
+    # create a list called unallocated_investors and loop through request['draws'] and append to
+    # unallocated_investors where src = "unallocated" using list comprehension
+    unallocated_investors = [draw for draw in request['draws'] if draw['src'] == "unallocated"]
+    # print()
+    # print("unallocated_investors", unallocated_investors[0:2])
+    # loop through unallocated_investors and copy draw_date to release_date then convert draw_date to datetime and
+    # deduct 30 days and convert back to string and put it to deposit_date
+    for investor in unallocated_investors:
+        investor['release_date'] = investor['draw_date']
+        investor['draw_date'] = datetime.strptime(investor['draw_date'].replace("-", "/"), "%Y/%m/%d") - timedelta(
+            days=30)
+        investor['deposit_date'] = investor['draw_date'].strftime("%Y/%m/%d")
+        investor['total_investment'] = investor['opportunity_invested_to_date']
+        investor['unallocated_investment'] = investor['opportunity_shortfall']
+        investor['project_interest_rate'] = investor['opportunity_interest_rate']
+        del investor['investment_amount']
+        del investor['opportunity_release_date']
+        del investor['opportunity_deposit_date']
+        del investor['opportunity_shortfall']
+        del investor['opportunity_invested_to_date']
+        del investor['opportunity_interest_rate']
+        del investor['src']
+        del investor['draw_date']
+        del investor['draw_number']
+
+    # create a list called unreleased_investors and loop through request['draws'] and append to unreleased_investors
+    # where draw['src'] = "draw" using list comprehension print() print("draws", request['draws'])
+    # unreleased_investors = [draw for draw in request['draws'] if draw['src'] == "draw"]
+    unreleased_investors = [draw for draw in request['draws'] if 'src' in draw and draw['src'] == "draw"]
+
+
+    for draw in unreleased_investors:
+        draw['planned_release_date'] = draw['draw_date']
+        draw['draw'] = f"Draw{draw['draw_number']}."
+
+
+
+    print()
+    print("unreleased_investors", unreleased_investors)
+
+    # get
+
+    # investor['src'] = "allocated"
+    # print()
+    # print("investor", investor)
+
+    try:
+        delete = unallocated_investments.delete_many({})
+        # print("delete", delete)
+        insert = unallocated_investments.insert_many(unallocated_investors)
+        # print("insert", insert)
+        # get investor from db where investor_acc_number is equal to draw['investor_acc_number']
+        for draw in unreleased_investors:
+            investor = list(db.investors.find({"investor_acc_number": draw['investor_acc_number']}))
+            # print()
+            print("investor", investor)
+            id = str(investor[0]['_id'])
+            del investor[0]['_id']
+            for trust_item in investor[0]['trust']:
+                if trust_item['opportunity_code'] == draw['opportunity_code'] and trust_item['release_date'] == "" and trust_item['investment_number'] == draw['investment_number']:
+                    trust_item['draw'] = draw['draw']
+                    trust_item['planned_release_date'] = draw['planned_release_date']
+                    print(trust_item)
+            # update investor in db where _id is equal to id
+            db.investors.update_one({"_id": ObjectId(id)}, {"$set": investor[0]})
+
+        return {"message": "success"}
+
+
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Error"}

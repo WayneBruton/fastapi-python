@@ -16,6 +16,9 @@ class PDF(FPDF):
         self.unit = 'mm'
         self.format = 'A4'
 
+        # make right margin bigger
+        # self.r_margin = 25
+
     def footer(self):
         self.set_y(-15)
         self.set_font('helvetica', 'B', 6)
@@ -47,7 +50,9 @@ def print_otp_pdf(data):
     # pdf = PDF('P', 'mm', 'A4')
     pdf = PDF(data)
 
+
     pdf.set_auto_page_break(auto=True, margin=15)
+
     pdf.add_page()
     # pdf.set_font('helvetica', '', 10)
     pdf.set_fill_color(211, 211, 211)
@@ -291,6 +296,7 @@ def print_otp_pdf(data):
     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
     pdf.add_page()
+
 
     pdf.cell(0, 10, "**INFORMATION SCHEDULE**", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
@@ -642,7 +648,7 @@ def print_otp_pdf(data):
 
     pdf.cell(0, 3, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-    if data['development'] != "Endulini":
+    if data['development'] == "Heron View":
         pdf.cell(20, 7, f"**I**", align="C", markdown=True, border=1)
         pdf.cell(50, 7, f"**Electricity Deposit**", align="L", markdown=True, border=1)
         pdf.cell(120, 7, f"**R1200.00 Payable upon Registration to the Transfer Attorneys", align="L",
@@ -756,7 +762,8 @@ def print_otp_pdf(data):
                  new_y=YPos.NEXT)
 
     pdf.add_page()
-
+    new_right_margin = 100  # Adjust this value as needed
+    pdf.set_right_margin(new_right_margin)
     pdf.cell(0, 7, f"**STANDARD TERMS AND CONDITIONS**", align="C", markdown=True, border=0, new_x=XPos.LMARGIN,
              new_y=YPos.NEXT)
     pdf.cell(0, 7, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN,
@@ -781,8 +788,8 @@ def print_otp_pdf(data):
             if pdf.get_y() > 250:
                 pdf.add_page()
             pdf.cell(0, 4, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-            pdf.cell(20, 7, f"{item['section']}", align="C", markdown=True, border=0)
-            pdf.cell(50, 7, f"{item['text']}", align="L", markdown=True, border=0,
+            pdf.cell(10, 7, f"{item['section']}", align="C", markdown=True, border=0)
+            pdf.cell(40, 7, f"{item['text']}", align="L", markdown=True, border=0,
                      new_x=XPos.LMARGIN,
                      new_y=YPos.NEXT)
 
@@ -793,8 +800,8 @@ def print_otp_pdf(data):
             if pdf.get_y() > 250:
                 pdf.add_page()
             pdf.cell(0, 4, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-            pdf.cell(20, 7, f"{item['section']}", align="C", markdown=True, border=0)
-            pdf.multi_cell(170, 5, f"{item['text']}", align="J", markdown=True, border=0,
+            pdf.cell(10, 7, f"{item['section']}", align="C", markdown=True, border=0)
+            pdf.multi_cell(150, 5, f"{item['text']}", align="J", markdown=True, border=0,
                            new_x=XPos.LMARGIN,
                            new_y=YPos.NEXT)
             if item['initial']:
@@ -804,9 +811,9 @@ def print_otp_pdf(data):
             if pdf.get_y() > 250:
                 pdf.add_page()
             pdf.cell(0, 2, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-            pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
-            pdf.cell(20, 7, f"{item['section']}", align="C", markdown=True, border=0)
-            pdf.multi_cell(150, 5,
+            pdf.cell(10, 7, f"", align="C", markdown=True, border=0)
+            pdf.cell(10, 7, f"{item['section']}", align="C", markdown=True, border=0)
+            pdf.multi_cell(140, 5,
                            f"{item['text']}",
                            align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=0)
             if item['initial']:
@@ -815,10 +822,10 @@ def print_otp_pdf(data):
             if pdf.get_y() > 250:
                 pdf.add_page()
             pdf.cell(0, 2, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-            pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
-            pdf.cell(20, 7, f"", align="C", markdown=True, border=0)
-            pdf.cell(20, 7, f"{item['section']}", align="C", markdown=True, border=0)
-            pdf.multi_cell(130, 5,
+            pdf.cell(10, 7, f"", align="C", markdown=True, border=0)
+            pdf.cell(10, 7, f"", align="C", markdown=True, border=0)
+            pdf.cell(10, 7, f"{item['section']}", align="C", markdown=True, border=0)
+            pdf.multi_cell(120, 5,
                            f"{item['text']}",
                            align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT,
                            border=0)

@@ -179,21 +179,21 @@ def create_standard_conditions(data):
         {
             "type": 3,
             "section": "2.1.20",
-            "text": "**\"Rules\"** means the Management and Conduct Rules as Amended for the **\"{data["
-                    "'development'].upper()}\"**  Sectional Title Scheme as prescribed in terms of Section 10(2)(a) "
-                    "and (b) of the Sectional Titles Schemes Management Act No. 8 of 2011, subject to the approval "
-                    "the Chief Ombud, and shall include any substituting rules, available on request from the Agent "
-                    "or Seller.",
+            "text": f"**\"Rules\"** means the Management and Conduct Rules as Amended for the **\""
+                    f"{data['development'].upper()}\"**  Sectional Title Scheme as prescribed in terms of Section 10(2)(a) "
+                    f"and (b) of the Sectional Titles Schemes Management Act No. 8 of 2011, subject to the approval "
+                    f"the Chief Ombud, and shall include any substituting rules, available on request from the Agent "
+                    f"or Seller.",
             "initial": False,
         },
         {
             "type": 3,
             "section": "2.1.21",
-            "text": "**\"Scheme\"** means the **\"{data['development'].upper()}\"** Sectional Title Development to be "
-                    "established on the Land, comprising of sectional title residential Units and Exclusive Use "
-                    "Areas, which development may take place in phases and which is situated on the Land as depicted "
-                    "on the Locality, Development, Unit and Exclusive Use Area Plans, Annexure's **\"A,"
-                    "B & C\"** hereto",
+            "text": f"**\"Scheme\"** means the **\"{data['development'].upper()}\"** Sectional Title Development to be "
+                    f"established on the Land, comprising of sectional title residential Units and Exclusive Use "
+                    f"Areas, which development may take place in phases and which is situated on the Land as depicted "
+                    f"on the Locality, Development, Unit and Exclusive Use Area Plans, Annexure's **\"A,"
+                    f"B & C\"** hereto",
             "initial": False,
         },
         {
@@ -226,7 +226,7 @@ def create_standard_conditions(data):
                     f"attorneys\"** means Ilismi du Toit of LAÄS & SCHOLTZ INC, Queen Street Chambers, "
                     f"33 Queen Street, Durbanville, 7550, Tel (021) 975 0802 \nEmail: ilismi@lslaw.co.za, "
                     f"LAÄS & SCHOLTZ INC Attorneys Trust Bank Account details;  \nBank:  Standard Bank; Account "
-                    f"Number: 272255505;  Branch Code: 051001; (Ref: Unit Number / {data['development'].upper()})",
+                    f"Number: 272255505;  Branch Code: 051001; (Ref: {data['opportunity_code']} / {data['development'].upper()})",
             "initial": False,
         },
         {
@@ -255,7 +255,7 @@ def create_standard_conditions(data):
         {
             "type": 3,
             "section": "2.1.29",
-            "text": "***\"Transfer Date\"** means the date of registration of transfer of the Unit in the name of the "
+            "text": "**\"Transfer Date\"** means the date of registration of transfer of the Unit in the name of the "
                     "Purchaser in the deeds office.",
             "initial": False,
         },
@@ -336,14 +336,14 @@ def create_standard_conditions(data):
         {
             "type": 3,
             "section": "4.1.1",
-            "text": "The Purchaser shall pay the Seller's attorneys the deposit for the Property as stated in clause "
-                    "E2 of the Information Schedule within 3(three) days of signature of this Agreement by the "
-                    "Purchaser, which deposit shall be held in trust by the Seller's attorneys and invested in an "
-                    "interest-bearing account in accordance with the provisions of Section 26 of the Alienation of "
-                    "Land Act No 68 of 1981 (as amended) with interest to accrue to the Purchaser.  The provisions of "
-                    "this clause 4.2 shall constitute authority to the Seller's attorneys, in terms of Section 86(4) "
-                    "of the Legal Practice Act, 2014(Act No. 28 of 2014), to invest the deposit for the benefit of "
-                    "Purchaser pending registration of transfer.",
+            "text": f"The Purchaser shall pay the Seller's attorneys the deposit for the Property as stated in clause "
+                    f"E2 of the Information Schedule **within 3(three) days of signature of this Agreement** by the "
+                    f"Purchaser, which deposit shall be held in trust by the Seller's attorneys and invested in an "
+                    f"interest-bearing account in accordance with the provisions of Section 26 of the Alienation of "
+                    f"Land Act No 68 of 1981 (as amended) with interest to accrue to the Purchaser.  The provisions of "
+                    f"this clause 4.2 shall constitute authority to the Seller's attorneys, in terms of Section 86(4) "
+                    f"of the Legal Practice Act, 2014(Act No. 28 of 2014), to invest the deposit for the benefit of "
+                    f"Purchaser pending registration of transfer.",
             "initial": False,
         },
         {
@@ -441,7 +441,7 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "5.2",
-            "text": "TThe Seller shall be responsible for payment of the transfer costs of the Seller's attorneys "
+            "text": "**The Seller shall be responsible for payment of the transfer costs of the Seller's attorneys** "
                     "insofar as it relates to the transfer of the Property (plus VAT on such costs), costs of all "
                     "necessary affidavits and all other costs which have to be incurred in order to comply with the "
                     "statutes or other enactments or regulations relating to the passing of transfer of the Property.",
@@ -450,7 +450,8 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "5.3",
-            "text": "The Seller shall be responsible for payment of all bond costs (if any) (plus VAT on such costs), "
+            "text": "**The Seller shall be responsible for payment of all bond costs** (if any) (plus VAT on such "
+                    "costs),"
                     "costs of all necessary affidavits initiation and valuation fees charged by the bank and all "
                     "other costs which have to be incurred in order to comply with the statutes or other enactments "
                     "or regulations relating to the mortgage of the Property.  However, the Purchaser will be liable "
@@ -868,7 +869,7 @@ def create_standard_conditions(data):
             "type": 2,
             "section": "11.1",
             "text": "The Unit and Scheme shall be erected and completed on the Land substantially in accordance with "
-                    "the Plans and Specifications annexed hereto as Annexure's **A to G** and initialled by both "
+                    "the Plans and Specifications annexed hereto as Annexure's **A to C** and initialled by both "
                     "parties for identification purposes (\"the Unit and Scheme\").",
             "initial": False,
         },
@@ -876,7 +877,7 @@ def create_standard_conditions(data):
             "type": 2,
             "section": "11.2",
             "text": "Extras, variations, and omissions shall mean all work, which cannot reasonably be inferred from "
-                    "the Unit Plan and Specifications annexed hereto as Annexure1s **B and G**.",
+                    "the Unit Plan and Specifications annexed hereto as Annexure1s **B and C**.",
             "initial": False,
         },
         {
@@ -906,8 +907,8 @@ def create_standard_conditions(data):
             "section": "11.5",
             "text": "In the event of the building work being delayed by non-availability for any materials, plant or "
                     "labour, accident on work site for which the Seller is not responsible, bad weather, viz major or "
-                    "other reasonable cause the Seller shall not be liable to the Purchaser for any damages caused by "
-                    "the delay.",
+                    "other reasonable cause the **Seller shall not be liable to the Purchaser for any damages caused by "
+                    "the delay.**",
             "initial": True,
         },
         {
@@ -1221,7 +1222,7 @@ def create_standard_conditions(data):
         {
             "type": 2,
             "section": "19.3",
-            "text": "**The Purchaser agrees to make use of the services of MORTGAGE MAX, Tel no. 021 913 1944 (Sophia Vorster Tel no.  082 372 8074) as the mortgage originator for the loan referred to**",
+            "text": "**The Purchaser agrees to make use of the services of MORTGAGE MAX, Tel no. 021 913 1944 (Sophia Vorster Tel no.  082 372 8074) as the mortgage originator for the loan referred to in clause 19.1 above or any other mortgage originator appointed by the seller.**",
             "initial": True,
         },
         {
@@ -1756,9 +1757,9 @@ def create_standard_conditions(data):
             "type": 2,
             "section": "32.5",
             "text": "Kindly ensure that before signing this Agreement that you have had an adequate opportunity to "
-                    "understand these terms.  If you do not understand these terms or if you do not appreciate their "
+                    "understand these terms.  **If you do not understand these terms or if you do not appreciate their "
                     "effect, please ask for an explanation and do not sign the Agreement until the terms have been "
-                    "explained to your satisfaction.",
+                    "explained to your satisfaction.**",
             "initial": False,
         },
         {
