@@ -21,7 +21,7 @@ def create_draw_down_file(request):
     ws.sheet_properties.tabColor = "1072BA"
 
     # insert in row 3 "QUINATE CONSULTING (PTY) LTD" and make it bold
-    ws['B3'] = "QUINATE CONSULTING (PTY) LTD"
+    ws['B3'] = "Heron Projects (Pty) Ltd"
     ws['B3'].font = Font(bold=True)
     ws.append(["", "INVESTOR ALLOCATIONS"])
     ws.append(["", f"{request['drawdowns'][0]['Category']} PROJECT - DRAW {request['draw_number']}".upper()])
@@ -56,7 +56,7 @@ def create_draw_down_file(request):
             cell.alignment = Alignment(horizontal='center', vertical='center')
             cell.font = Font(bold=True)
             if col != 5:
-                ws.column_dimensions[get_column_letter(col)].width = 20
+                ws.column_dimensions[get_column_letter(col)].width = 22
             else:
                 ws.column_dimensions[get_column_letter(col)].width = 40
 
@@ -134,7 +134,7 @@ def create_draw_down_file(request):
 
     ws.append(["", "", "", "", "", "", "", ""])
     ws.append(["", "", "", "", "", "", "", ""])
-    ws.append(["", "CURRENT BALANCE", "", 0, "", "", "", ""])
+    ws.append(["", f"CURRENT MOMENTUM BALANCE as at {day} {months[month - 1]} {year}", "", 0, "", "", "", ""])
     # get current row number
     current_row = ws.max_row
     for col in range(2, 9):
@@ -176,8 +176,9 @@ def create_draw_down_file(request):
             cell.border = Border(top=Side(style='medium'))
 
     for index, item in enumerate(request['previous_draws']):
+        # draw_down_date
         ws.append(["", item['draw_number'], item['draw_down_amount'], item["planned_draw_date"], item["note"], "", "",
-                   item["draw_down_date"]])
+                   ""])
         current_row = ws.max_row
 
         if index == 0:
@@ -229,7 +230,6 @@ def create_draw_down_file(request):
             cell = ws.cell(row=current_row, column=col)
             cell.border = Border(right=Side(style='medium'))
 
-
     ws.append(["", "TOTAL DRAWS TO DATE", f"=sum(C{first_row}:C{current_row - 1})", "", "", "", "", ""])
     current_row = ws.max_row
     for col in range(2, 9):
@@ -246,7 +246,6 @@ def create_draw_down_file(request):
             # add a top border and make cell bold and bottom border of double line
             cell.border = Border(top=Side(style='medium'), bottom=Side(style='double'))
             cell.font = Font(bold=True)
-
 
     ws.append(["", "", "", "", "", "", "", ""])
     current_row = ws.max_row
@@ -265,19 +264,60 @@ def create_draw_down_file(request):
     ws.append(["", "", "", "", "", "", "", ""])
     ws.append(["", "", "", "", "", "", "", ""])
     ws.append(["", "", "", "", "", "", "", ""])
-    ws.append(["", "date", "", "date", "", "date", "", ""])
-    for col in [2, 4, 6]:
+    ws.append(["", "", "", "", "", "", "", ""])
+    ws.append(["", "", "", "", "", "", "", ""])
+    for col in [3, 4, 5, 6, 7]:
         cell = ws.cell(row=ws.max_row, column=col)
-        cell.border = Border(top=Side(style='medium'))
+        cell.border = Border(left=Side(style='medium'),
+                             right=Side(style='medium'), top=Side(style='medium'))
+    ws.append(["", "", "", "", "", "", "", ""])
+    for col in [3, 4, 5, 6, 7]:
+        cell = ws.cell(row=ws.max_row, column=col)
+        cell.border = Border(left=Side(style='medium'),
+                             right=Side(style='medium'))
+    ws.append(["", "", "", "", "", "", "", ""])
+    for col in [3, 4, 5, 6, 7]:
+        cell = ws.cell(row=ws.max_row, column=col)
+        cell.border = Border(left=Side(style='medium'),
+                             right=Side(style='medium'))
+    ws.append(["", "", "", "", "", "", "", ""])
+    for col in [3, 4, 5, 6, 7]:
+        cell = ws.cell(row=ws.max_row, column=col)
+        cell.border = Border(left=Side(style='medium'),
+                             right=Side(style='medium'))
+
+    ws.append(["","", "CN Morgan", "JW Haywood", "MD van Rooyen", "Leandri Admin",
+               "Deric Finance", ""])
+    for col in [3, 4,5, 6, 7]:
+        cell = ws.cell(row=ws.max_row, column=col)
+        cell.border = Border(top=Side(style='medium'), bottom=Side(style='medium'), left=Side(style='medium'),
+                             right=Side(style='medium'))
 
     ws.append(["", "", "", "", "", "", "", ""])
-    ws.append(["", "", "", "", "", "", "", ""])
-    ws.append(["", "", "", "", "", "", "", ""])
-    ws.append(["", "", "", "", "", "", "", ""])
-    ws.append(["", "CN Morgan", "", "JW Haywood", "", "MD van Rooyen", "", ""])
-    for col in [2, 4, 6]:
+    for col in [3, 4,5, 6, 7]:
         cell = ws.cell(row=ws.max_row, column=col)
-        cell.border = Border(top=Side(style='medium'))
+        cell.border = Border( left=Side(style='medium'),
+                             right=Side(style='medium'))
+    ws.append(["", "", "", "", "", "", "", ""])
+    for col in [3, 4,5, 6, 7]:
+        cell = ws.cell(row=ws.max_row, column=col)
+        cell.border = Border( left=Side(style='medium'),
+                             right=Side(style='medium'))
+    ws.append(["", "", "", "", "", "", "", ""])
+    for col in [3, 4,5, 6, 7]:
+        cell = ws.cell(row=ws.max_row, column=col)
+        cell.border = Border( left=Side(style='medium'),
+                             right=Side(style='medium'))
+    ws.append(["", "", "", "", "", "", "", ""])
+    for col in [3, 4,5, 6, 7]:
+        cell = ws.cell(row=ws.max_row, column=col)
+        cell.border = Border( left=Side(style='medium'),
+                             right=Side(style='medium'))
+    ws.append(["","", "date", "date", "date", "date", "date", ""])
+    for col in [3, 4,5, 6, 7]:
+        cell = ws.cell(row=ws.max_row, column=col)
+        cell.border = Border(top=Side(style='medium'), bottom=Side(style='medium'), left=Side(style='medium'),
+                             right=Side(style='medium'))
 
         wb.save(f"excel_files/{filename}.xlsx")
 

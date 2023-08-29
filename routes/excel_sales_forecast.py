@@ -1767,26 +1767,59 @@ async def process_draw(data: Request):
             del item['id']
             del item['_id']
             investor_list = list(db.investors.find({"investor_acc_number": item['investor_acc_number']}))
+            investor_id = str(investor_list[0]['_id'])
+            del investor_list[0]['_id']
+
+            # if investor_list[0]['investor_acc_number'] == 'ZWIL02':
+            #     print("investor_list", investor_list[0]['investments'][-1:])
+            #     print()
             for momentum in investor_list[0]['trust']:
                 if momentum['opportunity_code'] == item['opportunity_code'] and momentum['release_date'] == "":
                     momentum['release_date'] = item['draw_down_date']
                     momentum['draw'] = f"Draw{item['draw_number']}."
 
-                    insert = {'investor_acc_number': item['investor_acc_number'],
-                              'opportunity_code': momentum['opportunity_code'],
-                              'investment_number': momentum['investment_number'],
-                              'investment_amount': momentum['investment_amount'], 'draw': momentum['draw'],
-                              'release_date': momentum['release_date'], 'email_sent': False, 'end_date': "",
-                              'Category': momentum['Category'], "interest": momentum['interest'],
-                              'investment_interest_rate': momentum['project_interest_rate']}
+                    insert = {
+                        'opportunity_code': momentum['opportunity_code'],
+                        'investment_number': momentum['investment_number'],
+                        'investment_amount': momentum['investment_amount'], 'draw': momentum['draw'],
+                        'release_date': momentum['release_date'], 'email_sent': False, 'end_date': "",
+                        'Category': momentum['Category'], "interest": momentum['interest'],
+                        'investment_interest_rate': momentum['project_interest_rate'],
+                        'dateCreated': momentum['creation_date'], 'interest': '', 'rollover_amount': 0,
+                        'rollover_date': '', 'rollover_interest_rate': 0, 'rollover_interest': 0,
+                        'interestPaidOnTransfer': 0}
 
                     investor_list[0]['investments'].append(insert)
 
-            db.investors.update_one({"investor_acc_number": item['investor_acc_number']},
-                                    {"$set": {"investments": investor_list[0]['investments']}})
-            db.investors.update_one({"investor_acc_number": item['investor_acc_number']},
-                                    {"$set": {"trust": investor_list[0]['trust']}})
-            db.investor_Draws.update_one({"_id": ObjectId(id)}, {"$set": item})
+            # if investor_list[0]['investor_acc_number'] == 'ZWIL02':
+            #     print("trust", investor_list[0]['trust'][-1:])
+            #     print()
+            #     print("investor_list", investor_list[0]['investments'][-1:])
+            #     print()
+            #     print("investor_list", investor_list[0])
+
+            # use a transaction to post both the investor and investor_Draws
+            with db.client.start_session() as session:
+                # Start the transaction
+                with session.start_transaction():
+                    try:
+                        db.investors.update_one({"_id": ObjectId(investor_id)}, {"$set": investor_list[0]})
+                        db.investor_Draws.update_one({"_id": ObjectId(id)}, {"$set": item})
+
+                        # If everything goes well, commit the transaction
+                        session.commit_transaction()
+
+                    except Exception as e:
+                        # If an error occurs, abort the transaction
+                        print("Error:", e)
+                        session.abort_transaction()
+
+                # End the session (no need to manually commit or end the session)
+                # The session context manager automatically handles it
+
+            #
+
+            # print("item", item)
         return {"message": "success"}
     except Exception as e:
         print("Error:", e)
@@ -1988,12 +2021,9 @@ async def process_unallocated_investors(data: Request):
     # unreleased_investors = [draw for draw in request['draws'] if draw['src'] == "draw"]
     unreleased_investors = [draw for draw in request['draws'] if 'src' in draw and draw['src'] == "draw"]
 
-
     for draw in unreleased_investors:
         draw['planned_release_date'] = draw['draw_date']
         draw['draw'] = f"Draw{draw['draw_number']}."
-
-
 
     print()
     print("unreleased_investors", unreleased_investors)
@@ -2017,7 +2047,8 @@ async def process_unallocated_investors(data: Request):
             id = str(investor[0]['_id'])
             del investor[0]['_id']
             for trust_item in investor[0]['trust']:
-                if trust_item['opportunity_code'] == draw['opportunity_code'] and trust_item['release_date'] == "" and trust_item['investment_number'] == draw['investment_number']:
+                if trust_item['opportunity_code'] == draw['opportunity_code'] and trust_item['release_date'] == "" and \
+                        trust_item['investment_number'] == draw['investment_number']:
                     trust_item['draw'] = draw['draw']
                     trust_item['planned_release_date'] = draw['planned_release_date']
                     print(trust_item)
