@@ -1,4 +1,6 @@
 import os
+
+
 from bson import ObjectId
 from fastapi import APIRouter, Request, BackgroundTasks
 from fastapi.responses import FileResponse
@@ -1673,7 +1675,7 @@ async def send_email(data: Request):
 async def create_draw_doc(data: Request):
     request = await data.json()
 
-    print("request", request)
+    # print("request", request)
     investor_acc_numbers = []
     for investor in request['drawdowns']:
         # if investor['_id'] exists then delete it
@@ -1719,11 +1721,72 @@ async def create_draw_doc(data: Request):
                     investor['investment_name'] = investor_db['investor_surname'] + " " + investor_db['investor_name'][
                                                                                           :1]
 
+    app_total = list(db.investors.find({}))
+
+    new_app_total = []
+
+    if request['drawdowns'][0]['Category'] == "Heron View" or request['drawdowns'][0]['Category'] == "Heron Fields":
+        Category = "Heron"
+    else:
+        Category = "Endulini"
+
+    for item in app_total:
+        for trust in item['trust']:
+            trust['investor_acc_number'] = item['investor_acc_number']
+            new_app_total.append(trust)
+
+    # if Category = "Heron" then filter new_app_total where Category is equal to "Heron View" or "Heron Fields"
+    # else filter new_app_total where Category is equal to "Endulini"
+    if Category == "Heron":
+        new_app_total = list(
+            filter(lambda trust: trust['Category'] == "Heron View" or trust['Category'] == 'Heron Fields',
+                   new_app_total))
+    else:
+        new_app_total = list(filter(lambda trust: trust['Category'] == "Endulini", new_app_total))
+
+    # filter out of new_app_total where release_date is equal to ""
+    new_app_total = list(filter(lambda trust: trust['release_date'] != "", new_app_total))
+
+    new_app_total = [investor for investor in new_app_total if
+                     not (investor['investor_acc_number'] == "ZCAM01" and investor[
+                         'opportunity_code'] == "HFA101" and investor['investment_number'] == 1)]
+
+    new_app_total = [investor for investor in new_app_total if
+                     not (investor['investor_acc_number'] == "ZJHO01" and investor[
+                         'opportunity_code'] == "HFA304" and investor['investment_number'] == 1)]
+
+    new_app_total = [investor for investor in new_app_total if
+                     not (investor['investor_acc_number'] == "ZPJB01" and investor[
+                         'opportunity_code'] == "HFA205" and investor['investment_number'] == 1)]
+
+    new_app_total = [investor for investor in new_app_total if
+                     not (investor['investor_acc_number'] == "ZERA01" and investor[
+                         'opportunity_code'] == "EA205" and investor['investment_number'] == 3)]
+
+    new_app_total = [investor for investor in new_app_total if
+                     not (investor['investor_acc_number'] == "ZVOL01" and investor[
+                         'opportunity_code'] == "EA103" and investor['investment_number'] == 3)]
+
+
+    # save new_app_total to csv file but investment_amount needs to be a number and not a string
+    # for investor in new_app_total:
+    #     investor['investment_amount'] = float(investor['investment_amount'])
+    # df = pd.DataFrame(new_app_total)
+    # df.to_csv('excel_files/app_total.csv', index=False)
+
+
+
+
+    # as final_app_total add all the investment_amounts
+    final_app_total = sum([float(investor['investment_amount']) for investor in new_app_total])
+
+    print("app_total", final_app_total)
+
     # print(request['drawdowns'][0])
 
     # print(request)
 
-    file_name = create_draw_down_file(request=request)
+    file_name = create_draw_down_file(request=request, app_total=final_app_total)
 
     file_name = f"{file_name}.xlsx"
 

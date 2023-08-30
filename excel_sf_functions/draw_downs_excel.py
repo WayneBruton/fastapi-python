@@ -8,7 +8,7 @@ import time
 import datetime
 
 
-def create_draw_down_file(request):
+def create_draw_down_file(request, app_total):
     start_time = time.time()
     filename = 'Investor Allocations'
     months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
@@ -177,8 +177,16 @@ def create_draw_down_file(request):
 
     for index, item in enumerate(request['previous_draws']):
         # draw_down_date
-        ws.append(["", item['draw_number'], item['draw_down_amount'], item["planned_draw_date"], item["note"], "", "",
-                   ""])
+        if index == 1:
+            ws.append(
+                ["", item['draw_number'], item['draw_down_amount'] - 100000, item["planned_draw_date"], item["note"], "", "",
+                 ""])
+        elif index == 2:
+            ws.append(["", item['draw_number'], item['draw_down_amount'] - 100000, item["planned_draw_date"], item["note"], "", "",
+                       ""])
+        else:
+            ws.append(["", item['draw_number'], item['draw_down_amount'], item["planned_draw_date"], item["note"], "", "",
+                       ""])
         current_row = ws.max_row
 
         if index == 0:
@@ -222,6 +230,7 @@ def create_draw_down_file(request):
 
     ws.append(["", "", "", "", "", "", "", ""])
     current_row = ws.max_row
+    total_draws = ws.max_row
     for col in range(2, 9):
         if col == 2:
             cell = ws.cell(row=current_row, column=col)
@@ -262,6 +271,49 @@ def create_draw_down_file(request):
 
     ws.append(["", "", "", "", "", "", "", ""])
     ws.append(["", "", "", "", "", "", "", ""])
+    ws.append(["", "CASHFLOW FINANCE - DERIC", 0, "Dynamic", "", "", "", ""])
+    # format as currency with 2 decimal places in column 'C'
+    cell = ws.cell(row=ws.max_row, column=3)
+    cell.number_format = '#,##0.00'
+    start_sum = ws.max_row
+    # print("start_sum", start_sum)
+    ws.append(["", "GLC NOT ON DRAW", 0, "", "", "", "", ""])
+    cell = ws.cell(row=ws.max_row, column=3)
+    cell.number_format = '#,##0.00'
+    ws.append(["", "ROUNDING", 0, "", "", "", "", ""])
+    cell = ws.cell(row=ws.max_row, column=3)
+    cell.number_format = '#,##0.00'
+    ws.append(["", "", "", "", "", "", "", ""])
+    end_sum = ws.max_row
+    # print("end_sum", ws.max_row)
+    ws.append(["", "TOTAL DRAW", f"=SUM(C{start_sum}:C{end_sum})", f"=C{end_sum + 1}-C{end_sum + 3}-C{total_draws - 1}", "", "", "", ""])
+    # put a top border on column 'C' of current row and a bottom border of double line
+    cell = ws.cell(row=ws.max_row, column=3)
+    cell.border = Border(top=Side(style='medium'), bottom=Side(style='double'))
+    cell.number_format = '#,##0.00'
+    cell.font = Font(bold=True)
+
+    ws.append(["", "", "", "", "", "", "", ""])
+    ws.append(["", "APP", app_total, "", "", "", "", ""])
+    app_total_row = ws.max_row
+    cell = ws.cell(row=ws.max_row, column=3)
+    cell.number_format = '#,##0.00'
+    cell.font = Font(bold=True)
+
+    ws.append(["", "", "", "", "", "", "", ""])
+    ws.append(["", "Reconciliation", "", "", "", "", "", ""])
+    ws.append(["", "Lebusa", 0, "Previous Error", "", "", "", ""])
+    ws.append(["", "INTEREST", 137832.56, "Interest received from STBB", "", "", "", ""])
+    interest_row = ws.max_row
+    cell = ws.cell(row=ws.max_row, column=3)
+    cell.number_format = '#,##0.00'
+    ws.append(["", "", "", "", "", "", "", ""])
+    ws.append(["", "CHECK", f"=C{total_draws + 1}-C{total_draws - 1}-C{interest_row}-C{app_total_row}", "", "", "", "", ""])
+    cell = ws.cell(row=ws.max_row, column=3)
+    cell.border = Border(top=Side(style='medium'), bottom=Side(style='double'))
+    cell.font = Font(bold=True)
+    cell.number_format = '#,##0.00'
+    ws.append(["", "", "", "", "", "", "", ""])
     ws.append(["", "", "", "", "", "", "", ""])
     ws.append(["", "", "", "", "", "", "", ""])
     ws.append(["", "", "", "", "", "", "", ""])
@@ -286,35 +338,35 @@ def create_draw_down_file(request):
         cell.border = Border(left=Side(style='medium'),
                              right=Side(style='medium'))
 
-    ws.append(["","", "CN Morgan", "JW Haywood", "MD van Rooyen", "Leandri Admin",
+    ws.append(["", "", "CN Morgan", "JW Haywood", "MD van Rooyen", "Leandri Admin",
                "Deric Finance", ""])
-    for col in [3, 4,5, 6, 7]:
+    for col in [3, 4, 5, 6, 7]:
         cell = ws.cell(row=ws.max_row, column=col)
         cell.border = Border(top=Side(style='medium'), bottom=Side(style='medium'), left=Side(style='medium'),
                              right=Side(style='medium'))
 
     ws.append(["", "", "", "", "", "", "", ""])
-    for col in [3, 4,5, 6, 7]:
+    for col in [3, 4, 5, 6, 7]:
         cell = ws.cell(row=ws.max_row, column=col)
-        cell.border = Border( left=Side(style='medium'),
+        cell.border = Border(left=Side(style='medium'),
                              right=Side(style='medium'))
     ws.append(["", "", "", "", "", "", "", ""])
-    for col in [3, 4,5, 6, 7]:
+    for col in [3, 4, 5, 6, 7]:
         cell = ws.cell(row=ws.max_row, column=col)
-        cell.border = Border( left=Side(style='medium'),
+        cell.border = Border(left=Side(style='medium'),
                              right=Side(style='medium'))
     ws.append(["", "", "", "", "", "", "", ""])
-    for col in [3, 4,5, 6, 7]:
+    for col in [3, 4, 5, 6, 7]:
         cell = ws.cell(row=ws.max_row, column=col)
-        cell.border = Border( left=Side(style='medium'),
+        cell.border = Border(left=Side(style='medium'),
                              right=Side(style='medium'))
     ws.append(["", "", "", "", "", "", "", ""])
-    for col in [3, 4,5, 6, 7]:
+    for col in [3, 4, 5, 6, 7]:
         cell = ws.cell(row=ws.max_row, column=col)
-        cell.border = Border( left=Side(style='medium'),
+        cell.border = Border(left=Side(style='medium'),
                              right=Side(style='medium'))
-    ws.append(["","", "date", "date", "date", "date", "date", ""])
-    for col in [3, 4,5, 6, 7]:
+    ws.append(["", "", "date", "date", "date", "date", "date", ""])
+    for col in [3, 4, 5, 6, 7]:
         cell = ws.cell(row=ws.max_row, column=col)
         cell.border = Border(top=Side(style='medium'), bottom=Side(style='medium'), left=Side(style='medium'),
                              right=Side(style='medium'))
