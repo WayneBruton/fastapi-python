@@ -1967,6 +1967,7 @@ async def get_unallocated_investors(data: Request):
             investor['id'] = str(investor['_id'])
             del investor['_id']
             for trust in investor['trust']:
+
                 trust['investor_acc_number'] = investor['investor_acc_number']
                 trust['investor_name'] = investor['investor_name']
                 trust['investor_surname'] = investor['investor_surname']
@@ -1978,6 +1979,7 @@ async def get_unallocated_investors(data: Request):
                 insert['investor_surname'] = trust['investor_surname']
                 insert['investment_name'] = trust['investment_name']
                 insert['id'] = trust['id']
+                insert['planned_draw_date'] = trust.get('planned_draw_date',"")
                 insert['opportunity_code'] = trust['opportunity_code']
                 insert['investment_amount'] = trust['investment_amount']
                 insert['investment_number'] = trust['investment_number']
@@ -2037,9 +2039,15 @@ async def get_unallocated_investors(data: Request):
                                     key=lambda k: (k['opportunity_end_date'], k['opportunity_shortfall'],
                                                    k['opportunity_code']))
 
+        future_draws = list(db.future_cf_requirements.find({}))
+        for draw in future_draws:
+            draw['id'] = str(draw['_id'])
+            del draw['_id']
+
         list_to_return = {
             "not Drawn": return_list,
             "not fully invested": not_fully_invested,
+            "futureDraws": future_draws,
             "success": "success message"
         }
         return list_to_return
@@ -2061,23 +2069,24 @@ async def process_unallocated_investors(data: Request):
     # print("unallocated_investors", unallocated_investors[0:2])
     # loop through unallocated_investors and copy draw_date to release_date then convert draw_date to datetime and
     # deduct 30 days and convert back to string and put it to deposit_date
-    for investor in unallocated_investors:
-        investor['release_date'] = investor['draw_date']
-        investor['draw_date'] = datetime.strptime(investor['draw_date'].replace("-", "/"), "%Y/%m/%d") - timedelta(
-            days=30)
-        investor['deposit_date'] = investor['draw_date'].strftime("%Y/%m/%d")
-        investor['total_investment'] = investor['opportunity_invested_to_date']
-        investor['unallocated_investment'] = investor['opportunity_shortfall']
-        investor['project_interest_rate'] = investor['opportunity_interest_rate']
-        del investor['investment_amount']
-        del investor['opportunity_release_date']
-        del investor['opportunity_deposit_date']
-        del investor['opportunity_shortfall']
-        del investor['opportunity_invested_to_date']
-        del investor['opportunity_interest_rate']
-        del investor['src']
-        del investor['draw_date']
-        del investor['draw_number']
+    if unallocated_investors:
+        for investor in unallocated_investors:
+            investor['release_date'] = investor['draw_date']
+            investor['draw_date'] = datetime.strptime(investor['draw_date'].replace("-", "/"), "%Y/%m/%d") - timedelta(
+                days=30)
+            investor['deposit_date'] = investor['draw_date'].strftime("%Y/%m/%d")
+            investor['total_investment'] = investor['opportunity_invested_to_date']
+            investor['unallocated_investment'] = investor['opportunity_shortfall']
+            investor['project_interest_rate'] = investor['opportunity_interest_rate']
+            del investor['investment_amount']
+            del investor['opportunity_release_date']
+            del investor['opportunity_deposit_date']
+            del investor['opportunity_shortfall']
+            del investor['opportunity_invested_to_date']
+            del investor['opportunity_interest_rate']
+            del investor['src']
+            del investor['draw_date']
+            del investor['draw_number']
 
     # create a list called unreleased_investors and loop through request['draws'] and append to unreleased_investors
     # where draw['src'] = "draw" using list comprehension print() print("draws", request['draws'])
@@ -2089,7 +2098,7 @@ async def process_unallocated_investors(data: Request):
         draw['draw'] = f"Draw{draw['draw_number']}."
 
     print()
-    print("unreleased_investors", unreleased_investors)
+    # print("unreleased_investors", unreleased_investors)
 
     # get
 
@@ -2098,25 +2107,31 @@ async def process_unallocated_investors(data: Request):
     # print("investor", investor)
 
     try:
-        delete = unallocated_investments.delete_many({})
+        db.future_cf_requirements.delete_many({})
+
+        unallocated_investments.delete_many({})
         # print("delete", delete)
-        insert = unallocated_investments.insert_many(unallocated_investors)
-        # print("insert", insert)
+        if unallocated_investors:
+            insert = unallocated_investments.insert_many(unallocated_investors)
+            # print("insert", insert)
         # get investor from db where investor_acc_number is equal to draw['investor_acc_number']
-        for draw in unreleased_investors:
-            investor = list(db.investors.find({"investor_acc_number": draw['investor_acc_number']}))
-            # print()
-            print("investor", investor)
-            id = str(investor[0]['_id'])
-            del investor[0]['_id']
-            for trust_item in investor[0]['trust']:
-                if trust_item['opportunity_code'] == draw['opportunity_code'] and trust_item['release_date'] == "" and \
-                        trust_item['investment_number'] == draw['investment_number']:
-                    trust_item['draw'] = draw['draw']
-                    trust_item['planned_release_date'] = draw['planned_release_date']
-                    print(trust_item)
-            # update investor in db where _id is equal to id
-            db.investors.update_one({"_id": ObjectId(id)}, {"$set": investor[0]})
+        if unreleased_investors:
+            for draw in unreleased_investors:
+                investor = list(db.investors.find({"investor_acc_number": draw['investor_acc_number']}))
+                # print("investor", investor)
+                # print()
+                # print("investor", investor)
+                id = str(investor[0]['_id'])
+                del investor[0]['_id']
+                for trust_item in investor[0]['trust']:
+                    if trust_item['opportunity_code'] == draw['opportunity_code'] and trust_item['release_date'] == "" and \
+                            trust_item['investment_number'] == draw['investment_number']:
+                        trust_item['draw'] = draw['draw']
+                        trust_item['planned_release_date'] = draw['planned_release_date']
+                        print(trust_item)
+                # update investor in db where _id is equal to id
+                # print("investor", investor[0])
+                db.investors.update_one({"_id": ObjectId(id)}, {"$set": investor[0]})
 
         return {"message": "success"}
 
@@ -2124,3 +2139,17 @@ async def process_unallocated_investors(data: Request):
     except Exception as e:
         print("Error:", e)
         return {"message": "Error"}
+
+@excel_sales_forecast.post("/update_future_cf_requirements")
+async def update_future_cf_requirements(data: Request):
+    request = await data.json()
+    print("request", request['futureDraws'])
+    future_draws_list = request['futureDraws']
+    try:
+        db.future_cf_requirements.delete_many({})
+        db.future_cf_requirements.insert_many(request['futureDraws'])
+        return {"message": "success"}
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Error"}
+
