@@ -553,7 +553,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         # Convert Rates_list Efective_date to datetime
 
         for rate in rates_list:
-            rate['Efective_date'] = datetime.strptime(rate['Efective_date'], '%Y-%m-%d')
+            rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace('/','-'), '%Y-%m-%d')
         # order rates_list by Efective_date in descending order
         rates_list = sorted(rates_list, key=lambda k: k['Efective_date'], reverse=True)
 
@@ -593,11 +593,11 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 # planned_release_date exists in investment then investment["planned_release_date"] = deposit_date +
                 # 30 days else investment["planned_release_date"] = ""
                 if "planned_release_date" in investment and investment["planned_release_date"] != "":
-                    investment["planned_release_date"] = str(datetime.strptime(investment["planned_release_date"],
+                    investment["planned_release_date"] = str(datetime.strptime(investment["planned_release_date"].replace('-','/'),
                                                                                '%Y/%m/%d')).split(" ")[0]
                 else:
 
-                    investment["planned_release_date"] = str(datetime.strptime(investment["deposit_date"],
+                    investment["planned_release_date"] = str(datetime.strptime(investment["deposit_date"].replace('-','/'),
                                                                                '%Y/%m/%d') + timedelta(days=30)).split(
                         " ")[
                         0]
@@ -1059,7 +1059,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
     except Exception as e:
         print("Error:", e)
-        return []
+        return {"error": e }
 
 
 def investment_status(request):
