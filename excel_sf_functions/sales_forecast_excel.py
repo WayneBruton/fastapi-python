@@ -134,7 +134,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
     for item in development_units:
         row_data = [item['investor_acc_number'], item['opportunity_code'], "B", "Dev Unit",
-                    float(item['opportunity_amount_required']),
+                    float(item.get('opportunity_amount_required', 1100000)),
                     "",
                     False, "", "",
                     "", "", "",
