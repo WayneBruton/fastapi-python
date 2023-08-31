@@ -1,6 +1,5 @@
 import os
 
-
 from bson import ObjectId
 from fastapi import APIRouter, Request, BackgroundTasks
 from fastapi.responses import FileResponse
@@ -1767,15 +1766,11 @@ async def create_draw_doc(data: Request):
                      not (investor['investor_acc_number'] == "ZVOL01" and investor[
                          'opportunity_code'] == "EA103" and investor['investment_number'] == 3)]
 
-
     # save new_app_total to csv file but investment_amount needs to be a number and not a string
     # for investor in new_app_total:
     #     investor['investment_amount'] = float(investor['investment_amount'])
     # df = pd.DataFrame(new_app_total)
     # df.to_csv('excel_files/app_total.csv', index=False)
-
-
-
 
     # as final_app_total add all the investment_amounts
     final_app_total = sum([float(investor['investment_amount']) for investor in new_app_total])
@@ -1967,7 +1962,6 @@ async def get_unallocated_investors(data: Request):
             investor['id'] = str(investor['_id'])
             del investor['_id']
             for trust in investor['trust']:
-
                 trust['investor_acc_number'] = investor['investor_acc_number']
                 trust['investor_name'] = investor['investor_name']
                 trust['investor_surname'] = investor['investor_surname']
@@ -1979,7 +1973,7 @@ async def get_unallocated_investors(data: Request):
                 insert['investor_surname'] = trust['investor_surname']
                 insert['investment_name'] = trust['investment_name']
                 insert['id'] = trust['id']
-                insert['planned_draw_date'] = trust.get('planned_draw_date',"")
+                insert['planned_draw_date'] = trust.get('planned_draw_date', "")
                 insert['opportunity_code'] = trust['opportunity_code']
                 insert['investment_amount'] = trust['investment_amount']
                 insert['investment_number'] = trust['investment_number']
@@ -2040,6 +2034,7 @@ async def get_unallocated_investors(data: Request):
                                                    k['opportunity_code']))
 
         future_draws = list(db.future_cf_requirements.find({}))
+        # print("future_draws:",future_draws)
         for draw in future_draws:
             draw['id'] = str(draw['_id'])
             del draw['_id']
@@ -2061,12 +2056,9 @@ async def get_unallocated_investors(data: Request):
 @excel_sales_forecast.post("/process_unallocated_investors")
 async def process_unallocated_investors(data: Request):
     request = await data.json()
-    # print("request", request['draws'][-2:])
     # create a list called unallocated_investors and loop through request['draws'] and append to
     # unallocated_investors where src = "unallocated" using list comprehension
     unallocated_investors = [draw for draw in request['draws'] if draw['src'] == "unallocated"]
-    # print()
-    # print("unallocated_investors", unallocated_investors[0:2])
     # loop through unallocated_investors and copy draw_date to release_date then convert draw_date to datetime and
     # deduct 30 days and convert back to string and put it to deposit_date
     if unallocated_investors:
@@ -2097,48 +2089,37 @@ async def process_unallocated_investors(data: Request):
         draw['planned_release_date'] = draw['draw_date']
         draw['draw'] = f"Draw{draw['draw_number']}."
 
-    print()
-    # print("unreleased_investors", unreleased_investors)
-
-    # get
-
-    # investor['src'] = "allocated"
-    # print()
-    # print("investor", investor)
-
     try:
         db.future_cf_requirements.delete_many({})
 
         unallocated_investments.delete_many({})
-        # print("delete", delete)
+
         if unallocated_investors:
             insert = unallocated_investments.insert_many(unallocated_investors)
-            # print("insert", insert)
+
         # get investor from db where investor_acc_number is equal to draw['investor_acc_number']
         if unreleased_investors:
             for draw in unreleased_investors:
                 investor = list(db.investors.find({"investor_acc_number": draw['investor_acc_number']}))
-                # print("investor", investor)
-                # print()
-                # print("investor", investor)
+
                 id = str(investor[0]['_id'])
                 del investor[0]['_id']
                 for trust_item in investor[0]['trust']:
-                    if trust_item['opportunity_code'] == draw['opportunity_code'] and trust_item['release_date'] == "" and \
+                    if trust_item['opportunity_code'] == draw['opportunity_code'] and trust_item[
+                        'release_date'] == "" and \
                             trust_item['investment_number'] == draw['investment_number']:
                         trust_item['draw'] = draw['draw']
                         trust_item['planned_release_date'] = draw['planned_release_date']
                         print(trust_item)
-                # update investor in db where _id is equal to id
-                # print("investor", investor[0])
+
                 db.investors.update_one({"_id": ObjectId(id)}, {"$set": investor[0]})
 
         return {"message": "success"}
 
-
     except Exception as e:
         print("Error:", e)
         return {"message": "Error"}
+
 
 @excel_sales_forecast.post("/update_future_cf_requirements")
 async def update_future_cf_requirements(data: Request):
@@ -2152,4 +2133,3 @@ async def update_future_cf_requirements(data: Request):
     except Exception as e:
         print("Error:", e)
         return {"message": "Error"}
-
