@@ -80,6 +80,8 @@ def create_excel_array(data):
     rowblank_1_data = ["RENTALS", "", "", "", "", ""]
     rowblank_data = []
     rental1_data = ["Marked for Rent", "", "", "", "", ""]
+    rental1A_data = ["Potential Monthly Income", "", "", "", "", ""]
+
     rental2_data = ["Rented Out", "", "", "", "", ""]
     rental3_data = ["Deposit Held", "", "", "", "", ""]
     rental4_data = ["Gross Rent", "", "", "", "", ""]
@@ -166,6 +168,7 @@ def create_excel_array(data):
         row50_data.append(item['early_release'])
 
         rental1_data.append(item['rental_marked_for_rent'])
+        rental1A_data.append(item['potential_income'])
         rental2_data.append(item['rental_rented_out'])
         rental3_data.append(item['rental_deposit_amount'])
         rental4_data.append(item['rental_gross_amount'])
@@ -194,7 +197,7 @@ def create_excel_array(data):
                        rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data,
                        rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data,
                        rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_1_data,
-                       rowblank_data, rental1_data, rental2_data, rental3_data, rental4_data, rental5_data,
+                       rowblank_data, rental1_data,rental1A_data, rental2_data, rental3_data, rental4_data, rental5_data,
                        rental6_data, rental7_data, rental8_data, rental9_data, rental10_data, rental11_data,
                        rental12_data, rental13_data]
 

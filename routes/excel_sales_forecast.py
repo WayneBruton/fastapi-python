@@ -992,6 +992,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                  == investor['opportunity_code']]
 
                 investor["rental_marked_for_rent"] = filtered_opps[0].get("rental_marked_for_rent", False)
+
                 investor["rental_rented_out"] = filtered_opps[0].get("rental_rented_out", False)
                 investor["rental_start_date"] = filtered_opps[0].get("rental_start_date", "")
                 investor["rental_end_date"] = filtered_opps[0].get("rental_end_date", "")
@@ -1005,6 +1006,21 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 investor["rental_rates"] = float(filtered_opps[0].get("rental_rates", 0))
                 investor["rental_other_expenses"] = float(filtered_opps[0].get("rental_other_expenses", 0))
                 investor["rental_nett_amount"] = float(filtered_opps[0].get("rental_nett_amount", 0))
+                if investor["rental_marked_for_rent"]:
+                    investor["potential_income"] = investor["rental_nett_amount"]
+                    investor["rental_start_date"] = ""
+                    investor["rental_end_date"] =  ""
+                    investor["rental_income_to_date"] =  0
+                    investor["rental_income_to_contract_end"] =  0
+                    investor["rental_gross_amount"] =  0
+                    investor["rental_deposit_amount"] =  0
+                    investor["rental_levy_amount"] =  0
+                    investor["rental_commission"] =  0
+                    investor["rental_rates"] =  0
+                    investor["rental_other_expenses"] =  0
+                    investor["rental_nett_amount"] = 0
+                else:
+                    investor["potential_income"] = 0
 
         for investor in final_investors_list:
             if investor['release_date'] == "" and investor['planned_release_date'] != "":
