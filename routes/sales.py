@@ -99,6 +99,7 @@ def get_files_required_for_sales():
         file_list_items = [x.split("/")[1] for x in file_list_items if type(x) == str]
 
         list_of_filenames = os.listdir("sales_documents")
+        # print("file_list_items", list_of_filenames)
 
         final_list_to_download = [x for x in file_list_items if x not in list_of_filenames]
 
@@ -177,6 +178,7 @@ async def get_units_for_sales(data: Request):
     # thousand separator
     for unit in result:
         unit['opportunity_sale_price'] = float(unit['opportunity_sale_price'])
+        unit['actual_price'] = unit['opportunity_sale_price']
         unit['opportunity_sale_price'] = f"R{unit['opportunity_sale_price']:,.2f}"
 
     # print(result)
@@ -225,7 +227,7 @@ async def get_all_units_sold(data: Request):
                 'opportunity_pay_type': 1,
                 'opportunity_client_type': 1,
                 'opportunity_client_no': 1,
-
+                'opportunity_specials': 1,
                 'opportunity_uploadId': 1,
                 'opportunity_uploadId_sec': 1,
                 'opportunity_uploadId_3rd': 1,
@@ -255,8 +257,8 @@ async def get_all_units_sold(data: Request):
             }
         }
     ]))
-    if len(response) > 0:
-        print(response[0])
+    # if len(response) > 0:
+        # print(response[0])
     for sale in response:
 
         if 'opportunity_otp' not in sale:
@@ -433,6 +435,12 @@ async def get_all_units_sold(data: Request):
             sale['registered'] = True
         else:
             sale['registered'] = False
+        sale['opportunity_base_price_str'] = float(sale['opportunity_base_price'])
+        # convert to currency
+        sale['opportunity_base_price_str'] = f"R{sale['opportunity_base_price_str']:,.2f}"
+        sale['opportunity_specials'] = sale.get('opportunity_specials', [""])
+        # convert opportunity_specials to a string
+        sale['opportunity_specials'] = ", ".join(sale['opportunity_specials'])
 
         del sale['opportunity_otp']
         del sale['opportunity_deposite_date']
@@ -484,7 +492,7 @@ async def get_all_units_sold(data: Request):
 async def delete_sale(data: Request):
     request = await data.json()
     try:
-        print(request)
+        # print(request)
         result = sales_processed.delete_one({"opportunity_code": request['opportunity_code']})
         result2 = opportunities.update_one({"opportunity_code": request['opportunity_code']},
                                            {"$set": {"opportunity_sold": False, "opportunity_final_transfer_date": ""}})
@@ -613,7 +621,7 @@ async def get_sold_unit(data: Request):
 @sales.post("/upload_sales_file")
 async def upload_file(data: Request):
     form = await data.form()
-    print("form", form['fileName'])
+    # print("form", form['fileName'])
     filename = form['fileName']
     contents = await form['doc'].read()
     with open(f"sales_documents/{filename}", 'wb') as f:
@@ -703,11 +711,11 @@ async def get_all_sales():
 
 @sales.get("/get_salesFile")
 async def get_uploaded_file(file_name):
-    print(file_name)
+    # print(file_name)
 
     try:  # File Name incl path.
         is_exists = os.path.exists(file_name)
-        print(is_exists)
+        # print(is_exists)
         if is_exists:
             return FileResponse(f"{file_name}", filename=file_name)
         else:
@@ -746,7 +754,7 @@ async def get_morgtage_brokers():
 @sales.post("/post_newAgent")
 async def post_newAgent(data: Request):
     request = await data.json()
-    print(request)
+    # print(request)
     try:
         sales_agents.insert_one(request)
         return {"done": True}
@@ -759,7 +767,7 @@ async def post_newAgent(data: Request):
 @sales.post("/post_new_broker")
 async def post_new_broker(data: Request):
     request = await data.json()
-    print(request)
+    # print(request)
     try:
         mortgage_brokers.insert_one(request)
         return {"done": True}
@@ -772,7 +780,7 @@ async def post_new_broker(data: Request):
 @sales.post("/delete_agent")
 async def delete_agent(data: Request):
     request = await data.json()
-    print(request)
+    # print(request)
     # return {"done": True}
     try:
         sales_agents.delete_one({"_id": ObjectId(request['_id'])})
@@ -785,7 +793,7 @@ async def delete_agent(data: Request):
 @sales.post("/delete_broker")
 async def delete_broker(data: Request):
     request = await data.json()
-    print(request)
+    # print(request)
     # return {"done": True}
     try:
         mortgage_brokers.delete_one({"_id": ObjectId(request['_id'])})
@@ -821,11 +829,11 @@ async def print_onboarding_doc(data: Request):
 
 @sales.get("/get_onboarding_doc")
 async def get_uploaded_file(file_name):
-    print(file_name)
+    # print(file_name)
 
     try:  # File Name incl path.
         is_exists = os.path.exists(f"sales_client_onboarding_docs/{file_name}")
-        print(is_exists)
+        # print(is_exists)
         if is_exists:
             return FileResponse(f"sales_client_onboarding_docs/{file_name}", filename=file_name)
         else:
@@ -836,11 +844,11 @@ async def get_uploaded_file(file_name):
 
 @sales.get("/get_otp_doc")
 async def get_uploaded_otp_file(file_name):
-    print(file_name)
+    # print(file_name)
 
     try:  # File Name incl path.
         is_exists = os.path.exists(f"{file_name}")
-        print(is_exists)
+        # print(is_exists)
         if is_exists:
             return FileResponse(f"{file_name}", filename=file_name)
         else:
@@ -856,7 +864,7 @@ async def print_otp_doc(data: Request):
     newData = request['data']
 
     doc_name = f"sales_client_onboarding_docs/{newData['opportunity_code']}-OTP.pdf"
-    print("doc_name", doc_name)
+    # print("doc_name", doc_name)
     is_exists = os.path.exists(doc_name)
 
     if is_exists:
@@ -869,7 +877,7 @@ async def print_otp_doc(data: Request):
     # print("newData", newData)
         result = print_otp_pdf(newData)
 
-        print("RESULT", result)
+        # print("RESULT", result)
         return {"fileName": result}
     except Exception as err:
         print("XXXXX", err)
