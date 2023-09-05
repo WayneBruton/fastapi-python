@@ -13,6 +13,8 @@ class PDF(FPDF):
     def __init__(self, data):
         super().__init__()
         self.data = data
+        # change to landscape
+        # self.landscape = True
         self.unit = 'mm'
         self.format = 'A4'
 
@@ -22,34 +24,34 @@ class PDF(FPDF):
     def footer(self):
         self.set_y(-15)
         self.set_font('helvetica', 'B', 6)
-
         self.cell(50, 10, f"{self.data['development'].upper()} Agreement of Sale", align="L")
         self.set_font('helvetica', 'I', 6)
-
         self.cell(90, 10, f"Page {self.page_no()}/{{nb}}", align="C")
-
         # add an "initial" block on the bottom right of the footer with a border around it
-        # if self.page_no() > 1:
         self.set_font('helvetica', '', 8)
         # make the font color light gray
         self.set_text_color(211, 211, 211)
-        self.cell(0, 10, f"INITIAL                 ", align="R")
+        page_width = self.w - self.l_margin - self.r_margin  # Calculate the available page width
+        # Calculate the x-coordinate based on the page width and the fixed position of the rectangle
+        x_coordinate = page_width - 20
+        self.cell(50, 10, f"INITIAL     ", align="R")
         self.set_line_width(0.5)
         # make the rectangle lines light gray
         self.set_draw_color(211, 211, 211)
-
-        self.rect(165, 282, 30, 8)
-
-        # put a bold line above the footer
+        if self.r_margin == 100:
+            x_coordinate = page_width + 70
+            self.rect(x_coordinate, 282, 30, 8)
+        else:
+            self.rect(x_coordinate, 282, 30, 8)
         self.set_draw_color(0, 0, 0)
         self.set_line_width(0.5)
         self.line(5, self.get_y() - 1, 200, self.get_y() - 1)
 
 
+
 def print_otp_pdf(data):
     # pdf = PDF('P', 'mm', 'A4')
     pdf = PDF(data)
-
 
     pdf.set_auto_page_break(auto=True, margin=15)
 
@@ -296,7 +298,6 @@ def print_otp_pdf(data):
     pdf.cell(0, 5, "", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
     pdf.add_page()
-
 
     pdf.cell(0, 10, "**INFORMATION SCHEDULE**", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
@@ -624,7 +625,8 @@ def print_otp_pdf(data):
                    align="J", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
     pdf.cell(0, 3, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-
+    if pdf.get_y() > 200:
+        pdf.add_page()
     pdf.cell(20, 7, f"**G**", align="C", markdown=True, border=1)
     pdf.cell(50, 7, f"**Selling Details**", align="L", markdown=True, border=1)
     pdf.cell(120, 7, "", align="C", markdown=True, new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
@@ -717,6 +719,7 @@ def print_otp_pdf(data):
     # print(pdf.get_y())
     if pdf.get_y() > 200:
         pdf.add_page()
+    pdf.cell(0, 7, f"", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,)
     pdf.cell(0, 7, f"**Notes:**", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
              new_y=YPos.NEXT)
 
@@ -764,6 +767,7 @@ def print_otp_pdf(data):
     pdf.add_page()
     new_right_margin = 100  # Adjust this value as needed
     pdf.set_right_margin(new_right_margin)
+    pdf.cell(80, 7, f"", align="L", markdown=True, border=0)
     pdf.cell(0, 7, f"**STANDARD TERMS AND CONDITIONS**", align="C", markdown=True, border=0, new_x=XPos.LMARGIN,
              new_y=YPos.NEXT)
     pdf.cell(0, 7, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN,
@@ -777,7 +781,7 @@ def print_otp_pdf(data):
         x = pdf.get_x() + 156
         y = pdf.get_y() - 1
         pdf.rect(x, y, 30, 8)
-        pdf.cell(0, 7, f"INITIAL                 ", align="R", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        pdf.cell(x + 30, 7, f"INITIAL                 ", align="R", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         pdf.set_text_color(0, 0, 0)
         pdf.set_font('helvetica', '', 9)
 
@@ -786,6 +790,9 @@ def print_otp_pdf(data):
     for item in standard_conditions:
         if item['type'] == 1 and item['section'] != "":
             if pdf.get_y() > 250:
+                pdf.add_page()
+            # print(item['section'])
+            if item['section'] == "12." or item['section'] == "17." or item['section'] == "21." or item['section'] == "30.":
                 pdf.add_page()
             pdf.cell(0, 4, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
             pdf.cell(10, 7, f"{item['section']}", align="C", markdown=True, border=0)
@@ -797,6 +804,7 @@ def print_otp_pdf(data):
                 initials()
 
         elif item['type'] == 1 and item['section'] == "":
+
             if pdf.get_y() > 250:
                 pdf.add_page()
             pdf.cell(0, 4, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)

@@ -258,7 +258,7 @@ async def get_all_units_sold(data: Request):
         }
     ]))
     # if len(response) > 0:
-        # print(response[0])
+    # print(response[0])
     for sale in response:
 
         if 'opportunity_otp' not in sale:
@@ -399,7 +399,7 @@ async def get_all_units_sold(data: Request):
         if sale['opportunity_upload_company_docs'] is not None and sale['opportunity_upload_company_docs'] != "":
             total_docs_uploaded += 1
         if sale['opportunity_upload_company_addressproof'] is not None and sale[
-                'opportunity_upload_company_addressproof'] != "":
+            'opportunity_upload_company_addressproof'] != "":
             total_docs_uploaded += 1
 
         sale['total_docs_required'] = total_docs_required
@@ -563,7 +563,7 @@ async def save_sale(data: Request):
                 "opportunity_sold": opportunity_sold}})
 
         if request['formData']['opportunity_actual_reg_date'] != "" and request['formData'][
-                'opportunity_actual_reg_date'] is not None:
+            'opportunity_actual_reg_date'] is not None:
             opportunity_sold = True
             result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
                 "opportunity_sold": opportunity_sold,
@@ -686,7 +686,7 @@ async def get_all_sales():
             print("file does not exist")
 
         result = list(sales_processed.find())
-
+        sold_opportunities = []
         for item in result:
             item['_id'] = str(item['_id'])
             if 'opportunity_bond_amount' not in item:
@@ -699,13 +699,270 @@ async def get_all_sales():
 
             if 'opportunity_pay_type' not in item:
                 item['opportunity_pay_type'] = ""
-        # print(result)
+            sold_opportunities.append(item['opportunity_code'])
 
+        opportunities_list = list(opportunities.find())
+        for item in opportunities_list:
+            item['_id'] = str(item['_id'])
+            if item['opportunity_code'] not in sold_opportunities:
+                item['opportunity_sold'] = False
+            else:
+                item['opportunity_sold'] = True
+
+        # filter opportunities_list to only include opportunities that are not sold
+        opportunities_list = [item for item in opportunities_list if item['opportunity_sold'] == False]
+        # print(opportunities_list[0])
+        # print()
+        # print(result[0])
+
+        for item in opportunities_list:
+            item['development'] = item['Category']
+            item['opportunity_best_price'] = float(item['opportunity_sale_price'])
+            item['opportunity_base_price'] = float(item['opportunity_sale_price'])
+            del item['Category']
+            del item['opportunity_sale_price']
+            del item['opportunity_name']
+            del item['opportunity_amount_required']
+            del item['opportunity_start_date']
+            del item['opportunity_end_date']
+            del item['opportunity_interest_rate']
+            item['transfer_date'] = item.get('transfer_date', "")
+            item['surplusReceived'] = item.get('surplusReceived', 0)
+            del item['transfer_date']
+            del item['surplusReceived']
+
+            # del item['categoryId']
+            del item['blocked']
+            del item['id']
+            del item['opportunity_final_transfer_date']
+            del item['opportunity_occupation_date']
+
+            item['opportunity_originalBayNo'] = item.get('opportunity_originalBayNo', "")
+            item['opportunity_client_type'] = item.get('opportunity_client_type', "")
+            item['opportunity_client_no'] = item.get('opportunity_client_no', "")
+            item['opportunity_firstname'] = item.get('opportunity_firstname', "")
+            item['opportunity_lastname'] = item.get('opportunity_lastname', "NOT SOLD")
+
+            item['opportunity_sale_agreement'] = item.get('opportunity_sale_agreement', "")
+            item['opportunity_sales_date'] = item.get('opportunity_sales_date', "")
+
+            item['opportunity_specials'] = item.get('opportunity_specials', [""])
+            # convert opportunity_specials to a string
+            item['opportunity_deposite'] = item.get('opportunity_deposite', 0)
+            item['opportunity_deposite_date'] = item.get('opportunity_deposite_date', "")
+            item['opportunity_fica'] = item.get('opportunity_fica', False)
+            item['opportunity_otp_to_bo'] = item.get('opportunity_otp_to_bo', "")
+            item['opportunity_bond_originator'] = item.get('opportunity_bond_originator', "")
+            item['opportunity_bond_docs_submit_date'] = item.get('opportunity_bond_docs_submit_date', "")
+            item['opportunity_aip_date'] = item.get('opportunity_aip_date', "")
+            item['opportunity_bond_instruction_date'] = item.get('opportunity_bond_instruction_date', "")
+            item['opportunity_bond_amount_milestone'] = item.get('opportunity_bond_amount_milestone', 0)
+            item['opportunity_bank'] = item.get('opportunity_bank', "")
+            item['opportunity_trnsf_docs_signed'] = item.get('opportunity_trnsf_docs_signed', False)
+            item['opportunity_bond_docs_signed'] = item.get('opportunity_bond_docs_signed', False)
+            item['opportunity_shortfall_amount'] = item.get('opportunity_shortfall_amount', 0)
+            item['opportunity_date_paid'] = item.get('opportunity_date_paid', "")
+            item['opportunity_transfer_duty_requested'] = item.get('opportunity_transfer_duty_requested', False)
+            item['opportunity_transfer_duty_received'] = item.get('opportunity_transfer_duty_received', False)
+            item['opportunity_rates_applied'] = item.get('opportunity_rates_applied', False)
+            item['opportunity_rates_figures_received'] = item.get('opportunity_rates_figures_received', False)
+            item['opportunity_rates_clearance_received'] = item.get('opportunity_rates_clearance_received', False)
+            item['opportunity_building_plans_submitted'] = item.get('opportunity_building_plans_submitted', False)
+            item['opportunity_nhbrc_unit_enrolment'] = item.get('opportunity_nhbrc_unit_enrolment', False)
+            item['opportunity_builders_all_risk_policy_submitted'] = item.get(
+                'opportunity_builders_all_risk_policy_submitted', False)
+            item['opportunity_unit_insurance_submitted'] = item.get('opportunity_unit_insurance_submitted', False)
+            item['opportunity_structural_engineers_completion'] = item.get(
+                'opportunity_structural_engineers_completion', False)
+            item['opportunity_slab_cerficate'] = item.get('opportunity_slab_cerficate', False)
+            item['opportunity_glazing_certicicate'] = item.get('opportunity_glazing_certicicate', False)
+            item['opportunity_geyser_coc'] = item.get('opportunity_geyser_coc', False)
+            item['opportunity_plumbering_coc'] = item.get('opportunity_plumbering_coc', False)
+            item['opportunity_electrical_coc'] = item.get('opportunity_electrical_coc', False)
+            item['opportunity_pc_date'] = item.get('opportunity_pc_date', False)
+            item['opportunity_bpas_certificate'] = item.get('opportunity_bpas_certificate', False)
+
+
+            item['opportunity_occupation_coc'] = item.get('opportunity_occupation_coc', "")
+            item['opportunity_happy_letter'] = item.get('opportunity_happy_letter', "")
+            item['opportunity_certificates_submitted_to_attorneys'] = item.get(
+                'opportunity_certificates_submitted_to_attorneys', "")
+            item['opportunity_store_doc_date'] = item.get('opportunity_store_doc_date', None)
+            item['opportunity_bond_proceed_received'] = item.get('opportunity_bond_proceed_received', "")
+            item['opportunity_potential_lodgement'] = item.get('opportunity_potential_lodgement', "")
+            item['opportunity_actual_lodgement'] = item.get('opportunity_actual_lodgement', "")
+            item['opportunity_potential_reg_date'] = item.get('opportunity_potential_reg_date', "")
+            item['opportunity_actual_reg_date'] = item.get('opportunity_actual_reg_date', "")
+            item['id'] = item.get('_id', "")
+            item['opportunity_additional_bay'] = item.get('opportunity_additional_bay', 0)
+            item['opportunity_additional_bay_covered'] = item.get('opportunity_additional_bay_covered', "")
+            item['opportunity_additional_bay_free'] = item.get('opportunity_additional_bay_free', False)
+            item['opportunity_additional_cost'] = item.get('opportunity_additional_cost', 0)
+            item['opportunity_addressproof'] = item.get('opportunity_addressproof', None)
+            item['opportunity_addressproof_10th'] = item.get('opportunity_addressproof_10th', None)
+            item['opportunity_addressproof_3rd'] = item.get('opportunity_addressproof_3rd', None)
+            item['opportunity_addressproof_4th'] = item.get('opportunity_addressproof_4th', None)
+            item['opportunity_addressproof_5th'] = item.get('opportunity_addressproof_5th', None)
+            item['opportunity_addressproof_6th'] = item.get('opportunity_addressproof_6th', None)
+            item['opportunity_addressproof_7th'] = item.get('opportunity_addressproof_7th', None)
+            item['opportunity_addressproof_8th'] = item.get('opportunity_addressproof_8th', None)
+            item['opportunity_addressproof_9th'] = item.get('opportunity_addressproof_9th', None)
+            item['opportunity_addressproof_sec'] = item.get('opportunity_addressproof_sec', None)
+            item['opportunity_bond_amount'] = item.get('opportunity_bond_amount', 0)
+            item['opportunity_company_contact'] = item.get('opportunity_company_contact', "")
+            item['opportunity_company_email'] = item.get('opportunity_company_email', "")
+            item['opportunity_company_postal_address'] = item.get('opportunity_company_postal_address', "")
+            item['opportunity_company_residential_address'] = item.get('opportunity_company_residential_address', "")
+            item['opportunity_companyname'] = item.get('opportunity_companyname', "")
+            item['opportunity_companyregistrationNo'] = item.get('opportunity_companyregistrationNo', "")
+            item['opportunity_contract_price'] = item.get('opportunity_contract_price', 0)
+            item['opportunity_discount'] = item.get('opportunity_discount', 0)
+            item['opportunity_email'] = item.get('opportunity_email', "")
+            item['opportunity_email_10th'] = item.get('opportunity_email_10th', "")
+            item['opportunity_email_3rd'] = item.get('opportunity_email_3rd', "")
+            item['opportunity_email_4th'] = item.get('opportunity_email_4th', "")
+            item['opportunity_email_5th'] = item.get('opportunity_email_5th', "")
+            item['opportunity_email_6th'] = item.get('opportunity_email_6th', "")
+            item['opportunity_email_7th'] = item.get('opportunity_email_7th', "")
+            item['opportunity_email_8th'] = item.get('opportunity_email_8th', "")
+            item['opportunity_email_9th'] = item.get('opportunity_email_9th', "")
+            item['opportunity_email_sec'] = item.get('opportunity_email_sec', "")
+            item['opportunity_extra_cost'] = item.get('opportunity_extra_cost', 0)
+            item['opportunity_extras_not_listed'] = item.get('opportunity_extras_not_listed', "")
+
+            item['opportunity_extras_not_listed_total_value'] = item.get('opportunity_extras_not_listed_total_value',
+                                                                         0)
+            item['opportunity_firstname_10th'] = item.get('opportunity_firstname_10th', "")
+            item['opportunity_firstname_3rd'] = item.get('opportunity_firstname_3rd', "")
+            item['opportunity_firstname_4th'] = item.get('opportunity_firstname_4th', "")
+            item['opportunity_firstname_5th'] = item.get('opportunity_firstname_5th', "")
+            item['opportunity_firstname_6th'] = item.get('opportunity_firstname_6th', "")
+            item['opportunity_firstname_7th'] = item.get('opportunity_firstname_7th', "")
+            item['opportunity_firstname_8th'] = item.get('opportunity_firstname_8th', "")
+            item['opportunity_firstname_9th'] = item.get('opportunity_firstname_9th', "")
+            item['opportunity_firstname_sec'] = item.get('opportunity_firstname_sec', "")
+            item['opportunity_flooring'] = item.get('opportunity_flooring', "")
+            item['opportunity_gardenNumber'] = item.get('opportunity_gardenNumber', 0)
+            item['opportunity_gardenSize'] = item.get('opportunity_gardenSize', 0)
+            item['opportunity_id'] = item.get('opportunity_id', None)
+            item['opportunity_id_10th'] = item.get('opportunity_id_10th', None )
+            item['opportunity_id_3rd'] = item.get('opportunity_id_3rd', None)
+            item['opportunity_id_4th'] = item.get('opportunity_id_4th', None)
+            item['opportunity_id_5th'] = item.get('opportunity_id_5th', None)
+            item['opportunity_id_6th'] = item.get('opportunity_id_6th', None)
+            item['opportunity_id_7th'] = item.get('opportunity_id_7th', None)
+            item['opportunity_id_8th'] = item.get('opportunity_id_8th', None)
+            item['opportunity_id_9th'] = item.get('opportunity_id_9th', None)
+            item['opportunity_id_sec'] = item.get('opportunity_id_sec', None)
+            item['opportunity_landline'] = item.get('opportunity_landline', "")
+            item['opportunity_landline_10th'] = item.get('opportunity_landline_10th', "")
+            item['opportunity_landline_3rd'] = item.get('opportunity_landline_3rd', "")
+            item['opportunity_landline_4th'] = item.get('opportunity_landline_4th', "")
+            item['opportunity_landline_5th'] = item.get('opportunity_landline_5th', "")
+            item['opportunity_landline_6th'] = item.get('opportunity_landline_6th', "")
+            item['opportunity_landline_7th'] = item.get('opportunity_landline_7th', "")
+            item['opportunity_landline_8th'] = item.get('opportunity_landline_8th', "")
+            item['opportunity_landline_9th'] = item.get('opportunity_landline_9th', "")
+            item['opportunity_landline_sec'] = item.get('opportunity_landline_sec', "")
+            item['opportunity_lastname_10th'] = item.get('opportunity_lastname_10th', "")
+            item['opportunity_lastname_3rd'] = item.get('opportunity_lastname_3rd', "")
+            item['opportunity_lastname_4th'] = item.get('opportunity_lastname_4th', "")
+            item['opportunity_lastname_5th'] = item.get('opportunity_lastname_5th', "")
+            item['opportunity_lastname_6th'] = item.get('opportunity_lastname_6th', "")
+            item['opportunity_lastname_7th'] = item.get('opportunity_lastname_7th', "")
+            item['opportunity_lastname_8th'] = item.get('opportunity_lastname_8th', "")
+            item['opportunity_lastname_9th'] = item.get('opportunity_lastname_9th', "")
+            item['opportunity_lastname_sec'] = item.get('opportunity_lastname_sec', "")
+            item['opportunity_legal_type'] = item.get('opportunity_legal_type', "")
+            item['opportunity_martial_status'] = item.get('opportunity_martial_status', "")
+            item['opportunity_martial_status_10th'] = item.get('opportunity_martial_status_10th', "")
+            item['opportunity_martial_status_3rd'] = item.get('opportunity_martial_status_3rd', "")
+            item['opportunity_martial_status_4th'] = item.get('opportunity_martial_status_4th', "")
+            item['opportunity_martial_status_5th'] = item.get('opportunity_martial_status_5th', "")
+            item['opportunity_martial_status_6th'] = item.get('opportunity_martial_status_6th', "")
+            item['opportunity_martial_status_7th'] = item.get('opportunity_martial_status_7th', "")
+            item['opportunity_martial_status_8th'] = item.get('opportunity_martial_status_8th', "")
+            item['opportunity_martial_status_9th'] = item.get('opportunity_martial_status_9th', "")
+            item['opportunity_martial_status_sec'] = item.get('opportunity_martial_status_sec', "")
+            item['opportunity_mobile'] = item.get('opportunity_mobile', "")
+            item['opportunity_mobile_10th'] = item.get('opportunity_mobile_10th', "")
+            item['opportunity_mobile_3rd'] = item.get('opportunity_mobile_3rd', "")
+            item['opportunity_mobile_4th'] = item.get('opportunity_mobile_4th', "")
+            item['opportunity_mobile_5th'] = item.get('opportunity_mobile_5th', "")
+            item['opportunity_mobile_6th'] = item.get('opportunity_mobile_6th', "")
+            item['opportunity_mobile_7th'] = item.get('opportunity_mobile_7th', "")
+            item['opportunity_mobile_8th'] = item.get('opportunity_mobile_8th', "")
+            item['opportunity_mobile_9th'] = item.get('opportunity_mobile_9th', "")
+            item['opportunity_mobile_sec'] = item.get('opportunity_mobile_sec', "")
+            item['opportunity_mood'] = item.get('opportunity_mood', "")
+            item['opportunity_notes'] = item.get('opportunity_notes', "")
+            item['opportunity_otp'] = item.get('opportunity_otp', "")
+            item['opportunity_parkingBayNo'] = item.get('opportunity_parkingBayNo', "")
+            item['opportunity_parking_bay'] = item.get('opportunity_parking_bay', "")
+            item['opportunity_parking_bay2'] = item.get('opportunity_parking_bay2', "")
+            item['opportunity_parking_cost'] = item.get('opportunity_parking_cost', 0)
+            item['opportunity_pat_category'] = item.get('opportunity_pat_category', "")
+            item['opportunity_pay_type'] = item.get('opportunity_pay_type', "")
+            item['opportunity_postal_address'] = item.get('opportunity_postal_address', "")
+            item['opportunity_postal_address_10th'] = item.get('opportunity_postal_address_10th', "")
+            item['opportunity_postal_address_3rd'] = item.get('opportunity_postal_address_3rd', "")
+            item['opportunity_postal_address_4th'] = item.get('opportunity_postal_address_4th', "")
+            item['opportunity_postal_address_5th'] = item.get('opportunity_postal_address_5th', "")
+            item['opportunity_postal_address_6th'] = item.get('opportunity_postal_address_6th', "")
+            item['opportunity_postal_address_7th'] = item.get('opportunity_postal_address_7th', "")
+            item['opportunity_postal_address_8th'] = item.get('opportunity_postal_address_8th', "")
+            item['opportunity_postal_address_9th'] = item.get('opportunity_postal_address_9th', "")
+            item['opportunity_postal_address_sec'] = item.get('opportunity_postal_address_sec', "")
+            item['opportunity_residental_address'] = item.get('opportunity_residental_address', "")
+            item['opportunity_residental_address_10th'] = item.get('opportunity_residental_address_10th', "")
+            item['opportunity_residental_address_3rd'] = item.get('opportunity_residental_address_3rd', "")
+            item['opportunity_residental_address_4th'] = item.get('opportunity_residental_address_4th', "")
+            item['opportunity_residental_address_5th'] = item.get('opportunity_residental_address_5th', "")
+            item['opportunity_residental_address_6th'] = item.get('opportunity_residental_address_6th', "")
+            item['opportunity_residental_address_7th'] = item.get('opportunity_residental_address_7th', "")
+            item['opportunity_residental_address_8th'] = item.get('opportunity_residental_address_8th', "")
+            item['opportunity_residental_address_9th'] = item.get('opportunity_residental_address_9th', "")
+            item['opportunity_residental_address_sec'] = item.get('opportunity_residental_address_sec', "")
+            item['opportunity_sale_mobile'] = item.get('opportunity_sale_mobile', "")
+            item['opportunity_spareRoom'] = item.get('opportunity_spareRoom', "")
+            item['opportunity_specials'] = item.get('opportunity_specials', "")
+            item['opportunity_stove_cost'] = item.get('opportunity_stove_cost', 0)
+            item['opportunity_stove_option'] = item.get('opportunity_stove_option', "")
+            item['opportunity_stove_type_offering'] = item.get('opportunity_stove_type_offering', "")
+            item['opportunity_uploadId'] = item.get('opportunity_uploadId', "")
+            item['opportunity_uploadId_10th'] = item.get('opportunity_uploadId_10th', "")
+            item['opportunity_uploadId_3rd'] = item.get('opportunity_uploadId_3rd', "")
+            item['opportunity_uploadId_4th'] = item.get('opportunity_uploadId_4th', "")
+            item['opportunity_uploadId_5th'] = item.get('opportunity_uploadId_5th', "")
+            item['opportunity_uploadId_6th'] = item.get('opportunity_uploadId_6th', "")
+            item['opportunity_uploadId_7th'] = item.get('opportunity_uploadId_7th', "")
+            item['opportunity_uploadId_8th'] = item.get('opportunity_uploadId_8th', "")
+            item['opportunity_uploadId_9th'] = item.get('opportunity_uploadId_9th', "")
+            item['opportunity_uploadId_sec'] = item.get('opportunity_uploadId_sec', "")
+            item['opportunity_upload_annexure'] = item.get('opportunity_upload_annexure', "")
+            item['opportunity_upload_company_addressproof'] = item.get('opportunity_upload_company_addressproof', "")
+            item['opportunity_upload_company_docs'] = item.get('opportunity_upload_company_docs', "")
+            item['opportunity_upload_deposite'] = item.get('opportunity_upload_deposite', "")
+            item['section'] = item.get('section', "-")
+
+            # for key in result[0]:
+            #     print(key)
+            # if key not in item:
+            #     item[key] = None
+
+        # put result and opportunities_list as one list
+        # result.extend(opportunities_list)
+        # print(opportunities_list[0])
+        # print()
+        # print(result[0])
+
+        result.extend(opportunities_list)
+        print("Got this far")
         create_excel_file(result, "unit_sales.xlsx")
         # return result
         return {"done": "excel_files/unit_sales.xlsx"}
     except Exception as err:
-        print(err)
+        print("ERR", err)
         return {"error": "error"}
 
 
@@ -842,6 +1099,7 @@ async def get_uploaded_file(file_name):
         print(err)
         return {"ERROR": "File does not exist!!"}
 
+
 @sales.get("/get_otp_doc")
 async def get_uploaded_otp_file(file_name):
     # print(file_name)
@@ -874,7 +1132,7 @@ async def print_otp_doc(data: Request):
         print("No such Document")
 
     try:
-    # print("newData", newData)
+        # print("newData", newData)
         result = print_otp_pdf(newData)
 
         # print("RESULT", result)
