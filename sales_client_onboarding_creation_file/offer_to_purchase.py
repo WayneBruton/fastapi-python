@@ -371,7 +371,7 @@ def print_otp_pdf(data):
         pdf.cell(20, 10, "B3", align="C", markdown=True, border=1)
         pdf.cell(50, 10, "Address (Street & Postal)", align="L", markdown=True, border=1)
         pdf.multi_cell(120, 5, f"**{data['opportunity_company_residential_address']}** **&** "
-                               f"**{data['opportunity_company_postal_address']}**", align="J", markdown=True,
+                               f"**{data['opportunity_company_postal_address']}**", align="C", markdown=True,
                        new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
         pdf.cell(20, 7, "B4", align="C", markdown=True, border=1)
@@ -420,10 +420,21 @@ def print_otp_pdf(data):
             pdf.cell(120, 7, f"**{purchaser['value_b2']}**", align="L", markdown=True,
                      new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
-            pdf.cell(20, 10, "B3", align="C", markdown=True, border=1)
-            pdf.cell(50, 10, f"{purchaser['label_b3']}", align="L", markdown=True, border=1)
-            pdf.multi_cell(120, 5, f"**{purchaser['value_b3']}**", align="J", markdown=True,
-                           new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+            if len(purchaser['value_b3']) > 69:
+                pdf.cell(20, 10, "B3", align="C", markdown=True, border=1)
+                pdf.cell(50, 10, f"{purchaser['label_b3']}", align="L", markdown=True, border=1)
+                pdf.multi_cell(120, 5, f"**{purchaser['value_b3']}**", align="J", markdown=True,
+                               new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+            elif len(purchaser['value_b3']) <= 3:
+                pdf.cell(20, 7, "B3", align="C", markdown=True, border=1)
+                pdf.cell(50, 7, f"{purchaser['label_b3']}", align="L", markdown=True, border=1)
+                pdf.cell(120, 7, f"", align="L", markdown=True,
+                         new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+            else:
+                pdf.cell(20, 7, "B3", align="C", markdown=True, border=1)
+                pdf.cell(50, 7, f"{purchaser['label_b3']}", align="L", markdown=True, border=1)
+                pdf.cell(120, 7, f"**{purchaser['value_b3']}**", align="L", markdown=True,
+                               new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
             pdf.cell(20, 7, "B4", align="C", markdown=True, border=1)
             pdf.cell(50, 7, f"{purchaser['label_b4']}", align="L", markdown=True, border=1)
