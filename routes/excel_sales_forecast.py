@@ -10,6 +10,7 @@ import time
 from datetime import datetime
 from datetime import timedelta
 from excel_sf_functions.draw_downs_excel import create_draw_down_file
+from excel_sf_functions.draw_history_report import create_draw_history_report
 # from excel_sf_functions.investment_list_excel import create_investment_list_file
 
 # from fastapi import File, UploadFile
@@ -553,7 +554,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         # Convert Rates_list Efective_date to datetime
 
         for rate in rates_list:
-            rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace('/','-'), '%Y-%m-%d')
+            rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace('/', '-'), '%Y-%m-%d')
         # order rates_list by Efective_date in descending order
         rates_list = sorted(rates_list, key=lambda k: k['Efective_date'], reverse=True)
 
@@ -593,12 +594,14 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 # planned_release_date exists in investment then investment["planned_release_date"] = deposit_date +
                 # 30 days else investment["planned_release_date"] = ""
                 if "planned_release_date" in investment and investment["planned_release_date"] != "":
-                    investment["planned_release_date"] = str(datetime.strptime(investment["planned_release_date"].replace('-','/'),
-                                                                               '%Y/%m/%d')).split(" ")[0]
+                    investment["planned_release_date"] = \
+                    str(datetime.strptime(investment["planned_release_date"].replace('-', '/'),
+                                          '%Y/%m/%d')).split(" ")[0]
                 else:
 
-                    investment["planned_release_date"] = str(datetime.strptime(investment["deposit_date"].replace('-','/'),
-                                                                               '%Y/%m/%d') + timedelta(days=30)).split(
+                    investment["planned_release_date"] = \
+                    str(datetime.strptime(investment["deposit_date"].replace('-', '/'),
+                                          '%Y/%m/%d') + timedelta(days=30)).split(
                         " ")[
                         0]
             else:
@@ -1009,15 +1012,15 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 if investor["rental_marked_for_rent"]:
                     investor["potential_income"] = investor["rental_nett_amount"]
                     investor["rental_start_date"] = ""
-                    investor["rental_end_date"] =  ""
-                    investor["rental_income_to_date"] =  0
-                    investor["rental_income_to_contract_end"] =  0
-                    investor["rental_gross_amount"] =  0
-                    investor["rental_deposit_amount"] =  0
-                    investor["rental_levy_amount"] =  0
-                    investor["rental_commission"] =  0
-                    investor["rental_rates"] =  0
-                    investor["rental_other_expenses"] =  0
+                    investor["rental_end_date"] = ""
+                    investor["rental_income_to_date"] = 0
+                    investor["rental_income_to_contract_end"] = 0
+                    investor["rental_gross_amount"] = 0
+                    investor["rental_deposit_amount"] = 0
+                    investor["rental_levy_amount"] = 0
+                    investor["rental_commission"] = 0
+                    investor["rental_rates"] = 0
+                    investor["rental_other_expenses"] = 0
                     investor["rental_nett_amount"] = 0
                 else:
                     investor["potential_income"] = 0
@@ -1075,7 +1078,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
     except Exception as e:
         print("Error:", e)
-        return {"error": e }
+        return {"error": e}
 
 
 def investment_status(request):
@@ -2149,3 +2152,72 @@ async def update_future_cf_requirements(data: Request):
     except Exception as e:
         print("Error:", e)
         return {"message": "Error"}
+
+
+@excel_sales_forecast.get("/draw_history")
+async def draw_history():
+    # get info from investors and project investor_acc_number, investor_name, investor_surname, investment_name and trust array
+
+    # request = await data.json()
+    # print("request", request)
+    try:
+        draw_history = list(db.investors.aggregate([
+            {
+                "$project": {
+                    "investor_acc_number": 1,
+                    "Category": 1,
+                    "investor_name": 1,
+                    "investor_surname": 1,
+                    "investment_name": 1,
+                    "trust": 1,
+                    "_id": 0
+                }
+            }
+        ]))
+
+        # remove records where trust is empty
+        final_draw_history = []
+        draw_history = [item for item in draw_history if item['trust']]
+        # print("draw_history", draw_history[0])
+        for draw in draw_history:
+            for trust in draw['trust']:
+                insert = {'investor_acc_number': draw['investor_acc_number'],
+                          'investment_name': draw['investment_name'], 'opportunity_code': trust['opportunity_code'],
+                          'investment_amount': float(trust['investment_amount']), 'draw_date': trust['release_date'],
+                          'investment_date': trust['deposit_date'], 'Category': trust['Category']}
+                if insert['draw_date'] == "" or insert['draw_date'] == None:
+                    insert['drawn_to_date'] = 0
+                    insert['available_to_draw'] = float(insert['investment_amount'])
+                else:
+                    insert['drawn_to_date'] = float(insert['investment_amount'])
+                    insert['available_to_draw'] = 0
+
+                final_draw_history.append(insert)
+
+        # filter out of final_draw_history where Category is equal to "Southwark
+
+        final_draw_history = list(filter(lambda draw: draw['Category'] != "Southwark", final_draw_history))
+
+        # sort final_draw_history by investment_date, investor_acc_number, opportunity_code
+        final_draw_history = sorted(final_draw_history,
+                                    key=lambda k: (k['investment_date'], k['investor_acc_number'],
+                                                   k['opportunity_code']))
+
+        report_data = create_draw_history_report(final_draw_history)
+
+
+        return report_data
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Error"}
+
+@excel_sales_forecast.get("/get_draw_history_report")
+async def sales_forecast(draw_report_name):
+    file_name = draw_report_name.split("/")[1]
+    dir_path = "excel_files"
+    dir_list = os.listdir(dir_path)
+    print(f"{dir_path}/{file_name}")
+    if file_name in dir_list:
+        return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
+    else:
+        return {"ERROR": "File does not exist!!"}

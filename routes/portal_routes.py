@@ -291,7 +291,7 @@ async def investment_termination(data: Request):
         investor_name = f"{investor['investor_name']} {investor['investor_surname']}"
 
         investor_email = (f"{investor['investor_email']},"
-                          f" debbie@opportunity.co.za, leandri@opportunity.co.za, izolda@opportunity.co.za")
+                          f" leandri@opportunity.co.za, izolda@opportunity.co.za")
 
         option_chosen = ""
         exit_amount = ""
@@ -356,8 +356,7 @@ async def investment_termination(data: Request):
                 <br /><br />
                 
                 Please do not reply to this email as it is not monitored. Any questions can be directed to 
-                Leandri Naude at leandri@opportunity.co.za or failing that, to Debbie 
-                Landsberg at debbie@opportunity.co.za or  <br /><br />
+                Leandri Naude at leandri@opportunity.co.za <br /><br />
                 
                 Kind Regards<br />
                 
