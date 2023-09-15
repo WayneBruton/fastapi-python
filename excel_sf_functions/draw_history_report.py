@@ -20,9 +20,10 @@ import time
 import threading
 
 
-def create_draw_history_report(data):
+def create_draw_history_report(data, pledges):
     # print("DATAAAAA",data)
     # print(data['draws'])
+
 
     filename = 'excel_files/current_funds_available.xlsx'
     if os.path.exists(filename):
@@ -30,6 +31,8 @@ def create_draw_history_report(data):
         print("File Removed!")
     else:
         print("The file does not exist")
+
+    # print(pledges)
 
     # create workbook
     wb = Workbook()
@@ -132,6 +135,14 @@ def create_draw_history_report(data):
 
     # freeze panes at row 4
     ws.freeze_panes = "A4"
+
+    # add a sheet
+    ws2 = wb.create_sheet("Pledges")
+    # tabb color = green
+    ws2.sheet_properties.tabColor = "004225"
+
+
+
 
     # save workbook
     wb.save('excel_files/current_funds_available.xlsx')

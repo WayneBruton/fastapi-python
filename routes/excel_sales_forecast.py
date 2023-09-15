@@ -595,15 +595,15 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 # 30 days else investment["planned_release_date"] = ""
                 if "planned_release_date" in investment and investment["planned_release_date"] != "":
                     investment["planned_release_date"] = \
-                    str(datetime.strptime(investment["planned_release_date"].replace('-', '/'),
-                                          '%Y/%m/%d')).split(" ")[0]
+                        str(datetime.strptime(investment["planned_release_date"].replace('-', '/'),
+                                              '%Y/%m/%d')).split(" ")[0]
                 else:
 
                     investment["planned_release_date"] = \
-                    str(datetime.strptime(investment["deposit_date"].replace('-', '/'),
-                                          '%Y/%m/%d') + timedelta(days=30)).split(
-                        " ")[
-                        0]
+                        str(datetime.strptime(investment["deposit_date"].replace('-', '/'),
+                                              '%Y/%m/%d') + timedelta(days=30)).split(
+                            " ")[
+                            0]
             else:
                 investment["planned_release_date"] = investment["release_date"]
                 # investment["planned_release_date"] = ""
@@ -2170,6 +2170,7 @@ async def draw_history():
                     "investor_surname": 1,
                     "investment_name": 1,
                     "trust": 1,
+                    "pledges": 1,
                     "_id": 0
                 }
             }
@@ -2177,6 +2178,8 @@ async def draw_history():
 
         # remove records where trust is empty
         final_draw_history = []
+        pledges_history = [item for item in draw_history if item['pledges']]
+        # print("pledges_history", pledges_history[0]['pledges'])
         draw_history = [item for item in draw_history if item['trust']]
         # print("draw_history", draw_history[0])
         for draw in draw_history:
@@ -2203,13 +2206,30 @@ async def draw_history():
                                     key=lambda k: (k['investment_date'], k['investor_acc_number'],
                                                    k['opportunity_code']))
 
-        report_data = create_draw_history_report(final_draw_history)
+        final_pledges_history = []
+        for draw in pledges_history:
+            for pledge in draw['pledges']:
+                insert = {'investor_acc_number': draw['investor_acc_number'],
+                          'investment_name': draw['investment_name'], 'opportunity_code': pledge['opportunity_code'],
+                          'investment_amount': float(pledge['investment_amount']), 'Category': pledge['Category']}
+                # if insert['draw_date'] == "" or insert['draw_date'] == None:
+                #     insert['drawn_to_date'] = 0
+                #     insert['available_to_draw'] = float(insert['investment_amount'])
+                # else:
+                #     insert['drawn_to_date'] = float(insert['investment_amount'])
+                #     insert['available_to_draw'] = 0
 
+                final_pledges_history.append(insert)
+
+        print("final_pledges_history", len(final_pledges_history))
+
+        report_data = create_draw_history_report(final_draw_history, final_pledges_history)
 
         return report_data
     except Exception as e:
         print("Error:", e)
         return {"message": "Error"}
+
 
 @excel_sales_forecast.get("/get_draw_history_report")
 async def sales_forecast(draw_report_name):
