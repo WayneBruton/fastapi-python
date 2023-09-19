@@ -89,8 +89,10 @@ async def create_construction_valuation(request: Request):
             for index, subcontractor in enumerate(subcontractors):
                 for index2, valuation in enumerate(valuations_to_date):
                     if valuation['subcontractor'] == subcontractor and valuation['taskCategory'] == "ATCV":
-                        valuation['terms'] = valuations_to_date[index - 1]['terms']
-                        valuation['works'] = valuations_to_date[index - 1]['works']
+                        filtered_valuations_to_date = [valuation for valuation in valuations_to_date if
+                                                         valuation['subcontractor'] == subcontractor]
+                        valuation['terms'] = filtered_valuations_to_date[0]['terms']
+                        valuation['works'] = filtered_valuations_to_date[0]['works']
                         # if index % 2 == 0:
                         #     valuation['terms'] = "30 Days"
                         # else:
@@ -156,7 +158,10 @@ async def submit_construction_valuation(request: Request):
                     job_to_approve['tasks'][-1:][0]['approved'] = True
                     job_to_approve['tasks'][-1:][0]['status'] = "Approved"
                     insert[0]['initialProgress'] = insert[0]['currentProgress']
-                    paNumber = insert[0]['paymentAdviceNumber'].rsplit("-", 1)[1]
+                    if insert[0]['paymentAdviceNumber'] == "" or insert[0]['paymentAdviceNumber'] == None:
+                        insert[0]['paymentAdviceNumber'] = "0"
+                    else:
+                        paNumber = insert[0]['paymentAdviceNumber'].rsplit("-", 1)[1]
                     initial_past_of_number = insert[0]['paymentAdviceNumber'].rsplit("-", 1)[0]
                     # convert paNumber to int, add 1, convert back to string of three characters and add to
                     # initial_past_of_number
@@ -169,7 +174,7 @@ async def submit_construction_valuation(request: Request):
 
                     # update db with job_to_approve
                     response = valuations.update_one({"_id": ObjectId(id)}, {"$set": job_to_approve})
-                    print(response)
+                    # print(response)
 
         return {"status": "ok", "length": len(data), "valuations": data}
     except Exception as e:
