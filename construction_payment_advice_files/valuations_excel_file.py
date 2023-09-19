@@ -27,6 +27,7 @@ def create_valuations_file(data, subcontractors):
     # print(data[0]['block'])
 
     filename = f"excel_files/Master {data[0]['block']}.xlsx"
+    print("filename",filename)
     if os.path.exists(filename):
         os.remove(filename)
         print("File Removed!")
@@ -533,7 +534,8 @@ def create_valuations_file(data, subcontractors):
             # filter the list thirty_days_subcontractors to only include dictionaries with the subcontractor name
             # equal to the current subcontractor in the loop
             subbie_contracts = [item for item in thirty_days_subcontractors if item['subcontractor'] == subbie]
-            insert.append(subbie_contracts[0]['works'])
+            # print(subbie_contracts)
+            insert.append(subbie_contracts[0].get('works','Nothing Shown'))
             # sum amount column in subbie_contracts where taskCategory is Standard
             sum_standard = 0
             sum_atcv = 0

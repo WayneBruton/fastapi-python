@@ -40,10 +40,10 @@ async def get_available_valuation_data():
         available_data = list(valuations.aggregate(pipeline))
 
         available_data.sort(key=lambda x: (x['development'], x['block']))
-        print(available_data)
+        # print(available_data)
         return {"status": "ok", "available_data": available_data}
     except Exception as e:
-        print(e)
+        print("XXXX",e)
         return {"status": "error", "error": e}
 
 
@@ -58,13 +58,20 @@ async def create_construction_valuation(request: Request):
         # print(valuations_to_date)
         if len(valuations_to_date) > 0:
 
-            for valuation in valuations_to_date:
+            for index, valuation in enumerate(valuations_to_date):
                 valuation['_id'] = str(valuation['_id'])
                 filtered_tasks = [task for task in valuation['tasks'] if task['approved']]
                 valuation['qty'] = int(valuation['qty'])
                 valuation['rate'] = float(valuation['rate'])
                 # if index % 2 == 0:
-                valuation['terms'] = valuation.get('terms', "30 Days")
+                valuation['taskCategory'] = valuation.get('taskCategory','Normal')
+                # if valuation['taskCategory'] == "ATCV":
+                #     valuation['terms'] = valuations_to_date[index - 1]['terms']
+                #     if valuation['subcontractor'] == "Taaibosch Development & Projects Pty Ltd - Heron View Block D":
+                #
+                #         print(valuations_to_date[index - 1])
+                #         print()
+                #         print(valuation['terms'])
                 # else:
                 #     valuation['terms'] = valuation.get('terms', "End of Month")
                 if len(filtered_tasks) > 0:
@@ -79,16 +86,18 @@ async def create_construction_valuation(request: Request):
             # sort subcontractors alphabetically
             subcontractors.sort()
 
-            # for index, subcontractor in enumerate(subcontractors):
-            #     for valuation in valuations_to_date:
-            #         if valuation['subcontractor'] == subcontractor and valuation['subcontractor'] != "ZZWayne":
-            #             if index % 2 == 0:
-            #                 valuation['terms'] = "30 Days"
-            #             else:
-            #                 valuation['terms'] = "End of Month"
+            for index, subcontractor in enumerate(subcontractors):
+                for index2, valuation in enumerate(valuations_to_date):
+                    if valuation['subcontractor'] == subcontractor and valuation['taskCategory'] == "ATCV":
+                        valuation['terms'] = valuations_to_date[index - 1]['terms']
+                        valuation['works'] = valuations_to_date[index - 1]['works']
+                        # if index % 2 == 0:
+                        #     valuation['terms'] = "30 Days"
+                        # else:
+                        #     valuation['terms'] = "End of Month"
 
             file_created = create_valuations_file(valuations_to_date, subcontractors)
-            print(file_created)
+            # print(file_created)
             file_created = file_created.split("/")[1]
 
             # print(subcontractors)
@@ -98,7 +107,7 @@ async def create_construction_valuation(request: Request):
         else:
             return {"status": "error", "error": "No Valuations to date"}
     except Exception as e:
-        print(e)
+        print("ERROR",e)
         return {"status": "error", "error": e}
 
 
@@ -125,7 +134,7 @@ async def submit_construction_valuation(request: Request):
                 if len(valuation['tasks']) > 0:
                     valuation_required += valuation['tasks'][-1:][0]['currentProgress'] - valuation['tasks'][-1:][0][
                         'initialProgress']
-            print(subcontractor, valuation_required)
+            # print(subcontractor, valuation_required)
             if valuation_required > 0:
                 final_valuations_jobs.append(subcontractor)
 
@@ -170,21 +179,35 @@ async def submit_construction_valuation(request: Request):
 
 @construction.post("/construction_valuations_to_approve")
 async def get_construction_valuations_to_approve(request: Request):
+
     data = await request.json()
-    print(data)
+    # print(data)
     # get valuations from db where development = data['development'] and block = data['block']
     valuations_to_approve = list(valuations.find({"development": data['development'], "block": data['block']}))
     # print(valuations_to_approve)
+    # print(valuations_to_approve[0])
+    # try:
 
     if len(valuations_to_approve) > 0:
 
         total_valuation_30_days = 0
         total_valuation_end_of_month = 0
         for valuation in valuations_to_approve:
+            # if len(valuation['tasks']) == 0:
+            #     print("VALUATION", valuation)
+            #     pass
 
             retention = valuation.get('retention', 0)
+            if valuation['retention'] == None:
+                valuation['retention'] = 0
+            if retention == None:
+                retention = 0
+            # print("Retention", retention)
             valuation['_id'] = str(valuation['_id'])
             task_filtered = [task for task in valuation['tasks'] if not task['approved']]
+            valuation['terms'] = valuation.get('terms', "30 Days")
+            # print("XXXX", valuation['subcontractor'])
+            # print("XXXX", valuation['amount'])
             if valuation['terms'] == "30 Days":
                 if valuation['vatable'] == "Yes":
 
@@ -227,9 +250,13 @@ async def get_construction_valuations_to_approve(request: Request):
         total_valuation_30_days = f"R{total_valuation_30_days:,.2f}"
         total_valuation_end_of_month = f"R{total_valuation_end_of_month:,.2f}"
         total_approvals = f"R{total_approvals:,.2f}"
+        print("XXXX",total_valuation_30_days, total_valuation_end_of_month, total_approvals)
 
         return {"30 Days": total_valuation_30_days, "total EOM": total_valuation_end_of_month,
                 "Total Approvals": total_approvals}
+    # except Exception as e:
+    #     print("ER",e)
+    #     return {"status": "error", "error": e}
 
 
 @construction.get("/get_valuation_report")
