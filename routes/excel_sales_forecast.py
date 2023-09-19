@@ -2178,7 +2178,7 @@ async def draw_history():
 
         # remove records where trust is empty
         final_draw_history = []
-        pledges_history = [item for item in draw_history if item['pledges']]
+        pledges_history = [item for item in draw_history if len(item['pledges']) > 0 ]
         # print("pledges_history", pledges_history[0]['pledges'])
         draw_history = [item for item in draw_history if item['trust']]
         # print("draw_history", draw_history[0])
@@ -2209,19 +2209,24 @@ async def draw_history():
         final_pledges_history = []
         for draw in pledges_history:
             for pledge in draw['pledges']:
-                insert = {'investor_acc_number': draw['investor_acc_number'],
-                          'investment_name': draw['investment_name'], 'opportunity_code': pledge['opportunity_code'],
-                          'investment_amount': float(pledge['investment_amount']), 'Category': pledge['Category']}
-                # if insert['draw_date'] == "" or insert['draw_date'] == None:
-                #     insert['drawn_to_date'] = 0
-                #     insert['available_to_draw'] = float(insert['investment_amount'])
-                # else:
-                #     insert['drawn_to_date'] = float(insert['investment_amount'])
-                #     insert['available_to_draw'] = 0
+                if float(pledge['investment_amount']) > 0:
+                    insert = {'investor_acc_number': draw['investor_acc_number'],
+                              'investment_name': draw['investment_name'], 'opportunity_code': pledge['opportunity_code'],
+                              'investment_amount': float(pledge['investment_amount']), 'Category': pledge['Category']}
+
 
                 final_pledges_history.append(insert)
 
-        print("final_pledges_history", len(final_pledges_history))
+        # print("final_pledges_history", final_pledges_history[0:2])
+
+        # remove duplicates from final_pledges_history if investment_amount and opportunity_code and investor_acc_number is the same
+        final_pledges_history = [dict(t) for t in {tuple(d.items()) for d in final_pledges_history}]
+        # sort by  opportunity_code , investor_acc_number, investment_amount
+        final_pledges_history = sorted(final_pledges_history,
+                                        key=lambda k: (k['opportunity_code'], k['investor_acc_number'],
+                                                        k['investment_amount']))
+
+
 
         report_data = create_draw_history_report(final_draw_history, final_pledges_history)
 
