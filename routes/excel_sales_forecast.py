@@ -2264,7 +2264,8 @@ async def draw_history():
 
         report_data = create_draw_history_report(final_draw_history, final_pledges_history, opportunitiesUsed)
 
-        return {"filename": report_data, "total_available_to_draw": total_available_to_draw, "total_pledges": total_pledges}
+        return {"filename": report_data, "total_available_to_draw": total_available_to_draw,
+                "total_pledges": total_pledges}
     except Exception as e:
         print("Error:", e)
         return {"message": "Error"}
