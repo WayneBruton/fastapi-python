@@ -45,7 +45,7 @@ def create_draw_history_report(data, pledges, opportunities):
     row1 = ["CURRENT FUNDS AVAILABLE TO DRAW"]
     row2 = []
     row3 = ["Unit Number", "Acc.", "Investor", "Capital Amount", "Investment Date", "Amount Available to Draw",
-            "Draw Date", "Total Drawn to Date"]
+            "Draw Date", "Total Drawn to Date", "Planned Draw Date", "Planned Draw No:"]
 
     data_to_insert.append(row1)
     data_to_insert.append(row2)
@@ -57,7 +57,7 @@ def create_draw_history_report(data, pledges, opportunities):
         row = [draw['opportunity_code'], draw['investor_acc_number'], draw['investment_name'],
                draw['investment_amount'],
                draw['investment_date'], draw['available_to_draw'], draw['draw_date'],
-               draw['drawn_to_date']]
+               draw['drawn_to_date'], draw['planned_draw_date'], draw['draw']]
         data_to_insert.append(row)
 
     # print(data_to_insert)
@@ -75,7 +75,7 @@ def create_draw_history_report(data, pledges, opportunities):
         ws.column_dimensions[get_column_letter(col)].width = 33
 
     # merge first row from A1 to H1, then center it and make it bold and 20 font size and blue color and add thick border
-    ws.merge_cells('A1:H1')
+    ws.merge_cells('A1:J1')
     ws['A1'].alignment = Alignment(horizontal='center')
     ws['A1'].font = Font(size=20, bold=True, color="1072BA")
     ws['A1'].border = Border(top=Side(border_style='thick', color='000000'),
@@ -93,7 +93,7 @@ def create_draw_history_report(data, pledges, opportunities):
                              bottom=Side(border_style='thick', color='000000'))
         cell.fill = PatternFill(start_color="DCDCDC", end_color="DCDCDC", fill_type="solid")
 
-    columns_to_center = ['A', 'B', 'C', 'E', 'G']
+    columns_to_center = ['A', 'B', 'C', 'E', 'G', 'I', 'J']
     # center everything in columns_to_center from row4 until the end, and put a thin border around it
     for col in columns_to_center:
         for cell in ws[col]:
@@ -117,7 +117,7 @@ def create_draw_history_report(data, pledges, opportunities):
     # print("MAX ROW", max_row)
 
     # put a filter in place in row 3 for data from row 4 until the end
-    ws.auto_filter.ref = "A3:H" + str(max_row)
+    ws.auto_filter.ref = "A3:J" + str(max_row)
 
     # in columns D, F, H, add a sum of the column, and format it as currency as above, and fill it with gray and put
     # a thick border around each one

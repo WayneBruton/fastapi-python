@@ -2214,12 +2214,17 @@ async def draw_history():
                           'investment_name': draw['investment_name'], 'opportunity_code': trust['opportunity_code'],
                           'investment_amount': float(trust['investment_amount']), 'draw_date': trust['release_date'],
                           'investment_date': trust['deposit_date'], 'Category': trust['Category']}
+
                 if insert['draw_date'] == "" or insert['draw_date'] == None:
                     insert['drawn_to_date'] = 0
                     insert['available_to_draw'] = float(insert['investment_amount'])
+                    insert['planned_draw_date'] = trust.get('planned_release_date',"")
+                    insert['draw'] = trust.get('draw',"")
                 else:
                     insert['drawn_to_date'] = float(insert['investment_amount'])
                     insert['available_to_draw'] = 0
+                    insert['planned_draw_date'] = ""
+                    insert['draw'] = ""
 
                 final_draw_history.append(insert)
 
