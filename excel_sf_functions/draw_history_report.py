@@ -314,13 +314,7 @@ def create_draw_history_report(data, pledges, opportunities):
         cell.value = f"=E{row}-F{row}"
         cell.number_format = 'R#,##0.00'
 
-    print("MAX ROW", max_ws3_row)
-    print("MAX ROW", max_ws2_row)
-    print("MAX ROW", max_ws1_row)
-
-
-
-    columns_as_currency = ['C','D', 'E', 'F', 'G']
+    columns_as_currency = ['C', 'D', 'E', 'F', 'G']
     # format columns_as_currency as currency and put a thin border around it
     for col in columns_as_currency:
         for cell in ws3[col]:

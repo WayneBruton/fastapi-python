@@ -2156,10 +2156,6 @@ async def update_future_cf_requirements(data: Request):
 
 @excel_sales_forecast.get("/draw_history")
 async def draw_history():
-    # get info from investors and project investor_acc_number, investor_name, investor_surname, investment_name and trust array
-
-    # request = await data.json()
-    # print("request", request)
     try:
         draw_history = list(db.investors.aggregate([
             {
@@ -2170,13 +2166,32 @@ async def draw_history():
                     "investor_surname": 1,
                     "investment_name": 1,
                     "trust": 1,
+
+                    "_id": 0
+                }
+            }
+        ]))
+
+        pledges_history = list(db.investors.aggregate([
+            {
+                "$project": {
+                    "investor_acc_number": 1,
+                    # "Category": 1,
+                    "investor_name": 1,
+                    "investor_surname": 1,
+                    "investment_name": 1,
+
                     "pledges": 1,
                     "_id": 0
                 }
             }
         ]))
 
-        # opportunitiesUsed = list(db.opportunities.find({}))
+        # filter out of pledges_history where pledges is equal to []
+        pledges_history = list(filter(lambda pledge: pledge['pledges'] != [], pledges_history))
+        for pledge in pledges_history:
+            if pledge['investor_acc_number'] == "ZMOR02":
+                print("pledge", pledge)
 
         # get all opportunities from db and return opportunity_code, opportunity_amount_required
         opportunitiesUsed = list(db.opportunities.find({}, {
@@ -2189,17 +2204,8 @@ async def draw_history():
         # filter out of opportunitiesUsed where Category is equal to "Southwark"
         opportunitiesUsed = list(filter(lambda opportunity: opportunity['Category'] != "Southwark", opportunitiesUsed))
 
-        # for opportunity in opportunitiesUsed:
-        #     opportunity['id'] = str(opportunity['_id'])
-        #     del opportunity['_id']
-
-        print("opportunitiesUsed", opportunitiesUsed[0])
-        # print(len(opportunitiesUsed))
-
-        # remove records where trust is empty
         final_draw_history = []
-        pledges_history = [item for item in draw_history if len(item['pledges']) > 0 ]
-        # print("pledges_history", pledges_history[0]['pledges'])
+
         draw_history = [item for item in draw_history if item['trust']]
         # print("draw_history", draw_history[0])
         for draw in draw_history:
@@ -2227,29 +2233,20 @@ async def draw_history():
                                                    k['opportunity_code']))
 
         final_pledges_history = []
-        for draw in pledges_history:
-            for pledge in draw['pledges']:
-                if float(pledge['investment_amount']) > 0:
-                    insert = {'investor_acc_number': draw['investor_acc_number'],
-                              'investment_name': draw['investment_name'], 'opportunity_code': pledge['opportunity_code'],
-                              'investment_amount': float(pledge['investment_amount']), 'Category': pledge['Category']}
-
-
+        for pledge in pledges_history:
+            for individual_pledge in pledge['pledges']:
+                insert = {'investor_acc_number': pledge['investor_acc_number'],
+                          'investment_name': pledge['investment_name'],
+                          'opportunity_code': individual_pledge['opportunity_code'],
+                          'investment_amount': float(individual_pledge['investment_amount'])}
                 final_pledges_history.append(insert)
 
-        # print("final_pledges_history", final_pledges_history[0:2])
-
-        # remove duplicates from final_pledges_history if investment_amount and opportunity_code and investor_acc_number is the same
-        final_pledges_history = [dict(t) for t in {tuple(d.items()) for d in final_pledges_history}]
+        # filter out of final_pledges_history where investment_amount is equal to 0
+        final_pledges_history = list(filter(lambda pledge: pledge['investment_amount'] != 0, final_pledges_history))
         # sort by  opportunity_code , investor_acc_number, investment_amount
         final_pledges_history = sorted(final_pledges_history,
-                                        key=lambda k: (k['opportunity_code'], k['investor_acc_number'],
-                                                        k['investment_amount']))
-
-
-
-
-
+                                       key=lambda k: (k['opportunity_code'], k['investor_acc_number'],
+                                                      k['investment_amount']))
 
         report_data = create_draw_history_report(final_draw_history, final_pledges_history, opportunitiesUsed)
 
