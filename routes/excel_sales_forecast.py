@@ -2166,7 +2166,6 @@ async def draw_history():
                     "investor_surname": 1,
                     "investment_name": 1,
                     "trust": 1,
-
                     "_id": 0
                 }
             }
@@ -2180,7 +2179,6 @@ async def draw_history():
                     "investor_name": 1,
                     "investor_surname": 1,
                     "investment_name": 1,
-
                     "pledges": 1,
                     "_id": 0
                 }
@@ -2189,9 +2187,9 @@ async def draw_history():
 
         # filter out of pledges_history where pledges is equal to []
         pledges_history = list(filter(lambda pledge: pledge['pledges'] != [], pledges_history))
-        for pledge in pledges_history:
-            if pledge['investor_acc_number'] == "ZMOR02":
-                print("pledge", pledge)
+        # for pledge in pledges_history:
+        #     if pledge['investor_acc_number'] == "ZMOR02":
+        #         print("pledge", pledge)
 
         # get all opportunities from db and return opportunity_code, opportunity_amount_required
         opportunitiesUsed = list(db.opportunities.find({}, {
@@ -2218,7 +2216,7 @@ async def draw_history():
                 if insert['draw_date'] == "" or insert['draw_date'] == None:
                     insert['drawn_to_date'] = 0
                     insert['available_to_draw'] = float(insert['investment_amount'])
-                    insert['planned_draw_date'] = trust.get('planned_release_date',"")
+                    insert['planned_draw_date'] = trust.get('planned_release_date',"").replace("-", "/")
                     insert['draw'] = trust.get('draw',"")
                 else:
                     insert['drawn_to_date'] = float(insert['investment_amount'])
@@ -2227,6 +2225,12 @@ async def draw_history():
                     insert['draw'] = ""
 
                 final_draw_history.append(insert)
+
+        # get a total of available_to_draw from final_draw_history
+        total_available_to_draw = sum([draw['available_to_draw'] for draw in final_draw_history])
+        # format total_available_to_draw to 2 decimal places, as currency with a R in front and a space between the R
+        # and the number
+        total_available_to_draw = f"R {total_available_to_draw:,.2f}"
 
         # filter out of final_draw_history where Category is equal to "Southwark
 
@@ -2253,9 +2257,14 @@ async def draw_history():
                                        key=lambda k: (k['opportunity_code'], k['investor_acc_number'],
                                                       k['investment_amount']))
 
+        total_pledges = sum([pledge['investment_amount'] for pledge in final_pledges_history])
+        # format total_pledges to 2 decimal places, as currency with a R in front and a space between the R and the
+        # number
+        total_pledges = f"R {total_pledges:,.2f}"
+
         report_data = create_draw_history_report(final_draw_history, final_pledges_history, opportunitiesUsed)
 
-        return report_data
+        return {"filename": report_data, "total_available_to_draw": total_available_to_draw, "total_pledges": total_pledges}
     except Exception as e:
         print("Error:", e)
         return {"message": "Error"}

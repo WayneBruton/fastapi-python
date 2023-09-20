@@ -1,5 +1,5 @@
 # from datetime import timedelta
-from datetime import datetime
+# from datetime import datetime
 import os
 
 from openpyxl import Workbook
@@ -12,26 +12,21 @@ from openpyxl.utils import get_column_letter
 
 # from openpyxl.utils import range_boundaries
 
-from excel_sf_functions.create_sales_sheet import create_excel_array
-from excel_sf_functions.create_NSST_sheets import create_nsst_sheet
-from excel_sf_functions.format_sf_sheets import format_sales_forecast
-from excel_sf_functions.format_nsst_sheets import format_nsst
-import time
-import threading
+# from excel_sf_functions.create_sales_sheet import create_excel_array
+# from excel_sf_functions.create_NSST_sheets import create_nsst_sheet
+# from excel_sf_functions.format_sf_sheets import format_sales_forecast
+# from excel_sf_functions.format_nsst_sheets import format_nsst
+# import time
+# import threading
 
 
 def create_draw_history_report(data, pledges, opportunities):
-    # print("DATAAAAA",data)
-    # print(data['draws'])
-
     filename = 'excel_files/current_funds_available.xlsx'
     if os.path.exists(filename):
         os.remove(filename)
         print("File Removed!")
     else:
         print("The file does not exist")
-
-    # print(pledges)
 
     # create workbook
     wb = Workbook()
@@ -51,8 +46,6 @@ def create_draw_history_report(data, pledges, opportunities):
     data_to_insert.append(row2)
     data_to_insert.append(row3)
 
-    # print(data_to_insert)
-
     for draw in data:
         row = [draw['opportunity_code'], draw['investor_acc_number'], draw['investment_name'],
                draw['investment_amount'],
@@ -60,13 +53,8 @@ def create_draw_history_report(data, pledges, opportunities):
                draw['drawn_to_date'], draw['planned_draw_date'], draw['draw']]
         data_to_insert.append(row)
 
-    # print(data_to_insert)
-
     for data_in in data_to_insert:
         ws.append(data_in)
-
-    # make all columns 20 wide
-    # get max column
 
     for col in range(1, ws.max_column + 1):
         ws.column_dimensions[get_column_letter(col)].width = 18
@@ -74,7 +62,8 @@ def create_draw_history_report(data, pledges, opportunities):
     for col in range(3, 4):
         ws.column_dimensions[get_column_letter(col)].width = 33
 
-    # merge first row from A1 to H1, then center it and make it bold and 20 font size and blue color and add thick border
+    # merge first row from A1 to H1, then center it and make it bold and 20 font size and blue color and add thick
+    # border
     ws.merge_cells('A1:J1')
     ws['A1'].alignment = Alignment(horizontal='center')
     ws['A1'].font = Font(size=20, bold=True, color="1072BA")
@@ -114,7 +103,6 @@ def create_draw_history_report(data, pledges, opportunities):
                                  bottom=Side(border_style='thin', color='000000'))
 
     max_row = ws.max_row
-    # print("MAX ROW", max_row)
 
     # make columns I & J have a yellow fill
     columns_to_fill = ['I', 'J']
@@ -139,9 +127,6 @@ def create_draw_history_report(data, pledges, opportunities):
                              left=Side(border_style='medium', color='000000'),
                              right=Side(border_style='medium', color='000000'),
                              bottom=Side(border_style='medium', color='000000'))
-
-
-
 
     # freeze panes at row 4
     ws.freeze_panes = "A4"
@@ -216,7 +201,6 @@ def create_draw_history_report(data, pledges, opportunities):
                                  bottom=Side(border_style='thin', color='000000'))
 
     max_row = ws2.max_row
-    # print("MAX ROW", max_row)
 
     # put a filter in place in row 3 for data from row 4 until the end
     ws2.auto_filter.ref = "A3:D" + str(max_row)
@@ -234,7 +218,6 @@ def create_draw_history_report(data, pledges, opportunities):
                              right=Side(border_style='medium', color='000000'),
                              bottom=Side(border_style='medium', color='000000'))
 
-    # ws.auto_filter.ref = "A3:D" + str(max_row)
     # freeze panes at row 4
     ws2.freeze_panes = "A4"
 
@@ -300,8 +283,8 @@ def create_draw_history_report(data, pledges, opportunities):
     ws2_sheet = 'Pledges'
     ws1_sheet = 'Draw History Report'
 
-    # in column D from row 4 until the end, add a formula =SUMIFS('Draw History Report'!$H$3:$H$723,'Draw History Report'!$A$3:$A$723,Shortfall!B4)
-    # and format it as currency as above
+    # in column D from row 4 until the end, add a formula =SUMIFS('Draw History Report'!$H$3:$H$723,'Draw History
+    # Report'!$A$3:$A$723,Shortfall!B4) and format it as currency as above
     for row in range(4, max_ws3_row + 1):
         cell = ws3['D' + str(row)]
         cell.value = f"=SUMIFS('{ws1_sheet}'!$H$3:$H${max_ws1_row},'{ws1_sheet}'!$A$3:$A${max_ws1_row},{'B' + str(row)})"
@@ -334,9 +317,8 @@ def create_draw_history_report(data, pledges, opportunities):
                                  left=Side(border_style='thin', color='000000'),
                                  right=Side(border_style='thin', color='000000'),
                                  bottom=Side(border_style='thin', color='000000'))
-    #
+
     max_row = ws3.max_row
-    # print("MAX ROW", max_row)
 
     # put a filter in place in row 3 for data from row 4 until the end
     ws3.auto_filter.ref = "A3:G" + str(max_row)
@@ -356,12 +338,10 @@ def create_draw_history_report(data, pledges, opportunities):
                              right=Side(border_style='medium', color='000000'),
                              bottom=Side(border_style='medium', color='000000'))
 
-    # ws.auto_filter.ref = "A3:D" + str(max_row)
     # freeze panes at row 4
     ws3.freeze_panes = "A4"
 
     # save workbook
     wb.save('excel_files/current_funds_available.xlsx')
 
-    return {"filename": "excel_files/current_funds_available.xlsx"}
-    # wb.save(filename="excel_files/")
+    return "excel_files/current_funds_available.xlsx"
