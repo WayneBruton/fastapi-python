@@ -116,6 +116,14 @@ def create_draw_history_report(data, pledges, opportunities):
     max_row = ws.max_row
     # print("MAX ROW", max_row)
 
+    # make columns I & J have a yellow fill
+    columns_to_fill = ['I', 'J']
+
+    for col in columns_to_fill:
+        for row in range(4, max_row + 1):
+            cell = ws[col + str(row)]
+            cell.fill = PatternFill(start_color="FAF2D3", end_color="FAF2D3", fill_type="solid")
+
     # put a filter in place in row 3 for data from row 4 until the end
     ws.auto_filter.ref = "A3:J" + str(max_row)
 
@@ -131,6 +139,9 @@ def create_draw_history_report(data, pledges, opportunities):
                              left=Side(border_style='medium', color='000000'),
                              right=Side(border_style='medium', color='000000'),
                              bottom=Side(border_style='medium', color='000000'))
+
+
+
 
     # freeze panes at row 4
     ws.freeze_panes = "A4"
