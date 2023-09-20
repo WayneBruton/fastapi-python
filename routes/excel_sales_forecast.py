@@ -2176,6 +2176,26 @@ async def draw_history():
             }
         ]))
 
+        # opportunitiesUsed = list(db.opportunities.find({}))
+
+        # get all opportunities from db and return opportunity_code, opportunity_amount_required
+        opportunitiesUsed = list(db.opportunities.find({}, {
+            "_id": 0,
+            "opportunity_code": 1,
+            "opportunity_amount_required": 1,
+            "Category": 1
+        }))
+
+        # filter out of opportunitiesUsed where Category is equal to "Southwark"
+        opportunitiesUsed = list(filter(lambda opportunity: opportunity['Category'] != "Southwark", opportunitiesUsed))
+
+        # for opportunity in opportunitiesUsed:
+        #     opportunity['id'] = str(opportunity['_id'])
+        #     del opportunity['_id']
+
+        print("opportunitiesUsed", opportunitiesUsed[0])
+        # print(len(opportunitiesUsed))
+
         # remove records where trust is empty
         final_draw_history = []
         pledges_history = [item for item in draw_history if len(item['pledges']) > 0 ]
@@ -2228,7 +2248,10 @@ async def draw_history():
 
 
 
-        report_data = create_draw_history_report(final_draw_history, final_pledges_history)
+
+
+
+        report_data = create_draw_history_report(final_draw_history, final_pledges_history, opportunitiesUsed)
 
         return report_data
     except Exception as e:
