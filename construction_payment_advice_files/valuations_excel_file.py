@@ -53,7 +53,7 @@ def create_valuations_file(data, subcontractors):
         for index, valuation in enumerate(data):
             if index == 0:
                 color_terms = valuation['terms']
-            if valuation['subcontractor'] == subcontractor and valuation.get('taskCategory', 'Standard') != 'ATCV':
+            if valuation['subcontractor'] == subcontractor and valuation.get('taskCategory', 'Normal') != 'ATCV':
                 insert = [valuation['development'], valuation['block'], valuation['unit'], valuation['floorType'],
                           valuation['description'], valuation['unitMeasure'], valuation['qty'], valuation['rate'],
                           valuation['amount'], valuation['percent_complete'], valuation['amount_complete'],
@@ -82,7 +82,7 @@ def create_valuations_file(data, subcontractors):
             data_to_insert.append(blank_row)
         data_to_insert.append(['', '', '', '', 'ATCV', '', '', '', '', '', '', ''])
         for valuation in data:
-            if valuation['subcontractor'] == subcontractor and valuation.get('taskCategory', 'Standard') == 'ATCV':
+            if valuation['subcontractor'] == subcontractor and valuation.get('taskCategory', 'Normal') == 'ATCV':
                 # data_to_insert.append(['', '', '', '', 'ATCV', '', '', '', '', '', '', ''])
                 insert = ["", "", "", "",
                           valuation['description'], valuation['unitMeasure'], valuation['qty'], valuation['rate'],
@@ -524,7 +524,7 @@ def create_valuations_file(data, subcontractors):
 
         thirst_day_subbies = []
         for index, contract in enumerate(thirty_days_subcontractors, 1):
-            contract['taskCategory'] = contract.get('taskCategory', 'Standard')
+            contract['taskCategory'] = contract.get('taskCategory', 'Normal')
             thirst_day_subbies.append(contract['subcontractor'])
 
         thirst_day_subbies = list(dict.fromkeys(thirst_day_subbies))
@@ -704,8 +704,11 @@ def create_valuations_file(data, subcontractors):
 
         eom_subbies = []
         for index, contract in enumerate(eom_subcontractors, 1):
-            contract['taskCategory'] = contract.get('taskCategory', 'Standard')
+            contract['taskCategory'] = contract.get('taskCategory', 'Normal')
             eom_subbies.append(contract['subcontractor'])
+            # print(contract)
+
+
 
         eom_subbies = list(dict.fromkeys(eom_subbies))
 
@@ -742,7 +745,7 @@ def create_valuations_file(data, subcontractors):
                 else:
                     amount_previously_certified += float(contract['amount_complete'])
 
-                if contract['taskCategory'] == 'Standard':
+                if contract['taskCategory'] == 'Normal':
                     if contract['vatable'] == 'Yes':
                         sum_standard += float(contract['amount']) * 1.15
                     else:

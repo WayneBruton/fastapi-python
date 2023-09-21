@@ -2157,6 +2157,7 @@ async def update_future_cf_requirements(data: Request):
 @excel_sales_forecast.get("/draw_history")
 async def draw_history():
     try:
+        start_time = time.time()
         draw_history = list(db.investors.aggregate([
             {
                 "$project": {
@@ -2230,7 +2231,7 @@ async def draw_history():
         total_available_to_draw = sum([draw['available_to_draw'] for draw in final_draw_history])
         # format total_available_to_draw to 2 decimal places, as currency with a R in front and a space between the R
         # and the number
-        total_available_to_draw = f"R {total_available_to_draw:,.2f}"
+        total_available_to_draw = f"R {total_available_to_draw:,.2f}".replace(",", " ")
 
         # filter out of final_draw_history where Category is equal to "Southwark
 
@@ -2260,9 +2261,20 @@ async def draw_history():
         total_pledges = sum([pledge['investment_amount'] for pledge in final_pledges_history])
         # format total_pledges to 2 decimal places, as currency with a R in front and a space between the R and the
         # number
-        total_pledges = f"R {total_pledges:,.2f}"
+        total_pledges = f"R {total_pledges:,.2f}".replace(",", " ")
 
         report_data = create_draw_history_report(final_draw_history, final_pledges_history, opportunitiesUsed)
+
+        end_time = time.time()
+
+        # format time_taken as seconds
+        time_taken = end_time - start_time
+        time_taken = f"{time_taken:.2f} seconds"
+
+
+        print("Time taken: ", end_time - start_time)
+
+
 
         return {"filename": report_data, "total_available_to_draw": total_available_to_draw,
                 "total_pledges": total_pledges}
