@@ -255,7 +255,7 @@ async def get_construction_valuations_to_approve(request: Request):
         total_valuation_30_days = f"R{total_valuation_30_days:,.2f}"
         total_valuation_end_of_month = f"R{total_valuation_end_of_month:,.2f}"
         total_approvals = f"R{total_approvals:,.2f}"
-        print("XXXX",total_valuation_30_days, total_valuation_end_of_month, total_approvals)
+        # print("XXXX",total_valuation_30_days, total_valuation_end_of_month, total_approvals)
 
         return {"30 Days": total_valuation_30_days, "total EOM": total_valuation_end_of_month,
                 "Total Approvals": total_approvals}
@@ -269,7 +269,7 @@ async def sales_forecast(valuation_report_name: str):
     file_name = valuation_report_name
     dir_path = "excel_files"
     dir_list = os.listdir(dir_path)
-    print(f"{dir_path}/{file_name}")
+    # print(f"{dir_path}/{file_name}")
     if file_name in dir_list:
         return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
     else:

@@ -36,6 +36,7 @@ portal_info = APIRouter()
 # MONGO COLLECTIONS
 portalUsers = db.portalUsers
 investors = db.investors
+investorRolloversPortal = db.investorRolloversPortal
 
 rates = db.rates
 
@@ -161,7 +162,6 @@ async def generate_otp(data: Request):
             #     }
             # )
 
-
             if responseData["messages"][0]["status"] == "0":
                 return {"message": "SMS sent successfully", "otp": str(pin)}
                 # print("Message sent successfully.")
@@ -277,8 +277,35 @@ async def add_investor(data: Request):
 @portal_info.post("/investment_termination")
 async def investment_termination(data: Request):
     request = await data.json()
-    # print(request)
+    print(request)
     try:
+        insert = {
+            "investor_acc_number": request['investor_acc_number'],
+            "opportunity_code": request['opportunity_code'],
+            "investment_number": request['investment_number'],
+            "amount_invested": request['float_investment'],
+            "exit_amount": request['float_exit'],
+            "balance": request['float_balance'],
+            "full_exit": request['full_exit'],
+            "full_rollover": request['full_rollover'],
+            "partial_exit": request['partial_exit'],
+            "from_portal": True,
+        }
+
+        # get document from investorRollOversPortal collection where investor_acc_number = request[
+        # 'investor_acc_number'] and opportunity_code = request['opportunity_code'] and investment_number = request[
+        # 'investment_number'] ,if document exists, update it with insert else insert it
+
+        investor_rollover = investorRolloversPortal.find_one(
+            {"investor_acc_number": request['investor_acc_number'], "opportunity_code": request['opportunity_code'],
+             "investment_number": request['investment_number']})
+
+        if investor_rollover:
+            investor_rollover['_id'] = str(investor_rollover['_id'])
+            investorRolloversPortal.update_one({"_id": ObjectId(investor_rollover['_id'])}, {"$set": insert})
+        else:
+            investorRolloversPortal.insert_one(insert)
+
         # get investor from investors collection where _id = request['id'] as an objectId and project only the
         # investor_mobile field
         investor = investors.find_one({"_id": ObjectId(request['_id'])},
@@ -340,7 +367,7 @@ async def investment_termination(data: Request):
                 <strong>Exit Amount:</strong> {exit_amount}<br><br>
                 <strong>Rollover Amount:</strong> {rollover_amount}<br><br>
                 
-                We will be in contact with you shortly to finalise the process.<br><br>
+                We will be in contact with you in due course to finalise the process.<br><br>
                 
                 
                 <strong>Investor Returns:</strong> The projected returns below are applicable to the next 
@@ -356,7 +383,7 @@ async def investment_termination(data: Request):
                 <br /><br />
                 
                 Please do not reply to this email as it is not monitored. Any questions can be directed to 
-                Leandri Naude at leandri@opportunity.co.za <br /><br />
+                Leandri Kriel at leandri@opportunity.co.za <br /><br />
                 
                 Kind Regards<br />
                 

@@ -95,6 +95,14 @@ def create_excel_array(data):
     rental12_data = ["Income to date", "", "", "", "", ""]
     rental13_data = ["Rental Contract Income", "", "", "", "", ""]
 
+    rollover_data1 = []
+    rollover_data2 = []
+    rollover_data3 = []
+    rollover_data4 = ["Rollover from portal", "", "", "", "", ""]
+    rollover_data5 = ["Rollover amount from portal", "", "", "", "", ""]
+    rollover_data6 = ["Forecast Rollover Date", "", "", "", "", ""]
+    rollover_data7 = ["Forecast Rollover Amount", "", "", "", "", ""]
+
 
 
     for item in data:
@@ -182,6 +190,9 @@ def create_excel_array(data):
         rental12_data.append(item['rental_income_to_date'])
         rental13_data.append(item['rental_income_to_contract_end'])
 
+        rollover_data4.append(item['from_portal'])
+        rollover_data5.append(item['rollover_amount_chosen'])
+
 
 
     worksheet_data += [row4_data, row5_data, row2_data, row2_data, row4_data, row5_data, [], row7_data, row8_data,
@@ -199,7 +210,8 @@ def create_excel_array(data):
                        rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_1_data,
                        rowblank_data, rental1_data,rental1A_data, rental2_data, rental3_data, rental4_data, rental5_data,
                        rental6_data, rental7_data, rental8_data, rental9_data, rental10_data, rental11_data,
-                       rental12_data, rental13_data]
+                       rental12_data, rental13_data, rollover_data1, rollover_data2, rollover_data3, rollover_data4,
+                       rollover_data5, rollover_data6, rollover_data7]
 
     merge_start = []
     merge_end = []

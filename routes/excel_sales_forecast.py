@@ -27,6 +27,7 @@ unallocated_investments = db.unallocated_investments
 sales_parameters = db.salesParameters
 rollovers = db.investorRollovers
 drawdowns = db.investor_Draws
+portal_choice = db.investorRolloversPortal
 
 
 @excel_sales_forecast.post("/update-sales-forecast_unallocated")
@@ -287,7 +288,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             "rollovers_list": list(db.investorRollovers.find({"Category": {"$in": request['Category']}})),
             "rates_list": list(db.rates.find({})),
             "unallocated_investments_list": list(
-                db.unallocated_investments.find({"Category": {"$in": request['Category']}}))
+                db.unallocated_investments.find({"Category": {"$in": request['Category']}})),
+            "portal_choice": list(db.investorRolloversPortal.find({}))
         }
 
         investor_list = result['investor_list']
@@ -296,6 +298,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         rollovers_list = result['rollovers_list']
         rates_list = result['rates_list']
         unallocated_investments_list = result['unallocated_investments_list']
+        portal_choice = result['portal_choice']
 
         # query_end = time.time()
         # print("Query Time", query_end - query_start)
@@ -1055,6 +1058,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
         listData = investment_status(request)
 
+        # print(final_investors_list[0])
+
         # append development_list to listData
         # listData.append(development_list)
         for devunit in development_list:
@@ -1063,6 +1068,29 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         # print("listData", listData[len(listData) - 1])
         # print()
         # print("listData", listData[len(listData) - 2])
+
+        # portal_choices = list(portal_choice.find({}))
+        # print(portal_choices)
+        for choice in portal_choice:
+            del choice['_id']
+
+        # print(portal_choice)
+
+        for investor in final_investors_list:
+            filtered_choice = [choice for choice in portal_choice if
+                               choice['investor_acc_number'] == investor['investor_acc_number'] and choice[
+                                   'opportunity_code'] == investor['opportunity_code']]
+            if len(filtered_choice) > 0:
+                investor['from_portal'] = True
+                if filtered_choice[0]['full_exit']:
+                    investor['rollover_amount_chosen'] = 0
+                elif filtered_choice[0]['full_rollover']:
+                    investor['rollover_amount_chosen'] = filtered_choice[0]['balance']
+                elif filtered_choice[0]['partial_exit']:
+                    investor['rollover_amount_chosen'] = filtered_choice[0]['balance'] - filtered_choice[0]['exit_amount']
+            else:
+                investor['from_portal'] = False
+                investor['rollover_amount_chosen'] = 0
 
         background_tasks.add_task(create_sales_forecast_file, final_investors_list, request, pledges, firstName,
                                   listData, request)
@@ -1794,7 +1822,7 @@ async def create_draw_doc(data: Request):
     # as final_app_total add all the investment_amounts
     final_app_total = sum([float(investor['investment_amount']) for investor in new_app_total])
 
-    print("app_total", final_app_total)
+    # print("app_total", final_app_total)
 
     # print(request['drawdowns'][0])
 
@@ -1822,10 +1850,10 @@ async def create_draw_doc(data: Request):
 @excel_sales_forecast.get("/get_draw_doc")
 async def draw_doc(file_name):
     file_name = file_name
-    print(file_name)
+    # print(file_name)
     dir_path = "excel_files"
     dir_list = os.listdir(dir_path)
-    print(dir_list)
+    # print(dir_list)
     if file_name in dir_list:
         return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
     else:
@@ -2129,7 +2157,7 @@ async def process_unallocated_investors(data: Request):
                             trust_item['investment_number'] == draw['investment_number']:
                         trust_item['draw'] = draw['draw']
                         trust_item['planned_release_date'] = draw['planned_release_date']
-                        print(trust_item)
+                        # print(trust_item)
 
                 db.investors.update_one({"_id": ObjectId(id)}, {"$set": investor[0]})
 
@@ -2143,7 +2171,7 @@ async def process_unallocated_investors(data: Request):
 @excel_sales_forecast.post("/update_future_cf_requirements")
 async def update_future_cf_requirements(data: Request):
     request = await data.json()
-    print("request", request['futureDraws'])
+    # print("request", request['futureDraws'])
     future_draws_list = request['futureDraws']
     try:
         db.future_cf_requirements.delete_many({})
@@ -2217,8 +2245,8 @@ async def draw_history():
                 if insert['draw_date'] == "" or insert['draw_date'] == None:
                     insert['drawn_to_date'] = 0
                     insert['available_to_draw'] = float(insert['investment_amount'])
-                    insert['planned_draw_date'] = trust.get('planned_release_date',"").replace("-", "/")
-                    insert['draw'] = trust.get('draw',"")
+                    insert['planned_draw_date'] = trust.get('planned_release_date', "").replace("-", "/")
+                    insert['draw'] = trust.get('draw', "")
                 else:
                     insert['drawn_to_date'] = float(insert['investment_amount'])
                     insert['available_to_draw'] = 0
@@ -2271,10 +2299,7 @@ async def draw_history():
         time_taken = end_time - start_time
         time_taken = f"{time_taken:.2f} seconds"
 
-
         print("Time taken: ", end_time - start_time)
-
-
 
         return {"filename": report_data, "total_available_to_draw": total_available_to_draw,
                 "total_pledges": total_pledges}
@@ -2288,7 +2313,7 @@ async def sales_forecast(draw_report_name):
     file_name = draw_report_name.split("/")[1]
     dir_path = "excel_files"
     dir_list = os.listdir(dir_path)
-    print(f"{dir_path}/{file_name}")
+    # print(f"{dir_path}/{file_name}")
     if file_name in dir_list:
         return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
     else:

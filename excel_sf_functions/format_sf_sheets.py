@@ -229,7 +229,7 @@ def format_sales_forecast(sheet):
     rows_to_center = [5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
                       33, 34, 35, 37, 38, 39, 40, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 55, 59, 60, 61, 62,
                       63, 64,65, 71, 72, 73, 74, 75, 76, 77, 78, 79, 81, 83, 84, 86, 87, 92, 93, 94, 95, 96, 97, 98, 99,
-                      100, 101, 102, 103, 104, 105]
+                      100, 101, 102, 103, 104, 105, 111, 112]
     # Loop through the rows_to_format_currency list and align the cells from column 6 to the last column in the
     # centre
     for row in rows_to_center:
@@ -325,7 +325,7 @@ def format_sales_forecast(sheet):
     # ROWS TO SUM
     rows_to_sum = [13, 14, 15, 16, 17, 19, 24, 25, 26, 27, 30, 31, 32, 33, 34, 35, 37, 38, 39, 42, 43, 44, 45, 46,
                    47, 48, 49, 50, 51, 52, 53, 55, 60, 61, 62, 63, 64, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 83,
-                   84, 86, 87,  93,95, 96,97,98, 99, 100,101, 104, 105]
+                   84, 86, 87,  93,95, 96,97,98, 99, 100,101, 104, 105, 112]
     # for each row in rows_to_sum, sum the cells from column 6 to the last column in the sheet in insert the
     # formula in column 'B', with white font and bold and format the cell as currency with 2 decimal places and
     # comma every 3 digits
@@ -537,6 +537,29 @@ def format_sales_forecast(sheet):
         for cell in col:
             if cell.value != '':
                 cell.number_format = 'yyyy/mm/dd'
+
+    # in row 112 insert the formula =IF(G3=FALSE,IF(G110<>0,G110,G35*0.6),0) from column 7 to the last column
+    for col in sheet.iter_cols(min_row=112, min_col=7, max_row=112, max_col=sheet.max_column):
+        for cell in col:
+            # =IF(AND(G3=FALSE, G10 <> "ZZUN01"), IF(G110 <> 0, G110, G35 * 0.6), 0)
+            cell.value = f'=IF(AND({cell.column_letter}3=FALSE, {cell.column_letter}10<>"ZZUN01"),IF({cell.column_letter}110<>0,{cell.column_letter}110,' \
+                         f'{cell.column_letter}35*0.6),0)'
+            # format as currency with 2 decimal places and comma every 3 digits
+            cell.number_format = 'R#,##0.00'
+
+    # for row 111 add the following formula, =IF(G112<>0,G22+3,"") from column 7 to the last column and format as date
+    # format yyyy/mm/dd if the value is not ''
+    for col in sheet.iter_cols(min_row=111, min_col=7, max_row=111, max_col=sheet.max_column):
+        for cell in col:
+            cell.value = f'=IF({cell.column_letter}112<>0,{cell.column_letter}22+3,"")'
+            if cell.value != '':
+                cell.number_format = 'yyyy/mm/dd'
+
+    # hide rows 109 and 110
+    sheet.row_dimensions[109].hidden = True
+    sheet.row_dimensions[110].hidden = True
+
+
 
 
 

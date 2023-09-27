@@ -1,5 +1,5 @@
 # from datetime import timedelta
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from openpyxl import Workbook
 # from openpyxl.utils import get_column_letter, column_index_from_string
@@ -119,7 +119,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     listData = listData[:-2]
     # print("development_units", development_units)
 
-
     for item in listData:
         row_data = [item['investor_acc_number'], item['opportunity_code'], item['block'], item['investment_name'],
                     float(item['investment_amount']),
@@ -127,10 +126,9 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                     item['opportunity_sold'], item['occupation_date'], item['estimated_transfer_date'],
                     item['final_transfer_date'], "", item['report_date'],
                     item['days_to_exit_deadline'], "", "", item['investment_interest'], item['investment_interest'],
-                    0, item['exited_by_developer'], item['date_of_exit'], item['early_release'], "",0]
+                    0, item['exited_by_developer'], item['date_of_exit'], item['early_release'], "", 0]
         # print(row_data[16], row_data[17], row_data[18])
         worksheet_data.append(row_data)
-
 
     for item in development_units:
         row_data = [item['investor_acc_number'], item['opportunity_code'], "B", "Dev Unit",
@@ -139,7 +137,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                     False, "", "",
                     "", "", "",
                     0, "", "", 0, 0,
-                    0, 0, 0, False, "",999]
+                    0, 0, 0, False, "", 999]
         # print(row_data[16], row_data[17], row_data[18])
         worksheet_data.append(row_data)
 
@@ -331,7 +329,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
             row[22].value = f"=SUMIFS('{ws3}'!$G$64:${last_colw3}$64, '{ws3}'!$G$4:${last_colw3}$4, B{row[0].row})"
         else:
             row[22].value = 0
-
 
     # Hide columns N & O
     cols_to_hide = ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'N', 'T', 'U']
@@ -1035,10 +1032,57 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         ws.append(insert)
         # cashflow_data.append(insert)
 
-        # if item['unit_no'] == 'HVE101':
-        #     print("merged_filtered",item)
-        #     print()
-        #     print("days",days)
+    ## ROLLOVER SHEET
+    ws = wb.create_sheet("Rollover")
+    ws.sheet_properties.tabColor = "FF8E00"
+
+    row1 = ["Unit No.", "Investor", "Name", "End Date", "Rollover Date", "Amount"]
+    ws.append(row1)
+
+    # get the last column in the first worksheet
+    # list the sheets in the workbook
+    worksheets = wb.sheetnames
+    # get the first sheet in the workbook
+    ws2 = wb[worksheets[0]]
+    # jst get the name of the first sheet in the workbook
+    ws_name = worksheets[0]
+    last_col_ws2 = get_column_letter(ws2.max_column)
+
+    for item in data:
+        insert = []
+        if item['opportunity_transferred'] == False and item['investor_acc_number'] != 'ZZUN01':
+            insert.append(item['opportunity_code'])
+            insert.append(item['investor_acc_number'])
+            insert.append(f"{item['investor_name']} {item['investor_surname']}")
+            insert.append(item['opportunity_final_transfer_date'])
+
+            ws.append(insert)
+
+    # in column E, insert the formula =D2+3 and format it as a date
+    for row in range(2, ws.max_row + 1):
+        ws[f'E{row}'].value = f'=D{row}+3'
+        ws[f'E{row}'].number_format = 'yyyy/mm/dd'
+
+    # in column F insert the formula =SUMIFS('SF Heron View'!$G$112:$PS$112,'SF Heron View'!$G$4:$PS$4,A2,
+    # 'SF Heron View'!$G$10:$PS$10,B2) and format it as currency
+    for row in range(2, ws.max_row + 1):
+        ws[
+            f'F{row}'].value = f'=SUMIFS(\'{ws_name}\'!$G$112:${last_col_ws2}$112,\'{ws_name}\'!$G$4:${last_col_ws2}$4,A{row},\'{ws_name}\'!$G$10:${last_col_ws2}$10,B{row})'
+        ws[f'F{row}'].number_format = '#,##0.00'
+
+    # make all columns 20 wide
+    for col in ws.iter_cols(min_col=1, max_col=6):
+        ws.column_dimensions[col[0].column_letter].width = 20
+
+    # make col C 30 wide
+    ws.column_dimensions['C'].width = 30
+
+    # make first row bold
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+
+    # freeze the first row
+    ws.freeze_panes = 'A2'
 
     # print("merged_list", final_list[0:3])
     #

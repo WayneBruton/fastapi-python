@@ -27,7 +27,7 @@ def create_valuations_file(data, subcontractors):
     # print(data[0]['block'])
 
     filename = f"excel_files/Master {data[0]['block']}.xlsx"
-    print("filename",filename)
+    # print("filename",filename)
     if os.path.exists(filename):
         os.remove(filename)
         print("File Removed!")
@@ -449,7 +449,7 @@ def create_valuations_file(data, subcontractors):
             ws['P' + str(amount_due_incl_vat)] = ('=P' + str(nett_before_vat) + '+P' + str(vat_amount_row))
 
         # ws.sheet_properties.tabColor = "1072BA"
-            print(color_terms)
+        #     print(color_terms)
             if color_terms == '30 Days':
                 # tab color = blue else tab color = green
                 ws.sheet_properties.tabColor = "4F709C"
