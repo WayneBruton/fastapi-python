@@ -58,7 +58,7 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
             # =B36 + B42 + B41
             sheet[f'{column}37'] = f'=SUM({column}36)+SUM({column}41:{column}42)'
             # sheet[f'D37'] = f'=B37'
-            sheet[f'B40'] = f'=SUM(B36)-SUM(C36)-SUM(B38)'
+            sheet[f'B40'] = f'=SUM(B36)-SUM(C36)-SUM(D38)'
             sheet[f'C40'] = f'=0'
             sheet[f'D40'] = f'=D36-D38'
             sheet[f'E40'] = f'=E36'
