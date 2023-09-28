@@ -754,6 +754,10 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                 not (investor['investor_acc_number'] == "ZVOL01" and investor[
                                     'opportunity_code'] == "EA103" and investor['investment_number'] == 3)]
 
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZLEW03" and investor[
+                                    'opportunity_code'] == "EA205" and investor['investment_number'] == 1)]
+
         # get unallocated_investments from mongo db where the request['Category'] is in the Category in the DB
 
         for unallocated_investment in unallocated_investments_list:
@@ -1125,6 +1129,10 @@ def investment_status(request):
         final_investors_list = [investor for investor in final_investors_list if
                                 not (investor['investor_acc_number'] == "ZVOL01" and investor[
                                     'opportunity_code'] == "EA103" and investor['investment_number'] == 3)]
+
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZLEW03" and investor[
+                                    'opportunity_code'] == "EA205" and investor['investment_number'] == 1)]
         # print(final_investors_list)
         for investment in final_investors_list:
             # filter opportunities_list where opportunity['opportunity_code'] is equal to investment['opportunity_code']
@@ -1691,6 +1699,10 @@ async def create_draw_doc(data: Request):
     new_app_total = [investor for investor in new_app_total if
                      not (investor['investor_acc_number'] == "ZERA01" and investor[
                          'opportunity_code'] == "EA205" and investor['investment_number'] == 3)]
+
+    new_app_total = [investor for investor in new_app_total if
+                            not (investor['investor_acc_number'] == "ZLEW03" and investor[
+                                'opportunity_code'] == "EA205" and investor['investment_number'] == 1)]
 
     new_app_total = [investor for investor in new_app_total if
                      not (investor['investor_acc_number'] == "ZVOL01" and investor[
