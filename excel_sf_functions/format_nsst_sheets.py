@@ -69,7 +69,7 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
             # sheet[f'B49'] = f'=SUM(B43)-SUM(C43)'
             # sheet[f'B49'] = total
             sheet[f'C51'] = f''
-            # sheet[f'D49'] = total_sold
+
             sheet[f'E51'] = f'=B51-D51'
             # =SUM(B32) - SUM(B37) - SUM(B45)
             sheet[f'{column}55'] = f'=SUM({column}32)-SUM({column}37)-SUM({column}45)'
@@ -163,7 +163,7 @@ def format_nsst(num_sheets, index, sheet, list_to_filter):
         # Make cells A7, A15, A20, A34, A41 25 units high and increase the font size to 15
         for row in [7, 15, 20, 34, 44, 54]:
             sheet.row_dimensions[row].height = 25
-            # sheet[f'A{row}'].font = Font(size=15)
+
             # make them bold and white
             sheet[f'A{row}'].font = Font(bold=True, color='FFFFFF', size=18)
 

@@ -1,30 +1,19 @@
-# from datetime import timedelta
-from datetime import datetime
+
 import os
 
 from openpyxl import Workbook
-# from openpyxl.utils import get_column_letter, column_index_from_string
+
 
 from openpyxl.styles import PatternFill
 from openpyxl.styles.borders import Border, Side
 from openpyxl.styles import Font, Alignment, NumberFormatDescriptor
 from openpyxl.utils import get_column_letter, column_index_from_string
 
-# from openpyxl.utils import range_boundaries
 
-from excel_sf_functions.create_sales_sheet import create_excel_array
-from excel_sf_functions.create_NSST_sheets import create_nsst_sheet
-from excel_sf_functions.format_sf_sheets import format_sales_forecast
-from excel_sf_functions.format_nsst_sheets import format_nsst
-import time
-import threading
 
 
 def create_valuations_file(data, subcontractors):
-    # print(subcontractors)
-    # if excel_files/valuations.xlsx exists then delete it
 
-    # print(data[0]['block'])
 
     filename = f"excel_files/Master {data[0]['block']}.xlsx"
     # print("filename",filename)

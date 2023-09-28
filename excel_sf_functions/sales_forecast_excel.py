@@ -438,6 +438,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     investment_interest = []
     early_release = []
     sales_price = []
+    interest_rate = []
 
     # get the value from column G row 4 until the last column from ws2 and insert into criteria_range list
     for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=4, max_row=4):
@@ -476,6 +477,9 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=42, max_row=42):
         for item in cell:
             sales_price.append(item.value)
+    for cell in ws2.iter_cols(min_col=7, max_col=ws2.max_column, min_row=11, max_row=11):
+        for item in cell:
+            interest_rate.append(item.value)
 
     # using list comprehension, replace None values with 0 in AVAILABLE
     AVAILABLE = [0 if x is None else x for x in AVAILABLE]
@@ -497,13 +501,16 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     early_release = [0 if x is None else x for x in early_release]
     # using list comprehension, replace None values with 0 in transferred
     sales_price = [0 if x is None else x for x in sales_price]
+    # using list comprehension, replace None values with 0 in transferred
+    interest_rate = [0 if x is None else x for x in interest_rate]
 
     # print("AVAILABLE",AVAILABLE)
 
     # print("criteria_range",criteria_range) using list  utilise only the 4th last character of each item in
     # criteria_range and insert into new list called final_criteria
     final_criteria = [item[-4:-3] for item in criteria_range]
-    # in a new variable called development, remove the last 4 characters from each item in criteria_range and insert into development using list comprehension
+    # in a new variable called development, remove the last 4 characters from each item in criteria_range and insert
+    # into development using list comprehension
     development = [item[:-4] for item in criteria_range]
 
     # print("development", development)
@@ -515,7 +522,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     worksheet_data.append(LEFT_TO_RAISE)
     worksheet_data.append(TO_RAISE)
     worksheet_data.append(transferred)
-    worksheet_data.append([])
+    worksheet_data.append(interest_rate)
     worksheet_data.append(development)
     worksheet_data.append(individual_capital)
     worksheet_data.append(released_interest)
@@ -527,7 +534,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                  "INTEREST REPAID", "UNITS", "TOTAL INCOME PER SALE AFTER EXPENSES", "FOR SALE INVESTOR REPAYMENT",
                  "FOR SALE INCOME DUE TO COMPANY", "SOLD INVESTOR REPAYMENT", "SOLD INCOME DUE TO COMPANY",
                  "TRANSFERRED DUE TO INVESTOR", "TRANSFERRED DUE TO COMPANY", "TOTAL INCOME DUE TO COMPANY",
-                 "ESTIMATED TOTAL REPAYMENT", "INTEREST", "NET INCOME", "% DRAWN", "CTC_COST", "CTC_PROFIT", "MARGIN",
+                 "ESTIMATED TOTAL REPAYMENT", "INTEREST", "NET INCOME", "% DRAWN","Interest / Day", "CTC_COST", "CTC_PROFIT", "MARGIN",
                  "SECURITY MARGIN"]
     worksheet_data.append(row2_data)
 
@@ -623,7 +630,16 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         # =S16 / C16
         formula = f'=IFERROR(S{max_row} / C{max_row}, 0)'
         insert_row.append(formula)
+        # =SUMIFS($A$41:$VT$41,$A$1:$VT$1, A16,$A$7:$VT$7, FALSE)
+        formula = f'=SUMIFS(A41:{last_col}41, A1:{last_col}1, A{max_row}, A7:{last_col}7, FALSE)'
+        insert_row.append(formula)
+
+
+
         ws.append(insert_row)
+
+
+
 
     club_house = ["CLUBHOUSE", 0, 0, 0, 0, 0, 0, 0]
     ws.append(club_house)
@@ -633,9 +649,16 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     ws.append([])
     max_row = ws.max_row
 
+    # in column z for rows
+
+    # add the following formula in row 41 for columns A to last_col
+    # ={column_name}10 * {column_name}8 / 365
+
+
+
     # in a new row, insert the sum of each column from start_sum to max_row for columns B through F
     columns = ["B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-               "V", "W", "X", "Y"]
+               "V", "W", "X", "Y", "Z"]
     insert = ["TOTAL"]
     for col in columns:
         # ws[f'{col}{max_row}'].value = f'=SUM({col}{start_sum}:{col}{max_row - 1})'
@@ -651,7 +674,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
     ws.append(["Heron Fields"])
     # for the above row, in columns B through H, add the formula + the value of the cell in row 15 and row 16
     columns = ["B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-               "V", "W", "X", "Y"]
+               "V", "W", "X", "Y","Z"]
     for col in columns:
         if col != "U":
             ws[f'{col}37'].value = f'=SUM({col}16+{col}17)'
@@ -666,7 +689,7 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
             ws[f'{col}38'].value = f'=IFERROR(S{max_row} / C{max_row}, 0)'
 
     columns = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-               "V", "W", "X", "Y"]
+               "V", "W", "X", "Y", "Z"]
     rows = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 35, 37, 38]
     # format all cells in columns B through F to currency format for the rows in the rows list, and set the font size
     # to 10, and set the alignment to center, and set the border to thin, and make the columns autofit
@@ -722,9 +745,17 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
                                        top=Side(border_style='thin', color='000000'),
                                        bottom=Side(border_style='thin', color='000000'))
 
+    for col in ws.iter_cols(min_col=1, max_col=ws.max_column, min_row=41, max_row=41):
+        for cell in col:
+            col_letter = get_column_letter(cell.column)
+            cell.value = f'={col_letter}10 * {col_letter}8 / 365'
+
     # hide rows 1 through 7
     for row in range(1, 15):
         ws.row_dimensions[row].hidden = True
+
+    # hide row 41
+    ws.row_dimensions[41].hidden = True
 
     # make all columns have a width of 15 except for columns A
     for col in columns:
@@ -887,30 +918,18 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
     merged_list = []
 
-    # print(transferred[0])
-
     for index, item in enumerate(transferred):
-        insert = {}
-        insert['transferred'] = item
-        insert['unit_no'] = unit_no[index]
-        insert['investment_account'] = investment_account[index]
-        insert['project_interest'] = project_interest[index]
-        insert['capital_required'] = capital_required[index]
-        insert['capital_invested'] = capital_invested[index]
-        insert['momentum_deposit_date'] = momentum_deposit_date[index]
-        insert['release_date'] = release_date[index]
-        insert['end_date'] = end_date[index]
-        insert['invest_account_interest_earned'] = invest_account_interest_earned[index]
-        insert['released_interest_earned'] = released_interest_earned[index]
-        insert['sales_price'] = sales_price[index]
-        insert['commission'] = commission[index]
-        insert['transfer_fees'] = transfer_fees[index]
-        insert['bond_registration_fees'] = bond_registration_fees[index]
-        insert['trust_release_fees'] = trust_release_fees[index]
-        insert['unforseen'] = unforseen[index]
-        insert['discount'] = discount[index]
-        insert['early_release'] = early_release[index]
-        insert['unallocated_interest'] = unallocated_interest[index]
+        insert = {'transferred': item, 'unit_no': unit_no[index], 'investment_account': investment_account[index],
+                  'project_interest': project_interest[index], 'capital_required': capital_required[index],
+                  'capital_invested': capital_invested[index], 'momentum_deposit_date': momentum_deposit_date[index],
+                  'release_date': release_date[index], 'end_date': end_date[index],
+                  'invest_account_interest_earned': invest_account_interest_earned[index],
+                  'released_interest_earned': released_interest_earned[index], 'sales_price': sales_price[index],
+                  'commission': commission[index], 'transfer_fees': transfer_fees[index],
+                  'bond_registration_fees': bond_registration_fees[index],
+                  'trust_release_fees': trust_release_fees[index], 'unforseen': unforseen[index],
+                  'discount': discount[index], 'early_release': early_release[index],
+                  'unallocated_interest': unallocated_interest[index]}
 
         merged_list.append(insert)
 
@@ -985,52 +1004,31 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
             item['due_to_investor'] = item['capital_invested'] + item['invest_account_interest_earned'] + item[
                 'invest_account_interest_earned2'] + item['released_interest_earned']
 
-        # item['profit'] = item['transfer_income'] - item['due_to_investor']
-        # if item['unit_no'] == 'HFB207':
-        #     print("HFB207 - ",item)
-
-        if item['early_release'] == True:
+        if item['early_release']:
             item['due_to_investor'] = 0
 
-    # create a new list variable from unit_no with only unique values using list comprehension
-    # print(unit_no)
-    # create a new list variable from unit_no with only unique values using list comprehension
     unit_no_list = [x['unit_no'] for x in merged_list]
     unit_no_list = list(dict.fromkeys(unit_no_list))
-
-    # print(merged_list[0])
 
     final_list = []
     for unit in unit_no_list:
         # create a new list variable from merged_list with only the items that match the unit_no
         merged_filtered = [x for x in merged_list if x['unit_no'] == unit]
-        insert = {}
-        insert['unit_no'] = merged_filtered[0]['unit_no']
+        insert = {'unit_no': merged_filtered[0]['unit_no']}
 
         # insert['date'] = merged_filtered[0]['opportunity_final_transfer_date']
         datafiltered = [x for x in data if x['opportunity_code'] == insert['unit_no']]
 
         insert['date'] = datafiltered[0]['opportunity_final_transfer_date']
-        # insert['date'] = merged_filtered[0]['end_date']
-        # convert date to a string
-        # insert['date'] = insert['date'].strftime('%Y/%m/%d')
-        insert['amount'] = merged_filtered[0]['transfer_income'] - sum(x['due_to_investor'] for x in merged_filtered)
-        # if insert['unit_no'] == 'EA202':
-        #     datafiltered = [x for x in data if x['opportunity_code'] == insert['unit_no']]
-        #     print("datafiltered", datafiltered[0])
 
-        # print("EA202", insert)
-        # print("merged_filtered", merged_filtered)
+        insert['amount'] = merged_filtered[0]['transfer_income'] - sum(x['due_to_investor'] for x in merged_filtered)
+
         final_list.append(insert)
 
     for item in final_list:
-        insert = []
-        insert.append(item['unit_no'])
-        insert.append(item['date'])
-        insert.append(item['amount'])
+        insert = [item['unit_no'], item['date'], item['amount']]
 
         ws.append(insert)
-        # cashflow_data.append(insert)
 
     ## ROLLOVER SHEET
     ws = wb.create_sheet("Rollover")
@@ -1083,12 +1081,6 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
 
     # freeze the first row
     ws.freeze_panes = 'A2'
-
-    # print("merged_list", final_list[0:3])
-    #
-    # print("merged_list", len(final_list))
-
-    # print("early_release", early_release)
 
     # SAVE TO FILE
     wb.save(f"excel_files/{filename}.xlsx")

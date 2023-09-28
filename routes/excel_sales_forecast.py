@@ -191,52 +191,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
     try:
 
-        # investor_list = list(db.investors.find({}))
-
-        # pipeline = [
-        #     {
-        #         "$match": {
-        #             "trust.Category": {"$in": request['Category']}
-        #         }
-        #     },
-        #     {
-        #         "$project": {
-        #             "_id": 1,
-        #             "investor_acc_number": 1,
-        #             "investor_name": 1,
-        #             "investor_surname": 1,
-        #             "pledges": 1,
-        #             "trust": {
-        #                 "$filter": {
-        #                     "input": "$trust",
-        #                     "as": "item",
-        #                     "cond": {"$in": ["$$item.Category", request['Category']]}
-        #                 }
-        #             },
-        #             "investments": {
-        #                 "$filter": {
-        #                     "input": "$investments",
-        #                     "as": "item",
-        #                     "cond": {"$in": ["$$item.Category", request['Category']]}
-        #                 }
-        #             }
-        #         }
-        #     },
-        #     {
-        #         "$match": {
-        #             "trust": {"$ne": []}
-        #         }
-        #     }
-        # ]
-        #
-        # investor_list = list(db.investors.aggregate(pipeline))
-        # opportunities_list = list(db.opportunities.find( {"Category": {"$in": request['Category']}}))
-        # sales_parameters_list = list(db.salesParameters.find({}))
-        # rollovers_list = list(db.investorRollovers.find( {"Category": {"$in": request['Category']}}))
-        # rates_list = list(db.rates.find({}))
-        # unallocated_investments_list = list(db.unallocated_investments.find(
-        #     {"Category": {"$in": request['Category']}}))
-
         pipeline = [
             {
                 "$match": {
@@ -300,9 +254,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         unallocated_investments_list = result['unallocated_investments_list']
         portal_choice = result['portal_choice']
 
-        # query_end = time.time()
-        # print("Query Time", query_end - query_start)
-
         for investor in investor_list:
 
             investor['id'] = str(investor['_id'])
@@ -349,16 +300,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                         insert[item] = trust_item[item]
                     trust_list.append(insert)
 
-        # Get Opportunities and Manipulate accordingly
-
-        # for opportunity in opportunities_list:
-        #     opportunity['id'] = str(opportunity['_id'])
-        #     del opportunity['_id']
-
-        # using list comprehension to filter out opportunities that are not in the request['Category'] list
-        # opportunities_list = [opportunity for opportunity in opportunities_list if
-        #                       opportunity['Category'] in request['Category']]
-
         for opportunity in opportunities_list:
             opportunity['id'] = str(opportunity['_id'])
             del opportunity['_id']
@@ -366,8 +307,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 tfr_date = datetime.strptime(opportunity["opportunity_final_transfer_date"].replace("-", "/"),
                                              "%Y/%m/%d")
                 report_date = datetime.strptime(request['date'].replace("-", "/"), "%Y/%m/%d")
-                # print("tfr_date", tfr_date)
-                # print("report_date", report_date)
+
                 if tfr_date > report_date:
                     opportunity["opportunity_transferred"] = False
                 else:
@@ -385,35 +325,13 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             if not opportunity["opportunity_sold"]:
                 opportunity["opportunity_transferred"] = False
 
-            # if opportunity['opportunity_final_transfer_date'] == '':
-            #     # if  opportunity['opportunity_end_date'] != '' or does not exist
-            #     if 'opportunity_end_date' in opportunity:
-            #         if opportunity['opportunity_end_date'] != '':
-            #             opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_end_date']
-            #         else:
-            #             opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_occupation_date']
-            #     else:
-            #         opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_occupation_date']
-
-        # Get Sales Parameters and Manipulate accordingly
-
         for sales_parameter in sales_parameters_list:
             sales_parameter['id'] = str(sales_parameter['_id'])
             del sales_parameter['_id']
-        # Using list comprehension to filter out sales parameters that are not in the request['Category'] list
-        # sales_parameters_list = [sales_parameter for sales_parameter in sales_parameters_list if
-        #                          sales_parameter['Development'] in request['Category']]
-
-        # Get Rollovers and Manipulate accordingly
 
         for rollover in rollovers_list:
             rollover['id'] = str(rollover['_id'])
             del rollover['_id']
-        # Using list comprehension to filter out rollovers that are not in the request['Category'] list
-        # rollovers_list = [rollover for rollover in rollovers_list if
-        #                   rollover['Category'] in request['Category']]
-
-        # Get Rates and Manipulate accordingly
 
         for rate in rates_list:
             del rate['_id']
@@ -467,8 +385,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             if len(final_investment):
                 insert['investment_interest_rate'] = final_investment[0]["investment_interest_rate"]
                 insert['investment_end_date'] = final_investment[0]["end_date"]
-                # if final_investment[0]['early_release'] exists, then set insert['early_release'] to equal
-                # final_investment[0]['early_release'] else set it to False
+
                 if 'early_release' in final_investment[0]:
                     insert['early_release'] = final_investment[0]['early_release']
                 else:
@@ -480,8 +397,6 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
         interim_investors_list = [investor for investor in interim_investors_list if
                                   str(investor['deposit_date']).replace('/', '-')]
-
-        # replace in request['date'] '/' with '-'
 
         request['date'] = request['date'].replace('-', '/')
 
@@ -1044,7 +959,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             if investor['investor_acc_number'] == "ZZUN01" and investor["investment_interest_rate"] == 0:
                 investor["investment_interest_rate"] = investor['project_interest_rate']
 
-                # end_date_total = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"), "%Y/%m/%d")
+                # end_date_total = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"),
+                # "%Y/%m/%d")
 
         ## DEVELOPMENT UNITS
         # create a new list called development_list which includes all the records in final_investors_list where the
@@ -1052,25 +968,11 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         development_list = [opportunity for opportunity in final_investors_list if
                             opportunity['opportunity_code'] == "HFB215" or opportunity['opportunity_code'] == "HFB315"]
 
-        # print("development_list", development_list)
-
-        # print("final_investors_list", final_investors_list[0])
-
         listData = investment_status(request)
 
-        # print(final_investors_list[0])
-
-        # append development_list to listData
-        # listData.append(development_list)
         for devunit in development_list:
             listData.append(devunit)
 
-        # print("listData", listData[len(listData) - 1])
-        # print()
-        # print("listData", listData[len(listData) - 2])
-
-        # portal_choices = list(portal_choice.find({}))
-        # print(portal_choices)
         for choice in portal_choice:
             del choice['_id']
 
@@ -1087,7 +989,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 elif filtered_choice[0]['full_rollover']:
                     investor['rollover_amount_chosen'] = filtered_choice[0]['balance']
                 elif filtered_choice[0]['partial_exit']:
-                    investor['rollover_amount_chosen'] = filtered_choice[0]['balance'] - filtered_choice[0]['exit_amount']
+                    investor['rollover_amount_chosen'] = filtered_choice[0]['balance'] - filtered_choice[0][
+                        'exit_amount']
             else:
                 investor['from_portal'] = False
                 investor['rollover_amount_chosen'] = 0
@@ -1110,13 +1013,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
 
 def investment_status(request):
-    # request = await data.json()
-    # print(request)
-
     try:
-        # start = time.time()
-
-        # developments = request['Category']
 
         investor_list = list(db.investors.aggregate([
             {
@@ -1151,14 +1048,6 @@ def investment_status(request):
         # Get opportunities from the database where Category is included in request['Category']
         opportunities_list = list(db.opportunities.find({"Category": {"$in": request['Category']}}))
 
-        # print("opportunities_list", opportunities_list[0])
-
-        # using list comprehension filter opportunities_list where opportunity['opportunity_code'] is equal to HB215 or HFB315
-
-        # development_list = [opportunity for opportunity in opportunities_list if opportunity['opportunity_code'] == "HFB215" or opportunity['opportunity_code'] == "HFB315"]
-
-        # print("development_list", development_list)
-
         final_investors_list = []
 
         report_date = datetime.strptime(request['date'], "%Y/%m/%d")
@@ -1172,12 +1061,6 @@ def investment_status(request):
             investor['investments'] = [investment for investment in investor['investments'] if
                                        investment['Category'] in request['Category']]
             for investment in investor['investments']:
-                # if investment['end_date'] != "":
-                #     end_date = datetime.strptime(investment['end_date'].replace("-", "/"), "%Y/%m/%d")
-                #     if end_date > report_date:
-                #         investment['end_date'] = ""
-                # if investor['investor_acc_number'] == "ZKRU01":
-                #     print(investment)
 
                 insert = {}
                 # if  investment['investment_number'] exists then set insert['investment_number'] to
@@ -2257,7 +2140,7 @@ async def draw_history():
 
         # get a total of available_to_draw from final_draw_history
         total_available_to_draw = sum([draw['available_to_draw'] for draw in final_draw_history])
-        # format total_available_to_draw to 2 decimal places, as currency with a R in front and a space between the R
+        # format total_available_to_draw to 2 decimal places, as currency with an R in front and a space between the R
         # and the number
         total_available_to_draw = f"R {total_available_to_draw:,.2f}".replace(",", " ")
 
@@ -2287,7 +2170,7 @@ async def draw_history():
                                                       k['investment_amount']))
 
         total_pledges = sum([pledge['investment_amount'] for pledge in final_pledges_history])
-        # format total_pledges to 2 decimal places, as currency with a R in front and a space between the R and the
+        # format total_pledges to 2 decimal places, as currency with an R in front and a space between the R and the
         # number
         total_pledges = f"R {total_pledges:,.2f}".replace(",", " ")
 

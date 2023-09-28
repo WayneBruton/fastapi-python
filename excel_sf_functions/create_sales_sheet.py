@@ -20,7 +20,6 @@ def create_excel_array(data):
 
     interest_on_funds_drawn, interest_on_funds_in_momentum = calculate_interest_figures(data)
 
-    # row1_data = [f"{sheet_name} - {developmentinputdata['date']}"]
     row2_data = ["Opportunity", "Total", "Interest", "Transferred", "sold", "Remaining"]
     row4A_data = ["Sold", "", "", "", "", ""]
     row4_data = ["Sold", "", "", "", "", ""]
@@ -103,8 +102,6 @@ def create_excel_array(data):
     rollover_data6 = ["Forecast Rollover Date", "", "", "", "", ""]
     rollover_data7 = ["Forecast Rollover Amount", "", "", "", "", ""]
 
-
-
     for item in data:
         row2_data.append(item['opportunity_code'])
         row4A_data.append(item['funds_in_momentum'])
@@ -134,7 +131,7 @@ def create_excel_array(data):
         row21_data.append(item['planned_release_date'])
 
         if item['opportunity_code'] != "ZZUN01":
-            if item['early_release'] == True:
+            if item['early_release']:
                 row22_data.append(item['investment_end_date'])
             else:
                 row22_data.append(item['opportunity_final_transfer_date'])
@@ -193,8 +190,6 @@ def create_excel_array(data):
         rollover_data4.append(item['from_portal'])
         rollover_data5.append(item['rollover_amount_chosen'])
 
-
-
     worksheet_data += [row4_data, row5_data, row2_data, row2_data, row4_data, row5_data, [], row7_data, row8_data,
                        row9_data, [], row13_data, row14_data, row15_data, row16_data, row17_data, [], row19_data,
                        row20_data, row21_data, row22_data, row23_data, row24_data, row25_data, row25A_data, row26_data,
@@ -208,7 +203,8 @@ def create_excel_array(data):
                        rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data,
                        rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data,
                        rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_data, rowblank_1_data,
-                       rowblank_data, rental1_data,rental1A_data, rental2_data, rental3_data, rental4_data, rental5_data,
+                       rowblank_data, rental1_data, rental1A_data, rental2_data, rental3_data, rental4_data,
+                       rental5_data,
                        rental6_data, rental7_data, rental8_data, rental9_data, rental10_data, rental11_data,
                        rental12_data, rental13_data, rollover_data1, rollover_data2, rollover_data3, rollover_data4,
                        rollover_data5, rollover_data6, rollover_data7]
@@ -216,8 +212,8 @@ def create_excel_array(data):
     merge_start = []
     merge_end = []
 
-    # from column 6 in excel to the end of the row, add the row number to the merge_start list if the value
-    # for each cell in row 3 is different to the cell to its immediete left
+    # from column 6 in Excel to the end of the row, add the row number to the merge_start list if the value
+    # for each cell in row 3 is different to the cell to its immediate left
     for index, item in enumerate(row2_data):
         if index > 5:
             if item != row2_data[index - 1]:
