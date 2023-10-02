@@ -545,7 +545,6 @@ async def get_investors_linked_to_sale(data: Request):
 async def save_sale(data: Request):
     try:
         request = await data.json()
-        # print(request)
 
         # Update the opportunities collection
         opportunity_code = request['formData']['opportunity_code']
@@ -574,12 +573,17 @@ async def save_sale(data: Request):
 
         if request['formData']['id'] != "":
             id_to_update = request['formData']['id']
+            del request['formData']['id']
+
             obj_instance = ObjectId(id_to_update)
-            sales_processed.update_one({"_id": obj_instance}, {"$set": request['formData']})
+
+            # replace all data in the document with the new data
+            response = db.sales_processed.update_one({"_id": obj_instance}, {"$set": request['formData']})
+
             return {"updated": "Success"}
 
         else:
-            obj_instance = sales_processed.insert_one(request['formData']).inserted_id
+            obj_instance = db.sales_processed.insert_one(request['formData']).inserted_id
             sales_processed.update_one({"_id": obj_instance}, {"$set": {"id": str(obj_instance)}})
             return {"id": str(obj_instance)}
     except Exception as e:
@@ -782,7 +786,6 @@ async def get_all_sales():
             item['opportunity_pc_date'] = item.get('opportunity_pc_date', False)
             item['opportunity_bpas_certificate'] = item.get('opportunity_bpas_certificate', False)
 
-
             item['opportunity_occupation_coc'] = item.get('opportunity_occupation_coc', "")
             item['opportunity_happy_letter'] = item.get('opportunity_happy_letter', "")
             item['opportunity_certificates_submitted_to_attorneys'] = item.get(
@@ -845,7 +848,7 @@ async def get_all_sales():
             item['opportunity_gardenNumber'] = item.get('opportunity_gardenNumber', 0)
             item['opportunity_gardenSize'] = item.get('opportunity_gardenSize', 0)
             item['opportunity_id'] = item.get('opportunity_id', None)
-            item['opportunity_id_10th'] = item.get('opportunity_id_10th', None )
+            item['opportunity_id_10th'] = item.get('opportunity_id_10th', None)
             item['opportunity_id_3rd'] = item.get('opportunity_id_3rd', None)
             item['opportunity_id_4th'] = item.get('opportunity_id_4th', None)
             item['opportunity_id_5th'] = item.get('opportunity_id_5th', None)
@@ -1140,3 +1143,24 @@ async def print_otp_doc(data: Request):
     except Exception as err:
         print("XXXXX", err)
         return {"done": False}
+
+
+@sales.post("/get_sales_parameters")
+async def get_sales_parameters(data: Request):
+    request = await data.json()
+
+    Development = request['Category']
+    # return {"done": True}
+    try:
+        result = list(sales_parameters.find({"Development": Development}))
+        insert = {}
+        for item in result:
+            item['_id'] = str(item['_id'])
+            # insert the Description as a key and rate as the value into insert
+            insert[f"opportunity_{item['Description']}"] = item['rate']
+
+        return insert
+
+    except Exception as err:
+        print(err)
+        return {"error": "error"}
