@@ -190,7 +190,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
     trust_list = []
 
     try:
-
+        # interim_start = time.time()
         pipeline = [
             {
                 "$match": {
@@ -243,7 +243,12 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             "rates_list": list(db.rates.find({})),
             "unallocated_investments_list": list(
                 db.unallocated_investments.find({"Category": {"$in": request['Category']}})),
-            "portal_choice": list(db.investorRolloversPortal.find({}))
+            "portal_choice": list(db.investorRolloversPortal.find({})),
+
+            "sales_processed": list(db.sales_processed.find({"development": {"$in": request['Category']}},
+                                                            {'_id': 0, 'opportunity_code': 1,
+                                                             'opportunity_bond_registration': 1,
+                                                             'opportunity_transfer_fees': 1}))
         }
 
         investor_list = result['investor_list']
@@ -253,6 +258,14 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         rates_list = result['rates_list']
         unallocated_investments_list = result['unallocated_investments_list']
         portal_choice = result['portal_choice']
+        sales_processed = result['sales_processed']
+        # using list comprehension, filter out sales_processed where opportunity_bond_registration and
+        # opportunity_transfer_fees do not exist
+        sales_processed = [sale for sale in sales_processed if
+                           'opportunity_bond_registration' in sale and 'opportunity_transfer_fees' in sale]
+
+        # interim_end = time.time()
+        # print("interim_end - interim_start", interim_end - interim_start)
 
         for investor in investor_list:
 
@@ -986,6 +999,13 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             filtered_choice = [choice for choice in portal_choice if
                                choice['investor_acc_number'] == investor['investor_acc_number'] and choice[
                                    'opportunity_code'] == investor['opportunity_code']]
+            filtered_sales_processed = [sale for sale in sales_processed if
+                                        sale['opportunity_code'] == investor['opportunity_code']]
+
+            if len(filtered_sales_processed) > 0:
+                investor['transfer_fees'] = float(filtered_sales_processed[0]['opportunity_transfer_fees'])
+                investor['bond_registration'] = float(filtered_sales_processed[0]['opportunity_bond_registration'])
+
             if len(filtered_choice) > 0:
                 investor['from_portal'] = True
                 if filtered_choice[0]['full_exit']:
@@ -1701,8 +1721,8 @@ async def create_draw_doc(data: Request):
                          'opportunity_code'] == "EA205" and investor['investment_number'] == 3)]
 
     new_app_total = [investor for investor in new_app_total if
-                            not (investor['investor_acc_number'] == "ZLEW03" and investor[
-                                'opportunity_code'] == "EA205" and investor['investment_number'] == 1)]
+                     not (investor['investor_acc_number'] == "ZLEW03" and investor[
+                         'opportunity_code'] == "EA205" and investor['investment_number'] == 1)]
 
     new_app_total = [investor for investor in new_app_total if
                      not (investor['investor_acc_number'] == "ZVOL01" and investor[
