@@ -1138,7 +1138,7 @@ async def print_otp_doc(data: Request):
         # print("newData", newData)
         result = print_otp_pdf(newData)
 
-        # print("RESULT", result)
+        print("RESULT", result)
         return {"fileName": result}
     except Exception as err:
         print("XXXXX", err)

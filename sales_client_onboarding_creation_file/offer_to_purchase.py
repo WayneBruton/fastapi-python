@@ -1,6 +1,8 @@
 # import copy
 # import os
+import os
 
+import PyPDF2
 from fpdf import FPDF, XPos, YPos
 from sales_client_onboarding_creation_file.standard_conditions import create_standard_conditions
 from sales_client_onboarding_creation_file.number_of_purchasers import create_purchaser_details
@@ -46,7 +48,6 @@ class PDF(FPDF):
         self.set_draw_color(0, 0, 0)
         self.set_line_width(0.5)
         self.line(5, self.get_y() - 1, 200, self.get_y() - 1)
-
 
 
 def print_otp_pdf(data):
@@ -434,7 +435,7 @@ def print_otp_pdf(data):
                 pdf.cell(20, 7, "B3", align="C", markdown=True, border=1)
                 pdf.cell(50, 7, f"{purchaser['label_b3']}", align="L", markdown=True, border=1)
                 pdf.cell(120, 7, f"**{purchaser['value_b3']}**", align="L", markdown=True,
-                               new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
+                         new_x=XPos.LMARGIN, new_y=YPos.NEXT, border=1)
 
             pdf.cell(20, 7, "B4", align="C", markdown=True, border=1)
             pdf.cell(50, 7, f"{purchaser['label_b4']}", align="L", markdown=True, border=1)
@@ -730,7 +731,7 @@ def print_otp_pdf(data):
     # print(pdf.get_y())
     if pdf.get_y() > 200:
         pdf.add_page()
-    pdf.cell(0, 7, f"", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,)
+    pdf.cell(0, 7, f"", align="L", markdown=True, border=0, new_x=XPos.LMARGIN, )
     pdf.cell(0, 7, f"**Notes:**", align="L", markdown=True, border=0, new_x=XPos.LMARGIN,
              new_y=YPos.NEXT)
 
@@ -803,7 +804,8 @@ def print_otp_pdf(data):
             if pdf.get_y() > 250:
                 pdf.add_page()
             # print(item['section'])
-            if item['section'] == "12." or item['section'] == "17." or item['section'] == "21." or item['section'] == "30.":
+            if item['section'] == "12." or item['section'] == "17." or item['section'] == "21." or item[
+                'section'] == "30.":
                 pdf.add_page()
             pdf.cell(0, 4, f"", align="C", markdown=True, border=0, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
             pdf.cell(10, 7, f"{item['section']}", align="C", markdown=True, border=0)
@@ -851,7 +853,117 @@ def print_otp_pdf(data):
 
             if item['initial']:
                 initials()
-
+    print(data['opportunity_code'])
     pdf.output(f"sales_client_onboarding_docs/{data['opportunity_code']}-OTP.pdf")
+
+    # loop through file names in annexures folder, if the file starts with "HV Block " and ends with ".pdf" then add "HV" and the last 4 characters of the file name to the annexures list
+    annexures = []
+    for file in os.listdir("annexures"):
+        if file.startswith("HV Block ") and file.endswith(".pdf"):
+            annexures.append("HV" + file[-8:-4])
+
+    # sort annexures
+    annexures.sort()
+
+    # print(len(annexures))
+    # print(annexures)
+
+    if data['development'] == "Heron View":
+        pdf_file1 = open(f"sales_client_onboarding_docs/{data['opportunity_code']}-OTP.pdf", 'rb')
+        pdf_file2 = open('annexures/Heron View - Annexure A.pdf', 'rb')
+        pdf_file3 = open('annexures/Heron View - Annexure B Parking Correlation.pdf', 'rb')
+
+
+        # Create PDF reader objects for both files
+        pdf_reader1 = PyPDF2.PdfFileReader(pdf_file1)
+        pdf_reader2 = PyPDF2.PdfFileReader(pdf_file2)
+        pdf_reader3 = PyPDF2.PdfFileReader(pdf_file3)
+
+        print(data['opportunity_code'])
+
+
+        try:
+            pdf_file4 = open(f"annexures/HV Block {data['opportunity_code'][-4:]}.pdf", 'rb')
+            pdf_reader4 = PyPDF2.PdfFileReader(pdf_file4)
+        except FileNotFoundError:
+            # create a blank pdf file
+            pdf_writer4 = PyPDF2.PdfFileWriter()
+
+        pdf_file5 = open('annexures/HV Annexure D - Finishes Choice.pdf', 'rb')
+        pdf_reader5 = PyPDF2.PdfFileReader(pdf_file5)
+        pdf_file6 = open('annexures/HV Annexure E - Specifications.pdf', 'rb')
+        pdf_reader6 = PyPDF2.PdfFileReader(pdf_file6)
+        pdf_file7 = open('annexures/Applicant POPIA Consent.pdf', 'rb')
+        pdf_reader7 = PyPDF2.PdfFileReader(pdf_file7)
+
+
+
+        # Create a PDF writer object to write the merged PDF
+        pdf_writer = PyPDF2.PdfFileWriter()
+
+        # Add pages from the first PDF
+        for page_num in range(pdf_reader1.numPages):
+            page = pdf_reader1.getPage(page_num)
+            pdf_writer.addPage(page)
+
+        # Add pages from the second PDF
+        for page_num in range(pdf_reader2.numPages):
+            page = pdf_reader2.getPage(page_num)
+            pdf_writer.addPage(page)
+
+        # Add pages from the third PDF
+        for page_num in range(pdf_reader3.numPages):
+            page = pdf_reader3.getPage(page_num)
+            pdf_writer.addPage(page)
+
+        # Add pages from the fourth PDF
+        try:
+            for page_num in range(pdf_reader4.numPages):
+                page = pdf_reader4.getPage(page_num)
+                pdf_writer.addPage(page)
+        except NameError:
+            pass
+
+        # Add pages from the fifth PDF
+        for page_num in range(pdf_reader5.numPages):
+            page = pdf_reader5.getPage(page_num)
+            pdf_writer.addPage(page)
+
+        # Add pages from the sixth PDF
+        for page_num in range(pdf_reader6.numPages):
+            page = pdf_reader6.getPage(page_num)
+            pdf_writer.addPage(page)
+
+        # Add pages from the seventh PDF
+        for page_num in range(pdf_reader7.numPages):
+            page = pdf_reader7.getPage(page_num)
+            pdf_writer.addPage(page)
+
+
+        # Create a new PDF file to save the merged result
+        merged_pdf = open('sales_client_onboarding_docs/merged_document.pdf', 'wb')
+
+        # Write the merged PDF to the new file
+        pdf_writer.write(merged_pdf)
+
+        # Close all open files
+        pdf_file1.close()
+        pdf_file2.close()
+        pdf_file3.close()
+        try:
+            pdf_file4.close()
+        except NameError:
+            pass
+        pdf_file5.close()
+        pdf_file6.close()
+        pdf_file7.close()
+        merged_pdf.close()
+
+        # rename the merged file as f"sales_client_onboarding_docs/{data['opportunity_code']}-OTP.pdf"
+        os.rename('sales_client_onboarding_docs/merged_document.pdf', f"sales_client_onboarding_docs/{data['opportunity_code']}-OTP.pdf")
+        # delete the merged file
+        # os.remove('sales_client_onboarding_docs/merged_document.pdf')
+
+        print("Heron View OTP created")
 
     return f"sales_client_onboarding_docs/{data['opportunity_code']}-OTP.pdf"
