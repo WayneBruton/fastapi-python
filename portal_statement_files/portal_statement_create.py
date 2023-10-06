@@ -4,7 +4,8 @@ from fpdf import FPDF, XPos, YPos
 import os
 
 
-def create_pdf(statement_type, data):
+def create_pdf(statement_type, data, rolled_from):
+    print(rolled_from)
     data1 = []
     data1 = data
     # print(data1)
@@ -62,6 +63,11 @@ def create_pdf(statement_type, data):
             "value": "SA Rand",
         }
     ]
+
+    # if rolled_from != "" then insert a new dictionary into front_page_data with the title of "**ROLLED FROM**" and
+    # the value of rolled_from after '**PROPERTY CODE**' and before '**STATEMENT DATE**'
+    if rolled_from != "":
+        front_page_data.insert(4, {"title": "**ROLLED FROM**", "value": f"{rolled_from}"})
 
     pdf = FPDF()
 
@@ -189,15 +195,11 @@ def create_pdf(statement_type, data):
             item['cumulative_interest'] = "R " + item['interest']
         if item['balance'] != "":
             item['balance'] = f"R {str(item['balance'])}"
-         # if item['investment_amount'] != "" then item['effective_date'] = item['effective_date'] else item['effective_date'] = the last day of the month in item['effective_date'] as a datetime and formated as a string in the format of YYYY-MM-DD
+        # if item['investment_amount'] != "" then item['effective_date'] = item['effective_date'] else item['effective_date'] = the last day of the month in item['effective_date'] as a datetime and formated as a string in the format of YYYY-MM-DD
         if item['investment_amount'] != "":
             # item['effective_date'] = the end of the current month of item['effective_date'] as a datetime and formated as a string in the format of YYYY-MM-DD
 
             item['interest_until'] = datetime.strptime(item['interest_until'], '%Y-%m-%d').strftime('%Y-%m-%d')
-
-
-
-
 
         pdf.set_text_color(128, 128, 128)
 

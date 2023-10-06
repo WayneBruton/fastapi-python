@@ -53,10 +53,28 @@ async def create_portal_statements(data: Request):
     data = request["data"]
     # make a deep copy of the data
     data1 = copy.deepcopy(data)
-    # print(data)
+    # print("Data",data)
+    # select one from the trust array from investors collection where investor_acc_number = data[0][
+    # 'investor_acc_number'] and inside the opportunity_code = data[0]['opportunity_code'] and investment_number =
+    # data[0]['investment_number'] and project only the opportunity_code_rolled_from field if it exists
+    trust = investors.find_one(
+        {"investor_acc_number": data[0]['investor_acc_number'], "trust.opportunity_code": data[0]['opportunity_code'],
+         "trust.investment_number": data[0]['investment_number']},
+        {"trust.opportunity_code_rolled_from": 1, "_id": 0})
 
-    type1 = create_pdf(1, data)
-    type2 = create_pdf(2, data1)
+    trust = trust['trust']
+
+    # remove all empty dictionaries from trust
+    trust = list(filter(lambda x: x != {}, trust))
+    if len(trust) > 0:
+        rolled_from = trust[0]['opportunity_code_rolled_from']
+    else:
+        rolled_from = ""
+
+    # print("trust", trust)
+
+    type1 = create_pdf(1, data, rolled_from)
+    type2 = create_pdf(2, data1, rolled_from)
     # return create_pdf(data)
     end_time = time.time()
 
