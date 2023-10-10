@@ -11,6 +11,7 @@ fpdf2
 gunicorn
 h11
 httptools
+httpx
 idna
 openpyxl~=3.0.10
 pandas~=2.0.0
@@ -38,3 +39,4 @@ yfinance~=0.2.18
 investpy~=1.0.8
 typing~=3.7.4.3
 vonage~=3.4.0
+xmltodict

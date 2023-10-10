@@ -10,6 +10,7 @@ from routes.portal_routes import portal_info
 from routes.investor_data_analysis import data_analysis
 from routes.rentals import rentals
 from routes.construction import construction
+from routes.xero import xero
 
 if not os.path.isdir("sales_documents"):
     os.makedirs("sales_documents")
@@ -50,3 +51,5 @@ app.include_router(portal_info)
 app.include_router(data_analysis)
 app.include_router(rentals)
 app.include_router(construction)
+app.include_router(xero)
+

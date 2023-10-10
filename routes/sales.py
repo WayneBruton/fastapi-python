@@ -412,17 +412,7 @@ async def get_all_units_sold(data: Request):
             sale['reserved'] = False
             sale['sold'] = True
 
-        # if (sale['opportunity_deposite_date'] is None or sale['opportunity_deposite_date'] == "") and \
-        #         sale['reserved'] is False:
-        #     sale['pending'] = True
-        #     sale['reserved'] = False
-        # else:
-        #     sale['pending'] = False
-        # if sale['opportunity_deposite_date'] is not None and sale['opportunity_deposite_date'] != "" and sale[
-        #         'pending']:
-        #     sale['sold'] = True
-        # else:
-        #     sale['sold'] = False
+       
         if sale['opportunity_bond_instruction_date'] is not None or sale['opportunity_bond_originator'] == 'Cash':
             sale['bond_approval'] = True
         else:
@@ -545,31 +535,41 @@ async def get_investors_linked_to_sale(data: Request):
 async def save_sale(data: Request):
     try:
         request = await data.json()
+        print(request['formData']['opportunity_otp'])
 
         # Update the opportunities collection
         opportunity_code = request['formData']['opportunity_code']
-
-        if (request['formData']['opportunity_pay_type'] == "Cash" or request['formData']['opportunity_bank'] == "Cash"
-                or request['formData']['opportunity_bond_originator'] == "Cash"
-                or (request['formData']['opportunity_bond_instruction_date'] != ""
-                    and request['formData']['opportunity_bond_instruction_date'] is not None)):
+        if request['formData']['opportunity_otp'] != "" and request['formData']['opportunity_otp'] is not None:
             opportunity_sold = True
-            result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
-                "opportunity_sold": opportunity_sold}})
         else:
             opportunity_sold = False
-            result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
-                "opportunity_sold": opportunity_sold}})
+
+        # result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
+        #     "opportunity_sold": opportunity_sold}})
+
+        # if (request['formData']['opportunity_pay_type'] == "Cash" or request['formData']['opportunity_bank'] == "Cash"
+        #         or request['formData']['opportunity_bond_originator'] == "Cash"
+        #         or (request['formData']['opportunity_bond_instruction_date'] != ""
+        #             and request['formData']['opportunity_bond_instruction_date'] is not None)):
+        #     opportunity_sold = True
+        #     result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
+        #         "opportunity_sold": opportunity_sold}})
+        # else:
+        #     opportunity_sold = False
+        #
+        #     result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
+        #         "opportunity_sold": opportunity_sold}})
 
         if request['formData']['opportunity_actual_reg_date'] != "" and request['formData'][
             'opportunity_actual_reg_date'] is not None:
-            opportunity_sold = True
+            # opportunity_sold = True
             result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
                 "opportunity_sold": opportunity_sold,
                 "opportunity_final_transfer_date": request['formData']['opportunity_actual_reg_date']}})
         else:
-            result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
-                "opportunity_final_transfer_date": ""}})
+            result = opportunities.update_one({"opportunity_code": opportunity_code},
+                                              {"$set": {"opportunity_sold": opportunity_sold,
+                                                        "opportunity_final_transfer_date": ""}})
 
         if request['formData']['id'] != "":
             id_to_update = request['formData']['id']
