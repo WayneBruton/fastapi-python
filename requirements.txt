@@ -25,6 +25,7 @@ python-decouple==3.7
 python-dotenv
 python-multipart
 PyYAML
+requests
 sniffio
 starlette==0.22.0
 svg.path
