@@ -3,7 +3,7 @@
   <component name="Black">
     <option name="executionMode" value="BINARY" />
     <option name="pathToExecutable" value="$USER_HOME$/opt/anaconda3/bin/black" />
-    <option name="sdkUUID" value="3d69002b-0287-4966-a3d5-239d63d385b5" />
+    <option name="sdkName" value="Python 3.11 (loanAgreementTest)" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (loanAgreementTest)" project-jdk-type="Python SDK" />
 </project>

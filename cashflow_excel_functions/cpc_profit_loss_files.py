@@ -8,14 +8,11 @@ def insert_data_from_xero_profit_loss(base_data):
     files = []
     for filename in os.listdir('cashflow_p&l_files'):
         files.append(filename)
-    # print("files",files)
-    # filter the list of files and exclude files that begin with ~$
+
     files = [file for file in files if not file.startswith('~$')]
-    # filter out  any files that do not end with .xlsx
     files = [file for file in files if file.endswith('.xlsx')]
-    # exclude "2. Heron Master report.xlsx" from the list of files
-    # files = [file for file in files if not file.startswith('2. Heron Master report.xlsx')]
-    print("files",files)
+
+    print("files", files)
     try:
         for file in files:
             # Load the existing Excel workbook

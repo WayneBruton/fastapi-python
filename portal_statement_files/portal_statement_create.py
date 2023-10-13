@@ -67,7 +67,7 @@ def create_pdf(statement_type, data, rolled_from):
     # if rolled_from != "" then insert a new dictionary into front_page_data with the title of "**ROLLED FROM**" and
     # the value of rolled_from after '**PROPERTY CODE**' and before '**STATEMENT DATE**'
     if rolled_from != "":
-        front_page_data.insert(4, {"title": "**ROLLED FROM**", "value": f"{rolled_from}"})
+        front_page_data.insert(4, {"title": "**PREVIOUS INVESTMENT**", "value": f"{rolled_from}"})
 
     pdf = FPDF()
 

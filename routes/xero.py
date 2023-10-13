@@ -1,4 +1,4 @@
-import os
+# import os
 
 from datetime import datetime, timedelta
 
@@ -10,7 +10,6 @@ from fastapi import APIRouter, Request, Depends, HTTPException
 import httpx
 from base64 import b64encode
 from urllib.parse import urlencode
-import openpyxl
 # from fastapi.responses import FileResponse
 from config.db import db
 
@@ -18,25 +17,9 @@ from bson.objectid import ObjectId
 
 from decouple import config
 
-import time
-
-# from typing import Annotated
-
-# from sales_python_files.sales_excel_sheet import create_excel_file
-# from sales_client_onboarding_creation_file.onboarding import print_onboarding_pdf
-# from sales_client_onboarding_creation_file.offer_to_purchase import print_otp_pdf
 from cashflow_excel_functions.cpc_profit_loss_files import insert_data_from_xero_profit_loss
 
-
 xero = APIRouter()
-
-# investors = db.investors
-# opportunityCategories = db.opportunityCategories
-# opportunities = db.opportunities
-# sales_parameters = db.salesParameters
-# sales_processed = db.sales_processed
-# sales_agents = db.sales_agents
-# mortgage_brokers = db.sales_mortgage_brokers
 
 xeroCredentials = db.xeroCredentials
 xeroTenants = db.xeroTenants
@@ -44,10 +27,6 @@ xeroTenants = db.xeroTenants
 clientId = config("clientId")
 xerosecret = config("xerosecret")
 redirectURI = config("redirectURI")
-
-
-# url = f"https://login.xero.com/identity/connect/authorize?response_type=code&client_id={clientId}&redirect_uri={
-# redirectURI}&scope=accounting.reports.read&state=123"
 
 
 @xero.get("/authorizeApp")
@@ -77,8 +56,6 @@ async def authorize_app():
 async def xero_callback(request: Request, code: str):
     # Extract the authorization code from the query parameter
     code = code.split("&")[0].split("=")[-1]
-
-    # print("code", code)
 
     # Create the base64-encoded token for Basic Authentication
     token = b64encode(f"{clientId}:{xerosecret}".encode()).decode()
@@ -150,15 +127,11 @@ async def xero_callback(request: Request, code: str):
 async def get_profit_and_loss(data: Request):
     request = await data.json()
 
-    # print(request)
-    # get the year and month from request['from_date']
     year = request['from_date'].split("-")[0]
     month = request['from_date'].split("-")[1]
-    # print(year, month)
 
     try:
-        start_time = time.time()
-        # if int(month) < 10 then current_year = year else current_year = year - 1
+
         if int(month) < 10:
             current_year = int(year)
         else:
@@ -227,8 +200,6 @@ async def get_profit_and_loss(data: Request):
             }
         ]
 
-        # print("periods_2024", periods_to_report)
-
         data_from_xero = []
 
         base_data = [{'Account': 'Fees - Construction - Heron',
@@ -256,11 +227,13 @@ async def get_profit_and_loss(data: Request):
                      {'Account': 'COS - Heron Fields - Printing & Stationary',
                       'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
                      {'Account': 'COS - Heron View - Construction',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 3306635.59, 3306635.59, 3306635.59, 5306635.59, 5306635.59,
+                                 9056635.59, 8338713.56]},
                      {'Account': 'COS - Heron View - P&G',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 24793.88, 24793.88, 24793.88, 24793.88, 24793.88, 24793.88,
+                                 24793.88]},
                      {'Account': 'COS - Heron View - Printing & Stationary',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 107.39, 107.39, 107.39, 107.39, 107.39, 107.39, 107.39]},
                      {'Account': 'COS - Insurance',
                       'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
                      {'Account': 'COS - Repairs & Maintenance - SH Soho',
@@ -357,6 +330,191 @@ async def get_profit_and_loss(data: Request):
                      {'Account': 'UIF Employee Contribution',
                       'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}]
 
+        base_data_HF_PandL = [
+            {"Account": "Sales",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1314591.31, 1314591.31, 1314591.31, 1314591.31, 1314591.31,
+                        1314591.31]},
+            {"Account": "Sales - Heron Fields occupational rent",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Bond Origination",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "COS - Commission Heron Fields investors",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "COS - Commission Heron Fields units",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -444370.35, 112945.52, 112945.52, 112945.52, 112945.52,
+                        112945.52]},
+
+            {"Account": "COS - Electricity",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "COS - Printing HV",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "COS - Rates clearance",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "COS - Construction",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "COS - Inverters",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "COS - Showhouse - HF",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "COS - Levies",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "COS - Legal fees",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -233043.82, 71053.34, 71053.34, 173655.62, 71053.34, 71053.34]},
+            {"Account": "Interest Received - Momentum",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Rental income",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Accounting fees",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Advertising _AND_ Promotions",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Advertising - Property24",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Advertising - HV",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Bank Charges",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Consulting Fees - Admin and Finance",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Consulting fees - Trustee",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Electricity", "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Insurance", "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Interest Paid",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Interest Paid - Investors @ 14%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -246794.53, -246794.53, -246794.53, -246794.53, -246794.53,
+                        -246794.53]},
+            {"Account": "Interest Paid - Investors @ 15%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 26630.13, 26630.13, 26630.13, 26630.13, 26630.13, 26630.13]},
+            {"Account": "Interest Paid - Investors @ 16%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Interest Paid - Investors @ 18%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 411780.83, 411780.83, 411780.83, 411780.83, 411780.83,
+                        411780.83]},
+            {"Account": "Interest Paid - Investors @ 6.25%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 15410.95, 15410.95, 15410.95, 15410.95, 15410.95, 15410.95]},
+            {"Account": "Interest Paid - Investors @ 6.5%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 11041.1, 11041.1, 11041.1, 11041.1, 11041.1, 11041.1]},
+            {"Account": "Interest Paid - Investors @ 6.75%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4808.22, 4808.22, 4808.22, 4808.22, 4808.22, 4808.22]},
+            {"Account": "Interest Paid - Investors @ 7.00%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Interest Paid - Investors @ 7.25%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Interest Paid - Investors @ 7.5%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 821.92, 821.92, 821.92, 821.92, 821.92, 821.92]},
+            {"Account": "Interest Paid - Investors @ 8.25%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5515.07, 5515.07, 5515.07, 5515.07, 5515.07, 5515.07]},
+            {"Account": "Interest Paid - Investors @ 9%",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 591.78, 591.78, 591.78, 591.78, 591.78, 591.78]},
+            {"Account": "Momentum Admin Fee",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Management fees - OMH",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Rates - Heron",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Refuse - Heron",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Levies", "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Repairs_AND_Maintenance",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Security - ADT",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Staff welfare",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Subscriptions - NHBRC",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Subscriptions - Xero",
+             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
+            {"Account": "Water", "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}]
+
+        base_data_HV_PandL = [{"Account": "Sales", "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Sales - Heron View occupational rent",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Bond Origination",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Commission Heron View investors",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Commission Heron View units",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Electricity",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Printing HV",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Rates clearance",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Construction",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Legal fees - Opening of Sec Title Fees",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Inverters",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Showhouse - HV",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Levies",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "COS - Legal fees",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Received - Momentum",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Accounting fees",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Advertising _AND_ Promotions",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Advertising - Property24",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Advertising - Pure Brand Activation",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Bank Charges",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Consulting Fees - Admin and Finance",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Consulting fees - Trustee",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Electricity", "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Insurance", "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Paid",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Paid - Investors @ 14%",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Paid - Investors @ 15%",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Paid - Investors @ 16%",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Paid - Investors @ 18%",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Paid - Investors @ 6.25%",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Paid - Investors @ 6.5%",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Paid - Investors @ 6.75%",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Paid - Investors @ 7.00%",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Interest Paid - Investors @ 7.5%",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Momentum Admin Fee",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Management fees - OMH",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Rates - Heron",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Refuse - Heron",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Levies", "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Repairs_AND_Maintenance",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Security - ADT",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Staff welfare",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Subscriptions - NHBRC",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Subscriptions - Xero",
+                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
+                              {"Account": "Water", "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}]
+
         credentials_string = f"{clientId}:{xerosecret}".encode("utf-8")
 
         # Encode the combined string in base64
@@ -419,6 +577,8 @@ async def get_profit_and_loss(data: Request):
             print("refresh_expires is in the past")
 
         tenant_id = "30b5d5a0-cf38-4bdb-baa1-9dda35b278a2"
+        tenant_id_HF = "9c4ba92b-93b0-4358-9ff8-141aa0718242"
+        tenant_id_HV = "4af624e3-6de5-4cc7-9123-36d63d2acbb4"
 
         # Make a GET request to the connections endpoint
         for period in range(1, request['period'] + 1):
@@ -478,18 +638,14 @@ async def get_profit_and_loss(data: Request):
                 final_record['Amount'][record['period'] - 1] = record[1]
 
             final_record['Amount'].reverse()
-        # print("base_data", base_data)
+        print("base_data", base_data)
         returned_data = insert_data_from_xero_profit_loss(base_data)
-        end_time = time.time()
-        print("time taken", end_time - start_time)
+
         # print("returned_data", returned_data)
         if returned_data['Success']:
             return {"Success": True}
         else:
             return {"Success": False, "Error": returned_data['Error']}
-
-
-
 
         # return {"Success": True}
 
