@@ -1,16 +1,17 @@
-# import os
+import os
 
 from datetime import datetime, timedelta
 
 import xmltodict
 
 import requests
+import time
 
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request
 import httpx
 from base64 import b64encode
 from urllib.parse import urlencode
-# from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse
 from config.db import db
 
 from bson.objectid import ObjectId
@@ -18,6 +19,8 @@ from bson.objectid import ObjectId
 from decouple import config
 
 from cashflow_excel_functions.cpc_profit_loss_files import insert_data_from_xero_profit_loss
+
+import cashflow_excel_functions.cpc_data_fields as cpc_data_fields
 
 xero = APIRouter()
 
@@ -45,6 +48,10 @@ async def authorize_app():
 
     credentials = xeroCredentials.find_one({})
     refresh_expires = credentials["refresh_expires"]
+    # if refresh_expires is a string like so 2023-11-19 11:58:10, then convert to a datetime object
+    if isinstance(refresh_expires, str):
+        refresh_expires = datetime.strptime(refresh_expires, "%Y-%m-%d %H:%M:%S")
+
     # is refresh_expires in the future?
     if refresh_expires > datetime.now():
         return {"response": authorization_url, "refresh_valid": True}
@@ -126,11 +133,16 @@ async def xero_callback(request: Request, code: str):
 @xero.post("/get_profit_and_loss")
 async def get_profit_and_loss(data: Request):
     request = await data.json()
+    # request = request['data']
+    print("request", request)
 
     year = request['from_date'].split("-")[0]
     month = request['from_date'].split("-")[1]
+    # print("year", year)
+    # print("month", month)
 
     try:
+        start_time = time.time()
 
         if int(month) < 10:
             current_year = int(year)
@@ -201,326 +213,32 @@ async def get_profit_and_loss(data: Request):
         ]
 
         data_from_xero = []
+        data_from_xero_HF_PandL = []
+        data_from_xero_HV_PandL = []
 
-        base_data = [{'Account': 'Fees - Construction - Heron',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Bakhoven',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Electricity Cost Endulini',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Electricity Cost Heron Field',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Endulini - Telephone & Internet',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Endulini Construction',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Endulini P and G',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Heron - Internet',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Heron Fields - Construction',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Heron Fields - Health & Safety',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Heron Fields - P & G',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Heron Fields - Printing & Stationary',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Heron View - Construction',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 3306635.59, 3306635.59, 3306635.59, 5306635.59, 5306635.59,
-                                 9056635.59, 8338713.56]},
-                     {'Account': 'COS - Heron View - P&G',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 24793.88, 24793.88, 24793.88, 24793.88, 24793.88, 24793.88,
-                                 24793.88]},
-                     {'Account': 'COS - Heron View - Printing & Stationary',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 107.39, 107.39, 107.39, 107.39, 107.39, 107.39, 107.39]},
-                     {'Account': 'COS - Insurance',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Repairs & Maintenance - SH Soho',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Repairs & Maintenance - SW Southwark',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'COS - Security - Guarding',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Cost of Sales - SouthWark Project',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Interest Received - FNB',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Interest received - Momentum',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Rent - CT Office',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Accounting Fees - Audit',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Accounting Fees - Other',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Advertising - Design Fees',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Advertising - Other',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Advertising _AND_ Promotions',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Bank Charges',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'BIBC Company Contribution',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'BIBC Employee Contribution',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Cleaning', 'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Computer Exp - IT, Internet/Hosting Fee',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Computer Expenses',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Consulting Fees - Admin and Finance',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Courier _AND_ Postage',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Depreciation - Computer Equipment',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Depreciation - Furniture and Fittings',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Depreciation - Generator Fixed Asset',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Electricity _AND_ Water',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Insurance - Santam',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Legal Fees', 'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Motor Vehicle - Insurance _AND_ Licence',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Motor Vehicle - Petrol _AND_ Oil',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Motor Vehicle Expenses',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'PAYE Contributions',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Printing - Printer rental',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Printing _AND_ Stationery',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Rates', 'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Rent Paid', 'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Repairs _AND_ Maintenance',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Salaries & Wages - WCA',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Salaries _AND_ Wages',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'SDL Contributions',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Secretarial fees - CIPC',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Security', 'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Small Assets',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Staff Welfare _AND_ Refreshmts',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Subscriptions - Smartsheet',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Subscriptions & Licenses - Caseware',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Subscriptions & Licenses - Sage payroll',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Subscriptions & Licenses - Xero',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'Subscriptions / Licenses',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'UIF Company Contributions',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-                     {'Account': 'UIF Employee Contribution',
-                      'Amount': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}]
+        base_data = cpc_data_fields.base_data.copy()
 
-        base_data_HF_PandL = [
-            {"Account": "Sales",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1314591.31, 1314591.31, 1314591.31, 1314591.31, 1314591.31,
-                        1314591.31]},
-            {"Account": "Sales - Heron Fields occupational rent",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Bond Origination",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "COS - Commission Heron Fields investors",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "COS - Commission Heron Fields units",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -444370.35, 112945.52, 112945.52, 112945.52, 112945.52,
-                        112945.52]},
+        for record in base_data:
+            for i in range(request['period']):
+                record['Amount'][i] = 0.0
 
-            {"Account": "COS - Electricity",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "COS - Printing HV",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "COS - Rates clearance",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "COS - Construction",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "COS - Inverters",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "COS - Showhouse - HF",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "COS - Levies",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "COS - Legal fees",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -233043.82, 71053.34, 71053.34, 173655.62, 71053.34, 71053.34]},
-            {"Account": "Interest Received - Momentum",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Rental income",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Accounting fees",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Advertising _AND_ Promotions",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Advertising - Property24",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Advertising - HV",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Bank Charges",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Consulting Fees - Admin and Finance",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Consulting fees - Trustee",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Electricity", "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Insurance", "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Interest Paid",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Interest Paid - Investors @ 14%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -246794.53, -246794.53, -246794.53, -246794.53, -246794.53,
-                        -246794.53]},
-            {"Account": "Interest Paid - Investors @ 15%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 26630.13, 26630.13, 26630.13, 26630.13, 26630.13, 26630.13]},
-            {"Account": "Interest Paid - Investors @ 16%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Interest Paid - Investors @ 18%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 411780.83, 411780.83, 411780.83, 411780.83, 411780.83,
-                        411780.83]},
-            {"Account": "Interest Paid - Investors @ 6.25%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 15410.95, 15410.95, 15410.95, 15410.95, 15410.95, 15410.95]},
-            {"Account": "Interest Paid - Investors @ 6.5%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 11041.1, 11041.1, 11041.1, 11041.1, 11041.1, 11041.1]},
-            {"Account": "Interest Paid - Investors @ 6.75%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4808.22, 4808.22, 4808.22, 4808.22, 4808.22, 4808.22]},
-            {"Account": "Interest Paid - Investors @ 7.00%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Interest Paid - Investors @ 7.25%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Interest Paid - Investors @ 7.5%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 821.92, 821.92, 821.92, 821.92, 821.92, 821.92]},
-            {"Account": "Interest Paid - Investors @ 8.25%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5515.07, 5515.07, 5515.07, 5515.07, 5515.07, 5515.07]},
-            {"Account": "Interest Paid - Investors @ 9%",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 591.78, 591.78, 591.78, 591.78, 591.78, 591.78]},
-            {"Account": "Momentum Admin Fee",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Management fees - OMH",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Rates - Heron",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Refuse - Heron",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Levies", "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Repairs_AND_Maintenance",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Security - ADT",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Staff welfare",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Subscriptions - NHBRC",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Subscriptions - Xero",
-             "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]},
-            {"Account": "Water", "Amount": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}]
+        base_data_HF_PandL = cpc_data_fields.base_data_HF_PandL.copy()
 
-        base_data_HV_PandL = [{"Account": "Sales", "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Sales - Heron View occupational rent",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Bond Origination",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Commission Heron View investors",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Commission Heron View units",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Electricity",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Printing HV",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Rates clearance",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Construction",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Legal fees - Opening of Sec Title Fees",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Inverters",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Showhouse - HV",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Levies",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "COS - Legal fees",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Received - Momentum",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Accounting fees",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Advertising _AND_ Promotions",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Advertising - Property24",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Advertising - Pure Brand Activation",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Bank Charges",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Consulting Fees - Admin and Finance",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Consulting fees - Trustee",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Electricity", "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Insurance", "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Paid",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Paid - Investors @ 14%",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Paid - Investors @ 15%",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Paid - Investors @ 16%",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Paid - Investors @ 18%",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Paid - Investors @ 6.25%",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Paid - Investors @ 6.5%",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Paid - Investors @ 6.75%",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Paid - Investors @ 7.00%",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Interest Paid - Investors @ 7.5%",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Momentum Admin Fee",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Management fees - OMH",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Rates - Heron",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Refuse - Heron",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Levies", "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Repairs_AND_Maintenance",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Security - ADT",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Staff welfare",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Subscriptions - NHBRC",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Subscriptions - Xero",
-                               "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]},
-                              {"Account": "Water", "Amount": [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]}]
+        for record in base_data_HF_PandL:
+            for i in range(request['period']):
+                record['Amount'][i] = 0.0
+
+        base_data_HV_PandL = cpc_data_fields.base_data_HV_PandL.copy()
+
+        for record in base_data_HV_PandL:
+            for i in range(0, request['period']):
+                # print(request['period'])
+                record['Amount'][i] = 0.0
 
         credentials_string = f"{clientId}:{xerosecret}".encode("utf-8")
 
         # Encode the combined string in base64
         encoded_credentials = b64encode(credentials_string).decode("utf-8")
-
-        # print("encoded_credentials", encoded_credentials)
 
         # get data from xeroCredentials and save to variable credentials
         credentials = xeroCredentials.find_one({})
@@ -532,7 +250,13 @@ async def get_profit_and_loss(data: Request):
 
         # refresh_expires = credentials["refresh_expires"], it is datetime object, ensure it is in the future
         # if it is in the future, use the refresh token to get a new access token
+        # print("refresh_expires", credentials["refresh_expires"])
+        # print("datetime.now()", datetime.now())
+        # if credentials["refresh_expires"] is a string like so 2023-11-19 11:58:10, then convert to a datetime object
+        if isinstance(credentials["refresh_expires"], str):
+            credentials["refresh_expires"] = datetime.strptime(credentials["refresh_expires"], "%Y-%m-%d %H:%M:%S")
         if credentials["refresh_expires"] > datetime.now():
+
             # print("refresh_expires is in the future")
 
             url_refresh = "https://identity.xero.com/connect/token"
@@ -578,35 +302,176 @@ async def get_profit_and_loss(data: Request):
 
         tenant_id = "30b5d5a0-cf38-4bdb-baa1-9dda35b278a2"
         tenant_id_HF = "9c4ba92b-93b0-4358-9ff8-141aa0718242"
+
         tenant_id_HV = "4af624e3-6de5-4cc7-9123-36d63d2acbb4"
 
-        # Make a GET request to the connections endpoint
-        for period in range(1, request['period'] + 1):
-            filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
-            # print("filtered_xero", filtered_xero)
-            report_from_date = filtered_xero[0]['from_date']
-            report_to_date = filtered_xero[0]['to_date']
-            period = filtered_xero[0]['period']
+        tenants = [tenant_id, tenant_id_HF, tenant_id_HV]
 
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&toDate="
-                    f"{report_to_date}",
-                    headers={
-                        "Content-Type": "application/xml",
-                        "Authorization": f"Bearer {access_token}",
-                        "xero-tenant-id": tenant_id,
-                    },
-                )
+        tenants_tb = [tenant_id_HF, tenant_id_HV]
+
+        hv_tb = []
+        hf_tb = []
+
+        for index, tenant in enumerate(tenants_tb):
+            report_date = request['to_date']
+
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(
+                        f"https://api.xero.com/api.xro/2.0/Reports/TrialBalance?date={report_date}",
+                        headers={
+                            "Content-Type": "application/xml",
+                            "Authorization": f"Bearer {access_token}",
+                            "xero-tenant-id": tenant,
+                        },
+                    )
+            except httpx.HTTPError as exc:
+                print(f"HTTP Error: {exc}")
+                return {"Success": False, "Error": "HTTP Error"}
+
+            # Check the HTTP status code
+            if response.status_code != 200:
+                return {"Success": False, "Error": "Non-200 Status Code"}
+
+            # print("Hello")
+
+            python_dict = xmltodict.parse(response.text)
+
+            python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+
+            python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
+
+            for item in python_dict:
+                new_item = item['Rows']['Row']
+                for cells in new_item:
+
+                    if isinstance(cells, dict):
+                        insert = {}
+
+                        for new_index, cell in enumerate(cells['Cells']['Cell']):
+
+                            # put all the above as key value pairs in a dictionary
+                            if new_index == 0:
+                                clean_account = cell.get('Value', 0)
+                                if clean_account != 0:
+                                    clean_account_list = clean_account.split("(")
+                                    clean_account_list[0] = clean_account_list[0].strip()
+                                    clean_account_list[1] = clean_account_list[1].replace(")", "")
+                                    clean_account_list[1] = clean_account_list[1].strip()
+
+                                insert['Account Code'] = clean_account_list[1]
+                                insert['Account'] = clean_account_list[0]
+                                insert['Account Type'] = ''
+
+                            if new_index == 3:
+                                insert['debit_ytd'] = float(cell.get('Value', 0))
+                            if new_index == 4:
+                                insert['credit_ytd'] = float(cell.get('Value', 0))
+
+                        if index == 0:
+                            hf_tb.append(insert)
+                        elif index == 1:
+                            hv_tb.append(insert)
+
+        short_months = [2, 4, 7, 9, 12]
+        comparison_data_cpc = []
+        comparison_data_hf = []
+        comparison_data_hv = []
+
+        # Make a GET request to the connections endpoint
+        for index1, tenant in enumerate(tenants):
+
+            if request['period'] in short_months:
+
+                for period in range(request['period'], request['period'] + 1):
+
+                    filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
+
+                    report_from_date = filtered_xero[0]['from_date']
+                    report_to_date = filtered_xero[0]['to_date']
+                    period = filtered_xero[0]['period']
+                    try:
+                        async with httpx.AsyncClient() as client:
+                            response = await client.get(
+                                f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&toDate="
+                                f"{report_to_date}",
+                                headers={
+                                    "Content-Type": "application/xml",
+                                    "Authorization": f"Bearer {access_token}",
+                                    "xero-tenant-id": tenant,
+                                },
+                            )
+                    except httpx.HTTPError as exc:
+                        print(f"HTTP Error: {exc}")
+                        return {"Success": False, "Error": "HTTP Error"}
+
+                    # Check the HTTP status code
+                    if response.status_code != 200:
+                        # print("HTTP Status Code:", response.status_code)
+                        return {"Success": False, "Error": "Non-200 Status Code"}
+
+                    python_dict = xmltodict.parse(response.text)
+
+                    python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+
+                    for item in python_dict:
+
+                        if 'Rows' in item:
+                            if isinstance(item['Rows']['Row'], list):
+                                data = item['Rows']['Row']
+                                for row in data:
+                                    if row['RowType'] == 'Row':
+
+                                        final_line_data = row['Cells']['Cell']
+                                        insert = {}
+                                        for index, line_item in enumerate(final_line_data):
+
+                                            try:
+                                                insert[index] = float(line_item['Value'])
+                                            except:
+                                                insert[index] = line_item['Value']
+                                        insert['period'] = period
+                                        if index1 == 0:
+                                            data_from_xero.append(insert)
+
+                                        elif index1 == 1:
+                                            data_from_xero_HF_PandL.append(insert)
+
+                                        elif index1 == 2:
+                                            data_from_xero_HV_PandL.append(insert)
+
+                period = request['period'] - 1
+
+                filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
+
+                report_from_date = filtered_xero[0]['from_date']
+                report_to_date = filtered_xero[0]['to_date']
+                period = filtered_xero[0]['period']
+
+                try:
+                    async with httpx.AsyncClient() as client:
+                        response = await client.get(
+                            f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&"
+                            f"toDate={report_to_date}&periods={period - 1}&timeframe=MONTH",
+                            headers={
+                                "Content-Type": "application/xml",
+                                "Authorization": f"Bearer {access_token}",
+                                "xero-tenant-id": tenant,
+                            },
+                        )
+                except httpx.HTTPError as exc:
+                    print(f"HTTP Error: {exc}")
+                    return {"Success": False, "Error": "HTTP Error"}
 
                 # Check the HTTP status code
                 if response.status_code != 200:
-                    # print("HTTP Status Code:", response.status_code)
                     return {"Success": False, "Error": "Non-200 Status Code"}
 
                 python_dict = xmltodict.parse(response.text)
 
                 python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+
+                python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
 
                 for item in python_dict:
 
@@ -614,22 +479,131 @@ async def get_profit_and_loss(data: Request):
                         if isinstance(item['Rows']['Row'], list):
                             data = item['Rows']['Row']
                             for row in data:
+                                # print("row", row)
                                 if row['RowType'] == 'Row':
-                                    # print(row['Cells']['Cell'])
-                                    final_line_data = row['Cells']['Cell']
+
                                     insert = {}
-                                    for index, line_item in enumerate(final_line_data):
+                                    values = []
+                                    if isinstance(row['Cells']['Cell'], list):
+                                        newData = row['Cells']['Cell']
+                                        for index, line_item in enumerate(newData):
 
-                                        # print(index, ':', line_item['Value'])
-                                        try:
-                                            insert[index] = float(line_item['Value'])
-                                        except:
-                                            insert[index] = line_item['Value']
-                                    insert['period'] = period
-                                    data_from_xero.append(insert)
+                                            if index == 0:
+                                                insert['Account'] = line_item['Value']
+                                            else:
+                                                values.append(line_item['Value'])
+                                    insert['Amount'] = values
+                                    if index1 == 0:
+                                        comparison_data_cpc.append(insert)
 
-        # sort data_from_xero first by 0 then by period
+                                    elif index1 == 1:
+                                        comparison_data_hf.append(insert)
+
+                                    elif index1 == 2:
+                                        comparison_data_hv.append(insert)
+
+            else:
+
+                period = request['period']
+
+                filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
+
+                report_from_date = filtered_xero[0]['from_date']
+                report_to_date = filtered_xero[0]['to_date']
+                period = filtered_xero[0]['period']
+
+                try:
+                    async with httpx.AsyncClient() as client:
+                        response = await client.get(
+                            f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&toDate={report_to_date}&periods={period - 1}&timeframe=MONTH",
+                            headers={
+                                "Content-Type": "application/xml",
+                                "Authorization": f"Bearer {access_token}",
+                                "xero-tenant-id": tenant,
+                            },
+                        )
+                except httpx.HTTPError as exc:
+                    print(f"HTTP Error: {exc}")
+                    return {"Success": False, "Error": "HTTP Error"}
+
+                # Check the HTTP status code
+                if response.status_code != 200:
+                    return {"Success": False, "Error": "Non-200 Status Code"}
+
+                python_dict = xmltodict.parse(response.text)
+
+                python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+
+                python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
+
+                for item in python_dict:
+
+                    if 'Rows' in item:
+                        if isinstance(item['Rows']['Row'], list):
+                            data = item['Rows']['Row']
+                            for row in data:
+
+                                if row['RowType'] == 'Row':
+
+                                    insert = {}
+                                    values = []
+                                    if isinstance(row['Cells']['Cell'], list):
+                                        newData = row['Cells']['Cell']
+                                        for index, line_item in enumerate(newData):
+
+                                            if index == 0:
+                                                insert['Account'] = line_item['Value']
+                                            else:
+                                                values.append(line_item['Value'])
+                                    insert['Amount'] = values
+                                    if index1 == 0:
+                                        comparison_data_cpc.append(insert)
+
+                                    elif index1 == 1:
+                                        comparison_data_hf.append(insert)
+
+                                    elif index1 == 2:
+                                        comparison_data_hv.append(insert)
+
+        for item in comparison_data_cpc:
+            item['Amount'].reverse()
+            insert = {}
+            for idx, value in enumerate(item['Amount'], start=1):
+                insert[0] = item['Account']
+                insert[1] = float(value)
+                insert['period'] = idx
+
+                data_from_xero.append(insert)
+                insert = {}
+
+        for item in comparison_data_hf:
+            item['Amount'].reverse()
+            insert = {}
+            for idx, value in enumerate(item['Amount'], start=1):
+                insert[0] = item['Account']
+                insert[1] = float(value)
+                insert['period'] = idx
+
+                data_from_xero_HF_PandL.append(insert)
+                insert = {}
+
+        for item in comparison_data_hv:
+            item['Amount'].reverse()
+            insert = {}
+            for idx, value in enumerate(item['Amount'], start=1):
+                insert[0] = item['Account']
+                insert[1] = float(value)
+                insert['period'] = idx
+
+                data_from_xero_HV_PandL.append(insert)
+                insert = {}
+
         data_from_xero.sort(key=lambda x: (x[0], x['period']))
+
+        data_from_xero_HF_PandL.sort(key=lambda x: (x[0], x['period']))
+
+        data_from_xero_HV_PandL.sort(key=lambda x: (x[0], x['period']))
+
         for final_record in base_data:
 
             filtered_data_from_xero = list(filter(lambda x: x[0] == final_record['Account'], data_from_xero))
@@ -638,12 +612,69 @@ async def get_profit_and_loss(data: Request):
                 final_record['Amount'][record['period'] - 1] = record[1]
 
             final_record['Amount'].reverse()
-        print("base_data", base_data)
-        returned_data = insert_data_from_xero_profit_loss(base_data)
+
+        for final_record in base_data_HF_PandL:
+
+            filtered_data_from_xero = list(filter(lambda x: x[0] == final_record['Account'], data_from_xero_HF_PandL))
+
+            for record in filtered_data_from_xero:
+                final_record['Amount'][record['period'] - 1] = record[1]
+
+            final_record['Amount'].reverse()
+
+        for record in base_data_HF_PandL:
+            if record['Account'] == 'Accounting Fees':
+
+                filtered_data_from_xero = list(
+                    filter(lambda x: x['Account'] == 'Accounting - CIPC', base_data_HF_PandL))
+
+                for index, item in enumerate(record['Amount']):
+                    record['Amount'][index] = record['Amount'][index] + filtered_data_from_xero[0]['Amount'][index]
+
+            if record['Account'] == 'Staff welfare':
+
+                filtered_data_from_xero1 = list(
+                    filter(lambda x: x['Account'] == 'Entertainment Expenses', base_data_HF_PandL))
+
+                filtered_data_from_xero2 = list(
+                    filter(lambda x: x['Account'] == 'General Expenses', base_data_HF_PandL))
+
+                for index, item in enumerate(record['Amount']):
+                    record['Amount'][index] = filtered_data_from_xero1[0]['Amount'][index] + \
+                                              filtered_data_from_xero2[0]['Amount'][index]
+
+            if record['Account'] == 'Repairs _AND_ Maintenance':
+                # print("record", record)
+                filtered_data_from_xero = list(
+                    filter(lambda x: x['Account'] == 'Motor Vehicle Expenses', base_data_HF_PandL))
+
+                for index, item in enumerate(record['Amount']):
+                    record['Amount'][index] = record['Amount'][index] + filtered_data_from_xero[0]['Amount'][index]
+
+        for final_record in base_data_HV_PandL:
+
+            filtered_data_from_xero = list(filter(lambda x: x[0] == final_record['Account'], data_from_xero_HV_PandL))
+
+            for record in filtered_data_from_xero:
+                final_record['Amount'][record['period'] - 1] = record[1]
+
+            final_record['Amount'].reverse()
+        # print("base_data_HV_PandL", base_data_HV_PandL)
+        # print()
+        # sort data_from_xero_HF_PandL first by '0' then by 'period'
+        data_from_xero_HF_PandL.sort(key=lambda x: (x[0], x['period']))
+        data_from_xero_HV_PandL.sort(key=lambda x: (x[0], x['period']))
+        # print("data_from_xero_HF_PandL", data_from_xero_HV_PandL)
+
+        returned_data = insert_data_from_xero_profit_loss(base_data, base_data_HF_PandL, base_data_HV_PandL, hf_tb,
+                                                          hv_tb, request['to_date'])
 
         # print("returned_data", returned_data)
+        end_time = time.time()
+        # print("time taken", end_time - start_time)
+        # return {"Success": True}
         if returned_data['Success']:
-            return {"Success": True}
+            return {"Success": True, "time_taken": end_time - start_time}
         else:
             return {"Success": False, "Error": returned_data['Error']}
 
@@ -652,3 +683,24 @@ async def get_profit_and_loss(data: Request):
     except Exception as e:
         print("Error", e)
         return {"Success": False, "Error": str(e)}
+
+
+@xero.get("/get_profit_and_loss")
+async def get_profit_and_loss(file_name):
+    try:
+        file_name = file_name + ".xlsx"
+        file_name = file_name.replace("_", " ")
+        file_name = file_name.replace("xx", "&")
+        print("file_name", file_name)
+        dir_path = "cashflow_p&l_files"
+        dir_list = os.listdir(dir_path)
+
+        print("dir_list", dir_list)
+        if file_name in dir_list:
+            print("file exists")
+            return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
+        else:
+            return {"ERROR": "File does not exist!!"}
+    except Exception as e:
+        print(e)
+        return {"ERROR": "Please Try again"}
