@@ -8,6 +8,8 @@ from main import create_final_loan_agreement
 import smtplib
 from email.message import EmailMessage
 
+from early_releases_excel_generation.early_releases_excel import early_release_creation
+
 
 # from verify_token import verify_jwt_token
 
@@ -307,3 +309,94 @@ async def loan_agreement(loan_agreement_name):
         return FileResponse(f"{dir_path}/{loan_agreement_name}", media_type="application/zip")
     else:
         return {"ERROR": "File does not exist!!"}
+
+
+# Get early releases
+@investor.get("/get_early_releases")
+async def get_early_releases():
+    # from the database get investors and project only investor_acc_number, investor_name, investor_surname and the
+    # investments array
+    try:
+        investors = list(db.investors.aggregate(
+            [
+                {
+                    '$project': {
+                        'investor_acc_number': 1,
+                        'investor_name': 1,
+                        'investor_surname': 1,
+                        'investments': 1,
+                        '_id': 0,
+                    }
+                }
+            ]
+        ))
+        for inv in investors:
+            # filter investor['invstments'] to only include investments where if early_release exists and is True
+
+            for i in inv['investments']:
+                i['early_release'] = i.get('early_release', False)
+            inv['investments'] = list(filter(lambda x: x['early_release'] == True, inv['investments']))
+
+        # filter investors to only include investors where investments is not empty
+        investors = list(filter(lambda x: len(x['investments']) > 0, investors))
+
+        early_releases = []
+
+        # get opportunities from the database
+        opportunities_list = list(db.opportunities.find({}))
+        for opportunity in opportunities_list:
+            opportunity['_id'] = str(opportunity['_id'])
+            opportunity['id'] = opportunity['_id']
+            del opportunity['_id']
+
+        for investor in investors:
+            for inv in investor['investments']:
+                # filter opportunity_list to only include opportunities where opportunity_code == inv['opportunity_code']
+                opportunity_list_filtered = list(filter(lambda x: x['opportunity_code'] == inv['opportunity_code'],
+                                                        opportunities_list))
+                insert = {}
+                insert['investor_acc_number'] = investor['investor_acc_number']
+                insert['investor_name'] = investor['investor_name']
+                insert['investor_surname'] = investor['investor_surname']
+                insert['opportunity_code'] = inv['opportunity_code']
+                insert['Category'] = opportunity_list_filtered[0]['Category']
+                insert['early_release_date'] = inv['end_date']
+                insert['early_release_amount'] = float(inv['exit_value'].replace(" ", ""))
+                insert['investment_amount'] = float(inv['investment_amount'].replace(" ", ""))
+                insert['sold'] = opportunity_list_filtered[0]['opportunity_sold']
+                insert['interest_rate'] = float(inv['investment_interest_rate'])
+                if opportunity_list_filtered[0]['opportunity_final_transfer_date'] == '':
+                    insert['transferred'] = False
+                else:
+                    insert['transferred'] = True
+
+                early_releases.append(insert)
+
+        result = early_release_creation(early_releases)
+        # return FileResponse(f"early_releases_excel_generation/early_releases.xlsx", media_type="application/xlsx")
+
+
+        return result
+    except Exception as e:
+        print(e)
+        return {"ERROR": f"Something went wrong!!- {e}"}
+
+
+@investor.get("/deliver_early_releases")
+async def deliver_early_releases(file_name):
+    try:
+        file_name = file_name + ".xlsx"
+        # file_name = file_name.replace("_", " ")
+        # file_name = file_name.replace("xx", "&")
+
+        dir_path = "early_releases_excel_generation"
+        dir_list = os.listdir(dir_path)
+
+        if file_name in dir_list:
+
+            return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
+        else:
+            return {"ERROR": "File does not exist!!"}
+    except Exception as e:
+        print(e)
+        return {"ERROR": "Please Try again"}

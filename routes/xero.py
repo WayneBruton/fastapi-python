@@ -1,32 +1,25 @@
 import os
-
 from datetime import datetime, timedelta
-
 import xmltodict
-
 import requests
 import time
-
 from fastapi import APIRouter, Request
 import httpx
 from base64 import b64encode
 from urllib.parse import urlencode
 from fastapi.responses import FileResponse
 from config.db import db
-
 from bson.objectid import ObjectId
-
 from decouple import config
 
 from cashflow_excel_functions.cpc_profit_loss_files import insert_data_from_xero_profit_loss
-
 import cashflow_excel_functions.cpc_data_fields as cpc_data_fields
 
 xero = APIRouter()
-
+# MONGODB DOCUMENTS
 xeroCredentials = db.xeroCredentials
 xeroTenants = db.xeroTenants
-
+# XERO CREDENTIALS
 clientId = config("clientId")
 xerosecret = config("xerosecret")
 redirectURI = config("redirectURI")
@@ -133,13 +126,9 @@ async def xero_callback(request: Request, code: str):
 @xero.post("/get_profit_and_loss")
 async def get_profit_and_loss(data: Request):
     request = await data.json()
-    # request = request['data']
-    print("request", request)
 
     year = request['from_date'].split("-")[0]
     month = request['from_date'].split("-")[1]
-    # print("year", year)
-    # print("month", month)
 
     try:
         start_time = time.time()
@@ -248,16 +237,9 @@ async def get_profit_and_loss(data: Request):
         access_token = credentials["access_token"]
         refresh_token = credentials["refresh_token"]
 
-        # refresh_expires = credentials["refresh_expires"], it is datetime object, ensure it is in the future
-        # if it is in the future, use the refresh token to get a new access token
-        # print("refresh_expires", credentials["refresh_expires"])
-        # print("datetime.now()", datetime.now())
-        # if credentials["refresh_expires"] is a string like so 2023-11-19 11:58:10, then convert to a datetime object
         if isinstance(credentials["refresh_expires"], str):
             credentials["refresh_expires"] = datetime.strptime(credentials["refresh_expires"], "%Y-%m-%d %H:%M:%S")
         if credentials["refresh_expires"] > datetime.now():
-
-            # print("refresh_expires is in the future")
 
             url_refresh = "https://identity.xero.com/connect/token"
 
@@ -659,8 +641,7 @@ async def get_profit_and_loss(data: Request):
                 final_record['Amount'][record['period'] - 1] = record[1]
 
             final_record['Amount'].reverse()
-        # print("base_data_HV_PandL", base_data_HV_PandL)
-        # print()
+
         # sort data_from_xero_HF_PandL first by '0' then by 'period'
         data_from_xero_HF_PandL.sort(key=lambda x: (x[0], x['period']))
         data_from_xero_HV_PandL.sort(key=lambda x: (x[0], x['period']))
@@ -669,16 +650,14 @@ async def get_profit_and_loss(data: Request):
         returned_data = insert_data_from_xero_profit_loss(base_data, base_data_HF_PandL, base_data_HV_PandL, hf_tb,
                                                           hv_tb, request['to_date'])
 
-        # print("returned_data", returned_data)
         end_time = time.time()
-        # print("time taken", end_time - start_time)
-        # return {"Success": True}
+
         if returned_data['Success']:
             return {"Success": True, "time_taken": end_time - start_time}
         else:
             return {"Success": False, "Error": returned_data['Error']}
 
-        # return {"Success": True}
+
 
     except Exception as e:
         print("Error", e)
@@ -691,13 +670,12 @@ async def get_profit_and_loss(file_name):
         file_name = file_name + ".xlsx"
         file_name = file_name.replace("_", " ")
         file_name = file_name.replace("xx", "&")
-        print("file_name", file_name)
+
         dir_path = "cashflow_p&l_files"
         dir_list = os.listdir(dir_path)
 
-        print("dir_list", dir_list)
         if file_name in dir_list:
-            print("file exists")
+
             return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
         else:
             return {"ERROR": "File does not exist!!"}

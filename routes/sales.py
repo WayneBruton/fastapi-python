@@ -1,7 +1,7 @@
 import os
 import boto3
 from botocore.exceptions import ClientError
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, BackgroundTasks
 from fastapi.responses import FileResponse
 from config.db import db
 from bson.objectid import ObjectId
@@ -120,7 +120,7 @@ def get_files_required_for_sales():
 
 # GET DEVELOPMENTS
 @sales.post("/getDevelopmentForSales")
-async def get_developments_for_sales():
+async def get_developments_for_sales(background_tasks: BackgroundTasks):
     result_developments = list(opportunityCategories.aggregate([{"$project": {
         "id2": {'$toString': "$_id"}, "_id": 0, "Description": 1, "blocked": 1
     }}]))
@@ -130,8 +130,14 @@ async def get_developments_for_sales():
 
     # for development in result_developments:
     #     print(development)
-    get_files_required_for_sales()
+    # get_files_required_for_sales()
+    # make get_files_required_for_sales() a background task
+
+    background_tasks.add_task(get_files_required_for_sales)
+
+    # await get_files_require/d_for_sales()
     return result_developments
+
 
 
 @sales.post("/get_new_sale_info")
