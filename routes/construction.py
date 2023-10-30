@@ -500,7 +500,7 @@ async def create_payment_advice(request: Request):
             "nett_amount_certified": f"R{((total_valuation_current - (total_valuation_current * retention)) + total_atcv_to_date) - (total_valuation_previous + total_atcv_previous):,.2f}",
             "vat": f"R{(((total_valuation_current - (total_valuation_current * retention)) + total_atcv_to_date) - (total_valuation_previous + total_atcv_previous)) * vat:,.2f}",
             "nett": f"R{(((total_valuation_current - (total_valuation_current * retention)) + total_atcv_to_date) - (total_valuation_previous + total_atcv_previous)) + ((((total_valuation_current - (total_valuation_current * retention)) + total_atcv_to_date) - (total_valuation_previous + total_atcv_previous)) * vat):,.2f}",
-            "execution": f"{(total_valuation_current / total_contract_value).__round__(2) * 100}%",
+            "execution": f"{((total_valuation_current / total_contract_value) * 100).__round__(2)}%",
         }
         # print("context", context)
 
