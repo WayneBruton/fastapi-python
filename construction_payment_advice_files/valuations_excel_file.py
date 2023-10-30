@@ -40,13 +40,13 @@ def create_valuations_file(data, subcontractors):
         data_to_insert.append(row1)
         color_terms = ""
         for index, valuation in enumerate(data):
-            if index == 0:
-                color_terms = valuation['terms']
+            # if index == 0:
+            #     color_terms = valuation['terms']
             if valuation['subcontractor'] == subcontractor and valuation.get('taskCategory', 'Normal') != 'ATCV':
                 insert = [valuation['development'], valuation['block'], valuation['unit'], valuation['floorType'],
                           valuation['description'], valuation['unitMeasure'], valuation['qty'], valuation['rate'],
                           valuation['amount'], valuation['percent_complete'], valuation['amount_complete'],
-                          valuation['terms']]
+                          valuation.get('terms',"30 Days")]
                 for item in valuation['tasks']:
                     insert.append(item['paymentAdviceNumber'])
                     insert.append(item['approved'])
@@ -76,7 +76,7 @@ def create_valuations_file(data, subcontractors):
                 insert = ["", "", "", "",
                           valuation['description'], valuation['unitMeasure'], valuation['qty'], valuation['rate'],
                           valuation['amount'], valuation['percent_complete'], valuation['amount_complete'],
-                          valuation['terms']]
+                          valuation.get('terms',"30 Days")]
                 for index, item in enumerate(valuation['tasks']):
                     insert.append(item['paymentAdviceNumber'])
                     insert.append(item['approved'])
@@ -439,11 +439,11 @@ def create_valuations_file(data, subcontractors):
 
         # ws.sheet_properties.tabColor = "1072BA"
         #     print(color_terms)
-            if color_terms == '30 Days':
-                # tab color = blue else tab color = green
-                ws.sheet_properties.tabColor = "4F709C"
-            else:
-                ws.sheet_properties.tabColor = "00DFA2"
+        #     if color_terms == '30 Days':
+        #         # tab color = blue else tab color = green
+        #         ws.sheet_properties.tabColor = "4F709C"
+        #     else:
+        #         ws.sheet_properties.tabColor = "00DFA2"
 
 
 
@@ -473,7 +473,7 @@ def create_valuations_file(data, subcontractors):
             ws.cell(row=1, column=col).font = Font(bold=True)
 
     ## 30 DAY SHEET
-    thirty_days_subcontractors = [item for item in data if item['terms'] == '30 Days']
+    thirty_days_subcontractors = [item for item in data if item.get('terms', "30 Days") == '30 Days']
     if len(thirty_days_subcontractors) > 0:
         ws = wb.create_sheet("Master(30 Days)", 0)
         ws.sheet_properties.tabColor = "FF0000"
@@ -652,7 +652,7 @@ def create_valuations_file(data, subcontractors):
 
 
     ## EOM SHEET
-    eom_subcontractors = [item for item in data if item['terms'] == 'End of Month']
+    eom_subcontractors = [item for item in data if item.get('terms', "30 Days") == 'End of Month']
     if len(eom_subcontractors) > 0:
         ws = wb.create_sheet("Master (Month End)", 0)
         ws.sheet_properties.tabColor = "FF0000"

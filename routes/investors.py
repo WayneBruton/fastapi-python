@@ -375,7 +375,6 @@ async def get_early_releases():
         result = early_release_creation(early_releases)
         # return FileResponse(f"early_releases_excel_generation/early_releases.xlsx", media_type="application/xlsx")
 
-
         return result
     except Exception as e:
         print(e)
@@ -400,3 +399,39 @@ async def deliver_early_releases(file_name):
     except Exception as e:
         print(e)
         return {"ERROR": "Please Try again"}
+
+
+# @investor.get("/test_investors")
+# async def test_investors():
+#     investors = list(db.investors.aggregate(
+#         [
+#             {
+#                 '$project': {
+#                     'investor_acc_number': 1,
+#                     'investor_name': 1,
+#                     'investor_surname': 1,
+#                     'investments': 1,
+#                     '_id': 0,
+#                 }
+#             }
+#         ]
+#     ))
+#     final_data = []
+#
+#     for inv in investors:
+#         for item in inv['investments']:
+#             if (item['Category'] == "Heron View" or item['Category'] == "Heron Fields") and item['release_date'][
+#                                                                                             :7] == "2022/02":
+#                 # take the first 7 characters of the release_date
+#                 # item['release_date'] = item['release_date'][:10]
+#                 insert = {}
+#                 insert['investor_acc_number'] = inv['investor_acc_number']
+#                 insert['investor_name'] = inv['investor_name']
+#                 insert['investor_surname'] = inv['investor_surname']
+#                 insert['opportunity_code'] = item['opportunity_code']
+#                 insert['release_date'] = item['release_date']
+#                 insert['investment_amount'] = item['investment_amount']
+#
+#                 final_data.append(insert)
+#
+#     return {"length": len(final_data), "data": final_data}

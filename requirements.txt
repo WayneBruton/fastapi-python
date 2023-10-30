@@ -4,6 +4,7 @@ boto3==1.26.53
 click
 deepdiff~=6.2.3
 defusedxml
+docxtpl
 dnspython==2.3.0
 fastapi==0.89.1
 fonttools

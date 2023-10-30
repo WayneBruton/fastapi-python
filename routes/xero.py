@@ -8,6 +8,7 @@ import httpx
 from base64 import b64encode
 from urllib.parse import urlencode
 from fastapi.responses import FileResponse
+from fastapi.responses import RedirectResponse
 from config.db import db
 from bson.objectid import ObjectId
 from decouple import config
@@ -36,6 +37,7 @@ async def authorize_app():
         f"client_id={clientId}&"
         f"redirect_uri={redirectURI}&"
         f"scope=accounting.reports.read offline_access&"
+        # f"scope=finance.statements.read offline_access&"
         f"state=123"
     )
 
@@ -120,7 +122,8 @@ async def xero_callback(request: Request, code: str):
         # insert the tenant id into xeroTenants
         xeroTenants.insert_many(tenant_id)
 
-    return {"authorized": True}
+    # return {"authorized": True}
+    return RedirectResponse(url="http://localhost:8080/finance")
 
 
 @xero.post("/get_profit_and_loss")

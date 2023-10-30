@@ -30,6 +30,9 @@ if not os.path.isdir("portal_statements"):
 if not os.path.isdir("sales_client_onboarding_docs"):
     os.makedirs("sales_client_onboarding_docs")
 
+if not os.path.isdir("payment_advice"):
+    os.makedirs("payment_advice")
+
 app = FastAPI()
 
 origins = ["*"]

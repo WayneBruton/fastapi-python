@@ -274,7 +274,8 @@ def create_sales_forecast_file(data, developmentinputdata, pledges, firstName, l
         row[15].value = f'=SUM(P4:P{ws.max_row})'
         row[16].value = f'=SUM(Q4:Q{ws.max_row})'
         row[17].value = f'=SUM(R4:R{ws.max_row})'
-        row[18].value = f'=SUM(S4:S{ws.max_row})'
+        # =SUBTOTAL(109,S4:S500)
+        row[18].value = f'=SUBTOTAL(109,S4:S{ws.max_row})'
         row[21].value = f'=SUM(V4:V{ws.max_row})'
         row[22].value = f'=SUM(W4:W{ws.max_row})'
 
