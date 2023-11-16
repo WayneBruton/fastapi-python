@@ -345,17 +345,14 @@ async def get_construction_valuations_to_approve(request: Request):
 
         for final_valuation in final_valuations_jobs:
             payment_advice_numbers.append(final_valuation['paymentAdviceNumber'])
-            # if final_valuation['subcontractor'] == "ZZWayne" and final_valuation['status'] != "Approved":
-            #     print()
-            #     print("final_valuation", final_valuation)
+
         # show only unique payment_advice_numbers
         payment_advice_numbers = list(set(payment_advice_numbers))
         final_data = []
         # print("payment_advice_numbers", payment_advice_numbers)
         for number in payment_advice_numbers:
             filtered_jobs = [job for job in final_valuations_jobs if job['paymentAdviceNumber'] == number]
-            # print("filtered_jobs", filtered_jobs)
-            # print()
+
             insert = {}
             insert['paymentAdviceNumber'] = number
             insert['subcontractor'] = filtered_jobs[0]['subcontractor']
@@ -502,7 +499,6 @@ async def create_payment_advice(request: Request):
             "nett": f"R{(((total_valuation_current - (total_valuation_current * retention)) + total_atcv_to_date) - (total_valuation_previous + total_atcv_previous)) + ((((total_valuation_current - (total_valuation_current * retention)) + total_atcv_to_date) - (total_valuation_previous + total_atcv_previous)) * vat):,.2f}",
             "execution": f"{((total_valuation_current / total_contract_value) * 100).__round__(2)}%",
         }
-        # print("context", context)
 
         doc.render(context)
         doc.save(f"payment_advice/{data['paymentAdviceNumber']}.docx")
@@ -526,7 +522,6 @@ async def create_payment_advice(request: Request):
                         # print("task", task)
                 result = valuations.update_one({"_id": ObjectId(id)}, {"$set": valuation})
 
-            # print("SUCCESS")
             # delete all files in payment_advice folder except the template "Payment Advice template.docx"
             dir_path = "payment_advice"
             dir_list = os.listdir(dir_path)
@@ -534,7 +529,7 @@ async def create_payment_advice(request: Request):
                 if file != "Payment Advice template.docx":
                     os.remove(f"{dir_path}/{file}")
 
-
+            print("SUCCESS")
 
         except ClientError as err:
             print("Credentials are incorrect")
@@ -544,52 +539,9 @@ async def create_payment_advice(request: Request):
         end_time = time.time()
         print("Time taken to create payment advice:", (end_time - start_time).__round__(2))
 
-        return {"link": link, "status": "ok", "valuation": data['paymentAdviceNumber'], "time": (end_time - start_time).__round__(2)}
+        return {"link": link, "status": "ok", "valuation": data['paymentAdviceNumber'],
+                "time": (end_time - start_time).__round__(2)}
 
     except Exception as e:
         print("ERROR", e)
         return {"status": "error", "error": e}
-
-# @construction.get("/get_draws_done")
-# async def get_draws_done():
-#     try:
-#         # pipeline = [
-#         #     {
-#         #         "$group": {
-#         #             "_id": {
-#         #                 "development": "$development",
-#         #                 "block": "$block"
-#         #             }
-#         #         }
-#         #     },
-#         #     {
-#         #         "$project": {
-#         #             "_id": 0,
-#         #             "development": "$_id.development",
-#         #             "block": "$_id.block"
-#         #         }
-#         #     }
-#         # ]
-#         # available_data = list(valuations.aggregate(pipeline))
-#
-#         data = list(investor_draws.find())
-#         for item in data:
-#             item['_id'] = str(item['_id'])
-#             print(item)
-#             with open('investor_draws.csv', 'a') as csvfile:
-#                 writer = csv.DictWriter(csvfile, fieldnames=item.keys())
-#                 # writer.writeheader()
-#                 writer.writerow(item)
-#
-#         # save data to a csv file called investor_draws
-#         # with open('investor_draws.csv', 'w') as csvfile:
-#         #     writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
-#         #     writer.writeheader()
-#         #     writer.writerows(data)
-#
-#         # available_data.sort(key=lambda x: (x['development'], x['block']))
-#         # print(available_data)
-#         return {"status": "ok", "available_data": data}
-#     except Exception as e:
-#         print("XXXX", e)
-#         return {"status": "error", "error": e}
