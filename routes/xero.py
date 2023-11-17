@@ -2241,13 +2241,19 @@ async def process_profit_and_loss(data: Request):
                  "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
                  "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
                  "Cash to flow to Heron from Quinate early exits", "", 0]
+        row52 = ["", "","","","","","","","","","","","","","","","","","",""]
+        row53 = ["Sales Income", total_units_sales_value4, transferred_units_sold_value4, sold_units_value4,
+                 remaining_units_value4, "Sales Income", total_units_sales_value3, transferred_units_sold_value3,
+                 sold_units_value3, remaining_units_value3, "Sales Income", total_units_sales_value2,
+                 transferred_units_sold_value2, sold_units_value2, remaining_units_value2, "Sales Income",
+                 total_units_sales_value1, transferred_units_sold_value1, sold_units_value1, remaining_units_value1]
 
         # append all rows to nsst_print_report
         nsss_print_report = [row1, row2, row3, row4, row5, row6, row7, row8, row9, row10, row11,
                              row12, row13, row14, row15, row16, row17, row18, row19, row20,
                              row21, row22, row23, row24, row25, row26, row27, row28, row29,
                              row30, row31, row32, row33, row34, row35, row36, row37, row38, row39, row40, row41, row42,
-                             row43, row44, row45, row46, row47, row48, row49, row50, row51]
+                             row43, row44, row45, row46, row47, row48, row49, row50, row51, row52,row53]
 
         # print(len(investors))
         report_date = request['to_date']
@@ -2263,6 +2269,8 @@ async def process_profit_and_loss(data: Request):
     except Exception as e:
         print(e)
         return {"ERROR": "Please Try again"}
+
+
 
 
 @xero.get("/get_profit_and_loss_data")
@@ -2351,6 +2359,20 @@ def get_json_file():
 
 # get_json_file()
 
+
+
+# def check_legal_fees():
+#     # get all profit_and_loss from db where Development = 'Heron Fields' and Account = 'COS - Legal Fees' and oder by Month ascending
+#     profit_and_loss = list(db.profit_and_loss.find({"Development": "Heron Fields", "Account": "COS - Legal Fees"}).sort(
+#         [("Month", 1)]))
+#     # print(profit_and_loss)
+#     # for item in profit_and_loss:
+#     #     item['_id'] = str(item['_id'])
+#     #     print(item)
+#     #     print()
+
+
+# check_legal_fees()
 # def endulini():
 #     # print("Hello World")
 #     investors = list(db.investors.find({}))
