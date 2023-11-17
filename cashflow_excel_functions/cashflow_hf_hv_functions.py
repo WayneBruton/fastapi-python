@@ -653,6 +653,10 @@ def cashflow_hf_hv(data, data2, report_date):
         for cell in cells_to_format_as_date:
             ws[cell].number_format = 'dd MMM yy'
 
+        # hide row 41 and 53
+        ws.row_dimensions[41].hidden = True
+        ws.row_dimensions[53].hidden = True
+
 
 
         wb.save('cashflow_p&l_files/cashflow_hf_hv.xlsx')
