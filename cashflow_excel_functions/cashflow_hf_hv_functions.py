@@ -420,23 +420,24 @@ def cashflow_hf_hv(data, data2, report_date):
         # in row 2, in columns inside total_cost_to_complete_columns insert a formula as per above and format as currency with 2 decimal places and R for South African
         for col in total_cost_to_complete_columns:
             #f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, \"Cost To Complete Project\", data!$E$1:$E${last_row}, 'NSST Print'!{col}3)-+SUM(D44:D50)"
-            ws[f'{col}35'].value = f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, \"Cost To Complete Project\", data!$E$1:$E${last_row}, 'NSST Print'!{col}3)-+SUM(D44:D50)"
+            ws[f'{col}35'].value = f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, \"Cost To Complete Project\", data!$E$1:$E${last_row}, 'NSST Print'!{col}3)-SUM(C44:C50)"
             ws[f'{col}35'].number_format = 'R #,##0.00'
             # =B9+SUMIFS(data!$H$1:$H$1648,data!$A$1:$A$1648,'NSST Print'!$A$32,data!$E$1:$E$1648,'NSST Print'!B3) in row 32
             ws[f'{col}32'].value = f"={col}9+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},'NSST Print'!$A$32,data!$E$1:$E${last_row},'NSST Print'!{col}3)"
             ws[f'{col}32'].number_format = 'R #,##0.00'
-            # in row 33 =SUMIFS(data!$H$1:$H$1684,data!$A$1:$A$1684,'NSST Print'!$A$33,data!$E$1:$E$1684,'NSST Print'!B3)+D43+E51
-            ws[f'{col}33'].value = f"=SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},'NSST Print'!$A$33,data!$E$1:$E${last_row},'NSST Print'!{col}3)+D43+E51"
+            # in row 33 ==SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,'NSST Print'!$A$33,data!$E$1:$E$1683,'NSST Print'!B3)+C43+C51+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Momentum Interest")++SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Attorneys Deposit")++SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"FNB Bank Account")
+            ws[f'{col}33'].value = f"=SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},'NSST Print'!$A$33,data!$E$1:$E${last_row},'NSST Print'!{col}3)+C43+C51+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Momentum Interest\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Attorneys Deposit\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"FNB Bank Account\")"
             ws[f'{col}33'].number_format = 'R #,##0.00'
             # in row 39 =SUMIFS(data!$H$1:$H$1656,data!$A$1:$A$1656,"Interest Received - Momentum")
             ws[f'{col}39'].value = f"=SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Interest Received - Momentum\")"
             ws[f'{col}39'].number_format = 'R #,##0.00'
             # in row 40 =SUMIFS(data!$H$1:$H$1680,data!$B$1:$B$1680,"Operating Expenses")+SUMIFS(data!$H$1:$H$1680,data!$B$1:$B$1680,"COS")-SUM(D44:D50)
-            ws[f'{col}40'].value = f"=SUMIFS(data!$H$1:$H${last_row},data!$B$1:$B${last_row},\"Operating Expenses\")+SUMIFS(data!$H$1:$H${last_row},data!$B$1:$B${last_row},\"COS\")-SUM(D44:D50)"
+            ws[f'{col}40'].value = f"=SUMIFS(data!$H$1:$H${last_row},data!$B$1:$B${last_row},\"Operating Expenses\")+SUMIFS(data!$H$1:$H${last_row},data!$B$1:$B${last_row},\"COS\")-SUM(C44:C50)"
             ws[f'{col}40'].number_format = 'R #,##0.00'
             # in row 41 =SUMPRODUCT(ISNUMBER(SEARCH("Interest Paid - Investors",data!$A$2:$A$1684))*(data!$H$2:$H$1684))
             # ws[f'{col}41'].value = f"=SUMPRODUCT(ISNUMBER(SEARCH(\"Interest Paid - Investors\",data!$A$2:$A${last_row}))*(data!$H$2:$H${last_row}))"
             # ws[f'{col}41'].number_format = 'R #,##0.00'
+
 
 
 
@@ -517,15 +518,15 @@ def cashflow_hf_hv(data, data2, report_date):
             # ws[f'{col}42'].font = Font(bold=True)
 
         # add the following formula to cell B21 =SUMIFS(data!$H$1:$H$1681,data!$A$1:$A$1681,"Sales - Heron View Sales")+SUMIFS(data!$H$1:$H$1681,data!$A$1:$A$1681,"Sales - Heron Fields")+D43
-        ws['B21'].value = f"=SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Sales - Heron View Sales\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Sales - Heron Fields\")+D43"
+        ws['B21'].value = f"=SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Sales - Heron View Sales\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Sales - Heron Fields\")+C43"
 
         # add the following formul to cell E21 =E53+D43
-        ws['E21'].value = f"=E53+D43"
+        ws['E21'].value = f"=E53+C43"
         # add the following formula to cell D43 =E53*B43
-        ws['D43'].value = f"=E21*B43"
+        ws['C43'].value = f"=E21*B43"
 
         # Add the folowing formula to E43 =E53*B43
-        ws['D43'].value = f"=E53*B43"
+        ws['C43'].value = f"=E53*B43"
 
 
         # add this formula to cell d44 =(SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"COS - Heron Fields -
@@ -539,8 +540,38 @@ def cashflow_hf_hv(data, data2, report_date):
         # data!$D$1:$D$1680,"Heron Fields",data!$I$1:$I$1680, B3)+SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,
         # "COS - Heron View - P&G", data!$D$1:$D$1680,"Heron View",data!$I$1:$I$1680, B3))*B44
 
-        ws['D44'].value = f"=((SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - Construction\", data!$D$1:$D${last_row},\"Heron Fields\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - Construction\", data!$D$1:$D${last_row},\"Heron View\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - P & G\", data!$D$1:$D${last_row},\"Heron Fields\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - P&G\", data!$D$1:$D${last_row},\"Heron View\"))-(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - Construction\", data!$D$1:$D${last_row},\"Heron Fields\",data!$I$1:$I${last_row}, \"<=\"&B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - Construction\", data!$D$1:$D${last_row},\"Heron View\",data!$I$1:$I${last_row}, \"<=\"&B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - P & G\", data!$D$1:$D${last_row},\"Heron Fields\",data!$I$1:$I${last_row}, \"<=\"&B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - P&G\", data!$D$1:$D${last_row},\"Heron View\",data!$I$1:$I${last_row}, \"<=\"&B3)))*B44"
-
+        ws['C44'].value = f"=((SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - Construction\", data!$D$1:$D${last_row},\"Heron Fields\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - Construction\", data!$D$1:$D${last_row},\"Heron View\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - P & G\", data!$D$1:$D${last_row},\"Heron Fields\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - P&G\", data!$D$1:$D${last_row},\"Heron View\"))-(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - Construction\", data!$D$1:$D${last_row},\"Heron Fields\",data!$I$1:$I${last_row}, \"<=\"&B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - Construction\", data!$D$1:$D${last_row},\"Heron View\",data!$I$1:$I${last_row}, \"<=\"&B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - P & G\", data!$D$1:$D${last_row},\"Heron Fields\",data!$I$1:$I${last_row}, \"<=\"&B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - P&G\", data!$D$1:$D${last_row},\"Heron View\",data!$I$1:$I${last_row}, \"<=\"&B3)))*B44"
+        # in row D44 the following =((SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Heron Fields - Construction", data!$D$1:$D$1683,"Heron Fields")+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Heron View - Construction", data!$D$1:$D$1683,"Heron View")+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Heron Fields - P & G", data!$D$1:$D$1683,"Heron Fields")+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Heron View - P&G", data!$D$1:$D$1683,"Heron View"))-(SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Heron Fields - Construction", data!$D$1:$D$1683,"Heron Fields",data!$I$1:$I$1683, "<="&B3)+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Heron View - Construction", data!$D$1:$D$1683,"Heron View",data!$I$1:$I$1683, "<="&B3)+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Heron Fields - P & G", data!$D$1:$D$1683,"Heron Fields",data!$I$1:$I$1683, "<="&B3)+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Heron View - P&G", data!$D$1:$D$1683,"Heron View",data!$I$1:$I$1683, "<="&B3)))-C44
+        ws['D44'].value = f"=((SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - Construction\", data!$D$1:$D${last_row},\"Heron Fields\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - Construction\", data!$D$1:$D${last_row},\"Heron View\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - P & G\", data!$D$1:$D${last_row},\"Heron Fields\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - P&G\", data!$D$1:$D${last_row},\"Heron View\"))-(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - Construction\", data!$D$1:$D${last_row},\"Heron Fields\",data!$I$1:$I${last_row}, \"<=\"&B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - Construction\", data!$D$1:$D${last_row},\"Heron View\",data!$I$1:$I${last_row}, \"<=\"&B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron Fields - P & G\", data!$D$1:$D${last_row},\"Heron Fields\",data!$I$1:$I${last_row}, \"<=\"&B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Heron View - P&G\", data!$D$1:$D${last_row},\"Heron View\",data!$I$1:$I${last_row}, \"<=\"&B3)))-C44"
+        # in row D46 =(SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"CPSD")-SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"CPSD",data!$I$1:$I$1683,"<="&'NSST Print'!B3))-C46
+        ws['D46'].value = f"=(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"CPSD\")-SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"CPSD\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3))-C46"
+        # in row d47 =(SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Opp Invest")-SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Opp Invest",data!$I$1:$I$1683,"<="&'NSST Print'!B3))-C47
+        ws['D47'].value = f"=(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Opp Invest\")-SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Opp Invest\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3))-C47"
+        # in row d48 =(SUMPRODUCT(ISNUMBER(SEARCH("Interest Paid - Investors",data!$A$2:$A$1683))*(data!$H$2:$H$1683))-SUMPRODUCT( --(ISNUMBER(SEARCH("Interest Paid - Investors", data!$A$2:$A$1683))), --(data!$I$2:$I$1683 <= B3), data!$H$2:$H$1683 ))-C48
+        ws['D48'].value = f"=(SUMPRODUCT(ISNUMBER(SEARCH(\"Interest Paid - Investors\",data!$A$2:$A${last_row}))*(data!$H$2:$H${last_row}))-SUMPRODUCT( --(ISNUMBER(SEARCH(\"Interest Paid - Investors\", data!$A$2:$A${last_row}))), --(data!$I$2:$I${last_row} <= B3), data!$H$2:$H${last_row} ))-C48"
+        # in row D49 =((SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HF Units")+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HV Units"))-(SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HF Units",data!$I$1:$I$1683,"<="&'NSST Print'!B3)+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HV Units",data!$I$1:$I$1683,"<="&'NSST Print'!B3)))-C49
+        ws['D49'].value = f"=((SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HF Units\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HV Units\"))-(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HF Units\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HV Units\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3)))-C49"
+        # in row D43 = ""
+        ws['D43'].value = f""
+        ws['D45'].value = f""
+        ws['D50'].value = f""
+        ws['D51'].value = f""
+        # in row E44 =C44/$E$20
+        ws['E44'].value = f"=C44/$E$20"
+        # in row E45 =C45/$E$20
+        ws['E45'].value = f"=C45/$E$20"
+        # in row E46 =C46/$E$20
+        ws['E46'].value = f"=C46/$E$20"
+        # in row E47 =C47/$E$20
+        ws['E47'].value = f"=C47/$E$20"
+        # in row E48 =C48/$E$20
+        ws['E48'].value = f"=C48/$E$20"
+        # in row E49 =C49/$E$20
+        ws['E49'].value = f"=C49/$E$20"
+        # in row E50 =C50/$E$20
+        ws['E50'].value = f"=C50/$E$20"
+        # row E51 = sum(E44:E50)
+        ws['E51'].value = f"=sum(E44:E50)"
 
 
 
@@ -554,21 +585,21 @@ def cashflow_hf_hv(data, data2, report_date):
 
 
         #add this formula to cell D48 =(SUMPRODUCT(ISNUMBER(SEARCH("Interest Paid - Investors",data!$A$2:$A$1680))*(data!$H$2:$H$1680))-SUMPRODUCT( --(ISNUMBER(SEARCH("Interest Paid - Investors", data!$A$2:$A$1680))), --(data!$I$2:$I$1680 <= B3), data!$H$2:$H$1680 ))*B48
-        ws['D48'].value = f"=(SUMPRODUCT(ISNUMBER(SEARCH(\"Interest Paid - Investors\",data!$A$2:$A${last_row}))*(data!$H$2:$H${last_row}))-SUMPRODUCT( --(ISNUMBER(SEARCH(\"Interest Paid - Investors\", data!$A$2:$A${last_row}))), --(data!$I$2:$I${last_row} <= B3), data!$H$2:$H${last_row} ))*B48"
+        ws['C48'].value = f"=(SUMPRODUCT(ISNUMBER(SEARCH(\"Interest Paid - Investors\",data!$A$2:$A${last_row}))*(data!$H$2:$H${last_row}))-SUMPRODUCT( --(ISNUMBER(SEARCH(\"Interest Paid - Investors\", data!$A$2:$A${last_row}))), --(data!$I$2:$I${last_row} <= B3), data!$H$2:$H${last_row} ))*B48"
         # cell d49 =((SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"COS - Commission HF Units")+SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"COS - Commission HV Units"))-(SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"COS - Commission HF Units",data!$I$1:$I$1680,"<="&'NSST Print'!B3)+SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"COS - Commission HV Units",data!$I$1:$I$1680,"<="&'NSST Print'!B3)))*B49
-        ws['D49'].value = f"=((SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HF Units\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HV Units\"))-(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HF Units\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HV Units\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3)))*B49"
+        ws['C49'].value = f"=((SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HF Units\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HV Units\"))-(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HF Units\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HV Units\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3)))*B49"
         # D50 =B26*B50
-        ws['D50'].value = f"=B26*B50"
+        ws['C50'].value = f"=B26*B50"
         # row D45 ==400000*B45
-        ws['D45'].value = f"=400000*B45"
+        ws['C45'].value = f"=400000*B45"
         # row 46 =(SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"CPSD")-SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"CPSD",data!$I$1:$I$1680,"<="&'NSST Print'!B3))*B46
-        ws['D46'].value = f"=(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"CPSD\")-SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"CPSD\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3))*B46"
+        ws['C46'].value = f"=(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"CPSD\")-SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"CPSD\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3))*B46"
 
 
         # row47 =(SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"Opp Invest")-SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"Opp Invest",data!$I$1:$I$1680,"<="&'NSST Print'!B3))*B47
-        ws['D47'].value = f"=(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Opp Invest\")-SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Opp Invest\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3))*B47"
+        ws['C47'].value = f"=(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Opp Invest\")-SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Opp Invest\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3))*B47"
         # in row 51 =SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Early Exit Loan")*B51
-        ws['E51'].value = f"=SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Early Exit Loan\")*B51"
+        ws['C51'].value = f"=SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Early Exit Loan\")*B51"
 
 
 

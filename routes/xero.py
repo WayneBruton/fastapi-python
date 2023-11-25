@@ -2192,7 +2192,7 @@ async def process_profit_and_loss(data: Request):
                  "Transfer Income", 0, 0, 0, 0]
         row28 = ["INTEREST", "", "", "", "", "INTEREST", "", "", "", "", "INTEREST", "", "", "", "", "INTEREST", "", "",
                  "", ""]
-        row29 = ["Total Estimated Interest", total_estimated_interest4, "", "", "", "Total Estimated Interest",
+        row29 = ["Total Estimated Interest", f"={total_estimated_interest4}+C48", "", "", "", "Total Estimated Interest",
                  total_estimated_interest3, "", "", "", "Total Estimated Interest", total_estimated_interest2, "", "",
                  "", "Total Estimated Interest", total_estimated_interest1, "", "", ""]
         row30 = ["Interest Paid to Date", interest_paid_to_date4, "", "", "", "Interest Paid to Date",
@@ -2222,25 +2222,33 @@ async def process_profit_and_loss(data: Request):
         row41 = ["Interest Expense", 0, "", "", "", "Interest Expense", 0, "", "", "", "Interest Expense", 0, "", "",
                  "", "Interest Expense", 0, "", "", ""]
         row42 = ["Profit", 0, "", "", "", "Profit", 0, "", "", "", "Profit", 0, "", "", "", "Profit", 0, "", "", ""]
-        row43 = ["", 0, "Sales increase", 0, "", "", 0, "Sales increase", 0, "", "", 0, "Sales increase", 0, "", "", 0,
-                 "Sales increase", 0, "", ""]
-        row44 = ["", 0, "CPC Construction", 0, "", "", 0, "CPC Construction", 0, "", "", 0, "CPC Construction", 0, "",
-                 "", 0, "CPC Construction", 0, ""]
-        row45 = ["", 0, " Rent Salaries and wages", 0, "", "", 0, " Rent Salaries and wages", 0, "", "", 0,
-                 " Rent Salaries and wages", 0, "", "", 0, " Rent Salaries and wages", 0, "", ""]
-        row46 = ["", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", ""]
-        row47 = ["", 0, "Opp Invest", 0, "", "", 0, "Opp Invest", 0, "", "", 0, "Opp Invest", 0, "", "", 0,
-                 "Opp Invest", 0, "", ""]
-        row48 = ["", 0, "investor interest", 0, "", "", 0, "investor interest", 0, "", "", 0, "investor interest", 0,
-                 "", "", 0, "investor interest", 0, ""]
-        row49 = ["", 0, "Commissions", 0, "", "", 0, "Commissions", 0, "", "", 0, "Commissions", 0, "", "", 0,
-                 "Commissions", 0, ""]
-        row50 = ["", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0,
-                 "", ""]
-        row51 = ["", 0, "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
-                 "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
-                 "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
-                 "Cash to flow to Heron from Quinate early exits", "", 0]
+        row43 = ["Sales Increase", 0, 0, 0]
+        row44 = ["CPC Construction",0,0,0]
+        row45 = ["Rent Salaries and wages",0,0,0]
+        row46 = ["CPSD",0,0,0]
+        row47 = ["Opp Invest",0,0,0]
+        row48 = ["investor interest",0,0,0]
+        row49 = ["Commissions",0,0,0]
+        row50 = ["Unforseen",0,0,0]
+        row51 = ["Cash to flow to Heron from Quinate early exits",0,0,0]
+
+        # row44 = ["", 0, "CPC Construction", 0, "", "", 0, "CPC Construction", 0, "", "", 0, "CPC Construction", 0, "",
+        #          "", 0, "CPC Construction", 0, ""]
+        # row45 = ["", 0, " Rent Salaries and wages", 0, "", "", 0, " Rent Salaries and wages", 0, "", "", 0,
+        #          " Rent Salaries and wages", 0, "", "", 0, " Rent Salaries and wages", 0, "", ""]
+        # row46 = ["", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", ""]
+        # row47 = ["", 0, "Opp Invest", 0, "", "", 0, "Opp Invest", 0, "", "", 0, "Opp Invest", 0, "", "", 0,
+        #          "Opp Invest", 0, "", ""]
+        # row48 = ["", 0, "investor interest", 0, "", "", 0, "investor interest", 0, "", "", 0, "investor interest", 0,
+        #          "", "", 0, "investor interest", 0, ""]
+        # row49 = ["", 0, "Commissions", 0, "", "", 0, "Commissions", 0, "", "", 0, "Commissions", 0, "", "", 0,
+        #          "Commissions", 0, ""]
+        # row50 = ["", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0,
+        #          "", ""]
+        # row51 = ["", 0, "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
+        #          "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
+        #          "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
+        #          "Cash to flow to Heron from Quinate early exits", "", 0]
         row52 = ["", "","","","","","","","","","","","","","","","","","",""]
         row53 = ["Sales Income", total_units_sales_value4, transferred_units_sold_value4, sold_units_value4,
                  remaining_units_value4, "Sales Income", total_units_sales_value3, transferred_units_sold_value3,
