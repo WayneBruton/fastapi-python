@@ -141,6 +141,9 @@ def cashflow_hf_hv(data, data2, report_date):
                 insert = {'Account': item['Account'], 'Category': item['Category']}
                 accounts.append(insert)
             months = sorted(list(set(months)))
+            if index == 2:
+                months.append("NSST")
+            # months.append("NSST")
             accounts = sorted(accounts, key=lambda k: (k['Category'], k['Account']))
             seen = set()
             accounts = [item for item in accounts if
@@ -294,19 +297,48 @@ def cashflow_hf_hv(data, data2, report_date):
 
                         cell.number_format = 'R #,##0.00'
 
-                for row in ws.iter_rows(min_row=value['start'], min_col=4, max_row=value['end'],
-                                        max_col=p_max_column):
-                    for cell in row:
-                        if index < 2:
+                if index == 2:
+                    for row in ws.iter_rows(min_row=value['start'], min_col=4, max_row=value['end'],
+                                            max_col=p_max_column - 1):
+                        for cell in row:
+                            # if index < 2:
+                            #
+                            #     cell.value = f"={get_column_letter(cell.column - 1)}{cell.row}+SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$D$1:$D${last_row}, '{dev}'!$A$2, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
+                            #     # cell.value = f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$D$1:$D${last_row}, '{dev}'!$A$2, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
+                            #
+                            # else:
+                            cell.value = f"={get_column_letter(cell.column - 1)}{cell.row}+SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row},  data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
+                                # cell.value = f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
+
+                            cell.number_format = 'R #,##0.00'
+
+                    for row in ws.iter_rows(min_row=value['start'], min_col=p_max_column, max_row=value['end'],
+                                            max_col=p_max_column):
+                        for cell in row:
+
+
+
+                            cell.value = f"={get_column_letter(cell.column - 1)}{cell.row}+SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row},  data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)+SUMIFS('NSST Print'!$C$43,'NSST Print'!$F$43,'{dev}'!$A{cell.row})-SUMIFS('NSST Print'!$C$44:$C$50,'NSST Print'!$F$44:$F$50,'{dev}'!$A{cell.row})"
+
+
+                            cell.number_format = 'R #,##0.00'
+
+                else:
+
+
+                    for row in ws.iter_rows(min_row=value['start'], min_col=4, max_row=value['end'],
+                                            max_col=p_max_column):
+                        for cell in row:
+                            # if index < 2:
 
                             cell.value = f"={get_column_letter(cell.column - 1)}{cell.row}+SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$D$1:$D${last_row}, '{dev}'!$A$2, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
-                            # cell.value = f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$D$1:$D${last_row}, '{dev}'!$A$2, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
+                                # cell.value = f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$D$1:$D${last_row}, '{dev}'!$A$2, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
 
-                        else:
-                            cell.value = f"={get_column_letter(cell.column - 1)}{cell.row}+SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row},  data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
-                            # cell.value = f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
+                            # else:
+                            #     cell.value = f"={get_column_letter(cell.column - 1)}{cell.row}+SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row},  data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
+                                # cell.value = f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
 
-                        cell.number_format = 'R #,##0.00'
+                            cell.number_format = 'R #,##0.00'
 
                 for row in ws.iter_rows(min_row=value['end'] + 1, min_col=3, max_row=value['end'] + 1,
                                         max_col=p_max_column):
@@ -447,7 +479,8 @@ def cashflow_hf_hv(data, data2, report_date):
 
 
 
-        # format rows in toggle_rows_to_format as percent with 2 decimal places and a % sign for columns in total_cost_to_complete_columns, except for 45, format those cells a 'General'
+        # format rows in toggle_rows_to_format as percent with 2 decimal places and a % sign for columns in
+        # total_cost_to_complete_columns, except for 45, format those cells a 'General'
         for row in toggle_rows_to_format:
             for col in total_cost_to_complete_columns:
                 if row == 45:
@@ -573,6 +606,15 @@ def cashflow_hf_hv(data, data2, report_date):
         # row E51 = sum(E44:E50)
         ws['E51'].value = f"=sum(E44:E50)"
 
+        ws['F43'].value = "Sales - Heron View Sales"
+        ws['F44'].value = "COS - Heron View - Construction"
+        ws['F45'].value = "Rent Salaries and wages"
+        ws['F46'].value = "CPSD"
+        ws['F47'].value = "Opp Invest"
+        ws['F48'].value = "Interest Paid - Investors @ 18%"
+        ws['F49'].value = "COS - Commission HV Units"
+        ws['F50'].value = "COS - Commission HV Units"
+
 
 
 
@@ -687,6 +729,10 @@ def cashflow_hf_hv(data, data2, report_date):
         # hide row 41 and 53
         ws.row_dimensions[41].hidden = True
         ws.row_dimensions[53].hidden = True
+
+        # get a list of all the worksheets in the workbook
+        sheets = wb.sheetnames
+        print(sheets)
 
 
 
