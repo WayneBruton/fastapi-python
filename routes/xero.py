@@ -971,7 +971,9 @@ async def process_profit_and_loss(data: Request):
                                     insert = {}
                                     values = []
                                     if isinstance(row['Cells']['Cell'], list):
+
                                         newData = row['Cells']['Cell']
+
                                         for index, line_item in enumerate(newData):
 
                                             if index == 0:
@@ -979,18 +981,28 @@ async def process_profit_and_loss(data: Request):
                                             else:
                                                 values.append(line_item['Value'])
                                     insert['Amount'] = values
+                                    # print(len(values))
+
                                     if index1 == 0:
+
                                         comparison_data_cpc.append(insert)
 
+
                                     elif index1 == 1:
+
                                         comparison_data_hf.append(insert)
 
+
                                     elif index1 == 2:
+                                        # print("Insert", insert)
                                         comparison_data_hv.append(insert)
+
+
 
             else:
 
                 period = request['period']
+
 
                 filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
 
@@ -1080,6 +1092,7 @@ async def process_profit_and_loss(data: Request):
 
                                         comparison_data_hv.append(insert)
 
+
         # filter comparison_data_cpc by Account contains 'Heron'
         comparison_data_cpc = list(filter(lambda x: 'Heron' in x['Account'], comparison_data_cpc))
         # filter out of comparison_data_cpc where Account contains 'Fees - Construction'
@@ -1101,9 +1114,12 @@ async def process_profit_and_loss(data: Request):
         final_data_for_profit_loss_to_update = []
         final_data_for_profit_loss_to_insert = []
 
+
+
         for item in comparison_data_hv:
 
             for index, value in enumerate(periods_to_report_comparison):
+
 
                 profit_loss_filtered = list(filter(
                     lambda x: x['Account'] == item['Account'] and x['Development'] == 'Heron View' and x['Month'] ==
@@ -1112,16 +1128,22 @@ async def process_profit_and_loss(data: Request):
                 if len(profit_loss_filtered) > 0:
                     # insert = {}
                     insert = profit_loss_filtered[0]
+
                     if float(insert['Actual']) != float(item['Amount'][index]):
                         insert['Actual'] = float(item['Amount'][index])
                         # print("update", insert)
                         final_data_for_profit_loss_to_update.append(insert)
 
                 else:
+                    # if 'Category' not in item:
+                    #
+                    #     print("item", item)
+                        # item['Category'] = 'Other Income'
                     insert = {'Account': item['Account'], 'Actual': item['Amount'][index], 'Forecast': 0,
                               'Development': 'Heron View', 'Applicable_dev': 'Heron View', 'Month': value['Month'],
-                              "Category": item['Category']}
+                              "Category": item.get('Category', "Trading Income")}
                     # print("insert", insert)
+                    print("Got this far!!!", item)
                     final_data_for_profit_loss_to_insert.append(insert)
 
         for item in comparison_data_hf:
@@ -1205,8 +1227,8 @@ async def process_profit_and_loss(data: Request):
         opportunity_amount_required_hf = sum(
             [float(item['opportunity_amount_required']) for item in opportunities if
              item['Category'] == 'Heron Fields'])
-        print("opportunity_amount_required_hf", opportunity_amount_required_hf)
-        print("opportunity_amount_required", opportunity_amount_required)
+        # print("opportunity_amount_required_hf", opportunity_amount_required_hf)
+        # print("opportunity_amount_required", opportunity_amount_required)
         # from investors in the db get all investors where 'Category' in the trust array is equal to 'Heron Fields'
         # or 'Heron View'
         for sales in sales_processed:
@@ -1219,7 +1241,7 @@ async def process_profit_and_loss(data: Request):
             sales['opportunity_commission'] = float(sales.get('opportunity_commission', 0))
             # print("sales", sales)
 
-        print("to_date", request['to_date'])
+        # print("to_date", request['to_date'])
         # convert request['to_date'] to datetime as a variable called to_date
         to_date = datetime.strptime(request['to_date'], "%Y-%m-%d")
         dates = []
@@ -1417,10 +1439,10 @@ async def process_profit_and_loss(data: Request):
         released_investments = sorted(released_investments,
                                       key=lambda i: (i['opportunity_code'], i['investor_acc_number']))
 
-        print("trust_investments_received", trust_investments_received[0], len(trust_investments_received))
-        print()
-        print("released_investments", released_investments[0], len(released_investments))
-        print()
+        # print("trust_investments_received", trust_investments_received[0], len(trust_investments_received))
+        # print()
+        # print("released_investments", released_investments[0], len(released_investments))
+        # print()
 
         sales_units = []
 
@@ -1572,9 +1594,9 @@ async def process_profit_and_loss(data: Request):
         rates = sorted(rates, key=lambda i: i['Efective_date'], reverse=True)
 
         # SALES_UNITS COSTS
-        print()
-        print("sales_units", sales_units[0])
-        print()
+        # print()
+        # print("sales_units", sales_units[0])
+        # print()
 
         for item in trust_investments_received:
             released_investments_filtered = list(
@@ -2267,6 +2289,7 @@ async def process_profit_and_loss(data: Request):
         report_date = request['to_date']
 
         # CREATE SPREADSHEET
+
         # print("profit_and_loss", profit_and_loss)
         result = cashflow_hf_hv(profit_and_loss, nsss_print_report, report_date)
         print("result", result)
@@ -2301,7 +2324,7 @@ def get_profit_and_loss_data():
 async def update_profit_and_loss(data: Request):
     request = await data.json()
     request = request['data']
-    print("request", request)
+    # print("request", request)
     try:
         id = request['_id']
         del request['_id']
@@ -2317,7 +2340,7 @@ async def update_profit_and_loss(data: Request):
 async def insert_profit_and_loss(data: Request):
     request = await data.json()
     request = request['data']
-    print("request", request)
+    # print("request", request)
 
     try:
         # insert profit and loss with request
@@ -2331,12 +2354,12 @@ async def insert_profit_and_loss(data: Request):
 @xero.get("/get_profit_and_loss_report")
 async def get_profit_and_loss_report(profit_and_loss_name):
     file_name = profit_and_loss_name
-    print("file_name", file_name)
+    # print("file_name", file_name)
     dir_path = "cashflow_p&l_files"
     dir_list = os.listdir(dir_path)
-    print("dir_list", dir_list)
+    # print("dir_list", dir_list)
     if file_name in dir_list:
-        print("file exists")
+        # print("file exists")
         return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
     else:
         return {"ERROR": "File does not exist!!"}

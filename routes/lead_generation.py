@@ -237,6 +237,39 @@ async def opportunityprop_contact_form(data: Request):
     return {"message": "success", "request": request}
 
 
+@leads.get('/get_sales_leads')
+async def get_sales_leads():
+    leads = list(db.leads_sales.find())
+    for lead in leads:
+        lead["_id"] = str(lead["_id"])
+        lead["created_at"] = lead["created_at"].strftime("%Y-%m-%d %H:%M:%S")
+        lead['action_taken'] = lead.get('action_taken', "")
+        lead['action_taken_date_time'] = lead.get('action_taken_date_time', "")
+        lead['comments'] = lead.get('comments', "")
+        lead['rating'] = lead.get('rating', 0)
+        lead['purchased'] = lead.get('purchased', "")
+        lead['purchased_date'] = lead.get('purchased_date', "")
+        lead['purchased_unit'] = lead.get('purchased_unit', "")
+
+
+    # print("leads", leads)
+    return {"message": "success", "leads": leads}
+
+
+@leads.get('/get_sales_people')
+async def get_sales_people():
+    sales_people = list(db.lead_sales_people.find())
+    for person in sales_people:
+        person["_id"] = str(person["_id"])
+        person["created_at"] = person["created_at"].strftime("%Y-%m-%d %H:%M:%S")
+        person["updated_at"] = person["updated_at"].strftime("%Y-%m-%d %H:%M:%S")
+        # person["unavailable_from"] = person["unavailable_from"].strftime("%Y-%m-%d %H:%M:%S")
+        # person["unavailable_to"] = person["unavailable_to"].strftime("%Y-%m-%d %H:%M:%S")
+
+    # print("sales_people", sales_people)
+    return {"message": "success", "sales_people": sales_people}
+
+
 def send_email_to_sales_person(sales_person, lead):
     email_sp = sales_person['email']
     # # trim all white spaces

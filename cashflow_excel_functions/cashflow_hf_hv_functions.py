@@ -13,9 +13,9 @@ from openpyxl.utils import get_column_letter
 def cashflow_hf_hv(data, data2, report_date):
     global trading_income_start_row, trading_income_end_row, other_income_start_row, other_income_end_row, cos_start_row, cos_end_row, operating_expenses_start_row, operating_expenses_end_row, gross_profit_start_row, nett_profit_start_row
     try:
-        print("report_date", report_date)
+        # print("report_date", report_date)
         report_date = datetime.strptime(report_date, '%Y-%m-%d')
-        print("report_date", report_date)
+        # print("report_date", report_date)
 
         month_map = {
             'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
@@ -42,6 +42,8 @@ def cashflow_hf_hv(data, data2, report_date):
                 item['use'] = item['Forecast']
             else:
                 item['use'] = item['Actual']
+            if item['Account'] == 'Consulting Fees - Admin and Finance' or item['Account'] == 'Management fees - OMH':
+                item['Category'] = 'Ignore per Deric'
 
         # print(data[0])
         # print()
@@ -149,7 +151,7 @@ def cashflow_hf_hv(data, data2, report_date):
             accounts = [item for item in accounts if
                         item['Account'] not in seen and not seen.add(item['Account'])]
 
-            print("accounts", accounts[0])
+            # print("accounts", accounts[0])
             # remove any duplicates from accounts which is a list of dictionaries
             # accounts = list(dict.fromkeys(accounts))
 
@@ -332,11 +334,7 @@ def cashflow_hf_hv(data, data2, report_date):
                             # if index < 2:
 
                             cell.value = f"={get_column_letter(cell.column - 1)}{cell.row}+SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$D$1:$D${last_row}, '{dev}'!$A$2, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
-                                # cell.value = f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$D$1:$D${last_row}, '{dev}'!$A$2, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
 
-                            # else:
-                            #     cell.value = f"={get_column_letter(cell.column - 1)}{cell.row}+SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row},  data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
-                                # cell.value = f"=SUMIFS(data!$H$1:$H${last_row}, data!$A$1:$A${last_row}, '{dev}'!$A{cell.row}, data!$E$1:$E${last_row}, '{dev}'!{get_column_letter(cell.column)}$5)"
 
                             cell.number_format = 'R #,##0.00'
 
@@ -344,7 +342,8 @@ def cashflow_hf_hv(data, data2, report_date):
                                         max_col=p_max_column):
                     for cell in row:
                         cell.value = f"=SUM({get_column_letter(cell.column)}{value['start']}:{get_column_letter(cell.column)}{value['end']})"
-                        # the values bold, font size 12, format as currency with 2 decimal places and R for South African and a top border
+                        # the values bold, font size 12, format as currency with 2 decimal places and R for South
+                        # African and a top border
                         cell.font = Font(bold=True, size=12)
                         cell.number_format = 'R #,##0.00'
                         cell.border = Border(top=Side(border_style='thin', color='FF000000'))
@@ -383,7 +382,7 @@ def cashflow_hf_hv(data, data2, report_date):
         ws.sheet_properties.tabColor = "00B0F0"
 
         # insert worksheet_input into worksheet
-        print("data2", data2[20])
+        # print("data2", data2[20])
 
         for row in data2:
             ws.append(row)
@@ -525,8 +524,14 @@ def cashflow_hf_hv(data, data2, report_date):
 
             # =+B21
             # in row 38, in columns inside columns_to_sum insert a formula as per above
-        for col in columns_to_sum:
+        # for col in columns_to_sum:
             ws[f'{col}38'].value = f"={col}21"
+            # make row 38 have the following formula =B21+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Sales - Heron Fields occupational rent")+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Sales - Heron View Occupational Rent")+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Rental Income")
+            if col == 'B':
+                ws[f'{col}38'].value = f"={col}21+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Sales - Heron Fields occupational rent\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Sales - Heron View Occupational Rent\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Rental Income\")"
+            else:
+                ws[f'{col}38'].value = f"={col}21"
+
             # format as currency with 2 decimal places and R for South African
             ws[f'{col}38'].number_format = 'R #,##0.00'
             # make the font bold
@@ -584,6 +589,10 @@ def cashflow_hf_hv(data, data2, report_date):
         ws['D48'].value = f"=(SUMPRODUCT(ISNUMBER(SEARCH(\"Interest Paid - Investors\",data!$A$2:$A${last_row}))*(data!$H$2:$H${last_row}))-SUMPRODUCT( --(ISNUMBER(SEARCH(\"Interest Paid - Investors\", data!$A$2:$A${last_row}))), --(data!$I$2:$I${last_row} <= B3), data!$H$2:$H${last_row} ))-C48"
         # in row D49 =((SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HF Units")+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HV Units"))-(SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HF Units",data!$I$1:$I$1683,"<="&'NSST Print'!B3)+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HV Units",data!$I$1:$I$1683,"<="&'NSST Print'!B3)))-C49
         ws['D49'].value = f"=((SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HF Units\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HV Units\"))-(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HF Units\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HV Units\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3)))-C49"
+
+        # row D45 be the following =(SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Rent Salaries and Wages")-SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Rent Salaries and Wages",data!$I$1:$I$1683,"<="&'NSST Print'!B3))-C45
+        ws['D45'].value = f"=(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Rent Salaries and Wages\")-SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Rent Salaries and Wages\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3))-C45"
+
         # in row D43 = ""
         ws['D43'].value = f""
         ws['D45'].value = f""
@@ -613,7 +622,7 @@ def cashflow_hf_hv(data, data2, report_date):
         ws['F47'].value = "Opp Invest"
         ws['F48'].value = "Interest Paid - Investors @ 18%"
         ws['F49'].value = "COS - Commission HV Units"
-        ws['F50'].value = "COS - Commission HV Units"
+        ws['F50'].value = "Unforseen"
 
 
 
@@ -634,6 +643,8 @@ def cashflow_hf_hv(data, data2, report_date):
         ws['C50'].value = f"=B26*B50"
         # row D45 ==400000*B45
         ws['C45'].value = f"=400000*B45"
+        # ws['C45'].value = f"=800000*B45"
+
         # row 46 =(SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"CPSD")-SUMIFS(data!$H$1:$H$1680,data!$A$1:$A$1680,"CPSD",data!$I$1:$I$1680,"<="&'NSST Print'!B3))*B46
         ws['C46'].value = f"=(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"CPSD\")-SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"CPSD\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3))*B46"
 
@@ -731,8 +742,8 @@ def cashflow_hf_hv(data, data2, report_date):
         ws.row_dimensions[53].hidden = True
 
         # get a list of all the worksheets in the workbook
-        sheets = wb.sheetnames
-        print(sheets)
+        # sheets = wb.sheetnames
+        # print(sheets)
 
 
 
@@ -740,5 +751,5 @@ def cashflow_hf_hv(data, data2, report_date):
 
         return "Awesome"
     except Exception as e:
-        print(e)
+        print("Error XX",e)
         return "Error"
