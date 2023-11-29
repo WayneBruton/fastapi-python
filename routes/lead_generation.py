@@ -881,7 +881,7 @@ def process_property_24_leads(data):
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
 scheduler = BackgroundScheduler()
-scheduler.add_job(check_emails_p24, 'interval', minutes=2)
+scheduler.add_job(check_emails_p24, 'interval', minutes=5)
 scheduler.start()
 
 

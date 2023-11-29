@@ -1128,23 +1128,49 @@ async def process_profit_and_loss(data: Request):
                 if len(profit_loss_filtered) > 0:
                     # insert = {}
                     insert = profit_loss_filtered[0]
-
-                    if float(insert['Actual']) != float(item['Amount'][index]):
-                        insert['Actual'] = float(item['Amount'][index])
-                        # print("update", insert)
+                    try:
+                        if float(insert['Actual']) != float(item['Amount'][index]):
+                            insert['Actual'] = float(item['Amount'][index])
+                            # print("update", insert)
+                            # print("Got this far!!!", item)
+                            final_data_for_profit_loss_to_update.append(insert)
+                    except IndexError:
+                        insert['Actual'] = 0
+                        # insert[]
                         final_data_for_profit_loss_to_update.append(insert)
 
+                        # print("item", item)
+                        # print("insert", insert)
+                        # print("index", index)
+                        # print("profit_loss_filtered", profit_loss_filtered)
+
+
+                        # break
+
                 else:
-                    # if 'Category' not in item:
-                    #
-                    #     print("item", item)
-                        # item['Category'] = 'Other Income'
+                    if 'Category' not in item:
+                        if item['Account'].startswith("COS"):
+                            item['Category'] = 'COS'
+
+                        elif item['Account'].startswith("Bond") or item['Account'].startswith("Sale"):
+                            item['Category'] = 'Trading Income'
+
+                        elif item['Account'].startswith("Rental") or item['Account'].startswith("Interest Received"):
+                            item['Category'] = 'Other Income'
+
+                        else:
+                            item['Category'] = 'Operating Expenses'
+
+
+
+
                     insert = {'Account': item['Account'], 'Actual': item['Amount'][index], 'Forecast': 0,
                               'Development': 'Heron View', 'Applicable_dev': 'Heron View', 'Month': value['Month'],
-                              "Category": item.get('Category', "Trading Income")}
+                              "Category": item['Category']}
                     # print("insert", insert)
-                    print("Got this far!!!", item)
+
                     final_data_for_profit_loss_to_insert.append(insert)
+
 
         for item in comparison_data_hf:
 
@@ -1158,16 +1184,33 @@ async def process_profit_and_loss(data: Request):
                 if len(profit_loss_filtered) > 0:
                     # insert = {}
                     insert = profit_loss_filtered[0]
-                    if float(insert['Actual']) != float(item['Amount'][index]):
-                        # print("profit_loss_filtered", profit_loss_filtered)
-                        insert['Actual'] = float(item['Amount'][index])
+                    try:
+                        if float(insert['Actual']) != float(item['Amount'][index]):
+                            # print("profit_loss_filtered", profit_loss_filtered)
+                            insert['Actual'] = float(item['Amount'][index])
+                            final_data_for_profit_loss_to_update.append(insert)
+                    except IndexError:
+                        insert['Actual'] = 0
                         final_data_for_profit_loss_to_update.append(insert)
 
                 else:
+                    if 'Category' not in item:
+                        if item['Account'].startswith("COS"):
+                            item['Category'] = 'COS'
 
+                        elif item['Account'].startswith("Bond") or item['Account'].startswith("Sale"):
+                            item['Category'] = 'Trading Income'
+
+                        elif item['Account'].startswith("Rental") or item['Account'].startswith("Interest Received"):
+                            item['Category'] = 'Other Income'
+
+                        else:
+                            item['Category'] = 'Operating Expenses'
+                    # print("item", item)
                     insert = {'Account': item['Account'], 'Actual': item['Amount'][index], 'Forecast': 0,
                               'Development': 'Heron Fields', 'Applicable_dev': 'Heron Fields', 'Month': value['Month'],
                               "Category": item['Category']}
+
                     final_data_for_profit_loss_to_insert.append(insert)
 
         for item in comparison_data_cpc:
@@ -1182,11 +1225,28 @@ async def process_profit_and_loss(data: Request):
                 if len(profit_loss_filtered) > 0:
 
                     insert = profit_loss_filtered[0]
-                    if float(insert['Actual']) != float(item['Amount'][index]):
-                        insert['Actual'] = float(item['Amount'][index])
+                    try:
+                        if float(insert['Actual']) != float(item['Amount'][index]):
+                            insert['Actual'] = float(item['Amount'][index])
+                            final_data_for_profit_loss_to_update.append(insert)
+                    except IndexError:
+                        insert['Actual'] = 0
                         final_data_for_profit_loss_to_update.append(insert)
 
                 else:
+
+                    if 'Category' not in item:
+                        if item['Account'].startswith("COS"):
+                            item['Category'] = 'COS'
+
+                        elif item['Account'].startswith("Bond") or item['Account'].startswith("Sale"):
+                            item['Category'] = 'Trading Income'
+
+                        elif item['Account'].startswith("Rental") or item['Account'].startswith("Interest Received"):
+                            item['Category'] = 'Other Income'
+
+                        else:
+                            item['Category'] = 'Operating Expenses'
 
                     insert = {'Account': item['Account'], 'Actual': item['Amount'][index], 'Forecast': 0,
                               'Development': 'CPC', 'Applicable_dev': 'Heron View', 'Month': value['Month'],
@@ -2287,6 +2347,8 @@ async def process_profit_and_loss(data: Request):
 
         # print(len(investors))
         report_date = request['to_date']
+
+
 
         # CREATE SPREADSHEET
 
