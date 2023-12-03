@@ -426,8 +426,8 @@ def send_email_to_sales_person(sales_person, lead):
 
 
 def send_email_to_leandri(lead):
-    # email_sp = 'leandri@opportunity.co.za'
-    email_sp = 'wayne@opportunity.co.za'
+    email_sp = 'leandri@opportunity.co.za'
+    # email_sp = 'wayne@opportunity.co.za'
     # # trim all white spaces
     email_sp = email_sp.strip()
     #
