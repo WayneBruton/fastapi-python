@@ -589,7 +589,8 @@ def cashflow_hf_hv(data, data2, report_date):
         ws['D48'].value = f"=(SUMPRODUCT(ISNUMBER(SEARCH(\"Interest Paid - Investors\",data!$A$2:$A${last_row}))*(data!$H$2:$H${last_row}))-SUMPRODUCT( --(ISNUMBER(SEARCH(\"Interest Paid - Investors\", data!$A$2:$A${last_row}))), --(data!$I$2:$I${last_row} <= B3), data!$H$2:$H${last_row} ))-C48"
         # in row D49 =((SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HF Units")+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HV Units"))-(SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HF Units",data!$I$1:$I$1683,"<="&'NSST Print'!B3)+SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"COS - Commission HV Units",data!$I$1:$I$1683,"<="&'NSST Print'!B3)))-C49
         ws['D49'].value = f"=((SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HF Units\")+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HV Units\"))-(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HF Units\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3)+SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"COS - Commission HV Units\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3)))-C49"
-
+        # D50 =B26-C50
+        ws['D50'].value = f"=B26-C50"
         # row D45 be the following =(SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Rent Salaries and Wages")-SUMIFS(data!$H$1:$H$1683,data!$A$1:$A$1683,"Rent Salaries and Wages",data!$I$1:$I$1683,"<="&'NSST Print'!B3))-C45
         ws['D45'].value = f"=(SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Rent Salaries and Wages\")-SUMIFS(data!$H$1:$H${last_row},data!$A$1:$A${last_row},\"Rent Salaries and Wages\",data!$I$1:$I${last_row},\"<=\"&'NSST Print'!B3))-C45"
 
@@ -599,6 +600,7 @@ def cashflow_hf_hv(data, data2, report_date):
         ws['D50'].value = f""
         ws['D51'].value = f""
         # in row E44 =C44/$E$20
+        ws['E43'] = f"=C43/$E$20"
         ws['E44'].value = f"=C44/$E$20"
         # in row E45 =C45/$E$20
         ws['E45'].value = f"=C45/$E$20"
@@ -613,7 +615,7 @@ def cashflow_hf_hv(data, data2, report_date):
         # in row E50 =C50/$E$20
         ws['E50'].value = f"=C50/$E$20"
         # row E51 = sum(E44:E50)
-        ws['E51'].value = f"=sum(E44:E50)"
+        ws['E51'].value = f"=sum(E43:E50)"
 
         ws['F43'].value = "Sales - Heron View Sales"
         ws['F44'].value = "COS - Heron View - Construction"
