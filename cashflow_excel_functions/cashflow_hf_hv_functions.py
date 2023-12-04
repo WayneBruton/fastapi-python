@@ -63,12 +63,15 @@ def cashflow_hf_hv(data, data2, report_date):
         # print(worksheet_input)
         # print()
         # loop through data and insert into worksheet_input
+
         for item in data:
             row = []
             if item['Actual'] == '0' or item['Actual'] == 0:
                 item['use'] = item['Forecast']
             else:
                 item['use'] = item['Actual']
+            # if item['Forecast'] is None:
+            #     print("item", item)
             row.append(item['Account'])
             row.append(item['Category'])
             row.append(item['Development'])
@@ -78,6 +81,7 @@ def cashflow_hf_hv(data, data2, report_date):
             row.append(float(item['Forecast']))
             row.append(float(item['use']))
             worksheet_input.append(row)
+        print("Got This Far!!!!")
 
         # create workbook and worksheet
         wb = Workbook()
