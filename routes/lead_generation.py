@@ -15,7 +15,8 @@ from email.mime.text import MIMEText
 
 import imaplib
 import email
-# import os
+import os
+from decouple import config
 from datetime import datetime
 # from distutils.command.clean import clean
 from email.header import decode_header
@@ -24,20 +25,29 @@ import re
 leads = APIRouter()
 
 
+# get AWS_BUCKET_NAME from .env file
+# SMTP_SERVER = config("SMTP_SERVER")
+# print("SMTP_SERVER", SMTP_SERVER)
+
+
 @leads.post("/post_sales_lead_form")
 async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request):
     request = await data.json()
-    sales_people = [{**person, "_id": str(person["_id"])} for person in db.lead_sales_people.find({"active": True})]
+    sales_people = list(db.lead_sales_people.find({"active": True}))
+    for person in sales_people:
+        person["_id"] = str(person["_id"])
+
     if last_leads_generated := list(
             db.leads_sales.find().sort("created_at", -1).limit(len(sales_people))
     ):
         sales_people_ids_with_recent_leads = {lead["sales_person_id"] for lead in last_leads_generated}
-        sales_people_to_choose = [person for person in sales_people if person["_id"] not in
-                                  sales_people_ids_with_recent_leads] or [sales_people[-1]]
+        # Choose from sales people who haven't received a lead recently, or the last one if all have.
+        sales_people_to_choose = [person for person in sales_people if
+                                  person["_id"] not in sales_people_ids_with_recent_leads] or [sales_people[-1]]
         sales_person = random.choice(sales_people_to_choose)
-
     else:
         sales_person = random.choice(sales_people)
+
     request.update({
         'origin': request['source']['source'],
         'type': request['source']['type'],
@@ -57,20 +67,18 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
 @leads.post("/post_investments_lead_form")
 async def post_investments_lead_form(background_tasks: BackgroundTasks, data: Request):
     request = await data.json()
-    consultants = [{**person, "_id": str(person["_id"])} for person in
-                   db.lead_investment_consultants.find({"active": True})]
-    if last_leads_generated := list(
-            db.leads_investments.find()
-                    .sort("created_at", -1)
-                    .limit(len(consultants))
-    ):
-        consultants_to_not_choose = {lead["consultant_id"] for lead in last_leads_generated}
-        consultants_people_to_choose = [person for person in consultants if person["_id"] not in
-                                        consultants_to_not_choose] or [consultants[-1]]
-        consultant_person = random.choice(consultants_people_to_choose)
+    active_consultants_cursor = db.lead_investment_consultants.find({"active": True})
+    consultants = [{**person, "_id": str(person["_id"])} for person in active_consultants_cursor]
 
+    last_leads_cursor = db.leads_investments.find().sort("created_at", -1).limit(len(consultants))
+    if last_leads_generated := list(last_leads_cursor):
+        consultants_to_not_choose = {lead["consultant_id"] for lead in last_leads_generated}
+        consultants_people_to_choose = [person for person in consultants if
+                                        person["_id"] not in consultants_to_not_choose] or [consultants[-1]]
+        consultant_person = random.choice(consultants_people_to_choose)
     else:
         consultant_person = random.choice(consultants)
+
     request.update({
         'origin': request['source']['source'],
         'type': request['source']['type'],
@@ -78,7 +86,6 @@ async def post_investments_lead_form(background_tasks: BackgroundTasks, data: Re
         "consultant": f"{consultant_person['name']} {consultant_person['surname']}",
         "consultant_id": consultant_person["_id"]
     })
-    del request['source']
 
     db.leads_investments.insert_one(request)
     background_tasks.add_task(send_email_to_consultant, consultant_person, request)
@@ -173,112 +180,124 @@ async def opportunity_contact_form(data: Request):
         return {"message": "Lead not created"}
 
 
-@leads.post("/opportunityprop_contact_form")
-async def opportunityprop_contact_form(backgound_tasks: BackgroundTasks, data: Request):
-    request = await data.form()
-    print("request", request)
-
-    sales_people = list(db.lead_sales_people.find({"active": True}))
-    length = len(sales_people)
-    sales_people_to_not_choose = []
-    for person in sales_people:
-        person["_id"] = str(person["_id"])
-
-    last_leads_generated = list(db.leads_sales.find().sort("created_at", -1).limit(length))
-    if len(last_leads_generated) == 0:
-        sales_person = random.choice(sales_people)
-    elif length > len(last_leads_generated) > 0:
-        for lead in last_leads_generated:
-            sales_people_to_not_choose.append(lead["sales_person_id"])
-        sales_people_to_choose = list(filter(lambda x: x["_id"] not in sales_people_to_not_choose, sales_people))
-        sales_person = random.choice(sales_people_to_choose)
-    else:
-        sales_people_to_choose = []
-        for person in sales_people:
-            # create variable called filtered_leads where the sales_person_id is equal to the person id
-            filtered_leads = list(filter(lambda x: x["sales_person_id"] == person["_id"], last_leads_generated))
-            if len(filtered_leads) == 0:
-                sales_people_to_choose.append(person["_id"])
-        if len(sales_people_to_choose) == 0:
-            sales_people_to_choose.append(last_leads_generated[len(last_leads_generated) - 1]["sales_person_id"])
-        sales_person = list(filter(lambda x: x["_id"] in sales_people_to_choose, sales_people))[0]
-
-    name = request.getlist("form_fields[name]")[0]
-    surname = ""
-    contact = request.getlist("form_fields[field_c045127]")[0]
-    email = request.getlist("form_fields[email]")[0]
-    development = ""
-    submission_date = datetime.now()
-    # format submission_date as yyyy-mm-dd hh:mm:ss
-    submission_date = submission_date.strftime("%Y-%m-%d %H:%M:%S")
-    contact_time = "ASAP"
-    message = request.getlist("form_fields[field_16ad61e]")[0]
-    origin = 'OpportunityProp Website'
-    type = 'sales'
-    created_at = datetime.now()
-
-    data = {
-        "name": name,
-        "surname": surname,
-        "email": email,
-        "contact": contact,
-        "development": development,
-        "submission_date": submission_date,
-        "contact_time": contact_time,
-        "message": message,
-        "origin": origin,
-        "type": type,
-        "created_at": created_at,
-        "sales_person": sales_person["name"] + " " + sales_person["surname"],
-        "sales_person_id": sales_person["_id"]
-    }
-
-    # request = data
-
-    db.leads_sales.insert_one(data)
-
-    # sp_email = send_email_to_sales_person(sales_person, data)
-    # send email to sales person as background task
-    backgound_tasks.add_task(send_email_to_sales_person, sales_person, data)
-
-    # client_email = send_email_to_sales_lead(sales_person, data)
-    # send email to client as background task
-    backgound_tasks.add_task(send_email_to_sales_lead, sales_person, data)
-
-    print("opportunityprop_contact_form ZZ")
-    return {"message": "success"}
-
+# @leads.post("/opportunityprop_contact_form")
+# async def opportunityprop_contact_form(backgound_tasks: BackgroundTasks, data: Request):
+#     request = await data.form()
+#     print("request", request)
+#
+#     sales_people = list(db.lead_sales_people.find({"active": True}))
+#     length = len(sales_people)
+#     sales_people_to_not_choose = []
+#     for person in sales_people:
+#         person["_id"] = str(person["_id"])
+#
+#     last_leads_generated = list(db.leads_sales.find().sort("created_at", -1).limit(length))
+#     if len(last_leads_generated) == 0:
+#         sales_person = random.choice(sales_people)
+#     elif length > len(last_leads_generated) > 0:
+#         for lead in last_leads_generated:
+#             sales_people_to_not_choose.append(lead["sales_person_id"])
+#         sales_people_to_choose = list(filter(lambda x: x["_id"] not in sales_people_to_not_choose, sales_people))
+#         sales_person = random.choice(sales_people_to_choose)
+#     else:
+#         sales_people_to_choose = []
+#         for person in sales_people:
+#             # create variable called filtered_leads where the sales_person_id is equal to the person id
+#             filtered_leads = list(filter(lambda x: x["sales_person_id"] == person["_id"], last_leads_generated))
+#             if len(filtered_leads) == 0:
+#                 sales_people_to_choose.append(person["_id"])
+#         if len(sales_people_to_choose) == 0:
+#             sales_people_to_choose.append(last_leads_generated[len(last_leads_generated) - 1]["sales_person_id"])
+#         sales_person = list(filter(lambda x: x["_id"] in sales_people_to_choose, sales_people))[0]
+#
+#     name = request.getlist("form_fields[name]")[0]
+#     surname = ""
+#     contact = request.getlist("form_fields[field_c045127]")[0]
+#     email = request.getlist("form_fields[email]")[0]
+#     development = ""
+#     submission_date = datetime.now()
+#     # format submission_date as yyyy-mm-dd hh:mm:ss
+#     submission_date = submission_date.strftime("%Y-%m-%d %H:%M:%S")
+#     contact_time = "ASAP"
+#     message = request.getlist("form_fields[field_16ad61e]")[0]
+#     origin = 'OpportunityProp Website'
+#     type = 'sales'
+#     created_at = datetime.now()
+#
+#     data = {
+#         "name": name,
+#         "surname": surname,
+#         "email": email,
+#         "contact": contact,
+#         "development": development,
+#         "submission_date": submission_date,
+#         "contact_time": contact_time,
+#         "message": message,
+#         "origin": origin,
+#         "type": type,
+#         "created_at": created_at,
+#         "sales_person": sales_person["name"] + " " + sales_person["surname"],
+#         "sales_person_id": sales_person["_id"]
+#     }
+#
+#     # request = data
+#
+#     db.leads_sales.insert_one(data)
+#
+#     # sp_email = send_email_to_sales_person(sales_person, data)
+#     # send email to sales person as background task
+#     backgound_tasks.add_task(send_email_to_sales_person, sales_person, data)
+#
+#     # client_email = send_email_to_sales_lead(sales_person, data)
+#     # send email to client as background task
+#     backgound_tasks.add_task(send_email_to_sales_lead, sales_person, data)
+#
+#     print("opportunityprop_contact_form ZZ")
+#     return {"message": "success"}
+#
 
 @leads.get('/get_sales_leads')
 async def get_sales_leads():
     leads = list(db.leads_sales.find())
+    default_values = {
+        'action_taken': "",
+        'action_taken_date_time': "",
+        'comments': "",
+        'previous_actions': [],
+        'rating': 0,
+        'purchased': "",
+        'purchased_date': "",
+        'purchased_unit': ""
+    }
+
     for lead in leads:
         lead["_id"] = str(lead["_id"])
         lead["created_at"] = lead["created_at"].strftime("%Y-%m-%d %H:%M:%S")
-        lead['action_taken'] = lead.get('action_taken', "")
-        lead['action_taken_date_time'] = lead.get('action_taken_date_time', "")
-        lead['comments'] = lead.get('comments', "")
-        lead['previous_actions'] = lead.get('previous_actions', [])
-        lead['rating'] = lead.get('rating', 0)
-        lead['purchased'] = lead.get('purchased', "")
-        lead['purchased_date'] = lead.get('purchased_date', "")
-        lead['purchased_unit'] = lead.get('purchased_unit', "")
+        for key, default in default_values.items():
+            lead[key] = lead.get(key, default)
 
-    # sort leads by created_at descending
     leads = sorted(leads, key=lambda x: x['created_at'], reverse=True)
 
     return {"message": "success", "leads": leads}
 
 
+def format_datetime(dt):
+    return dt.strftime("%Y-%m-%d %H:%M:%S")
+
+
 @leads.get('/get_sales_people')
 async def get_sales_people():
-    sales_people = list(db.lead_sales_people.find())
-    for person in sales_people:
-        person["_id"] = str(person["_id"])
-        person["created_at"] = person["created_at"].strftime("%Y-%m-%d %H:%M:%S")
-        person["updated_at"] = person["updated_at"].strftime("%Y-%m-%d %H:%M:%S")
-        # person["unavailable_from"] = person["unavailable_from"].strftime("%Y-%m-%d %H:%M:%S")
-        # person["unavailable_to"] = person["unavailable_to"].strftime("%Y-%m-%d %H:%M:%S")
+    sales_people = [
+        {
+            **person,
+            "_id": str(person["_id"]),
+            "created_at": format_datetime(person["created_at"]),
+            "updated_at": format_datetime(person["updated_at"]),
+            # "unavailable_from": format_datetime(person["unavailable_from"]),
+            # "unavailable_to": format_datetime(person["unavailable_to"]),
+        }
+        for person in db.lead_sales_people.find()
+    ]
 
     return {"message": "success", "sales_people": sales_people}
 
@@ -288,6 +307,8 @@ async def get_sales_people():
     consultants = list(db.lead_investment_consultants.find())
     for person in consultants:
         person["_id"] = str(person["_id"])
+        # if person
+
         person["created_at"] = person["created_at"].strftime("%Y-%m-%d %H:%M:%S")
         person["updated_at"] = person["updated_at"].strftime("%Y-%m-%d %H:%M:%S")
         # person["unavailable_from"] = person["unavailable_from"].strftime("%Y-%m-%d %H:%M:%S")
@@ -300,6 +321,12 @@ async def get_sales_people():
 async def get_investment_leads():
     leads = list(db.leads_investments.find())
     for lead in leads:
+        # if lead['created_at'] is a str type then print the lead
+        if type(lead['created_at']) == str:
+            # print("lead", lead)
+            # convert created_at to datetime object
+            lead['created_at'] = datetime.fromisoformat(lead['created_at'])
+
         lead["_id"] = str(lead["_id"])
         lead["created_at"] = lead["created_at"].strftime("%Y-%m-%d %H:%M:%S")
         lead['action_taken'] = lead.get('action_taken', "")
@@ -327,11 +354,7 @@ async def edit_sales_lead(data: Request):
     try:
         lead_id = request['_id']
         del request['_id']
-        # convert created_at to datetime object
         request['created_at'] = datetime.strptime(request['created_at'], "%Y-%m-%d %H:%M:%S")
-
-        # obj_instance = ObjectId(lead_id)
-        # update leads_sales in db
         db.leads_sales.update_one({"_id": ObjectId(lead_id)}, {"$set": request})
 
         return {"message": "success"}
@@ -344,11 +367,7 @@ async def edit_sales_lead(data: Request):
 @leads.post('/edit_investment_lead')
 async def edit_investment_lead(background_tasks: BackgroundTasks, data: Request):
     request = await data.json()
-    # print("request", request)
     if request['category'] not in ["", "Category 1"]:
-        # print("category not empty", request['category'])
-        # send_email_to_leandri(request)
-        # send email to leandri as background task
         background_tasks.add_task(send_email_to_leandri, request)
 
     try:
@@ -356,9 +375,6 @@ async def edit_investment_lead(background_tasks: BackgroundTasks, data: Request)
         del request['_id']
         # convert created_at to datetime object
         request['created_at'] = datetime.strptime(request['created_at'], "%Y-%m-%d %H:%M:%S")
-
-        # obj_instance = ObjectId(lead_id)
-        # update leads_sales in db
         db.leads_investments.update_one({"_id": ObjectId(lead_id)}, {"$set": request})
 
         return {"message": "success"}
@@ -369,40 +385,34 @@ async def edit_investment_lead(background_tasks: BackgroundTasks, data: Request)
 
 
 def send_email_to_sales_person(sales_person, lead):
-    email_sp = sales_person['email']
-    # # trim all white spaces
-    email_sp = email_sp.strip()
-    #
-    smtp_server = "depro8.fcomet.com"
-    port = 465  # For starttls
-    sender_email = 'omh-app@opportunitymanagement.co.za'
-    password = "12071994Wb!"
+    email_sp = sales_person['email'].strip()
+    smtp_server = config('SMTP_SERVER')
+    port = config('SMTP_PORT')
+    sender_email = config('SENDER_EMAIL')
+    password = config('EMAIL_PASSWORD')
 
-    message = f"""\
+    message = f"""
                 <html>
                   <body>
                     <p>Dear {sales_person['name']},<br>
-                    <br /><br />
-                    A new sales lead has been generated. Please see the details below:<br />
-                    <br /><br />
-                    <b>Lead Details</b><br />
-                    <br /><br />
-                    <b>First Name:</b> {lead['name']}<br />
-                    <b>Last Name:</b> {lead['surname']}<br />
-                    <b>Cell:</b> {lead['contact']}<br />
-                    <b>Email:</b> {lead['email']}<br />
-                    <b>Origin:</b> {lead['origin']}<br /> 
-                    <b>Development:</b> {lead['development']}<br />
-                    <b>Best Time:</b> {lead['contact_time']}<br />
-                    <b>Message:</b> {lead['message']}<br />
-                    
-                    <br /><br />
-                    Please contact the lead as soon as possible and follow up by inputting into the app.<br />
-                    
-                    <br /><br />
-                    Kind Regards,<br />
-                    OMH App<br />
-                         
+                    <br>
+                    A new sales lead has been generated. Please see the details below:<br>
+                    <br>
+                    <b>Lead Details</b><br>
+                    <br>
+                    <b>First Name:</b> {lead['name']}<br>
+                    <b>Last Name:</b> {lead['surname']}<br>
+                    <b>Cell:</b> {lead['contact']}<br>
+                    <b>Email:</b> {lead['email']}<br>
+                    <b>Origin:</b> {lead['origin']}<br>
+                    <b>Development:</b> {lead['development']}<br>
+                    <b>Best Time:</b> {lead['contact_time']}<br>
+                    <b>Message:</b> {lead['message']}<br>
+                    <br>
+                    Please contact the lead as soon as possible and follow up by inputting into the app.<br>
+                    <br>
+                    Kind Regards,<br>
+                    OMH App<br>
                   </body>
                 </html>
                 """
@@ -426,37 +436,30 @@ def send_email_to_sales_person(sales_person, lead):
 
 
 def send_email_to_leandri(lead):
-    email_sp = 'leandri@opportunity.co.za'
-    # email_sp = 'wayne@opportunity.co.za'
-    # # trim all white spaces
-    email_sp = email_sp.strip()
-    #
-    smtp_server = "depro8.fcomet.com"
-    port = 465  # For starttls
-    sender_email = 'omh-app@opportunitymanagement.co.za'
-    password = "12071994Wb!"
+    # email_sp = 'leandri@opportunity.co.za'
+    email_sp = 'wayne@opportunity.co.za'
+    smtp_server = config('SMTP_SERVER')
+    port = config('SMTP_PORT')
+    sender_email = config('SENDER_EMAIL')
+    password = config('EMAIL_PASSWORD')
 
-    message = f"""\
+    message = f"""
                 <html>
                   <body>
                     <p>Dear Leandri,<br>
-                    <br /><br />
-                    A new investment lead has been categorised as {lead['category']}:<br />
-                    <br /><br />
-                    <b>Lead Details</b><br />
-                    <br /><br />
-                    <b>First Name:</b> {lead['name']}<br />
-                    <b>Last Name:</b> {lead['surname']}<br />
-                    <b>Cell:</b> {lead['contact']}<br />
-                    <b>Email:</b> {lead['email']}<br />
-                    <b>Message:</b> {lead['message']}<br />
-
-                    
-
-                    <br /><br />
-                    Kind Regards,<br />
-                    OMH App<br />
-
+                    <br>
+                    A new investment lead has been categorised as {lead['category']}:<br>
+                    <br>
+                    <b>Lead Details</b><br>
+                    <br>
+                    <b>First Name:</b> {lead['name']}<br>
+                    <b>Last Name:</b> {lead['surname']}<br>
+                    <b>Cell:</b> {lead['contact']}<br>
+                    <b>Email:</b> {lead['email']}<br>
+                    <b>Message:</b> {lead['message']}<br>
+                    <br>
+                    Kind Regards,<br>
+                    OMH App<br>
                   </body>
                 </html>
                 """
@@ -472,7 +475,6 @@ def send_email_to_leandri(lead):
             server.ehlo()
             server.login(sender_email, password=password)
             server.send_message(msg)
-            server.quit()
             return {"message": "Email sent successfully"}
     except Exception as e:
         print("Error:", e)
@@ -484,10 +486,10 @@ def send_email_to_sales_lead(sales_person, lead):
     # # trim all white spaces
     email_lead = email_lead.strip()
     #
-    smtp_server = "depro8.fcomet.com"
-    port = 465  # For starttls
-    sender_email = 'omh-app@opportunitymanagement.co.za'
-    password = "12071994Wb!"
+    smtp_server = config('SMTP_SERVER')
+    port = config('SMTP_PORT')
+    sender_email = config('SENDER_EMAIL')
+    password = config('EMAIL_PASSWORD')
 
     image_attached = False
 
@@ -551,10 +553,10 @@ def send_email_to_consultant(consultant_person, lead):
     # # trim all white spaces
     email_consultant = email_consultant.strip()
 
-    smtp_server = "depro8.fcomet.com"
-    port = 465  # For starttls
-    sender_email = 'omh-app@opportunitymanagement.co.za'
-    password = "12071994Wb!"
+    smtp_server = config('SMTP_SERVER')
+    port = config('SMTP_PORT')
+    sender_email = config('SENDER_EMAIL')
+    password = config('EMAIL_PASSWORD')
 
     message = f"""\
                 <html>
@@ -609,10 +611,10 @@ def send_email_to_investment_lead(consultant_person, lead):
     # # trim all white spaces
     email_lead = email_lead.strip()
     #
-    smtp_server = "depro8.fcomet.com"
-    port = 465  # For starttls
-    sender_email = 'omh-app@opportunitymanagement.co.za'
-    password = "12071994Wb!"
+    smtp_server = config('SMTP_SERVER')
+    port = config('SMTP_PORT')
+    sender_email = config('SENDER_EMAIL')
+    password = config('EMAIL_PASSWORD')
 
     message = f"""\
                     <html>
@@ -745,13 +747,12 @@ def create_investment_lead_collection():
 # create_investment_lead_collection()
 
 def check_emails_p24():
-    # global enquiry_by, contact_number, email_address_in_mail, message, address, development, body
-    smtp_server = "depro8.fcomet.com"
-    email_address = "omh-app@opportunitymanagement.co.za"
-    password = "12071994Wb!"
+    smtp_server = config("SMTP_SERVER")
+    email_address = config("SENDER_EMAIL")
+    password = config("EMAIL_PASSWORD")
 
     # Connect to the mail server
-    mail = imaplib.IMAP4_SSL("imap.depro8.fcomet.com")
+    mail = imaplib.IMAP4_SSL(f"imap.{smtp_server}")
 
     # Login to the email account
     mail.login(email_address, password)
@@ -759,9 +760,7 @@ def check_emails_p24():
     # Select the mailbox (inbox, for example)
 
     mail.select("inbox")
-    # mail.select("junk")
-    #
-    # Search for all unseen (new) emails
+
     # CHANGE TO "UNSEEN" RATHER THAN ALL - Below is for testing ALL
     status, messages = mail.search(None, "UNSEEN")
 
@@ -787,20 +786,11 @@ def check_emails_p24():
             sender = sender.split()[-1]
             sender = sender.split("<")[-1].strip(">").strip()
 
-        # if sender == "no-reply@property24.com" and msg['To'] != "Mario Stoop <mario@opportunityprop.co.za>": NOT
-        # SURE IF I NEED TO WORRY ABOUT MARIO
         # if sender == "wayne@opportunity.co.za":
         if sender == "no-reply@property24.com":
 
             enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
                 = "", "", "", "", "", "", ""
-
-            # Print or process the email information
-            # print(f"Subject: {subject}")
-            # print(f"From: {sender}")
-            # print(f"Date: {msg['Date']}")
-            # # print msg recipient
-            # print(f"To: {msg['To']}")
 
             original_date_string = msg["Date"]
 
@@ -810,12 +800,6 @@ def check_emails_p24():
             # Format the date as "yyyy-mm-dd h:mm:ss"
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
 
-            # Print the result
-            # print("formatted_date", formatted_date)
-            # convert msg['Date'] into a datetime object and format it to be in the format yyyy-mm-dd hh:mm:ss called
-            # submission_date
-
-            # print()
             # get the message body
             if msg.is_multipart():
                 for part in msg.walk():
@@ -825,12 +809,9 @@ def check_emails_p24():
                     try:
                         # get the email body
                         body = part.get_payload(decode=True).decode()
-                    except:
+                    except Exception:
                         pass
                     if content_type == "text/plain" and "attachment" not in content_disposition:
-                        # print text/plain emails and skip attachments
-                        # print("BODY1",body)
-                        # print()
 
                         email_body = body
 
@@ -864,10 +845,7 @@ def check_emails_p24():
 
                         if address_match:
                             address = address_match.group(1).strip()
-                            # print(f"Address: {address}")
-                            # if address contains 'Heron View' then development = 'Heron View', if address contains
-                            # 'Heron Fields' then development = 'Heron Fields', if address contains 'Endulini' then
-                            # development = 'Endulini'
+
                             if "Heron View" in address:
                                 development = "Heron View"
                             elif "Heron Fields" in address:
@@ -888,10 +866,10 @@ def check_emails_p24():
                             "contact_time": "ASAP",
                         }
 
-                        # print()
-                        # for item in data:
-                        #     print(item, ":", data[item])
-                        # print(data)
+                        print()
+                        for item in data:
+                            print(item, ":", data[item])
+                        print(data)
 
                         # UNCOMMENT BELOW to UPDATE DB
                         process_property_24_leads(data)
@@ -899,61 +877,60 @@ def check_emails_p24():
                 # extract content type of email
 
                 content_type = msg.get_content_type()
-                # print("content_type", content_type)
+                print("content_type", content_type)
                 # print("msg", msg)
                 # get the email body
                 body = msg.get_payload(decode=True).decode()
-                # print("BODY", body)
+                print("BODY P24", body)
                 # if content_type == "text/plain":
                 if content_type == "text/html":
-
                     # print only text email parts
                     # print()
-                    # print("BODY2", body)
-                    body = body.split("<br>")
-                    # filter out empty strings
-                    body = list(filter(None, body))
-                    # filter out "---" string
-                    body = list(filter(lambda x: x != "---", body))
-                    # filter out where string starts with "Date:
-                    body = list(filter(lambda x: not x.startswith("Date:"), body))
-                    # filter out where string contand \r
-                    body = list(filter(lambda x: not x.startswith("\r"), body))
-                    for item in body:
-                        # print("item", item)
-                        if item.startswith("Name:"):
-                            enquiry_by = item.split("Name:")[-1].strip()
-                            # print("enquiry_by", enquiry_by)
-                        elif item.startswith("Mobile:"):
-                            contact_number = item.split("Mobile:")[-1].strip()
-                            # print("contact_number", contact_number)
-                        elif item.startswith("Email:"):
-                            email_address_in_mail = item.split("Email:")[-1].strip()
-                            # print("email_address_in_mail", email_address_in_mail)
-                        elif item.startswith("Message:"):
-                            message = item.split("Message:")[-1].strip()
-                            # print("message", message)
-                        elif item.startswith("Address:"):
-                            address = item.split("Address:")[-1].strip()
-                            # print("address", address)
-                        elif item.startswith("Web ref:"):
-                            development = item.split("Web ref:")[-1].strip()
-                            # print("development", development)
+                    print("BODY2 P24", body)
+                    # body = body.split("<br>")
+                    # # filter out empty strings
+                    # body = list(filter(None, body))
+                    # # filter out "---" string
+                    # body = list(filter(lambda x: x != "---", body))
+                    # # filter out where string starts with "Date:
+                    # body = list(filter(lambda x: not x.startswith("Date:"), body))
+                    # # filter out where string contand \r
+                    # body = list(filter(lambda x: not x.startswith("\r"), body))
+                    # for item in body:
+                    #     # print("item", item)
+                    #     if item.startswith("Name:"):
+                    #         enquiry_by = item.split("Name:")[-1].strip()
+                    #         # print("enquiry_by", enquiry_by)
+                    #     elif item.startswith("Mobile:"):
+                    #         contact_number = item.split("Mobile:")[-1].strip()
+                    #         # print("contact_number", contact_number)
+                    #     elif item.startswith("Email:"):
+                    #         email_address_in_mail = item.split("Email:")[-1].strip()
+                    #         # print("email_address_in_mail", email_address_in_mail)
+                    #     elif item.startswith("Message:"):
+                    #         message = item.split("Message:")[-1].strip()
+                    #         # print("message", message)
+                    #     elif item.startswith("Address:"):
+                    #         address = item.split("Address:")[-1].strip()
+                    #         # print("address", address)
+                    #     elif item.startswith("Web ref:"):
+                    #         development = item.split("Web ref:")[-1].strip()
+                    # print("development", development)
                     # print("BODY3", body)
-                    data = {
-
-                        "name": enquiry_by,
-                        "surname": "",
-                        "contact": contact_number,
-                        "email": email_address_in_mail,
-                        "message": message,
-                        "development": "",
-                        "origin": "opportunityProp",
-                        "type": "sales",
-                        "submission_date": formatted_date,
-                        "contact_time": "ASAP"
-                    }
-                    process_property_24_leads(data)
+                    # data = {
+                    #
+                    #     "name": enquiry_by,
+                    #     "surname": "",
+                    #     "contact": contact_number,
+                    #     "email": email_address_in_mail,
+                    #     "message": message,
+                    #     "development": "",
+                    #     "origin": "opportunityProp",
+                    #     "type": "sales",
+                    #     "submission_date": formatted_date,
+                    #     "contact_time": "ASAP"
+                    # }
+                    # process_property_24_leads(data)
         # if sender == "waynebruton@icloud.com":
         # if sender == "webmaster@opportunityprop.co.za":
         # if sender is "webmaster@opportunityprop.co.za" and the subject is "Message via website"
@@ -977,13 +954,6 @@ def check_emails_p24():
             # Format the date as "yyyy-mm-dd h:mm:ss"
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
 
-            # Print the result
-            # print("formatted_date", formatted_date)
-            # convert msg['Date'] into a datetime object and format it to be in the format yyyy-mm-dd hh:mm:ss called
-            # submission_date
-
-            # print()
-            # get the message body
             # print(msg)
             if msg.is_multipart():
                 for part in msg.walk():
@@ -1068,24 +1038,11 @@ def check_emails_p24():
                         # UNCOMMENT BELOW to UPDATE DB
                         process_property_24_leads(data)
 
-                                    # elif "attachment" in content_disposition:
-                                    #     # download attachment
-                                    #     filename = part.get_filename()
-                                    #     if filename:
-                                    #         folder_name = clean(subject)
-                                    #         if not os.path.isdir(folder_name):
-                                    #             # make a folder for this email (named after the subject)
-                                    #             os.mkdir(folder_name)
-                                    #         filepath = os.path.join(folder_name, filename)
-                                    #         # download attachment and save it
-                                    #         open(filepath, "wb").write(part.get_payload(decode=True))
             else:
                 # extract content type of email
 
                 content_type = msg.get_content_type()
-                # print("content_type", content_type)
-                # print("msg", msg)
-                # get the email body
+
                 body = msg.get_payload(decode=True).decode()
                 # print("BODY", body)
                 # if content_type == "text/plain":
@@ -1145,53 +1102,6 @@ def check_emails_p24():
     print("Done")
 
 
-# def process_property_24_leads(data):
-#     sales_people = list(db.lead_sales_people.find({"active": True}))
-#     length = len(sales_people)
-#     sales_people_to_not_choose = []
-#     for person in sales_people:
-#         person["_id"] = str(person["_id"])
-#
-#     last_leads_generated = list(db.leads_sales.find().sort("created_at", -1).limit(length))
-#     if len(last_leads_generated) == 0:
-#         sales_person = random.choice(sales_people)
-#     elif length > len(last_leads_generated) > 0:
-#         for lead in last_leads_generated:
-#             sales_people_to_not_choose.append(lead["sales_person_id"])
-#         sales_people_to_choose = list(filter(lambda x: x["_id"] not in sales_people_to_not_choose, sales_people))
-#         sales_person = random.choice(sales_people_to_choose)
-#     else:
-#         sales_people_to_choose = []
-#         for person in sales_people:
-#             # create variable called filtered_leads where the sales_person_id is equal to the person id
-#             filtered_leads = list(filter(lambda x: x["sales_person_id"] == person["_id"], last_leads_generated))
-#             if len(filtered_leads) == 0:
-#                 sales_people_to_choose.append(person["_id"])
-#         if len(sales_people_to_choose) == 0:
-#             sales_people_to_choose.append(last_leads_generated[len(last_leads_generated) - 1]["sales_person_id"])
-#         sales_person = list(filter(lambda x: x["_id"] in sales_people_to_choose, sales_people))[0]
-#
-#     # data['origin'] = request['source']['source']
-#     # request['type'] = request['source']['type']
-#     # del request['source']
-#     data['created_at'] = datetime.now()
-#     data["sales_person"] = sales_person["name"] + " " + sales_person["surname"]
-#     data["sales_person_id"] = sales_person["_id"]
-#     # TEMPORARY
-#     # data['email'] = 'waynebruton@icloud.com'
-#
-#     db.leads_sales.insert_one(data)
-#
-#     sp_email = send_email_to_sales_person(sales_person, data)
-#     # print()
-#     # print("sp_email", sp_email)
-#     client_email = send_email_to_sales_lead(sales_person, data)
-#     # print()
-#     # print("client_email", client_email)
-#
-#     return {"message": "success"}
-
-
 def select_sales_person(sales_people, last_leads_generated):
     sales_people_ids = {person["_id"] for person in sales_people}
     last_leads_ids = {lead["sales_person_id"] for lead in last_leads_generated}
@@ -1221,16 +1131,15 @@ def process_property_24_leads(data):
 
     return {"message": "success"}
 
-
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
-scheduler = BackgroundScheduler()
-scheduler.add_job(check_emails_p24, 'interval', minutes=5)
-scheduler.start()
-
-
-# Shut down the scheduler when exiting the app
-
-@leads.on_event("shutdown")
-def shutdown_event():
-    scheduler.shutdown()
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(check_emails_p24, 'interval', minutes=5)
+# scheduler.start()
+#
+#
+# # Shut down the scheduler when exiting the app
+#
+# @leads.on_event("shutdown")
+# def shutdown_event():
+#     scheduler.shutdown()
