@@ -834,8 +834,12 @@ def check_emails_p24():
             sender = sender.split()[-1]
             sender = sender.split("<")[-1].strip(">").strip()
 
-        # if sender == "wayne@opportunity.co.za":
-        if sender == "no-reply@property24.com":
+        # if sender == "wayne@opportunity.co.za" and subject contains "Contact Request"
+        if sender == "no-reply@property24.com" and "Contact Request" in subject:
+        # if sender == "no-reply@property24.com":
+
+            print("Subject:", subject)
+            print()
 
             enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
                 = "", "", "", "", "", "", ""
@@ -914,10 +918,10 @@ def check_emails_p24():
                             "contact_time": "ASAP",
                         }
 
-                        print()
-                        for item in data:
-                            print(item, ":", data[item])
-                        print(data)
+                        # print()
+                        # for item in data:
+                        #     print(item, ":", data[item])
+                        # print(data)
 
                         # UNCOMMENT BELOW to UPDATE DB
                         process_property_24_leads(data)
@@ -925,16 +929,87 @@ def check_emails_p24():
                 # extract content type of email
 
                 content_type = msg.get_content_type()
-                print("content_type", content_type)
+                # print("content_type", content_type)
                 # print("msg", msg)
                 # get the email body
                 body = msg.get_payload(decode=True).decode()
-                print("BODY P24", body)
+                # print("BODY P24", body)
                 # if content_type == "text/plain":
                 if content_type == "text/html":
                     # print only text email parts
                     # print()
-                    print("BODY2 P24", body)
+                    # print("BODY2 P24", body)
+
+                    # remove all html tags from the body
+                    # body = re.sub(r'<[^>]*>', '', body)
+                    #
+                    # print("BODY3 P24", body)
+
+                    html = body
+
+                    # Define a regular expression pattern
+                    enquiry_by = r'<strong>Enquiry by:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
+                    address = r'<strong>Address:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
+                    contact_number = r'<strong>Contact Number:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
+                    email_address = r'<strong>Email Address:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
+                    message = r'<strong>Message:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
+
+                    # Search for the pattern in the HTML
+                    enquiry_by_match = re.search(enquiry_by, html, re.DOTALL)
+                    address_match = re.search(address, html, re.DOTALL)
+                    contact_number_match = re.search(contact_number, html, re.DOTALL)
+                    email_address_match = re.search(email_address, html, re.DOTALL)
+                    message_match = re.search(message, html, re.DOTALL)
+
+                    if enquiry_by_match:
+                        enquiry_by = enquiry_by_match.group(1).strip()
+                        # print(f'Enquiry By: {enquiry_by}')
+                    else:
+                        print('Enquiry By information not found in the HTML.')
+
+                    if address_match:
+                        address = address_match.group(1).strip()
+                        # print(f'Address: {address}')
+                    else:
+                        print('Address information not found in the HTML.')
+
+                    if contact_number_match:
+                        contact_number = contact_number_match.group(0).strip()
+                        # split contact_number by <td and get the last item in the list
+                        contact_number = contact_number.split("<td")[-1].strip()
+                        # split contact number by > and get the last item in the list
+                        contact_number = contact_number.split(">")[1].strip()
+                        # split contact number by ( and get the first item in the list
+                        contact_number = contact_number.split("(")[0].strip()
+                        # print(f'Contact Number: {contact_number}')
+                    else:
+                        print('Contact Number information not found in the HTML.')
+                        
+                    if email_address_match:
+                        email_address = email_address_match.group(0).strip()
+                        # split email_address by <td and get the last item in the list
+                        email_address = email_address.split("<td")[-1].strip()
+                        # # split email_address by > and get the last item in the list
+                        email_address = email_address.split(">")[1].strip()
+                        # # split email_address by < and get the first item in the list
+                        email_address = email_address.split("<")[0].strip()
+                        # print(f'Email Address: {email_address}')
+                    else:
+                        print('Email Address information not found in the HTML.')
+                        
+                    if message_match:
+                        message = message_match.group(0).strip()
+                        # split message by <td and get the last item in the list
+                        message = message.split("<td")[-1].strip()
+                        # split message by > and get the last item in the list
+                        message = message.split(">")[1].strip()
+                        # split message by < and get the first item in the list
+                        message = message.split("<")[0].strip()
+                        # if any ascii characters, then remove them
+                        # message = message.encode('ascii', 'ignore').decode()
+                        # print(f'Message: {message}')
+                    else:
+                        print('Message information not found in the HTML.')
                     # body = body.split("<br>")
                     # # filter out empty strings
                     # body = list(filter(None, body))
@@ -965,34 +1040,28 @@ def check_emails_p24():
                     #         development = item.split("Web ref:")[-1].strip()
                     # print("development", development)
                     # print("BODY3", body)
-                    # data = {
-                    #
-                    #     "name": enquiry_by,
-                    #     "surname": "",
-                    #     "contact": contact_number,
-                    #     "email": email_address_in_mail,
-                    #     "message": message,
-                    #     "development": "",
-                    #     "origin": "opportunityProp",
-                    #     "type": "sales",
-                    #     "submission_date": formatted_date,
-                    #     "contact_time": "ASAP"
-                    # }
-                    # process_property_24_leads(data)
-        # if sender == "waynebruton@icloud.com":
-        # if sender == "webmaster@opportunityprop.co.za":
-        # if sender is "webmaster@opportunityprop.co.za" and the subject is "Message via website"
+                    data = {
+
+                        "name": enquiry_by,
+                        "surname": "",
+                        "contact": contact_number,
+                        "email": email_address,
+                        "message": message,
+                        "development": "",
+                        "origin": "property24",
+                        "type": "sales",
+                        "submission_date": formatted_date,
+                        "contact_time": "ASAP"
+                    }
+                    # print("data", data)
+                    process_property_24_leads(data)
+
         if sender == "webmaster@opportunityprop.co.za" and subject == "Message via website":
 
             enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
                 = "", "", "", "", "", "", ""
 
-            # Print or process the email information
-            # print(f"Subject: {subject}")
-            # print(f"From: {sender}")
-            # print(f"Date: {msg['Date']}")
-            # # # print msg recipient
-            # print(f"To: {msg['To']}")
+
 
             original_date_string = msg["Date"]
 
@@ -1196,15 +1265,15 @@ def check_unanswered_leads():
 
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
-scheduler = BackgroundScheduler()
-scheduler.add_job(check_emails_p24, 'interval', minutes=5)
-# add check_unanswered_leads to run at 9:30 am every day
-scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
-scheduler.start()
-
-
-# Shut down the scheduler when exiting the app
-
-@leads.on_event("shutdown")
-def shutdown_event():
-    scheduler.shutdown()
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(check_emails_p24, 'interval', minutes=5)
+# # add check_unanswered_leads to run at 9:30 am every day
+# scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
+# scheduler.start()
+#
+#
+# # Shut down the scheduler when exiting the app
+# #
+# @leads.on_event("shutdown")
+# def shutdown_event():
+#     scheduler.shutdown()
