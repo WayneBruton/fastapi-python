@@ -436,8 +436,8 @@ def send_email_to_sales_person(sales_person, lead):
 
 
 def send_email_to_leandri(lead):
-    # email_sp = 'leandri@opportunity.co.za'
-    email_sp = 'wayne@opportunity.co.za'
+    email_sp = 'leandri@opportunity.co.za'
+    # email_sp = 'wayne@opportunity.co.za'
     smtp_server = config('SMTP_SERVER')
     port = config('SMTP_PORT')
     sender_email = config('SENDER_EMAIL')
@@ -1133,13 +1133,13 @@ def process_property_24_leads(data):
 
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
-# scheduler = BackgroundScheduler()
-# scheduler.add_job(check_emails_p24, 'interval', minutes=5)
-# scheduler.start()
-#
-#
-# # Shut down the scheduler when exiting the app
-#
-# @leads.on_event("shutdown")
-# def shutdown_event():
-#     scheduler.shutdown()
+scheduler = BackgroundScheduler()
+scheduler.add_job(check_emails_p24, 'interval', minutes=5)
+scheduler.start()
+
+
+# Shut down the scheduler when exiting the app
+
+@leads.on_event("shutdown")
+def shutdown_event():
+    scheduler.shutdown()
