@@ -17,7 +17,7 @@ import imaplib
 import email
 import os
 from decouple import config
-from datetime import datetime
+from datetime import datetime, timedelta
 # from distutils.command.clean import clean
 from email.header import decode_header
 import re
@@ -606,6 +606,64 @@ def send_email_to_consultant(consultant_person, lead):
         return {"message": "Email not sent"}
 
 
+def send_email_to_consultant_unanswered(consultant_person, lead):
+    email_consultant = consultant_person['email']
+    # # trim all white spaces
+    email_consultant = email_consultant.strip()
+
+    smtp_server = config('SMTP_SERVER')
+    port = config('SMTP_PORT')
+    sender_email = config('SENDER_EMAIL')
+    password = config('EMAIL_PASSWORD')
+
+    message = f"""\
+                <html>
+                  <body>
+                    <p>Dear {consultant_person['name']},<br>
+                    <br /><br />
+                    This potential client did not answer, perhaps you want to follow up? It has been around 48 hours. Please see the details below:<br />
+                    <br /><br />
+                    <b>Lead Details</b><br />
+                    <br /><br />
+                    <b>First Name:</b> {lead['name']}<br />
+                    <b>Last Name:</b> {lead['surname']}<br />
+                    <b>Cell:</b> {lead['contact']}<br />
+                    <b>Email:</b> {lead['email']}<br />
+                    <b>Origin:</b> {lead['origin']}<br /> 
+                    <b>Interested in:</b> {lead['investment_choice']}<br />
+
+                    <b>Has R100 0000 minimum to invest:</b> {lead['min_value']}<br />
+                    <b>Range keen to invest:</b> {lead['investment_amount']}<br />
+
+                    <br /><br />
+                    Please contact the lead as soon as possible and follow up by inputting into the app.<br />
+
+                    <br /><br />
+                    Kind Regards,<br />
+                    OMH App<br />
+
+                  </body>
+                </html>
+                """
+
+    msg = EmailMessage()
+    msg['Subject'] = "Investment Lead"
+    msg['From'] = sender_email
+    msg['To'] = email_consultant
+    msg.set_content(message, subtype='html')
+
+    try:
+        with smtplib.SMTP_SSL(smtp_server, port) as server:
+            server.ehlo()
+            server.login(sender_email, password=password)
+            server.send_message(msg)
+            server.quit()
+            return {"message": "Email sent successfully"}
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Email not sent"}
+
+
 def send_email_to_investment_lead(consultant_person, lead):
     email_lead = lead['email']
     # # trim all white spaces
@@ -1121,10 +1179,27 @@ def process_property_24_leads(data):
 
     return {"message": "success"}
 
+
+def check_unanswered_leads():
+    leads = list(db.leads_investments.find({"action_taken": "Called - No Answer"}))
+    for lead in leads:
+        action_taken_date_time = datetime.strptime(lead.get('action_taken_date_time',""), "%Y-%m-%d %H:%M:%S")
+        now = datetime.now()
+        difference = now - action_taken_date_time
+        # if difference > timedelta(minutes=5):
+        if difference > timedelta(hours=47):
+            consultant = db.lead_investment_consultants.find_one({"_id": ObjectId(lead.get('consultant_id',""))})
+            send_email_to_consultant_unanswered(consultant, lead)
+
+# check_unanswered_leads()
+
+
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
 scheduler = BackgroundScheduler()
 scheduler.add_job(check_emails_p24, 'interval', minutes=5)
+# add check_unanswered_leads to run at 9:30 am every day
+scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
 scheduler.start()
 
 
