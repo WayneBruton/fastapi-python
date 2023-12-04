@@ -625,17 +625,7 @@ def send_email_to_investment_lead(consultant_person, lead):
                         <br /><br />
                         <b>Our investment consultant will be in touch with you shortly.</b><br />
                         <br /><br />
-                        <b>Consultant Details</b><br />
-                        {consultant_person['name']} {consultant_person['surname']}.<br />
-                        
-                         {consultant_person['cell']}<br />
-                         <a href=mailTo:{consultant_person['email']}>{consultant_person['email']}</a><br />
-
-
-                        <br /><br />
                         Please keep a lookout for their call.<br />
-                        
-
                         <br /><br />
                         Thank You,<br /><br />
                         021 919 9944<br />
