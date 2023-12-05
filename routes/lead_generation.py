@@ -1206,7 +1206,10 @@ def check_emails_p24():
                             # print("development", development)
                     # print("BODY3", body)
                     # make message read and not UNSEEN
-                    mail.store(email_id, '+FLAGS', '\Seen')
+                    # delete the email
+                    mail.store(email_id, '+FLAGS', '\\Deleted')
+                    mail.expunge()
+                    
                     data = {
 
                         "name": enquiry_by,
