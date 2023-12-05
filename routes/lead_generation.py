@@ -1065,7 +1065,36 @@ def check_emails_p24():
 
                     else:
                         print('Message information not found in the HTML.')
-
+                    # body = body.split("<br>")
+                    # # filter out empty strings
+                    # body = list(filter(None, body))
+                    # # filter out "---" string
+                    # body = list(filter(lambda x: x != "---", body))
+                    # # filter out where string starts with "Date:
+                    # body = list(filter(lambda x: not x.startswith("Date:"), body))
+                    # # filter out where string contand \r
+                    # body = list(filter(lambda x: not x.startswith("\r"), body))
+                    # for item in body:
+                    #     # print("item", item)
+                    #     if item.startswith("Name:"):
+                    #         enquiry_by = item.split("Name:")[-1].strip()
+                    #         # print("enquiry_by", enquiry_by)
+                    #     elif item.startswith("Mobile:"):
+                    #         contact_number = item.split("Mobile:")[-1].strip()
+                    #         # print("contact_number", contact_number)
+                    #     elif item.startswith("Email:"):
+                    #         email_address_in_mail = item.split("Email:")[-1].strip()
+                    #         # print("email_address_in_mail", email_address_in_mail)
+                    #     elif item.startswith("Message:"):
+                    #         message = item.split("Message:")[-1].strip()
+                    #         # print("message", message)
+                    #     elif item.startswith("Address:"):
+                    #         address = item.split("Address:")[-1].strip()
+                    #         # print("address", address)
+                    #     elif item.startswith("Web ref:"):
+                    #         development = item.split("Web ref:")[-1].strip()
+                    # print("development", development)
+                    # print("BODY3", body)
                     data = {
 
                         "name": enquiry_by,
@@ -1142,9 +1171,21 @@ def check_emails_p24():
 
                         if enquiry_by_match:
                             enquiry_by = enquiry_by_match.group(1).strip()
+                            # print(f"Enquiry By: {enquiry_by}")
 
-
-
+                        # if address_match:
+                        #     address = address_match.group(1).strip()
+                        #     # print(f"Address: {address}")
+                        #     # if address contains 'Heron View' then development = 'Heron View', if address contains
+                        #     # 'Heron Fields' then development = 'Heron Fields', if address contains 'Endulini' then
+                        #     # development = 'Endulini'
+                        #     if "Heron View" in address:
+                        #         development = "Heron View"
+                        #     elif "Heron Fields" in address:
+                        #         development = "Heron Fields"
+                        #     elif "Endulini" in address:
+                        #         development = "Endulini"
+                        #
                         data = {
 
                             "name": enquiry_by,
@@ -1159,7 +1200,10 @@ def check_emails_p24():
                             "contact_time": "ASAP"
                         }
 
-
+                        # print()
+                        # for item in data:
+                        #     print(item, ":", data[item])
+                        # # print(data)
 
                         # UNCOMMENT BELOW to UPDATE DB
                         process_property_24_leads(data)
@@ -1174,7 +1218,9 @@ def check_emails_p24():
                 # if content_type == "text/plain":
                 if content_type == "text/html":
 
-
+                    # print only text email parts
+                    # print()
+                    # print("BODY2", body)
                     body = body.split("<br>")
                     # filter out empty strings
                     body = list(filter(None, body))
