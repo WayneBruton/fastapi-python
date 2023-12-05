@@ -258,6 +258,9 @@ async def opportunity_contact_form(data: Request):
 
 @leads.get('/get_sales_leads')
 async def get_sales_leads():
+    # opportunities =list(db.opportunities.find())
+    # get all opportunities and project only 'opportunity_code' and 'Category'
+    opportunities = list(db.opportunities.find({}, {"opportunity_code": 1, "Category": 1, "_id": 0}))
     leads = list(db.leads_sales.find())
     default_values = {
         'action_taken': "",
@@ -278,7 +281,7 @@ async def get_sales_leads():
 
     leads = sorted(leads, key=lambda x: x['created_at'], reverse=True)
 
-    return {"message": "success", "leads": leads}
+    return {"message": "success", "leads": leads, "opportunities": opportunities}
 
 
 def format_datetime(dt):
@@ -364,6 +367,41 @@ async def edit_sales_lead(data: Request):
         return {"message": "Lead not updated"}
 
 
+@leads.post('/add_sales_lead')
+async def add_sales_lead(data: Request):
+    try:
+        request = await data.json()
+        # print("request", request)
+        created_at = datetime.now()
+        print("created_at", created_at)
+        request['created_at'] = created_at
+        print("request", request)
+        #
+        db.leads_sales.insert_one(request)
+        return {"message": "success"}
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Lead not added"}
+
+
+@leads.post('/delete_sales_lead')
+async def delete_sales_lead(data: Request):
+    request = await data.json()
+    try:
+        print(request)
+        lead_id = request['id']
+        # remove the document from the collection
+        db.leads_sales.delete_one({"_id": ObjectId(lead_id)})
+
+        return {"message": "success"}
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Lead not deleted"}
+
+
+
+
+
 @leads.post('/edit_investment_lead')
 async def edit_investment_lead(background_tasks: BackgroundTasks, data: Request):
     request = await data.json()
@@ -382,6 +420,7 @@ async def edit_investment_lead(background_tasks: BackgroundTasks, data: Request)
     except Exception as e:
         print("Error:", e)
         return {"message": "Lead not updated"}
+
 
 
 def send_email_to_sales_person(sales_person, lead):
@@ -836,7 +875,7 @@ def check_emails_p24():
 
         # if sender == "wayne@opportunity.co.za" and subject contains "Contact Request"
         if sender == "no-reply@property24.com" and "Contact Request" in subject:
-        # if sender == "no-reply@property24.com":
+            # if sender == "no-reply@property24.com":
 
             print("Subject:", subject)
             print()
@@ -984,7 +1023,7 @@ def check_emails_p24():
                         # print(f'Contact Number: {contact_number}')
                     else:
                         print('Contact Number information not found in the HTML.')
-                        
+
                     if email_address_match:
                         email_address = email_address_match.group(0).strip()
                         # split email_address by <td and get the last item in the list
@@ -996,7 +1035,7 @@ def check_emails_p24():
                         # print(f'Email Address: {email_address}')
                     else:
                         print('Email Address information not found in the HTML.')
-                        
+
                     if message_match:
                         message = message_match.group(0).strip()
                         # split message by <td and get the last item in the list
@@ -1046,7 +1085,7 @@ def check_emails_p24():
                         "surname": "",
                         "contact": contact_number,
                         "email": email_address,
-                        "message": message,
+                        "message": f"{message} [{address}]",
                         "development": "",
                         "origin": "property24",
                         "type": "sales",
@@ -1060,8 +1099,6 @@ def check_emails_p24():
 
             enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
                 = "", "", "", "", "", "", ""
-
-
 
             original_date_string = msg["Date"]
 
@@ -1252,12 +1289,12 @@ def process_property_24_leads(data):
 def check_unanswered_leads():
     leads = list(db.leads_investments.find({"action_taken": "Called - No Answer"}))
     for lead in leads:
-        action_taken_date_time = datetime.strptime(lead.get('action_taken_date_time',""), "%Y-%m-%d %H:%M:%S")
+        action_taken_date_time = datetime.strptime(lead.get('action_taken_date_time', ""), "%Y-%m-%d %H:%M:%S")
         now = datetime.now()
         difference = now - action_taken_date_time
         # if difference > timedelta(minutes=5):
         if difference > timedelta(hours=47):
-            consultant = db.lead_investment_consultants.find_one({"_id": ObjectId(lead.get('consultant_id',""))})
+            consultant = db.lead_investment_consultants.find_one({"_id": ObjectId(lead.get('consultant_id', ""))})
             send_email_to_consultant_unanswered(consultant, lead)
 
 # check_unanswered_leads()
