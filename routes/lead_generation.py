@@ -1273,7 +1273,7 @@ def check_unanswered_leads():
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
 scheduler = BackgroundScheduler()
-scheduler.add_job(check_emails_p24, 'interval', minutes=1)
+scheduler.add_job(check_emails_p24, 'interval', minutes=5)
 # add check_unanswered_leads to run at 9:30 am every day
 scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
 scheduler.start()
