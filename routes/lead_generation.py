@@ -1205,6 +1205,8 @@ def check_emails_p24():
                             development = item.split("Web ref:")[-1].strip()
                             # print("development", development)
                     # print("BODY3", body)
+                    # make message read and not UNSEEN
+                    mail.store(email_id, '+FLAGS', '\Seen')
                     data = {
 
                         "name": enquiry_by,
