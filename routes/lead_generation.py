@@ -399,6 +399,39 @@ async def delete_sales_lead(data: Request):
         return {"message": "Lead not deleted"}
 
 
+@leads.post('/add_investment_lead')
+async def add_investment_lead(data: Request):
+    try:
+        request = await data.json()
+        # print("request", request)
+        created_at = datetime.now()
+        print("created_at", created_at)
+        request['created_at'] = created_at
+        print("request", request)
+        #
+        db.leads_investments.insert_one(request)
+        return {"message": "success"}
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Lead not added"}
+
+
+@leads.post('/delete_investment_lead')
+async def delete_investment_lead(data: Request):
+    request = await data.json()
+    try:
+        print(request)
+        lead_id = request['id']
+        # remove the document from the collection
+        db.leads_investments.delete_one({"_id": ObjectId(lead_id)})
+
+        return {"message": "success"}
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Lead not deleted"}
+
+
+
 
 
 
@@ -537,7 +570,7 @@ def send_email_to_sales_lead(sales_person, lead):
                       <body>
                         <p>Good Day {lead['name']},<br>
                         <br /><br />
-                        Thank you for your enquiry about {lead['development']}.<br />
+                        Thank you for your enquiry.<br />
                         <br /><br />
                         <b>The following agent will be in contact with you shortly:</b><br />
                         <br /><br />
