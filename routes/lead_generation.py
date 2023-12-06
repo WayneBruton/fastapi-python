@@ -1,3 +1,5 @@
+from time import sleep
+
 from bson.objectid import ObjectId
 from fastapi import APIRouter, Request, BackgroundTasks
 # from fastapi.encoders import jsonable_encoder
@@ -1236,6 +1238,7 @@ def check_emails_p24():
     # print("final_data", final_data)
     # print("final_data", len(final_data))
     print("Done")
+    sleep(5)
 
 
 def select_sales_person(sales_people, last_leads_generated):
@@ -1255,12 +1258,14 @@ def process_property_24_leads(data):
     # print()
 
     for email_data in data:
+
         name = email_data["name"]
         submission_date = email_data["submission_date"]
         email = email_data["email"]
         # get from leads_sales collection where name, submission_date and email match
         # if match, then do not insert into leads_sales collection
         # if no match, then insert into leads_sales collection
+
         if db.leads_sales.find_one({"name": name, "submission_date": submission_date, "email": email}):  # if match
             continue
 
