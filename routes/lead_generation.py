@@ -880,12 +880,13 @@ def check_emails_p24():
 
     processed_emails = set()
 
+    final_data = []
+
     # Loop through the email IDs
     for email_id in email_ids:
 
         if email_id in processed_emails:
             continue
-
 
         # Fetch the email by ID
         status, msg_data = mail.fetch(email_id, "(RFC822)")
@@ -972,6 +973,7 @@ def check_emails_p24():
                                 development = "Endulini"
 
                         data = {
+                            "email_id": email_id,
                             "name": enquiry_by,
                             "surname": "",
                             "contact": contact_number,
@@ -1067,7 +1069,7 @@ def check_emails_p24():
                         print('Message information not found in the HTML.')
 
                     data = {
-
+                        "email_id": email_id,
                         "name": enquiry_by,
                         "surname": "",
                         "contact": contact_number,
@@ -1081,9 +1083,10 @@ def check_emails_p24():
                     }
                     # print("data", data)
 
-            process_property_24_leads(data)
+            # process_property_24_leads(data)
+            final_data.append(data)
             processed_emails.add(email_id)
-                    # process_property_24_leads(data)
+            # process_property_24_leads(data)
 
         if sender == "webmaster@opportunityprop.co.za" and subject == "Message via website":
 
@@ -1143,7 +1146,7 @@ def check_emails_p24():
                             enquiry_by = enquiry_by_match.group(1).strip()
 
                         data = {
-
+                            "email_id": email_id,
                             "name": enquiry_by,
                             "surname": "",
                             "contact": contact_number,
@@ -1201,7 +1204,7 @@ def check_emails_p24():
                             # print("development", development)
 
                     data = {
-
+                        "email_id": email_id,
                         "name": enquiry_by,
                         "surname": "",
                         "contact": contact_number,
@@ -1214,12 +1217,19 @@ def check_emails_p24():
                         "contact_time": "ASAP"
                     }
 
-            process_property_24_leads(data)
+            # process_property_24_leads(data)
+            final_data.append(data)
+            final_data.append(data)
+
             processed_emails.add(email_id)
-                    # process_property_24_leads(data)
+            # process_property_24_leads(data)
 
     # Logout from the email account
     mail.logout()
+    if len(final_data) > 0:
+        process_property_24_leads(final_data)
+    # print("final_data", final_data)
+    # print("final_data", len(final_data))
     print("Done")
 
 
@@ -1233,22 +1243,34 @@ def select_sales_person(sales_people, last_leads_generated):
 
 
 def process_property_24_leads(data):
-    sales_people = [{**person, "_id": str(person["_id"])} for person in db.lead_sales_people.find({"active": True})]
-    if last_leads_generated := list(
-            db.leads_sales.find().sort("created_at", -1).limit(len(sales_people))
-    ):
-        sales_person = select_sales_person(sales_people, last_leads_generated)
-    else:
-        sales_person = random.choice(sales_people)
+    # in data list, eliminate duplicates based on 'email_id'
+    data = [dict(t) for t in {tuple(d.items()) for d in data}]
+    # print("data", data)
+    # print("len(data)", len(data))
+    # print()
 
-    data['created_at'] = datetime.now()
-    data["sales_person"] = sales_person["name"] + " " + sales_person["surname"]
-    data["sales_person_id"] = sales_person["_id"]
+    for email_data in data:
+        # print("email_id", email_data["email_id"])
+        del email_data["email_id"]
 
-    db.leads_sales.insert_one(data)
+        sales_people = [{**person, "_id": str(person["_id"])} for person in db.lead_sales_people.find({"active": True})]
+        if last_leads_generated := list(
+                db.leads_sales.find().sort("created_at", -1).limit(len(sales_people))
+        ):
+            sales_person = select_sales_person(sales_people, last_leads_generated)
+        else:
+            sales_person = random.choice(sales_people)
 
-    sp_email = send_email_to_sales_person(sales_person, data)
-    client_email = send_email_to_sales_lead(sales_person, data)
+        # print("data", data)
+
+        email_data['created_at'] = datetime.now()
+        email_data["sales_person"] = sales_person["name"] + " " + sales_person["surname"]
+        email_data["sales_person_id"] = sales_person["_id"]
+
+        db.leads_sales.insert_one(email_data)
+
+        sp_email = send_email_to_sales_person(sales_person, email_data)
+        client_email = send_email_to_sales_lead(sales_person, email_data)
 
     return {"message": "success"}
 
@@ -1264,17 +1286,16 @@ def check_unanswered_leads():
             consultant = db.lead_investment_consultants.find_one({"_id": ObjectId(lead.get('consultant_id', ""))})
             send_email_to_consultant_unanswered(consultant, lead)
 
+
 # check_unanswered_leads()
 
 
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
-# scheduler = BackgroundScheduler()
-# scheduler.add_job(check_emails_p24, 'interval', minutes=5)
-# scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
-# scheduler.start()
-
-
+scheduler = BackgroundScheduler()
+scheduler.add_job(check_emails_p24, 'interval', minutes=5)
+scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
+scheduler.start()
 
 
 @leads.on_event("shutdown")
