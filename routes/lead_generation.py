@@ -17,6 +17,7 @@ from email.mime.text import MIMEText
 
 import imaplib
 import email
+from email.header import decode_header
 import os
 from decouple import config
 from datetime import datetime, timedelta
@@ -1263,6 +1264,7 @@ def process_property_24_leads(data):
         name = email_data["name"]
         submission_date = email_data["submission_date"]
         email = email_data["email"]
+        origin = email_data["origin"]
         # get from leads_sales collection where name, submission_date and email match
         # if match, then do not insert into leads_sales collection
         # if no match, then insert into leads_sales collection
