@@ -895,6 +895,7 @@ def check_emails_p24():
         # Get the email content
         raw_email = msg_data[0][1]
         msg = email.message_from_bytes(raw_email)
+        # print("msg", msg)
 
         # Extract relevant information (e.g., subject and sender)
         subject, encoding = decode_header(msg["Subject"])[0]
@@ -910,8 +911,9 @@ def check_emails_p24():
         if sender == "no-reply@property24.com" and "Contact Request" in subject:
             # if sender == "no-reply@property24.com":
 
-            print("Subject:", subject)
-            print()
+            # print("Subject:", subject)
+            # print()
+            # print("MSG", msg)
 
             enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
                 = "", "", "", "", "", "", ""
@@ -925,10 +927,14 @@ def check_emails_p24():
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
 
             # get the message body
+            print("Got Here P24 A")
             if msg.is_multipart():
+                print("Got Here P24 B")
                 for part in msg.walk():
                     # extract content type of email
                     content_type = part.get_content_type()
+                    print("content_type", content_type)
+
                     content_disposition = str(part.get("Content-Disposition"))
                     try:
                         # get the email body
@@ -938,6 +944,7 @@ def check_emails_p24():
                     if content_type == "text/plain" and "attachment" not in content_disposition:
 
                         email_body = body
+                        print("email_body", email_body)
 
                         address_match = re.search(r"Address:(.+?)Web ref:", email_body, re.DOTALL)
                         enquiry_by_match = re.search(r"Enquiry by:(.+?)Contact Number:", email_body, re.DOTALL)
@@ -1003,6 +1010,9 @@ def check_emails_p24():
 
 
                     html = body
+
+                    # print("html", html)
+                    print("Got Here P24 C")
 
                     # Define a regular expression pattern
                     enquiry_by = r'<strong>Enquiry by:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
@@ -1096,6 +1106,7 @@ def check_emails_p24():
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
 
             # print(msg)
+            print("Got Here Opp A")
             if msg.is_multipart():
                 for part in msg.walk():
                     # extract content type of email
@@ -1174,7 +1185,7 @@ def check_emails_p24():
 
                     # print only text email parts
                     # print()
-                    # print("BODY2", body)
+                    print("BODY2", body)
                     body = body.split("<br>")
                     # filter out empty strings
                     body = list(filter(None, body))
@@ -1209,7 +1220,7 @@ def check_emails_p24():
                     # delete the email
                     mail.store(email_id, '+FLAGS', '\\Deleted')
                     mail.expunge()
-                    
+
                     data = {
 
                         "name": enquiry_by,
@@ -1277,15 +1288,15 @@ def check_unanswered_leads():
 
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
-scheduler = BackgroundScheduler()
-scheduler.add_job(check_emails_p24, 'interval', minutes=1)
-# add check_unanswered_leads to run at 9:30 am every day
-scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
-scheduler.start()
-
-
-# Shut down the scheduler when exiting the app
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(check_emails_p24, 'interval', minutes=1)
+# # add check_unanswered_leads to run at 9:30 am every day
+# scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
+# scheduler.start()
 #
-@leads.on_event("shutdown")
-def shutdown_event():
-    scheduler.shutdown()
+#
+# # Shut down the scheduler when exiting the app
+# #
+# @leads.on_event("shutdown")
+# def shutdown_event():
+#     scheduler.shutdown()
