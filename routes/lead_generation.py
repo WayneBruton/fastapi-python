@@ -1238,7 +1238,7 @@ def check_emails_p24():
     # print("final_data", final_data)
     # print("final_data", len(final_data))
     print("Done")
-    sleep(5)
+
 
 
 def select_sales_person(sales_people, last_leads_generated):
@@ -1265,6 +1265,7 @@ def process_property_24_leads(data):
         # get from leads_sales collection where name, submission_date and email match
         # if match, then do not insert into leads_sales collection
         # if no match, then insert into leads_sales collection
+        sleep(5)
 
         if db.leads_sales.find_one({"name": name, "submission_date": submission_date, "email": email}):  # if match
             continue
