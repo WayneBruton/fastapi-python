@@ -884,6 +884,7 @@ def check_emails_p24():
     processed_emails = set()
 
     final_data = []
+    done = False
 
     # Loop through the email IDs
     for email_id in email_ids:
@@ -1239,12 +1240,19 @@ def check_emails_p24():
 
     # Logout from the email account
     mail.logout()
+
     if len(final_data) > 0:
-        sleep(2)
-        process_property_24_leads(final_data)
+        while not done:
+            sleep(2)
+            process_property_24_leads(final_data)
+            done = True
+            print("Done")
+        # exit mail
+
+
     # print("final_data", final_data)
     # print("final_data", len(final_data))
-    print("Done")
+
 
 
 
