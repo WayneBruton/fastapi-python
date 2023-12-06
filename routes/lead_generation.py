@@ -894,7 +894,11 @@ def check_emails_p24():
         # Get the email content
         raw_email = msg_data[0][1]
         # msg = email.message_from_bytes(raw_email)
-        msg = email.message_from_string(raw_email.decode())
+        # msg = email.message_from_string(raw_email.decode())
+        if isinstance(raw_email, int):
+            raw_email = str(raw_email).encode()
+
+        msg = email.message_from_bytes(raw_email)
         # print("msg", msg)
 
         # Extract relevant information (e.g., subject and sender)
