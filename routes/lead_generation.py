@@ -893,7 +893,8 @@ def check_emails_p24():
 
         # Get the email content
         raw_email = msg_data[0][1]
-        msg = email.message_from_bytes(raw_email)
+        # msg = email.message_from_bytes(raw_email)
+        msg = email.message_from_string(raw_email.decode())
         # print("msg", msg)
 
         # Extract relevant information (e.g., subject and sender)
@@ -1245,7 +1246,7 @@ def select_sales_person(sales_people, last_leads_generated):
 def process_property_24_leads(data):
     # in data list, eliminate duplicates based on 'email_id'
     data = [dict(t) for t in {tuple(d.items()) for d in data}]
-    # print("data", data)
+    print("data", data)
     # print("len(data)", len(data))
     # print()
 
@@ -1293,7 +1294,7 @@ def check_unanswered_leads():
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
 scheduler = BackgroundScheduler()
-scheduler.add_job(check_emails_p24, 'interval', minutes=5)
+scheduler.add_job(check_emails_p24, 'interval', minutes=1)
 scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
 scheduler.start()
 
