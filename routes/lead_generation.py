@@ -927,9 +927,9 @@ def check_emails_p24():
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
 
             # get the message body
-            print("Got Here P24 A")
+            # print("Got Here P24 A")
             if msg.is_multipart():
-                print("Got Here P24 B")
+                # print("Got Here P24 B")
                 for part in msg.walk():
                     # extract content type of email
                     content_type = part.get_content_type()
@@ -1012,14 +1012,14 @@ def check_emails_p24():
                     html = body
 
                     # print("html", html)
-                    print("Got Here P24 C")
+                    # print("Got Here P24 C")
 
                     # Define a regular expression pattern
                     enquiry_by = r'<strong>Enquiry by:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
-                    address = r'<strong>Address:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
+                    address = r"<strong>Address:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>"
                     contact_number = r'<strong>Contact Number:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
                     email_address = r'<strong>Email Address:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
-                    message = r'<strong>Message:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
+                    message = r"<strong>Message:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>"
 
                     # Search for the pattern in the HTML
                     enquiry_by_match = re.search(enquiry_by, html, re.DOTALL)
@@ -1035,7 +1035,10 @@ def check_emails_p24():
                         print('Enquiry By information not found in the HTML.')
 
                     if address_match:
-                        address = address_match.group(1).strip()
+                        raw_address = address_match.group(1).strip()
+                        # decoded_address = html.unescape(raw_address)
+                        address = raw_address.replace("&#xD;", "")
+                        address = address.replace("&#xA;", "")
                         # print(f'Address: {address}')
                     else:
                         print('Address information not found in the HTML.')
@@ -1072,6 +1075,7 @@ def check_emails_p24():
                         message = message.split(">")[1].strip()
                         # split message by < and get the first item in the list
                         message = message.split("<")[0].strip()
+                        message = message.replace("&#x27;", "'")
 
                     else:
                         print('Message information not found in the HTML.')
@@ -1106,7 +1110,7 @@ def check_emails_p24():
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
 
             # print(msg)
-            print("Got Here Opp A")
+            # print("Got Here Opp A")
             if msg.is_multipart():
                 for part in msg.walk():
                     # extract content type of email
@@ -1119,7 +1123,7 @@ def check_emails_p24():
                         pass
                     if content_type == "text/plain" and "attachment" not in content_disposition:
                         # print text/plain emails and skip attachments
-                        print("BODY1", body)
+                        # print("BODY1", body)
                         # print()
 
                         email_body = body
@@ -1185,7 +1189,7 @@ def check_emails_p24():
 
                     # print only text email parts
                     # print()
-                    print("BODY2", body)
+                    # print("BODY2", body)
                     body = body.split("<br>")
                     # filter out empty strings
                     body = list(filter(None, body))
@@ -1218,8 +1222,8 @@ def check_emails_p24():
                     # print("BODY3", body)
                     # make message read and not UNSEEN
                     # delete the email
-                    mail.store(email_id, '+FLAGS', '\\Deleted')
-                    mail.expunge()
+                    # mail.store(email_id, '+FLAGS', '\\Deleted')
+                    # mail.expunge()
 
                     data = {
 
@@ -1288,15 +1292,15 @@ def check_unanswered_leads():
 
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
-# scheduler = BackgroundScheduler()
-# scheduler.add_job(check_emails_p24, 'interval', minutes=1)
-# # add check_unanswered_leads to run at 9:30 am every day
-# scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
-# scheduler.start()
+scheduler = BackgroundScheduler()
+scheduler.add_job(check_emails_p24, 'interval', minutes=5)
+# add check_unanswered_leads to run at 9:30 am every day
+scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
+scheduler.start()
+
+
+# Shut down the scheduler when exiting the app
 #
-#
-# # Shut down the scheduler when exiting the app
-# #
-# @leads.on_event("shutdown")
-# def shutdown_event():
-#     scheduler.shutdown()
+@leads.on_event("shutdown")
+def shutdown_event():
+    scheduler.shutdown()
