@@ -431,10 +431,6 @@ async def delete_investment_lead(data: Request):
         return {"message": "Lead not deleted"}
 
 
-
-
-
-
 @leads.post('/edit_investment_lead')
 async def edit_investment_lead(background_tasks: BackgroundTasks, data: Request):
     request = await data.json()
@@ -453,7 +449,6 @@ async def edit_investment_lead(background_tasks: BackgroundTasks, data: Request)
     except Exception as e:
         print("Error:", e)
         return {"message": "Lead not updated"}
-
 
 
 def send_email_to_sales_person(sales_person, lead):
@@ -871,13 +866,9 @@ def check_emails_p24():
     email_address = config("SENDER_EMAIL")
     password = config("EMAIL_PASSWORD")
 
-    # Connect to the mail server
     mail = imaplib.IMAP4_SSL(f"imap.{smtp_server}")
 
-    # Login to the email account
     mail.login(email_address, password)
-
-    # Select the mailbox (inbox, for example)
 
     mail.select("inbox")
 
@@ -887,8 +878,15 @@ def check_emails_p24():
     # Get the list of email IDs
     email_ids = messages[0].split()
 
+    processed_emails = set()
+
     # Loop through the email IDs
     for email_id in email_ids:
+
+        if email_id in processed_emails:
+            continue
+
+
         # Fetch the email by ID
         status, msg_data = mail.fetch(email_id, "(RFC822)")
 
@@ -909,11 +907,6 @@ def check_emails_p24():
 
         # if sender == "wayne@opportunity.co.za" and subject contains "Contact Request"
         if sender == "no-reply@property24.com" and "Contact Request" in subject:
-            # if sender == "no-reply@property24.com":
-
-            # print("Subject:", subject)
-            # print()
-            # print("MSG", msg)
 
             enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
                 = "", "", "", "", "", "", ""
@@ -927,9 +920,7 @@ def check_emails_p24():
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
 
             # get the message body
-            # print("Got Here P24 A")
             if msg.is_multipart():
-                # print("Got Here P24 B")
                 for part in msg.walk():
                     # extract content type of email
                     content_type = part.get_content_type()
@@ -944,7 +935,6 @@ def check_emails_p24():
                     if content_type == "text/plain" and "attachment" not in content_disposition:
 
                         email_body = body
-                        print("email_body", email_body)
 
                         address_match = re.search(r"Address:(.+?)Web ref:", email_body, re.DOTALL)
                         enquiry_by_match = re.search(r"Enquiry by:(.+?)Contact Number:", email_body, re.DOTALL)
@@ -963,16 +953,13 @@ def check_emails_p24():
                             email_address_in_mail = email_address_in_mail.replace(">", "")
                             # make email_address_in_mail lowercase
                             email_address_in_mail = email_address_in_mail.lower()
-                            # print(f"Email Address: {email_address_in_mail}")
 
                         if contact_number_match:
                             contact_number = contact_number_match.group(1).strip()
                             contact_number = contact_number.replace(" ", "")
-                            # print(f"Contact Number: {contact_number}")
 
                         if enquiry_by_match:
                             enquiry_by = enquiry_by_match.group(1).strip()
-                            # print(f"Enquiry By: {enquiry_by}")
 
                         if address_match:
                             address = address_match.group(1).strip()
@@ -998,7 +985,10 @@ def check_emails_p24():
                         }
 
                         # UNCOMMENT BELOW to UPDATE DB
+
                         process_property_24_leads(data)
+                        processed_emails.add(email_id)
+                        # process_property_24_leads(data)
             else:
                 # extract content type of email
 
@@ -1008,11 +998,7 @@ def check_emails_p24():
 
                 if content_type == "text/html":
 
-
                     html = body
-
-                    # print("html", html)
-                    # print("Got Here P24 C")
 
                     # Define a regular expression pattern
                     enquiry_by = r'<strong>Enquiry by:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
@@ -1094,7 +1080,10 @@ def check_emails_p24():
                         "contact_time": "ASAP"
                     }
                     # print("data", data)
+
                     process_property_24_leads(data)
+                    processed_emails.add(email_id)
+                    # process_property_24_leads(data)
 
         if sender == "webmaster@opportunityprop.co.za" and subject == "Message via website":
 
@@ -1109,8 +1098,6 @@ def check_emails_p24():
             # Format the date as "yyyy-mm-dd h:mm:ss"
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
 
-            # print(msg)
-            # print("Got Here Opp A")
             if msg.is_multipart():
                 for part in msg.walk():
                     # extract content type of email
@@ -1122,9 +1109,6 @@ def check_emails_p24():
                     except Exception:
                         pass
                     if content_type == "text/plain" and "attachment" not in content_disposition:
-                        # print text/plain emails and skip attachments
-                        # print("BODY1", body)
-                        # print()
 
                         email_body = body
 
@@ -1172,24 +1156,20 @@ def check_emails_p24():
                             "contact_time": "ASAP"
                         }
 
-
-
                         # UNCOMMENT BELOW to UPDATE DB
+
                         process_property_24_leads(data)
+                        processed_emails.add(email_id)
+                        # process_property_24_leads(data)
 
             else:
-                # extract content type of email
 
                 content_type = msg.get_content_type()
 
                 body = msg.get_payload(decode=True).decode()
-                # print("BODY", body)
-                # if content_type == "text/plain":
+
                 if content_type == "text/html":
 
-                    # print only text email parts
-                    # print()
-                    # print("BODY2", body)
                     body = body.split("<br>")
                     # filter out empty strings
                     body = list(filter(None, body))
@@ -1219,11 +1199,6 @@ def check_emails_p24():
                         elif item.startswith("Web ref:"):
                             development = item.split("Web ref:")[-1].strip()
                             # print("development", development)
-                    # print("BODY3", body)
-                    # make message read and not UNSEEN
-                    # delete the email
-                    # mail.store(email_id, '+FLAGS', '\\Deleted')
-                    # mail.expunge()
 
                     data = {
 
@@ -1238,8 +1213,10 @@ def check_emails_p24():
                         "submission_date": formatted_date,
                         "contact_time": "ASAP"
                     }
+
                     process_property_24_leads(data)
-                    # print("data",data)
+                    processed_emails.add(email_id)
+                    # process_property_24_leads(data)
 
     # Logout from the email account
     mail.logout()
@@ -1292,15 +1269,14 @@ def check_unanswered_leads():
 
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
-# scheduler = BackgroundScheduler()
-# scheduler.add_job(check_emails_p24, 'interval', minutes=5)
-# # add check_unanswered_leads to run at 9:30 am every day
-# scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
-# scheduler.start()
-#
-#
-# # Shut down the scheduler when exiting the app
-# #
-# @leads.on_event("shutdown")
-# def shutdown_event():
-#     scheduler.shutdown()
+scheduler = BackgroundScheduler()
+scheduler.add_job(check_emails_p24, 'interval', minutes=5)
+scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
+scheduler.start()
+
+
+
+
+@leads.on_event("shutdown")
+def shutdown_event():
+    scheduler.shutdown()
