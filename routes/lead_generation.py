@@ -935,172 +935,172 @@ def check_emails_p24():
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
 
             # get the message body
-            if msg.is_multipart():
-                for part in msg.walk():
-                    # extract content type of email
-                    content_type = part.get_content_type()
-                    print("content_type", content_type)
-
-                    content_disposition = str(part.get("Content-Disposition"))
-                    try:
-                        # get the email body
-                        body = part.get_payload(decode=True).decode()
-                    except Exception:
-                        pass
-                    if content_type == "text/plain" and "attachment" not in content_disposition:
-
-                        email_body = body
-
-                        address_match = re.search(r"Address:(.+?)Web ref:", email_body, re.DOTALL)
-                        enquiry_by_match = re.search(r"Enquiry by:(.+?)Contact Number:", email_body, re.DOTALL)
-                        contact_number_match = re.search(r"Contact Number:(.+?)\(", email_body, re.DOTALL)
-                        email_match = re.search(r"Email Address:(.+?)Message:", email_body, re.DOTALL)
-                        message_match = re.search(r"Message:(.+?)Regards", email_body, re.DOTALL)
-
-                        # Print extracted information
-                        if message_match:
-                            message = message_match.group(1).strip()
-                            # print(f"Message: {message}")
-
-                        if email_match:
-                            email_address_in_mail = email_match.group(1).strip()
-                            email_address_in_mail = email_address_in_mail.split("mailto:")[-1].strip()
-                            email_address_in_mail = email_address_in_mail.replace(">", "")
-                            # make email_address_in_mail lowercase
-                            email_address_in_mail = email_address_in_mail.lower()
-
-                        if contact_number_match:
-                            contact_number = contact_number_match.group(1).strip()
-                            contact_number = contact_number.replace(" ", "")
-
-                        if enquiry_by_match:
-                            enquiry_by = enquiry_by_match.group(1).strip()
-
-                        if address_match:
-                            address = address_match.group(1).strip()
-
-                            if "Heron View" in address:
-                                development = "Heron View"
-                            elif "Heron Fields" in address:
-                                development = "Heron Fields"
-                            elif "Endulini" in address:
-                                development = "Endulini"
-
-                        data = {
-                            "email_id": email_id,
-                            "name": enquiry_by,
-                            "surname": "",
-                            "contact": contact_number,
-                            "email": email_address_in_mail,
-                            "message": f"{message}[{address}]",
-                            "development": development,
-                            "origin": "Property 24",
-                            "type": "sales",
-                            "submission_date": formatted_date,
-                            "contact_time": "ASAP",
-                        }
-
-                        # UNCOMMENT BELOW to UPDATE DB
-
-                        # process_property_24_leads(data)
-                        # processed_emails.add(email_id)
-                        # process_property_24_leads(data)
-            else:
+            # if msg.is_multipart():
+            #     for part in msg.walk():
+            #         # extract content type of email
+            #         content_type = part.get_content_type()
+            #         print("content_type", content_type)
+            #
+            #         content_disposition = str(part.get("Content-Disposition"))
+            #         try:
+            #             # get the email body
+            #             body = part.get_payload(decode=True).decode()
+            #         except Exception:
+            #             pass
+            #         if content_type == "text/plain" and "attachment" not in content_disposition:
+            #
+            #             email_body = body
+            #
+            #             address_match = re.search(r"Address:(.+?)Web ref:", email_body, re.DOTALL)
+            #             enquiry_by_match = re.search(r"Enquiry by:(.+?)Contact Number:", email_body, re.DOTALL)
+            #             contact_number_match = re.search(r"Contact Number:(.+?)\(", email_body, re.DOTALL)
+            #             email_match = re.search(r"Email Address:(.+?)Message:", email_body, re.DOTALL)
+            #             message_match = re.search(r"Message:(.+?)Regards", email_body, re.DOTALL)
+            #
+            #             # Print extracted information
+            #             if message_match:
+            #                 message = message_match.group(1).strip()
+            #                 # print(f"Message: {message}")
+            #
+            #             if email_match:
+            #                 email_address_in_mail = email_match.group(1).strip()
+            #                 email_address_in_mail = email_address_in_mail.split("mailto:")[-1].strip()
+            #                 email_address_in_mail = email_address_in_mail.replace(">", "")
+            #                 # make email_address_in_mail lowercase
+            #                 email_address_in_mail = email_address_in_mail.lower()
+            #
+            #             if contact_number_match:
+            #                 contact_number = contact_number_match.group(1).strip()
+            #                 contact_number = contact_number.replace(" ", "")
+            #
+            #             if enquiry_by_match:
+            #                 enquiry_by = enquiry_by_match.group(1).strip()
+            #
+            #             if address_match:
+            #                 address = address_match.group(1).strip()
+            #
+            #                 if "Heron View" in address:
+            #                     development = "Heron View"
+            #                 elif "Heron Fields" in address:
+            #                     development = "Heron Fields"
+            #                 elif "Endulini" in address:
+            #                     development = "Endulini"
+            #
+            #             data = {
+            #                 "email_id": email_id,
+            #                 "name": enquiry_by,
+            #                 "surname": "",
+            #                 "contact": contact_number,
+            #                 "email": email_address_in_mail,
+            #                 "message": f"{message}[{address}]",
+            #                 "development": development,
+            #                 "origin": "Property 24",
+            #                 "type": "sales",
+            #                 "submission_date": formatted_date,
+            #                 "contact_time": "ASAP",
+            #             }
+            #
+            #             # UNCOMMENT BELOW to UPDATE DB
+            #
+            #             # process_property_24_leads(data)
+            #             # processed_emails.add(email_id)
+            #             # process_property_24_leads(data)
+            # else:
                 # extract content type of email
 
-                content_type = msg.get_content_type()
+            content_type = msg.get_content_type()
 
-                body = msg.get_payload(decode=True).decode()
+            body = msg.get_payload(decode=True).decode()
 
-                if content_type == "text/html":
+            if content_type == "text/html":
 
-                    html = body
+                html = body
 
-                    # Define a regular expression pattern
-                    enquiry_by = r'<strong>Enquiry by:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
-                    address = r"<strong>Address:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>"
-                    contact_number = r'<strong>Contact Number:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
-                    email_address = r'<strong>Email Address:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
-                    message = r"<strong>Message:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>"
+                # Define a regular expression pattern
+                enquiry_by = r'<strong>Enquiry by:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
+                address = r"<strong>Address:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>"
+                contact_number = r'<strong>Contact Number:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
+                email_address = r'<strong>Email Address:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>'
+                message = r"<strong>Message:</strong>\s*<\/td>\s*<td[^>]*>\s*(.*?)\s*<\/td>"
 
-                    # Search for the pattern in the HTML
-                    enquiry_by_match = re.search(enquiry_by, html, re.DOTALL)
-                    address_match = re.search(address, html, re.DOTALL)
-                    contact_number_match = re.search(contact_number, html, re.DOTALL)
-                    email_address_match = re.search(email_address, html, re.DOTALL)
-                    message_match = re.search(message, html, re.DOTALL)
+                # Search for the pattern in the HTML
+                enquiry_by_match = re.search(enquiry_by, html, re.DOTALL)
+                address_match = re.search(address, html, re.DOTALL)
+                contact_number_match = re.search(contact_number, html, re.DOTALL)
+                email_address_match = re.search(email_address, html, re.DOTALL)
+                message_match = re.search(message, html, re.DOTALL)
 
-                    if enquiry_by_match:
-                        enquiry_by = enquiry_by_match.group(1).strip()
-                        # print(f'Enquiry By: {enquiry_by}')
-                    else:
-                        print('Enquiry By information not found in the HTML.')
+                if enquiry_by_match:
+                    enquiry_by = enquiry_by_match.group(1).strip()
+                    # print(f'Enquiry By: {enquiry_by}')
+                else:
+                    print('Enquiry By information not found in the HTML.')
 
-                    if address_match:
-                        raw_address = address_match.group(1).strip()
-                        # decoded_address = html.unescape(raw_address)
-                        address = raw_address.replace("&#xD;", "")
-                        address = address.replace("&#xA;", "")
-                        # print(f'Address: {address}')
-                    else:
-                        print('Address information not found in the HTML.')
+                if address_match:
+                    raw_address = address_match.group(1).strip()
+                    # decoded_address = html.unescape(raw_address)
+                    address = raw_address.replace("&#xD;", "")
+                    address = address.replace("&#xA;", "")
+                    # print(f'Address: {address}')
+                else:
+                    print('Address information not found in the HTML.')
 
-                    if contact_number_match:
-                        contact_number = contact_number_match.group(0).strip()
-                        # split contact_number by <td and get the last item in the list
-                        contact_number = contact_number.split("<td")[-1].strip()
-                        # split contact number by > and get the last item in the list
-                        contact_number = contact_number.split(">")[1].strip()
-                        # split contact number by ( and get the first item in the list
-                        contact_number = contact_number.split("(")[0].strip()
-                        # print(f'Contact Number: {contact_number}')
-                    else:
-                        print('Contact Number information not found in the HTML.')
+                if contact_number_match:
+                    contact_number = contact_number_match.group(0).strip()
+                    # split contact_number by <td and get the last item in the list
+                    contact_number = contact_number.split("<td")[-1].strip()
+                    # split contact number by > and get the last item in the list
+                    contact_number = contact_number.split(">")[1].strip()
+                    # split contact number by ( and get the first item in the list
+                    contact_number = contact_number.split("(")[0].strip()
+                    # print(f'Contact Number: {contact_number}')
+                else:
+                    print('Contact Number information not found in the HTML.')
 
-                    if email_address_match:
-                        email_address = email_address_match.group(0).strip()
-                        # split email_address by <td and get the last item in the list
-                        email_address = email_address.split("<td")[-1].strip()
-                        # # split email_address by > and get the last item in the list
-                        email_address = email_address.split(">")[1].strip()
-                        # # split email_address by < and get the first item in the list
-                        email_address = email_address.split("<")[0].strip()
-                        # print(f'Email Address: {email_address}')
-                    else:
-                        print('Email Address information not found in the HTML.')
+                if email_address_match:
+                    email_address = email_address_match.group(0).strip()
+                    # split email_address by <td and get the last item in the list
+                    email_address = email_address.split("<td")[-1].strip()
+                    # # split email_address by > and get the last item in the list
+                    email_address = email_address.split(">")[1].strip()
+                    # # split email_address by < and get the first item in the list
+                    email_address = email_address.split("<")[0].strip()
+                    # print(f'Email Address: {email_address}')
+                else:
+                    print('Email Address information not found in the HTML.')
 
-                    if message_match:
-                        message = message_match.group(0).strip()
-                        # split message by <td and get the last item in the list
-                        message = message.split("<td")[-1].strip()
-                        # split message by > and get the last item in the list
-                        message = message.split(">")[1].strip()
-                        # split message by < and get the first item in the list
-                        message = message.split("<")[0].strip()
-                        message = message.replace("&#x27;", "'")
+                if message_match:
+                    message = message_match.group(0).strip()
+                    # split message by <td and get the last item in the list
+                    message = message.split("<td")[-1].strip()
+                    # split message by > and get the last item in the list
+                    message = message.split(">")[1].strip()
+                    # split message by < and get the first item in the list
+                    message = message.split("<")[0].strip()
+                    message = message.replace("&#x27;", "'")
 
-                    else:
-                        print('Message information not found in the HTML.')
+                else:
+                    print('Message information not found in the HTML.')
 
-                    data = {
-                        "email_id": email_id,
-                        "name": enquiry_by,
-                        "surname": "",
-                        "contact": contact_number,
-                        "email": email_address,
-                        "message": f"{message} [{address}]",
-                        "development": "",
-                        "origin": "property24",
-                        "type": "sales",
-                        "submission_date": formatted_date,
-                        "contact_time": "ASAP"
-                    }
-                    # print("data", data)
+                data = {
+                    "email_id": email_id,
+                    "name": enquiry_by,
+                    "surname": "",
+                    "contact": contact_number,
+                    "email": email_address,
+                    "message": f"{message} [{address}]",
+                    "development": "",
+                    "origin": "property24",
+                    "type": "sales",
+                    "submission_date": formatted_date,
+                    "contact_time": "ASAP"
+                }
+                # print("data", data)
 
-            # process_property_24_leads(data)
-            final_data.append(data)
-            processed_emails.add(email_id)
-            # process_property_24_leads(data)
+        # process_property_24_leads(data)
+        final_data.append(data)
+        processed_emails.add(email_id)
+        # process_property_24_leads(data)
 
         if sender == "webmaster@opportunityprop.co.za" and subject == "Message via website":
 
@@ -1115,127 +1115,127 @@ def check_emails_p24():
             # Format the date as "yyyy-mm-dd h:mm:ss"
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
 
-            if msg.is_multipart():
-                for part in msg.walk():
-                    # extract content type of email
-                    content_type = part.get_content_type()
-                    content_disposition = str(part.get("Content-Disposition"))
-                    try:
-                        # get the email body
-                        body = part.get_payload(decode=True).decode()
-                    except Exception:
-                        pass
-                    if content_type == "text/plain" and "attachment" not in content_disposition:
+            # if msg.is_multipart():
+            #     for part in msg.walk():
+            #         # extract content type of email
+            #         content_type = part.get_content_type()
+            #         content_disposition = str(part.get("Content-Disposition"))
+            #         try:
+            #             # get the email body
+            #             body = part.get_payload(decode=True).decode()
+            #         except Exception:
+            #             pass
+            #         if content_type == "text/plain" and "attachment" not in content_disposition:
+            #
+            #             email_body = body
+            #
+            #             address_match = re.search(r"Address:(.+?)Web ref:", email_body, re.DOTALL)
+            #             enquiry_by_match = re.search(r"Name:(.+?)Mobile:", email_body,
+            #                                          re.DOTALL)
+            #             contact_number_match = re.search(r"Mobile:(.+?)Email:", email_body,
+            #                                              re.DOTALL)
+            #             # contact_number_match = re.search(r"Mobile:(.+?)\(", email_body, re.DOTALL)
+            #             email_match = re.search(r"Email:(.+?)Message:", email_body, re.DOTALL)
+            #             message_match = re.search(r"Message:(.+?)---", email_body, re.DOTALL)
+            #             #
+            #             # # Print extracted information
+            #             if message_match:
+            #                 message = message_match.group(1).strip()
+            #                 # print(f"Message: {message}")
+            #
+            #             if email_match:
+            #                 email_address_in_mail = email_match.group(1).strip()
+            #                 email_address_in_mail = email_address_in_mail.split("mailto:")[-1].strip()
+            #                 email_address_in_mail = email_address_in_mail.replace(">", "")
+            #                 # make email_address_in_mail lowercase
+            #                 email_address_in_mail = email_address_in_mail.lower()
+            #                 # print(f"Email Address: {email_address_in_mail}")
+            #
+            #             if contact_number_match:
+            #                 contact_number = contact_number_match.group(1).strip()
+            #                 contact_number = contact_number.replace(" ", "")
+            #                 # print(f"Contact Number: {contact_number}")
+            #
+            #             if enquiry_by_match:
+            #                 enquiry_by = enquiry_by_match.group(1).strip()
+            #
+            #             data = {
+            #                 "email_id": email_id,
+            #                 "name": enquiry_by,
+            #                 "surname": "",
+            #                 "contact": contact_number,
+            #                 "email": email_address_in_mail,
+            #                 "message": message,
+            #                 "development": "",
+            #                 "origin": "opportunityProp",
+            #                 "type": "sales",
+            #                 "submission_date": formatted_date,
+            #                 "contact_time": "ASAP"
+            #             }
+            #
+            #             # UNCOMMENT BELOW to UPDATE DB
+            #
+            #             # process_property_24_leads(data)
+            #             # processed_emails.add(email_id)
+            #             # process_property_24_leads(data)
+            #
+            # else:
 
-                        email_body = body
+            content_type = msg.get_content_type()
 
-                        address_match = re.search(r"Address:(.+?)Web ref:", email_body, re.DOTALL)
-                        enquiry_by_match = re.search(r"Name:(.+?)Mobile:", email_body,
-                                                     re.DOTALL)
-                        contact_number_match = re.search(r"Mobile:(.+?)Email:", email_body,
-                                                         re.DOTALL)
-                        # contact_number_match = re.search(r"Mobile:(.+?)\(", email_body, re.DOTALL)
-                        email_match = re.search(r"Email:(.+?)Message:", email_body, re.DOTALL)
-                        message_match = re.search(r"Message:(.+?)---", email_body, re.DOTALL)
-                        #
-                        # # Print extracted information
-                        if message_match:
-                            message = message_match.group(1).strip()
-                            # print(f"Message: {message}")
+            body = msg.get_payload(decode=True).decode()
 
-                        if email_match:
-                            email_address_in_mail = email_match.group(1).strip()
-                            email_address_in_mail = email_address_in_mail.split("mailto:")[-1].strip()
-                            email_address_in_mail = email_address_in_mail.replace(">", "")
-                            # make email_address_in_mail lowercase
-                            email_address_in_mail = email_address_in_mail.lower()
-                            # print(f"Email Address: {email_address_in_mail}")
+            if content_type == "text/html":
 
-                        if contact_number_match:
-                            contact_number = contact_number_match.group(1).strip()
-                            contact_number = contact_number.replace(" ", "")
-                            # print(f"Contact Number: {contact_number}")
+                body = body.split("<br>")
+                # filter out empty strings
+                body = list(filter(None, body))
+                # filter out "---" string
+                body = list(filter(lambda x: x != "---", body))
+                # filter out where string starts with "Date:
+                body = list(filter(lambda x: not x.startswith("Date:"), body))
+                # filter out where string contand \r
+                body = list(filter(lambda x: not x.startswith("\r"), body))
+                for item in body:
+                    # print("item", item)
+                    if item.startswith("Name:"):
+                        enquiry_by = item.split("Name:")[-1].strip()
+                        # print("enquiry_by", enquiry_by)
+                    elif item.startswith("Mobile:"):
+                        contact_number = item.split("Mobile:")[-1].strip()
+                        # print("contact_number", contact_number)
+                    elif item.startswith("Email:"):
+                        email_address_in_mail = item.split("Email:")[-1].strip()
+                        # print("email_address_in_mail", email_address_in_mail)
+                    elif item.startswith("Message:"):
+                        message = item.split("Message:")[-1].strip()
+                        # print("message", message)
+                    elif item.startswith("Address:"):
+                        address = item.split("Address:")[-1].strip()
+                        # print("address", address)
+                    elif item.startswith("Web ref:"):
+                        development = item.split("Web ref:")[-1].strip()
+                        # print("development", development)
 
-                        if enquiry_by_match:
-                            enquiry_by = enquiry_by_match.group(1).strip()
+                data = {
+                    "email_id": email_id,
+                    "name": enquiry_by,
+                    "surname": "",
+                    "contact": contact_number,
+                    "email": email_address_in_mail,
+                    "message": message,
+                    "development": "",
+                    "origin": "opportunityProp",
+                    "type": "sales",
+                    "submission_date": formatted_date,
+                    "contact_time": "ASAP"
+                }
 
-                        data = {
-                            "email_id": email_id,
-                            "name": enquiry_by,
-                            "surname": "",
-                            "contact": contact_number,
-                            "email": email_address_in_mail,
-                            "message": message,
-                            "development": "",
-                            "origin": "opportunityProp",
-                            "type": "sales",
-                            "submission_date": formatted_date,
-                            "contact_time": "ASAP"
-                        }
+        # process_property_24_leads(data)
+        # final_data.append(data)
+        final_data.append(data)
 
-                        # UNCOMMENT BELOW to UPDATE DB
-
-                        # process_property_24_leads(data)
-                        # processed_emails.add(email_id)
-                        # process_property_24_leads(data)
-
-            else:
-
-                content_type = msg.get_content_type()
-
-                body = msg.get_payload(decode=True).decode()
-
-                if content_type == "text/html":
-
-                    body = body.split("<br>")
-                    # filter out empty strings
-                    body = list(filter(None, body))
-                    # filter out "---" string
-                    body = list(filter(lambda x: x != "---", body))
-                    # filter out where string starts with "Date:
-                    body = list(filter(lambda x: not x.startswith("Date:"), body))
-                    # filter out where string contand \r
-                    body = list(filter(lambda x: not x.startswith("\r"), body))
-                    for item in body:
-                        # print("item", item)
-                        if item.startswith("Name:"):
-                            enquiry_by = item.split("Name:")[-1].strip()
-                            # print("enquiry_by", enquiry_by)
-                        elif item.startswith("Mobile:"):
-                            contact_number = item.split("Mobile:")[-1].strip()
-                            # print("contact_number", contact_number)
-                        elif item.startswith("Email:"):
-                            email_address_in_mail = item.split("Email:")[-1].strip()
-                            # print("email_address_in_mail", email_address_in_mail)
-                        elif item.startswith("Message:"):
-                            message = item.split("Message:")[-1].strip()
-                            # print("message", message)
-                        elif item.startswith("Address:"):
-                            address = item.split("Address:")[-1].strip()
-                            # print("address", address)
-                        elif item.startswith("Web ref:"):
-                            development = item.split("Web ref:")[-1].strip()
-                            # print("development", development)
-
-                    data = {
-                        "email_id": email_id,
-                        "name": enquiry_by,
-                        "surname": "",
-                        "contact": contact_number,
-                        "email": email_address_in_mail,
-                        "message": message,
-                        "development": "",
-                        "origin": "opportunityProp",
-                        "type": "sales",
-                        "submission_date": formatted_date,
-                        "contact_time": "ASAP"
-                    }
-
-            # process_property_24_leads(data)
-            # final_data.append(data)
-            final_data.append(data)
-
-            processed_emails.add(email_id)
+        processed_emails.add(email_id)
             # process_property_24_leads(data)
 
     # Logout from the email account
@@ -1265,25 +1265,27 @@ def select_sales_person(sales_people, last_leads_generated):
 def process_property_24_leads(data):
     # in data list, eliminate duplicates based on 'email_id'
     data = [dict(t) for t in {tuple(d.items()) for d in data}]
-    print("data", data)
+    # print("data", data)
     # print("len(data)", len(data))
     # print()
-    sleep(4)
-    for email_data in data:
+
+    for index, email_data in enumerate(data):
 
         name = email_data["name"]
         submission_date = email_data["submission_date"]
         email = email_data["email"]
         origin = email_data["origin"]
+        sleep(3)
         result = db.leads_sales.find_one(
             {"name": name, "submission_date": submission_date, "email": email, "origin": origin})
 
         if result is not None:
-            print("Lead already exists")
+            print(f"Lead already exists: {index}")
             print("result",result)
             continue
 
         # print("email_id", email_data["email_id"])
+        print(f"Processing lead: {index}")
         del email_data["email_id"]
 
         sales_people = [{**person, "_id": str(person["_id"])} for person in db.lead_sales_people.find({"active": True})]
