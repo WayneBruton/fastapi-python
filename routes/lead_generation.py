@@ -1098,7 +1098,7 @@ def check_emails_p24():
                 # print("data", data)
 
         # process_property_24_leads(data)
-        final_data.append(data)
+                final_data.append(data)
         processed_emails.add(email_id)
         # process_property_24_leads(data)
 
@@ -1233,7 +1233,7 @@ def check_emails_p24():
 
         # process_property_24_leads(data)
         # final_data.append(data)
-        final_data.append(data)
+                final_data.append(data)
 
         processed_emails.add(email_id)
             # process_property_24_leads(data)
