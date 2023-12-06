@@ -903,9 +903,14 @@ def check_emails_p24():
 
         msg = email.message_from_bytes(raw_email)
         # print("msg", msg)
+        subject = msg["Subject"]
+        if subject is not None:
+            subject, encoding = decode_header(subject)[0]
+            if isinstance(subject, bytes):
+                subject = subject.decode(encoding or "utf-8")
 
         # Extract relevant information (e.g., subject and sender)
-        subject, encoding = decode_header(msg["Subject"])[0]
+        # subject, encoding = decode_header(msg["Subject"])[0]
         if isinstance(subject, bytes):
             subject = subject.decode(encoding or "utf-8")
 
