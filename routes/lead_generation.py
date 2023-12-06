@@ -3,7 +3,8 @@ from time import sleep
 from bson.objectid import ObjectId
 from fastapi import APIRouter, Request, BackgroundTasks
 # from fastapi.encoders import jsonable_encoder
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
+
 
 from config.db import db
 
@@ -881,16 +882,11 @@ def check_emails_p24():
     # Get the list of email IDs
     email_ids = messages[0].split()
 
-    processed_emails = set()
-
     final_data = []
     done = False
 
     # Loop through the email IDs
     for email_id in email_ids:
-
-        if email_id in processed_emails:
-            continue
 
         # Fetch the email by ID
         status, msg_data = mail.fetch(email_id, "(RFC822)")
@@ -933,80 +929,6 @@ def check_emails_p24():
 
             # Format the date as "yyyy-mm-dd h:mm:ss"
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
-
-            # get the message body
-            # if msg.is_multipart():
-            #     for part in msg.walk():
-            #         # extract content type of email
-            #         content_type = part.get_content_type()
-            #         print("content_type", content_type)
-            #
-            #         content_disposition = str(part.get("Content-Disposition"))
-            #         try:
-            #             # get the email body
-            #             body = part.get_payload(decode=True).decode()
-            #         except Exception:
-            #             pass
-            #         if content_type == "text/plain" and "attachment" not in content_disposition:
-            #
-            #             email_body = body
-            #
-            #             address_match = re.search(r"Address:(.+?)Web ref:", email_body, re.DOTALL)
-            #             enquiry_by_match = re.search(r"Enquiry by:(.+?)Contact Number:", email_body, re.DOTALL)
-            #             contact_number_match = re.search(r"Contact Number:(.+?)\(", email_body, re.DOTALL)
-            #             email_match = re.search(r"Email Address:(.+?)Message:", email_body, re.DOTALL)
-            #             message_match = re.search(r"Message:(.+?)Regards", email_body, re.DOTALL)
-            #
-            #             # Print extracted information
-            #             if message_match:
-            #                 message = message_match.group(1).strip()
-            #                 # print(f"Message: {message}")
-            #
-            #             if email_match:
-            #                 email_address_in_mail = email_match.group(1).strip()
-            #                 email_address_in_mail = email_address_in_mail.split("mailto:")[-1].strip()
-            #                 email_address_in_mail = email_address_in_mail.replace(">", "")
-            #                 # make email_address_in_mail lowercase
-            #                 email_address_in_mail = email_address_in_mail.lower()
-            #
-            #             if contact_number_match:
-            #                 contact_number = contact_number_match.group(1).strip()
-            #                 contact_number = contact_number.replace(" ", "")
-            #
-            #             if enquiry_by_match:
-            #                 enquiry_by = enquiry_by_match.group(1).strip()
-            #
-            #             if address_match:
-            #                 address = address_match.group(1).strip()
-            #
-            #                 if "Heron View" in address:
-            #                     development = "Heron View"
-            #                 elif "Heron Fields" in address:
-            #                     development = "Heron Fields"
-            #                 elif "Endulini" in address:
-            #                     development = "Endulini"
-            #
-            #             data = {
-            #                 "email_id": email_id,
-            #                 "name": enquiry_by,
-            #                 "surname": "",
-            #                 "contact": contact_number,
-            #                 "email": email_address_in_mail,
-            #                 "message": f"{message}[{address}]",
-            #                 "development": development,
-            #                 "origin": "Property 24",
-            #                 "type": "sales",
-            #                 "submission_date": formatted_date,
-            #                 "contact_time": "ASAP",
-            #             }
-            #
-            #             # UNCOMMENT BELOW to UPDATE DB
-            #
-            #             # process_property_24_leads(data)
-            #             # processed_emails.add(email_id)
-            #             # process_property_24_leads(data)
-            # else:
-                # extract content type of email
 
             content_type = msg.get_content_type()
 
@@ -1095,12 +1017,9 @@ def check_emails_p24():
                     "submission_date": formatted_date,
                     "contact_time": "ASAP"
                 }
-                # print("data", data)
 
-        # process_property_24_leads(data)
                 final_data.append(data)
-        processed_emails.add(email_id)
-        # process_property_24_leads(data)
+
 
         if sender == "webmaster@opportunityprop.co.za" and subject == "Message via website":
 
@@ -1114,72 +1033,6 @@ def check_emails_p24():
 
             # Format the date as "yyyy-mm-dd h:mm:ss"
             formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
-
-            # if msg.is_multipart():
-            #     for part in msg.walk():
-            #         # extract content type of email
-            #         content_type = part.get_content_type()
-            #         content_disposition = str(part.get("Content-Disposition"))
-            #         try:
-            #             # get the email body
-            #             body = part.get_payload(decode=True).decode()
-            #         except Exception:
-            #             pass
-            #         if content_type == "text/plain" and "attachment" not in content_disposition:
-            #
-            #             email_body = body
-            #
-            #             address_match = re.search(r"Address:(.+?)Web ref:", email_body, re.DOTALL)
-            #             enquiry_by_match = re.search(r"Name:(.+?)Mobile:", email_body,
-            #                                          re.DOTALL)
-            #             contact_number_match = re.search(r"Mobile:(.+?)Email:", email_body,
-            #                                              re.DOTALL)
-            #             # contact_number_match = re.search(r"Mobile:(.+?)\(", email_body, re.DOTALL)
-            #             email_match = re.search(r"Email:(.+?)Message:", email_body, re.DOTALL)
-            #             message_match = re.search(r"Message:(.+?)---", email_body, re.DOTALL)
-            #             #
-            #             # # Print extracted information
-            #             if message_match:
-            #                 message = message_match.group(1).strip()
-            #                 # print(f"Message: {message}")
-            #
-            #             if email_match:
-            #                 email_address_in_mail = email_match.group(1).strip()
-            #                 email_address_in_mail = email_address_in_mail.split("mailto:")[-1].strip()
-            #                 email_address_in_mail = email_address_in_mail.replace(">", "")
-            #                 # make email_address_in_mail lowercase
-            #                 email_address_in_mail = email_address_in_mail.lower()
-            #                 # print(f"Email Address: {email_address_in_mail}")
-            #
-            #             if contact_number_match:
-            #                 contact_number = contact_number_match.group(1).strip()
-            #                 contact_number = contact_number.replace(" ", "")
-            #                 # print(f"Contact Number: {contact_number}")
-            #
-            #             if enquiry_by_match:
-            #                 enquiry_by = enquiry_by_match.group(1).strip()
-            #
-            #             data = {
-            #                 "email_id": email_id,
-            #                 "name": enquiry_by,
-            #                 "surname": "",
-            #                 "contact": contact_number,
-            #                 "email": email_address_in_mail,
-            #                 "message": message,
-            #                 "development": "",
-            #                 "origin": "opportunityProp",
-            #                 "type": "sales",
-            #                 "submission_date": formatted_date,
-            #                 "contact_time": "ASAP"
-            #             }
-            #
-            #             # UNCOMMENT BELOW to UPDATE DB
-            #
-            #             # process_property_24_leads(data)
-            #             # processed_emails.add(email_id)
-            #             # process_property_24_leads(data)
-            #
-            # else:
 
             content_type = msg.get_content_type()
 
@@ -1231,12 +1084,10 @@ def check_emails_p24():
                     "contact_time": "ASAP"
                 }
 
-        # process_property_24_leads(data)
-        # final_data.append(data)
                 final_data.append(data)
 
-        processed_emails.add(email_id)
-            # process_property_24_leads(data)
+
+
 
     # Logout from the email account
     mail.logout()
@@ -1331,12 +1182,12 @@ def check_unanswered_leads():
 
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
-scheduler = BackgroundScheduler()
-scheduler.add_job(check_emails_p24, 'interval', minutes=1)
-scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
-scheduler.start()
-
-
-@leads.on_event("shutdown")
-def shutdown_event():
-    scheduler.shutdown()
+# scheduler = BlockingScheduler()
+# scheduler.add_job(check_emails_p24, 'interval', minutes=1)
+# scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
+# scheduler.start()
+#
+#
+# @leads.on_event("shutdown")
+# def shutdown_event():
+#     scheduler.shutdown()
