@@ -1255,6 +1255,15 @@ def process_property_24_leads(data):
     # print()
 
     for email_data in data:
+        name = email_data["name"]
+        submission_date = email_data["submission_date"]
+        email = email_data["email"]
+        # get from leads_sales collection where name, submission_date and email match
+        # if match, then do not insert into leads_sales collection
+        # if no match, then insert into leads_sales collection
+        if db.leads_sales.find_one({"name": name, "submission_date": submission_date, "email": email}):  # if match
+            continue
+
         # print("email_id", email_data["email_id"])
         del email_data["email_id"]
 
