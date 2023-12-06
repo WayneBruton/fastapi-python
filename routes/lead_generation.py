@@ -1275,8 +1275,8 @@ def process_property_24_leads(data):
         submission_date = email_data["submission_date"]
         email = email_data["email"]
         origin = email_data["origin"]
-        result = db.leads_sales.find_one(
-            {"name": name, "submission_date": submission_date, "email": email, "origin": origin})
+        result = list(db.leads_sales.find_one(
+            {"name": name, "submission_date": submission_date, "email": email, "origin": origin}))
 
         if len(result) > 0:
             print("Lead already exists")
