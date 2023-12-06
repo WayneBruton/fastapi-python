@@ -986,8 +986,8 @@ def check_emails_p24():
 
                         # UNCOMMENT BELOW to UPDATE DB
 
-                        process_property_24_leads(data)
-                        processed_emails.add(email_id)
+                        # process_property_24_leads(data)
+                        # processed_emails.add(email_id)
                         # process_property_24_leads(data)
             else:
                 # extract content type of email
@@ -1081,8 +1081,8 @@ def check_emails_p24():
                     }
                     # print("data", data)
 
-                    process_property_24_leads(data)
-                    processed_emails.add(email_id)
+            process_property_24_leads(data)
+            processed_emails.add(email_id)
                     # process_property_24_leads(data)
 
         if sender == "webmaster@opportunityprop.co.za" and subject == "Message via website":
@@ -1158,8 +1158,8 @@ def check_emails_p24():
 
                         # UNCOMMENT BELOW to UPDATE DB
 
-                        process_property_24_leads(data)
-                        processed_emails.add(email_id)
+                        # process_property_24_leads(data)
+                        # processed_emails.add(email_id)
                         # process_property_24_leads(data)
 
             else:
@@ -1214,8 +1214,8 @@ def check_emails_p24():
                         "contact_time": "ASAP"
                     }
 
-                    process_property_24_leads(data)
-                    processed_emails.add(email_id)
+            process_property_24_leads(data)
+            processed_emails.add(email_id)
                     # process_property_24_leads(data)
 
     # Logout from the email account
