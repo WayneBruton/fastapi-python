@@ -1178,12 +1178,21 @@ def check_unanswered_leads():
 
 
 # check_unanswered_leads()
+@leads.post('/check_emails_omh_app')
+async def check_emails_omh_app():
+    try:
+        check_emails_p24()
+        # check_unanswered_leads()
+        return {"message": "success Checked"}
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Emails not checked"}
 
 
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
-# scheduler = BlockingScheduler()
-# scheduler.add_job(check_emails_p24, 'interval', minutes=1)
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(check_emails_p24, 'interval', minutes=5)
 # scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
 # scheduler.start()
 #
