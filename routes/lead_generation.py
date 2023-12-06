@@ -1243,9 +1243,10 @@ def check_emails_p24():
 
     if len(final_data) > 0:
         while not done:
-            sleep(2)
+
             process_property_24_leads(final_data)
             done = True
+            final_data = []
             print("Done")
         # exit mail
 
@@ -1283,30 +1284,32 @@ def process_property_24_leads(data):
         # if no match, then insert into leads_sales collection
 
 
-        if db.leads_sales.find_one({"name": name, "submission_date": submission_date, "email": email}):  # if match
+        if db.leads_sales.find_one({"name": name, "submission_date": submission_date, "email": email, "origin": origin}):  # if match
             continue
 
-        # print("email_id", email_data["email_id"])
-        del email_data["email_id"]
-
-        sales_people = [{**person, "_id": str(person["_id"])} for person in db.lead_sales_people.find({"active": True})]
-        if last_leads_generated := list(
-                db.leads_sales.find().sort("created_at", -1).limit(len(sales_people))
-        ):
-            sales_person = select_sales_person(sales_people, last_leads_generated)
         else:
-            sales_person = random.choice(sales_people)
 
-        # print("data", data)
+            # print("email_id", email_data["email_id"])
+            del email_data["email_id"]
 
-        email_data['created_at'] = datetime.now()
-        email_data["sales_person"] = sales_person["name"] + " " + sales_person["surname"]
-        email_data["sales_person_id"] = sales_person["_id"]
+            sales_people = [{**person, "_id": str(person["_id"])} for person in db.lead_sales_people.find({"active": True})]
+            if last_leads_generated := list(
+                    db.leads_sales.find().sort("created_at", -1).limit(len(sales_people))
+            ):
+                sales_person = select_sales_person(sales_people, last_leads_generated)
+            else:
+                sales_person = random.choice(sales_people)
 
-        db.leads_sales.insert_one(email_data)
+            # print("data", data)
 
-        sp_email = send_email_to_sales_person(sales_person, email_data)
-        client_email = send_email_to_sales_lead(sales_person, email_data)
+            email_data['created_at'] = datetime.now()
+            email_data["sales_person"] = sales_person["name"] + " " + sales_person["surname"]
+            email_data["sales_person_id"] = sales_person["_id"]
+
+            db.leads_sales.insert_one(email_data)
+
+            sp_email = send_email_to_sales_person(sales_person, email_data)
+            client_email = send_email_to_sales_lead(sales_person, email_data)
 
     return {"message": "success"}
 
