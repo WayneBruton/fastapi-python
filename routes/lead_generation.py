@@ -1243,18 +1243,14 @@ def check_emails_p24():
 
     if len(final_data) > 0:
         while not done:
-
             process_property_24_leads(final_data)
             done = True
             final_data = []
             print("Done")
         # exit mail
 
-
     # print("final_data", final_data)
     # print("final_data", len(final_data))
-
-
 
 
 def select_sales_person(sales_people, last_leads_generated):
@@ -1272,44 +1268,46 @@ def process_property_24_leads(data):
     print("data", data)
     # print("len(data)", len(data))
     # print()
-
+    sleep(4)
     for email_data in data:
 
         name = email_data["name"]
         submission_date = email_data["submission_date"]
         email = email_data["email"]
         origin = email_data["origin"]
-        # get from leads_sales collection where name, submission_date and email match
-        # if match, then do not insert into leads_sales collection
-        # if no match, then insert into leads_sales collection
+        result = db.leads_sales.find_one(
+            {"name": name, "submission_date": submission_date, "email": email, "origin": origin})
 
-
-        if db.leads_sales.find_one({"name": name, "submission_date": submission_date, "email": email, "origin": origin}):  # if match
+        if len(result) > 0:
+            print("Lead already exists")
+            print("result",result)
             continue
 
-        else:
+        # print("email_id", email_data["email_id"])
+        del email_data["email_id"]
 
-            # print("email_id", email_data["email_id"])
-            del email_data["email_id"]
+        sales_people = [{**person, "_id": str(person["_id"])} for person in db.lead_sales_people.find({"active": True})]
+        sales_person = (
+            select_sales_person(sales_people, last_leads_generated)
+            if (
+                last_leads_generated := list(
+                    db.leads_sales.find()
+                    .sort("created_at", -1)
+                    .limit(len(sales_people))
+                )
+            )
+            else random.choice(sales_people)
+        )
+        # print("data", data)
 
-            sales_people = [{**person, "_id": str(person["_id"])} for person in db.lead_sales_people.find({"active": True})]
-            if last_leads_generated := list(
-                    db.leads_sales.find().sort("created_at", -1).limit(len(sales_people))
-            ):
-                sales_person = select_sales_person(sales_people, last_leads_generated)
-            else:
-                sales_person = random.choice(sales_people)
+        email_data['created_at'] = datetime.now()
+        email_data["sales_person"] = sales_person["name"] + " " + sales_person["surname"]
+        email_data["sales_person_id"] = sales_person["_id"]
 
-            # print("data", data)
+        db.leads_sales.insert_one(email_data)
 
-            email_data['created_at'] = datetime.now()
-            email_data["sales_person"] = sales_person["name"] + " " + sales_person["surname"]
-            email_data["sales_person_id"] = sales_person["_id"]
-
-            db.leads_sales.insert_one(email_data)
-
-            sp_email = send_email_to_sales_person(sales_person, email_data)
-            client_email = send_email_to_sales_lead(sales_person, email_data)
+        sp_email = send_email_to_sales_person(sales_person, email_data)
+        client_email = send_email_to_sales_lead(sales_person, email_data)
 
     return {"message": "success"}
 
