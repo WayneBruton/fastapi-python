@@ -1170,7 +1170,11 @@ def check_unanswered_leads():
     for lead in leads:
         action_taken_date_time = datetime.strptime(lead.get('action_taken_date_time', ""), "%Y-%m-%d %H:%M:%S")
         now = datetime.now()
-        difference = now - action_taken_date_time
+        if action_taken_date_time != "":
+            difference = now - action_taken_date_time
+        else:
+            # difference = now less 48 hours
+            difference = now - timedelta(hours=48)
         # if difference > timedelta(minutes=5):
         if difference > timedelta(hours=47):
             consultant = db.lead_investment_consultants.find_one({"_id": ObjectId(lead.get('consultant_id', ""))})
