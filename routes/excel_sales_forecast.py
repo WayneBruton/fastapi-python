@@ -191,859 +191,859 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
     pledges = []
     trust_list = []
 
-    # try:
+    try:
         # interim_start = time.time()
-    pipeline = [
-        {
-            "$match": {
-                "trust.Category": {"$in": request['Category']}
-            }
-        },
-        {
-            "$project": {
-                "_id": 1,
-                "investor_acc_number": 1,
-                "investor_name": 1,
-                "investor_surname": 1,
-                # "pledges": 1,
-                "trust": {
-                    "$filter": {
-                        "input": "$trust",
-                        "as": "item",
-                        "cond": {"$in": ["$$item.Category", request['Category']]}
-                    }
-                },
-                "investments": {
-                    "$filter": {
-                        "input": "$investments",
-                        "as": "item",
-                        "cond": {"$in": ["$$item.Category", request['Category']]}
-                    }
-                },
-                "pledges": {
-                    "$filter": {
-                        "input": "$pledges",
-                        "as": "item",
-                        "cond": {"$in": ["$$item.Category", request['Category']]}
-                    }
-                },
+        pipeline = [
+            {
+                "$match": {
+                    "trust.Category": {"$in": request['Category']}
+                }
+            },
+            {
+                "$project": {
+                    "_id": 1,
+                    "investor_acc_number": 1,
+                    "investor_name": 1,
+                    "investor_surname": 1,
+                    # "pledges": 1,
+                    "trust": {
+                        "$filter": {
+                            "input": "$trust",
+                            "as": "item",
+                            "cond": {"$in": ["$$item.Category", request['Category']]}
+                        }
+                    },
+                    "investments": {
+                        "$filter": {
+                            "input": "$investments",
+                            "as": "item",
+                            "cond": {"$in": ["$$item.Category", request['Category']]}
+                        }
+                    },
+                    "pledges": {
+                        "$filter": {
+                            "input": "$pledges",
+                            "as": "item",
+                            "cond": {"$in": ["$$item.Category", request['Category']]}
+                        }
+                    },
 
+                }
+            },
+            {
+                "$match": {
+                    "trust": {"$ne": []}
+                }
             }
-        },
-        {
-            "$match": {
-                "trust": {"$ne": []}
-            }
+        ]
+        # query_start = time.time()
+        result = {
+            "investor_list": list(db.investors.aggregate(pipeline)),
+            "opportunities_list": list(db.opportunities.find({"Category": {"$in": request['Category']}})),
+            "sales_parameters_list": list(db.salesParameters.find({"Development": {"$in": request['Category']}})),
+            "rollovers_list": list(db.investorRollovers.find({"Category": {"$in": request['Category']}})),
+            "rates_list": list(db.rates.find({})),
+            "unallocated_investments_list": list(
+                db.unallocated_investments.find({"Category": {"$in": request['Category']}})),
+            "portal_choice": list(db.investorRolloversPortal.find({})),
+
+            "sales_processed": list(db.sales_processed.find({"development": {"$in": request['Category']}},
+                                                            {'_id': 0, 'opportunity_code': 1,
+                                                             'opportunity_bond_registration': 1,
+                                                             'opportunity_transfer_fees': 1}))
         }
-    ]
-    # query_start = time.time()
-    result = {
-        "investor_list": list(db.investors.aggregate(pipeline)),
-        "opportunities_list": list(db.opportunities.find({"Category": {"$in": request['Category']}})),
-        "sales_parameters_list": list(db.salesParameters.find({"Development": {"$in": request['Category']}})),
-        "rollovers_list": list(db.investorRollovers.find({"Category": {"$in": request['Category']}})),
-        "rates_list": list(db.rates.find({})),
-        "unallocated_investments_list": list(
-            db.unallocated_investments.find({"Category": {"$in": request['Category']}})),
-        "portal_choice": list(db.investorRolloversPortal.find({})),
 
-        "sales_processed": list(db.sales_processed.find({"development": {"$in": request['Category']}},
-                                                        {'_id': 0, 'opportunity_code': 1,
-                                                         'opportunity_bond_registration': 1,
-                                                         'opportunity_transfer_fees': 1}))
-    }
+        investor_list = result['investor_list']
+        opportunities_list = result['opportunities_list']
+        sales_parameters_list = result['sales_parameters_list']
+        rollovers_list = result['rollovers_list']
+        rates_list = result['rates_list']
+        unallocated_investments_list = result['unallocated_investments_list']
+        portal_choice = result['portal_choice']
+        sales_processed = result['sales_processed']
+        # using list comprehension, filter out sales_processed where opportunity_bond_registration and
+        # opportunity_transfer_fees do not exist
+        sales_processed = [sale for sale in sales_processed if
+                           'opportunity_bond_registration' in sale and 'opportunity_transfer_fees' in sale]
 
-    investor_list = result['investor_list']
-    opportunities_list = result['opportunities_list']
-    sales_parameters_list = result['sales_parameters_list']
-    rollovers_list = result['rollovers_list']
-    rates_list = result['rates_list']
-    unallocated_investments_list = result['unallocated_investments_list']
-    portal_choice = result['portal_choice']
-    sales_processed = result['sales_processed']
-    # using list comprehension, filter out sales_processed where opportunity_bond_registration and
-    # opportunity_transfer_fees do not exist
-    sales_processed = [sale for sale in sales_processed if
-                       'opportunity_bond_registration' in sale and 'opportunity_transfer_fees' in sale]
+        # interim_end = time.time()
+        # print("interim_end - interim_start", interim_end - interim_start)
 
-    # interim_end = time.time()
-    # print("interim_end - interim_start", interim_end - interim_start)
+        for investor in investor_list:
 
-    for investor in investor_list:
+            investor['id'] = str(investor['_id'])
+            del investor['_id']
 
-        investor['id'] = str(investor['_id'])
-        del investor['_id']
+            # CREATE INSERT DICT TO INSERT INTO RELEVANT LISTS
 
-        # CREATE INSERT DICT TO INSERT INTO RELEVANT LISTS
+            if len(investor['pledges']):
+                for pledge in investor['pledges']:
+                    insert = {
+                        'id': investor['id'],
+                        'investor_surname': investor['investor_surname'],
+                        'investor_name': investor['investor_name'],
+                        'investor_acc_number': investor['investor_acc_number'],
+                    }
+                    for item in pledge:
+                        insert[item] = pledge[item]
+                    if 'link' in insert:
+                        del insert['link']
+                    pledges.append(insert)
+            # Do the same for investments
 
-        if len(investor['pledges']):
-            for pledge in investor['pledges']:
-                insert = {
-                    'id': investor['id'],
-                    'investor_surname': investor['investor_surname'],
-                    'investor_name': investor['investor_name'],
-                    'investor_acc_number': investor['investor_acc_number'],
-                }
-                for item in pledge:
-                    insert[item] = pledge[item]
-                if 'link' in insert:
-                    del insert['link']
-                pledges.append(insert)
-        # Do the same for investments
+            if len(investor['investments']):
+                for investment in investor['investments']:
+                    insert = {
+                        'id': investor['id'],
+                        'investor_surname': investor['investor_surname'],
+                        'investor_name': investor['investor_name'],
+                        'investor_acc_number': investor['investor_acc_number'],
+                    }
+                    for item in investment:
+                        insert[item] = investment[item]
+                    investments.append(insert)
+            # Do the same for trust
+            if len(investor['trust']):
+                for trust_item in investor['trust']:
+                    insert = {
+                        'id': investor['id'],
+                        'investor_surname': investor['investor_surname'],
+                        'investor_name': investor['investor_name'],
+                        'investor_acc_number': investor['investor_acc_number'],
+                    }
+                    for item in trust_item:
+                        insert[item] = trust_item[item]
+                    trust_list.append(insert)
 
-        if len(investor['investments']):
-            for investment in investor['investments']:
-                insert = {
-                    'id': investor['id'],
-                    'investor_surname': investor['investor_surname'],
-                    'investor_name': investor['investor_name'],
-                    'investor_acc_number': investor['investor_acc_number'],
-                }
-                for item in investment:
-                    insert[item] = investment[item]
-                investments.append(insert)
-        # Do the same for trust
-        if len(investor['trust']):
-            for trust_item in investor['trust']:
-                insert = {
-                    'id': investor['id'],
-                    'investor_surname': investor['investor_surname'],
-                    'investor_name': investor['investor_name'],
-                    'investor_acc_number': investor['investor_acc_number'],
-                }
-                for item in trust_item:
-                    insert[item] = trust_item[item]
-                trust_list.append(insert)
+        for opportunity in opportunities_list:
+            opportunity['id'] = str(opportunity['_id'])
+            del opportunity['_id']
+            if opportunity["opportunity_final_transfer_date"] != "":
+                tfr_date = datetime.strptime(opportunity["opportunity_final_transfer_date"].replace("-", "/"),
+                                             "%Y/%m/%d")
+                report_date = datetime.strptime(request['date'].replace("-", "/"), "%Y/%m/%d")
 
-    for opportunity in opportunities_list:
-        opportunity['id'] = str(opportunity['_id'])
-        del opportunity['_id']
-        if opportunity["opportunity_final_transfer_date"] != "":
-            tfr_date = datetime.strptime(opportunity["opportunity_final_transfer_date"].replace("-", "/"),
-                                         "%Y/%m/%d")
-            report_date = datetime.strptime(request['date'].replace("-", "/"), "%Y/%m/%d")
-
-            if tfr_date > report_date:
-                opportunity["opportunity_transferred"] = False
+                if tfr_date > report_date:
+                    opportunity["opportunity_transferred"] = False
+                else:
+                    opportunity["opportunity_transferred"] = True
             else:
-                opportunity["opportunity_transferred"] = True
-        else:
-            opportunity["opportunity_transferred"] = False
-            if 'opportunity_end_date' in opportunity:
-                if opportunity['opportunity_end_date'] != '':
-                    opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_end_date']
+                opportunity["opportunity_transferred"] = False
+                if 'opportunity_end_date' in opportunity:
+                    if opportunity['opportunity_end_date'] != '':
+                        opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_end_date']
+                    else:
+                        opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_occupation_date']
                 else:
                     opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_occupation_date']
-            else:
-                opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_occupation_date']
 
-        if not opportunity["opportunity_sold"]:
-            opportunity["opportunity_transferred"] = False
+            if not opportunity["opportunity_sold"]:
+                opportunity["opportunity_transferred"] = False
 
-    for sales_parameter in sales_parameters_list:
-        sales_parameter['id'] = str(sales_parameter['_id'])
-        del sales_parameter['_id']
+        for sales_parameter in sales_parameters_list:
+            sales_parameter['id'] = str(sales_parameter['_id'])
+            del sales_parameter['_id']
 
-    for rollover in rollovers_list:
-        rollover['id'] = str(rollover['_id'])
-        del rollover['_id']
+        for rollover in rollovers_list:
+            rollover['id'] = str(rollover['_id'])
+            del rollover['_id']
 
-    for rate in rates_list:
-        del rate['_id']
-    # replace '/' with '-' in Efective_date
-    for rate in rates_list:
-        rate['Efective_date'] = rate['Efective_date'].replace('/', '-')
-        rate['rate'] = float(rate['rate'])
-    # sort rates by Efective_date converted to datetime in descending order
-    rates_list = sorted(rates_list, key=lambda k: datetime.strptime(k['Efective_date'], '%Y-%m-%d'), reverse=True)
+        for rate in rates_list:
+            del rate['_id']
+        # replace '/' with '-' in Efective_date
+        for rate in rates_list:
+            rate['Efective_date'] = rate['Efective_date'].replace('/', '-')
+            rate['rate'] = float(rate['rate'])
+        # sort rates by Efective_date converted to datetime in descending order
+        rates_list = sorted(rates_list, key=lambda k: datetime.strptime(k['Efective_date'], '%Y-%m-%d'), reverse=True)
 
-    # Produce an interim list of investors and investor details
-    interim_investors_list = []
+        # Produce an interim list of investors and investor details
+        interim_investors_list = []
 
-    for trust in trust_list:
-        # if trust['investor_acc_number'] = 'ZCON01' then print trust
+        for trust in trust_list:
+            # if trust['investor_acc_number'] = 'ZCON01' then print trust
 
-        # If trust['project_interest_rate'] does not exist, create it and set it to 0.00
-        if 'project_interest_rate' not in trust:
-            trust['project_interest_rate'] = 0.00
-        # If trust['planned_release_date'] does not exist, create it and set it to ""
-        if 'planned_release_date' not in trust:
-            trust['planned_release_date'] = ""
-        # If trust['investment_interest_rate'] does not exist, create it and set it to 0.00
-        if 'investment_interest_rate' not in trust:
-            trust['investment_interest_rate'] = 15.00
+            # If trust['project_interest_rate'] does not exist, create it and set it to 0.00
+            if 'project_interest_rate' not in trust:
+                trust['project_interest_rate'] = 0.00
+            # If trust['planned_release_date'] does not exist, create it and set it to ""
+            if 'planned_release_date' not in trust:
+                trust['planned_release_date'] = ""
+            # If trust['investment_interest_rate'] does not exist, create it and set it to 0.00
+            if 'investment_interest_rate' not in trust:
+                trust['investment_interest_rate'] = 15.00
 
-        insert = {"investor_surname": trust["investor_surname"], "investor_name": trust["investor_name"],
-                  "investor_acc_number": trust["investor_acc_number"],
-                  "investment_amount": float(trust["investment_amount"]), "deposit_date": trust["deposit_date"],
-                  "release_date": trust["release_date"], "opportunity_code": trust["opportunity_code"],
-                  "Category": trust["Category"], "investment_number": trust["investment_number"],
-                  "project_interest_rate": trust["project_interest_rate"],
-                  "planned_release_date": trust["planned_release_date"],
-                  "trust_interest": 0.00,
-                  "investment_interest_rate": trust['investment_interest_rate'], "investment_end_date": "",
-                  }
-        # Filter investments by investor_acc_number, opportunity_code and investment_number
-
-        for investment in investments:
-            # if investment['investment_number'] does not exist, create it and set it to 0
-            if 'investment_number' not in investment:
-                investment['investment_number'] = 0
-
-        final_investment = [investment for investment in investments if
-                            investment['investor_acc_number'] == trust['investor_acc_number'] and
-                            investment['opportunity_code'] == trust['opportunity_code']
-                            and
-                            investment['investment_number'] == trust['investment_number']
-                            ]
-
-        if len(final_investment):
-            insert['investment_interest_rate'] = final_investment[0]["investment_interest_rate"]
-            insert['investment_end_date'] = final_investment[0]["end_date"]
-
-            if 'early_release' in final_investment[0]:
-                insert['early_release'] = final_investment[0]['early_release']
-            else:
-                insert['early_release'] = False
-
-        interim_investors_list.append(insert)
-
-    # in interim_investors_list, in deposit_date, replace '-' with '/' using list comprehension
-
-    interim_investors_list = [investor for investor in interim_investors_list if
-                              str(investor['deposit_date']).replace('/', '-')]
-
-    request['date'] = request['date'].replace('-', '/')
-
-    for investor in interim_investors_list:
-        investor['deposit_date'] = str(investor['deposit_date'])
-        investor['deposit_date'] = investor['deposit_date'].replace('-', '/')
-
-    # Filter interim investor list where deposit_date as date is less than or equal to the request['date'] as date
-    interim_investors_list = [investor for investor in interim_investors_list if
-                              datetime.strptime(investor['deposit_date'], '%Y/%m/%d') <=
-                              datetime.strptime(request['date'], '%Y/%m/%d')]
-
-    final_investors_list = []
-
-    for item in opportunities_list:
-
-        # Create new list from interim_investors_list where opportunity_code matches item['opportunity_code']
-        # using list comprehension
-        interim_investors = [investor for investor in interim_investors_list if
-                             investor['opportunity_code'] == item['opportunity_code']]
-
-        item['opportunity_sale_price'] = item[
-            'opportunity_sale_price'] if 'opportunity_sale_price' in item else 0
-        if len(interim_investors) == 0:
-            # if item['opportunity_end_date'] exits then set it to item['opportunity_end_date'] else set it to ""
-            item['opportunity_end_date'] = item['opportunity_end_date'] if 'opportunity_end_date' in item else ""
-
-            insert = {"investor_surname": "UnAllocated", "investor_name": "",
-                      "investor_acc_number": "ZZUN01",
-                      "investment_amount": 0, "deposit_date": "",
-                      "release_date": "", "opportunity_code": item['opportunity_code'],
-                      "investment_number": 0,
+            insert = {"investor_surname": trust["investor_surname"], "investor_name": trust["investor_name"],
+                      "investor_acc_number": trust["investor_acc_number"],
+                      "investment_amount": float(trust["investment_amount"]), "deposit_date": trust["deposit_date"],
+                      "release_date": trust["release_date"], "opportunity_code": trust["opportunity_code"],
+                      "Category": trust["Category"], "investment_number": trust["investment_number"],
                       "project_interest_rate": trust["project_interest_rate"],
                       "planned_release_date": trust["planned_release_date"],
                       "trust_interest": 0.00,
-                      "investment_interest_rate": trust["project_interest_rate"], "investment_end_date": "",
-                      "Category": item['Category'],
-                      "opportunity_sold": item['opportunity_sold'],
-                      "opportunity_end_date": item['opportunity_end_date'],
-                      "opportunity_final_transfer_date": item['opportunity_final_transfer_date'],
-                      "opportunity_amount_required": float(item['opportunity_amount_required']),
-                      "opportunity_sale_price": float(item['opportunity_sale_price']),
-                      "investment_interest_today": 0, "released_interest_today": 0, "trust_interest_total": 0,
-                      "released_interest_total": 0,
-                      "opportunity_transferred": item["opportunity_transferred"],
-                      "interest_to_date_still_to_be_raised": 0, "interest_total_still_to_be_raised": 0,
-                      'early_release': False
+                      "investment_interest_rate": trust['investment_interest_rate'], "investment_end_date": "",
                       }
+            # Filter investments by investor_acc_number, opportunity_code and investment_number
 
-            final_investors_list.append(insert)
-        else:
-            # if item['opportunity_end_date'] exits then set it to item['opportunity_end_date'] else set it to ""
-            item['opportunity_end_date'] = item['opportunity_end_date'] if 'opportunity_end_date' in item else ""
+            for investment in investments:
+                # if investment['investment_number'] does not exist, create it and set it to 0
+                if 'investment_number' not in investment:
+                    investment['investment_number'] = 0
 
-            # if item['opportunity_final_transfer_date'] exits then set it to item[
-            # 'opportunity_final_transfer_date'] else set it to item['opportunity_end_date']
-            item['opportunity_final_transfer_date'] = item[
-                'opportunity_final_transfer_date'] if 'opportunity_final_transfer_date' in item else item[
-                'opportunity_end_date']
+            final_investment = [investment for investment in investments if
+                                investment['investor_acc_number'] == trust['investor_acc_number'] and
+                                investment['opportunity_code'] == trust['opportunity_code']
+                                and
+                                investment['investment_number'] == trust['investment_number']
+                                ]
 
-            for invest in interim_investors:
-                invest["opportunity_sold"] = item['opportunity_sold']
-                invest["opportunity_end_date"] = item['opportunity_end_date']
-                invest["opportunity_final_transfer_date"] = item['opportunity_final_transfer_date']
-                invest["opportunity_amount_required"] = float(item['opportunity_amount_required'])
-                invest["opportunity_sale_price"] = float(item['opportunity_sale_price'])
-                invest['opportunity_transferred'] = item["opportunity_transferred"]
-                invest["interest_to_date_still_to_be_raised"] = 0
-                invest["interest_total_still_to_be_raised"] = 0
+            if len(final_investment):
+                insert['investment_interest_rate'] = final_investment[0]["investment_interest_rate"]
+                insert['investment_end_date'] = final_investment[0]["end_date"]
 
-                final_investors_list.append(invest)
+                if 'early_release' in final_investment[0]:
+                    insert['early_release'] = final_investment[0]['early_release']
+                else:
+                    insert['early_release'] = False
 
-    # Convert Rates_list Efective_date to datetime
+            interim_investors_list.append(insert)
 
-    for rate in rates_list:
-        rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace('/', '-'), '%Y-%m-%d')
-    # order rates_list by Efective_date in descending order
-    rates_list = sorted(rates_list, key=lambda k: k['Efective_date'], reverse=True)
+        # in interim_investors_list, in deposit_date, replace '-' with '/' using list comprehension
 
-    for index, investment in enumerate(final_investors_list):
-        # If investment["investment_interest_rate"] is an empty string then set it to 15.5
-        investment["investment_interest_rate"] = investment["investment_interest_rate"] \
-            if investment["investment_interest_rate"] != "" else 15.5
+        interim_investors_list = [investor for investor in interim_investors_list if
+                                  str(investor['deposit_date']).replace('/', '-')]
 
-        # if investment["opportunity_code"] is equal to "HFB313" and the investment['investor_acc_number'] is
-        # equal to "ZCON01" then set investment["release_date"] equal to investment['deposit_date']
-        if investment["opportunity_code"] == "HFB313" and investment['investor_acc_number'] == "ZCON01":
-            investment["release_date"] = investment['deposit_date']
+        request['date'] = request['date'].replace('-', '/')
 
-        for sales_parameter in sales_parameters_list:
-            for item in sales_parameter:
-                if item == "Description":
-                    investment[sales_parameter[item]] = sales_parameter['rate']
+        for investor in interim_investors_list:
+            investor['deposit_date'] = str(investor['deposit_date'])
+            investor['deposit_date'] = investor['deposit_date'].replace('-', '/')
 
-        # If investment["opportunity_final_transfer_date"] if investment['opportunity_end_date'] does not exist
-        # then set it to investment['opportunity_occupation_date']
-        investment['opportunity_end_date'] = investment[
-            'opportunity_end_date'] if 'opportunity_end_date' in investment else investment[
-            'opportunity_occupation_date']
+        # Filter interim investor list where deposit_date as date is less than or equal to the request['date'] as date
+        interim_investors_list = [investor for investor in interim_investors_list if
+                                  datetime.strptime(investor['deposit_date'], '%Y/%m/%d') <=
+                                  datetime.strptime(request['date'], '%Y/%m/%d')]
 
-        if investment["opportunity_final_transfer_date"] == "":
-            if investment["investment_end_date"] != "":
-                investment["opportunity_final_transfer_date"] = investment["investment_end_date"]
+        final_investors_list = []
+
+        for item in opportunities_list:
+
+            # Create new list from interim_investors_list where opportunity_code matches item['opportunity_code']
+            # using list comprehension
+            interim_investors = [investor for investor in interim_investors_list if
+                                 investor['opportunity_code'] == item['opportunity_code']]
+
+            item['opportunity_sale_price'] = item[
+                'opportunity_sale_price'] if 'opportunity_sale_price' in item else 0
+            if len(interim_investors) == 0:
+                # if item['opportunity_end_date'] exits then set it to item['opportunity_end_date'] else set it to ""
+                item['opportunity_end_date'] = item['opportunity_end_date'] if 'opportunity_end_date' in item else ""
+
+                insert = {"investor_surname": "UnAllocated", "investor_name": "",
+                          "investor_acc_number": "ZZUN01",
+                          "investment_amount": 0, "deposit_date": "",
+                          "release_date": "", "opportunity_code": item['opportunity_code'],
+                          "investment_number": 0,
+                          "project_interest_rate": trust["project_interest_rate"],
+                          "planned_release_date": trust["planned_release_date"],
+                          "trust_interest": 0.00,
+                          "investment_interest_rate": trust["project_interest_rate"], "investment_end_date": "",
+                          "Category": item['Category'],
+                          "opportunity_sold": item['opportunity_sold'],
+                          "opportunity_end_date": item['opportunity_end_date'],
+                          "opportunity_final_transfer_date": item['opportunity_final_transfer_date'],
+                          "opportunity_amount_required": float(item['opportunity_amount_required']),
+                          "opportunity_sale_price": float(item['opportunity_sale_price']),
+                          "investment_interest_today": 0, "released_interest_today": 0, "trust_interest_total": 0,
+                          "released_interest_total": 0,
+                          "opportunity_transferred": item["opportunity_transferred"],
+                          "interest_to_date_still_to_be_raised": 0, "interest_total_still_to_be_raised": 0,
+                          'early_release': False
+                          }
+
+                final_investors_list.append(insert)
             else:
-                investment["opportunity_final_transfer_date"] = investment["opportunity_occupation_date"]
+                # if item['opportunity_end_date'] exits then set it to item['opportunity_end_date'] else set it to ""
+                item['opportunity_end_date'] = item['opportunity_end_date'] if 'opportunity_end_date' in item else ""
 
-        # if investment["release_date"] == "" then investment["planned_release_date"] = deposit_date + 30 days
-        # else investment["planned_release_date"] = release_date
-        if investment["release_date"] == "" and investment['investor_acc_number'] != "ZZUN01":
-            # in investment["deposit_date"] replace '-' with '/'
-            investment["deposit_date"] = investment["deposit_date"].replace('-', '/')
+                # if item['opportunity_final_transfer_date'] exits then set it to item[
+                # 'opportunity_final_transfer_date'] else set it to item['opportunity_end_date']
+                item['opportunity_final_transfer_date'] = item[
+                    'opportunity_final_transfer_date'] if 'opportunity_final_transfer_date' in item else item[
+                    'opportunity_end_date']
 
-            # planned_release_date exists in investment then investment["planned_release_date"] = deposit_date +
-            # 30 days else investment["planned_release_date"] = ""
-            if "planned_release_date" in investment and investment["planned_release_date"] != "":
-                investment["planned_release_date"] = \
-                    str(datetime.strptime(investment["planned_release_date"].replace('-', '/'),
-                                          '%Y/%m/%d')).split(" ")[0]
+                for invest in interim_investors:
+                    invest["opportunity_sold"] = item['opportunity_sold']
+                    invest["opportunity_end_date"] = item['opportunity_end_date']
+                    invest["opportunity_final_transfer_date"] = item['opportunity_final_transfer_date']
+                    invest["opportunity_amount_required"] = float(item['opportunity_amount_required'])
+                    invest["opportunity_sale_price"] = float(item['opportunity_sale_price'])
+                    invest['opportunity_transferred'] = item["opportunity_transferred"]
+                    invest["interest_to_date_still_to_be_raised"] = 0
+                    invest["interest_total_still_to_be_raised"] = 0
+
+                    final_investors_list.append(invest)
+
+        # Convert Rates_list Efective_date to datetime
+
+        for rate in rates_list:
+            rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace('/', '-'), '%Y-%m-%d')
+        # order rates_list by Efective_date in descending order
+        rates_list = sorted(rates_list, key=lambda k: k['Efective_date'], reverse=True)
+
+        for index, investment in enumerate(final_investors_list):
+            # If investment["investment_interest_rate"] is an empty string then set it to 15.5
+            investment["investment_interest_rate"] = investment["investment_interest_rate"] \
+                if investment["investment_interest_rate"] != "" else 15.5
+
+            # if investment["opportunity_code"] is equal to "HFB313" and the investment['investor_acc_number'] is
+            # equal to "ZCON01" then set investment["release_date"] equal to investment['deposit_date']
+            if investment["opportunity_code"] == "HFB313" and investment['investor_acc_number'] == "ZCON01":
+                investment["release_date"] = investment['deposit_date']
+
+            for sales_parameter in sales_parameters_list:
+                for item in sales_parameter:
+                    if item == "Description":
+                        investment[sales_parameter[item]] = sales_parameter['rate']
+
+            # If investment["opportunity_final_transfer_date"] if investment['opportunity_end_date'] does not exist
+            # then set it to investment['opportunity_occupation_date']
+            investment['opportunity_end_date'] = investment[
+                'opportunity_end_date'] if 'opportunity_end_date' in investment else investment[
+                'opportunity_occupation_date']
+
+            if investment["opportunity_final_transfer_date"] == "":
+                if investment["investment_end_date"] != "":
+                    investment["opportunity_final_transfer_date"] = investment["investment_end_date"]
+                else:
+                    investment["opportunity_final_transfer_date"] = investment["opportunity_occupation_date"]
+
+            # if investment["release_date"] == "" then investment["planned_release_date"] = deposit_date + 30 days
+            # else investment["planned_release_date"] = release_date
+            if investment["release_date"] == "" and investment['investor_acc_number'] != "ZZUN01":
+                # in investment["deposit_date"] replace '-' with '/'
+                investment["deposit_date"] = investment["deposit_date"].replace('-', '/')
+
+                # planned_release_date exists in investment then investment["planned_release_date"] = deposit_date +
+                # 30 days else investment["planned_release_date"] = ""
+                if "planned_release_date" in investment and investment["planned_release_date"] != "":
+                    investment["planned_release_date"] = \
+                        str(datetime.strptime(investment["planned_release_date"].replace('-', '/'),
+                                              '%Y/%m/%d')).split(" ")[0]
+                else:
+
+                    investment["planned_release_date"] = \
+                        str(datetime.strptime(investment["deposit_date"].replace('-', '/'),
+                                              '%Y/%m/%d') + timedelta(days=30)).split(
+                            " ")[
+                            0]
             else:
+                investment["planned_release_date"] = investment["release_date"]
+                # investment["planned_release_date"] = ""
 
-                investment["planned_release_date"] = \
-                    str(datetime.strptime(investment["deposit_date"].replace('-', '/'),
-                                          '%Y/%m/%d') + timedelta(days=30)).split(
-                        " ")[
-                        0]
-        else:
-            investment["planned_release_date"] = investment["release_date"]
-            # investment["planned_release_date"] = ""
+            if investment["investor_acc_number"] != "ZZUN01":
+                deposit_date = investment["deposit_date"].replace('-', '/')
+                deposit_date = deposit_date.split(" ")[0]
+                deposit_date = datetime.strptime(deposit_date, '%Y/%m/%d')
 
-        if investment["investor_acc_number"] != "ZZUN01":
-            deposit_date = investment["deposit_date"].replace('-', '/')
-            deposit_date = deposit_date.split(" ")[0]
-            deposit_date = datetime.strptime(deposit_date, '%Y/%m/%d')
+                # if investment["investment_end_date"] != "" replace '/' with '-' in investment[
+                # "investment_end_date"] and do the exact same for investment["opportunity_final_transfer_date"]
 
-            # if investment["investment_end_date"] != "" replace '/' with '-' in investment[
-            # "investment_end_date"] and do the exact same for investment["opportunity_final_transfer_date"]
+                if investment["investment_end_date"] != "":
+                    investment["investment_end_date"] = investment["investment_end_date"].replace('/', '-')
+                    investment["opportunity_final_transfer_date"] = investment[
+                        "opportunity_final_transfer_date"].replace(
+                        '/', '-')
 
-            if investment["investment_end_date"] != "":
-                investment["investment_end_date"] = investment["investment_end_date"].replace('/', '-')
-                investment["opportunity_final_transfer_date"] = investment[
-                    "opportunity_final_transfer_date"].replace(
-                    '/', '-')
+                planned_release_date = investment["planned_release_date"].replace('-', '/')
+                planned_release_date = planned_release_date.split(" ")[0]
+                planned_release_date = datetime.strptime(planned_release_date, '%Y/%m/%d')
 
-            planned_release_date = investment["planned_release_date"].replace('-', '/')
-            planned_release_date = planned_release_date.split(" ")[0]
-            planned_release_date = datetime.strptime(planned_release_date, '%Y/%m/%d')
+                opportunity_final_transfer_date = investment["opportunity_final_transfer_date"].replace('-', '/')
+                opportunity_final_transfer_date = opportunity_final_transfer_date.split(" ")[0]
+                opportunity_final_transfer_date = datetime.strptime(opportunity_final_transfer_date, '%Y/%m/%d')
 
-            opportunity_final_transfer_date = investment["opportunity_final_transfer_date"].replace('-', '/')
-            opportunity_final_transfer_date = opportunity_final_transfer_date.split(" ")[0]
-            opportunity_final_transfer_date = datetime.strptime(opportunity_final_transfer_date, '%Y/%m/%d')
-
-            # Add a day to deposit_date
-            deposit_date = deposit_date + timedelta(days=1)
-
-            investment_interest_total = 0
-            released_interest_total = 0
-
-            while deposit_date <= planned_release_date:
-                # Filter rates_list where Efective_date is less than or equal to deposit_date
-                # using list comprehension
-                interim_rate = float(
-                    [rate for rate in rates_list if rate['Efective_date'] <= deposit_date][0]['rate'])
-                investment_interest_total = investment_interest_total + (
-                        float(investment["investment_amount"]) * (interim_rate - 2.75) / 100 / 365)
+                # Add a day to deposit_date
                 deposit_date = deposit_date + timedelta(days=1)
-            investment["trust_interest_total"] = round(investment_interest_total, 2)
 
-            # Days between planned_release_date and opportunity_final_transfer_date
-            days_between = (opportunity_final_transfer_date - planned_release_date).days
+                investment_interest_total = 0
+                released_interest_total = 0
 
-            released_interest_total = released_interest_total + (float(investment["investment_amount"]) * float(
-                investment["investment_interest_rate"]) / 100 / 365 * days_between)
-            investment["released_interest_total"] = round(released_interest_total, 2)
+                while deposit_date <= planned_release_date:
+                    # Filter rates_list where Efective_date is less than or equal to deposit_date
+                    # using list comprehension
+                    interim_rate = float(
+                        [rate for rate in rates_list if rate['Efective_date'] <= deposit_date][0]['rate'])
+                    investment_interest_total = investment_interest_total + (
+                            float(investment["investment_amount"]) * (interim_rate - 2.75) / 100 / 365)
+                    deposit_date = deposit_date + timedelta(days=1)
+                investment["trust_interest_total"] = round(investment_interest_total, 2)
 
-            investment_interest_today = 0
-            released_interest_today = 0
+                # Days between planned_release_date and opportunity_final_transfer_date
+                days_between = (opportunity_final_transfer_date - planned_release_date).days
 
-            # Days between deposit_date and today
-            # DO TO DATE CALCS
-            deposit_date = investment["deposit_date"].replace('-', '/')
-            deposit_date = deposit_date.split(" ")[0]
-            deposit_date = datetime.strptime(deposit_date, '%Y/%m/%d')
-            planned_release_date = investment["planned_release_date"].replace('-', '/')
-            planned_release_date = planned_release_date.split(" ")[0]
-            planned_release_date = datetime.strptime(planned_release_date, '%Y/%m/%d')
+                released_interest_total = released_interest_total + (float(investment["investment_amount"]) * float(
+                    investment["investment_interest_rate"]) / 100 / 365 * days_between)
+                investment["released_interest_total"] = round(released_interest_total, 2)
 
-            opportunity_final_transfer_date = investment["opportunity_final_transfer_date"].replace('-', '/')
-            opportunity_final_transfer_date = opportunity_final_transfer_date.split(" ")[0]
-            opportunity_final_transfer_date = datetime.strptime(opportunity_final_transfer_date, '%Y/%m/%d')
+                investment_interest_today = 0
+                released_interest_today = 0
 
-            today_released = datetime.strptime(request['date'], '%Y/%m/%d')
-            today_transfer = datetime.strptime(request['date'], '%Y/%m/%d')
-            if planned_release_date < today_released:
-                today_released = planned_release_date
-            if opportunity_final_transfer_date < today_transfer:
-                today_transfer = opportunity_final_transfer_date
+                # Days between deposit_date and today
+                # DO TO DATE CALCS
+                deposit_date = investment["deposit_date"].replace('-', '/')
+                deposit_date = deposit_date.split(" ")[0]
+                deposit_date = datetime.strptime(deposit_date, '%Y/%m/%d')
+                planned_release_date = investment["planned_release_date"].replace('-', '/')
+                planned_release_date = planned_release_date.split(" ")[0]
+                planned_release_date = datetime.strptime(planned_release_date, '%Y/%m/%d')
 
-            # Add a day to deposit_date
-            deposit_date = deposit_date + timedelta(days=1)
+                opportunity_final_transfer_date = investment["opportunity_final_transfer_date"].replace('-', '/')
+                opportunity_final_transfer_date = opportunity_final_transfer_date.split(" ")[0]
+                opportunity_final_transfer_date = datetime.strptime(opportunity_final_transfer_date, '%Y/%m/%d')
 
-            while deposit_date <= today_released:
-                # Filter rates_list where Efective_date is less than or equal to deposit_date
-                # using list comprehension
+                today_released = datetime.strptime(request['date'], '%Y/%m/%d')
+                today_transfer = datetime.strptime(request['date'], '%Y/%m/%d')
+                if planned_release_date < today_released:
+                    today_released = planned_release_date
+                if opportunity_final_transfer_date < today_transfer:
+                    today_transfer = opportunity_final_transfer_date
 
-                interim_rate = float(
-                    [rate for rate in rates_list if rate['Efective_date'] <= deposit_date][0]['rate'])
-
-                investment_interest_today = investment_interest_today + (
-                        float(investment["investment_amount"]) * interim_rate / 100 / 365)
-
+                # Add a day to deposit_date
                 deposit_date = deposit_date + timedelta(days=1)
-            investment["investment_interest_today"] = round(investment_interest_today, 2)
 
-            # Days between planned_release_date and opportunity_final_transfer_date
-            days_between = (today_transfer - planned_release_date).days
+                while deposit_date <= today_released:
+                    # Filter rates_list where Efective_date is less than or equal to deposit_date
+                    # using list comprehension
 
-            released_interest_today = released_interest_today + (float(investment["investment_amount"]) * float(
-                investment["investment_interest_rate"]) / 100 / 365 * days_between)
-            investment["released_interest_today"] = round(released_interest_today, 2)
+                    interim_rate = float(
+                        [rate for rate in rates_list if rate['Efective_date'] <= deposit_date][0]['rate'])
 
-    for investment in final_investors_list:
-        filtered_rollovers = [rollover for rollover in rollovers_list if
-                              rollover['investor_acc_number'] == investment['investor_acc_number']
-                              and rollover['investment_number'] == investment['investment_number']
-                              and rollover['opportunity_code'] == investment['opportunity_code']]
-
-        if len(filtered_rollovers) > 0:
-            investment['rollover_amount'] = filtered_rollovers[0]['rollover_amount']
-            investment['rollover_date'] = filtered_rollovers[0]['end_date']
-        else:
-            investment['rollover_amount'] = 0
-            investment['rollover_date'] = ""
-
-    # LOOP THROUGH AND FILL OPPORTUNITIES
-    report_date = datetime.strptime(request['date'], '%Y/%m/%d')
-
-    for opportunity in opportunities_list:
-
-        opportunity['opportunity_end_date'] = opportunity['opportunity_end_date'].replace('/', '-')
-        # opportunity['opportunity_end_date'] = opportunity['opportunity_end_date'].split(" ")[0]
-        opportunity['opportunity_end_date'] = datetime.strptime(opportunity['opportunity_end_date'], '%Y-%m-%d')
-        # if opportunity_final_transfer_date in opportunity and if it is not empty then do as above
-        if opportunity['opportunity_final_transfer_date'] != "":
-            opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_final_transfer_date'].replace(
-                '/', '-')
-            # opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_final_transfer_date'].split(
-            #     " ")[0]
-            opportunity['opportunity_final_transfer_date'] = datetime.strptime(
-                opportunity['opportunity_final_transfer_date'], '%Y-%m-%d')
-
-            if opportunity['opportunity_end_date'] > report_date or opportunity[
-                'opportunity_final_transfer_date'] > report_date:
-                opportunity['opportunity_transferred'] = False
-
-        # Filter final_investors_list where opportunity_code is equal to opportunity['opportunity_code']
-        # using list comprehension
-        filtered_investors = [investor for investor in final_investors_list if
-                              investor['opportunity_code'] == opportunity['opportunity_code']]
-
-        opportunity_required = float(opportunity['opportunity_amount_required'])
-
-        # sum the investment_amounts in filtered_investors list using list comprehension
-        opportunity_invested = sum(float(investor['investment_amount']) for investor in filtered_investors)
-        if 0 < opportunity_invested < opportunity_required:
-            insert = {"investor_surname": "UnAllocated", "investor_name": "",
-                      "investor_acc_number": "ZZUN01",
-                      "investment_amount": 0, "deposit_date": "",
-                      "release_date": "", "opportunity_code": opportunity['opportunity_code'],
-                      "investment_number": 0,
-                      "project_interest_rate": opportunity["opportunity_interest_rate"],
-                      "planned_release_date": "",
-                      "trust_interest": 0.00,
-                      "investment_interest_rate": opportunity["opportunity_interest_rate"],
-                      "investment_end_date": "", "Category": opportunity['Category'],
-                      "opportunity_sold": opportunity['opportunity_sold'],
-                      "opportunity_end_date": opportunity['opportunity_end_date'],
-                      "opportunity_final_transfer_date": opportunity['opportunity_final_transfer_date'],
-                      "opportunity_amount_required": float(opportunity['opportunity_amount_required']),
-                      "opportunity_sale_price": float(opportunity['opportunity_sale_price']),
-                      "investment_interest_today": 0, "released_interest_today": 0, "trust_interest_total": 0,
-                      "released_interest_total": 0,
-                      "opportunity_transferred": opportunity["opportunity_transferred"],
-                      "raising_commission": 0, "structuring_fee": 0, "commission": 0, "transfer_fees": 0,
-                      "bond_registration": 0, "trust_release_fee": 0, "unforseen": 0,
-                      "interest_to_date_still_to_be_raised": 0, "interest_total_still_to_be_raised": 0,
-                      "early_release": False
-                      }
-
-            final_investors_list.append(insert)
-
-    for investment in final_investors_list:
-
-        # filter sales_parameters_list where Development is equal to investment['Category'] using list comprehension
-
-        if investment['raising_commission'] == 0:
-            filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
-                                         sales_parameter['Development'] == investment['Category'] and
-                                         sales_parameter['Description'] == 'raising_commission']
-            investment['raising_commission'] = filtered_sales_parameters[0]['rate']
-        if investment['structuring_fee'] == 0:
-            filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
-                                         sales_parameter['Development'] == investment['Category'] and
-                                         sales_parameter['Description'] == 'structuring_fee']
-            investment['structuring_fee'] = filtered_sales_parameters[0]['rate']
-
-        if investment['commission'] == 0:
-            filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
-                                         sales_parameter['Development'] == investment['Category'] and
-                                         sales_parameter['Description'] == 'commission']
-            investment['commission'] = filtered_sales_parameters[0]['rate']
-        if investment['transfer_fees'] == 0:
-            filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
-                                         sales_parameter['Development'] == investment['Category'] and
-                                         sales_parameter['Description'] == 'transfer_fees']
-            investment['transfer_fees'] = filtered_sales_parameters[0]['rate']
-        if investment['bond_registration'] == 0:
-            filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
-                                         sales_parameter['Development'] == investment['Category'] and
-                                         sales_parameter['Description'] == 'bond_registration']
-            investment['bond_registration'] = filtered_sales_parameters[0]['rate']
-        if investment['trust_release_fee'] == 0:
-            filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
-                                         sales_parameter['Development'] == investment['Category'] and
-                                         sales_parameter['Description'] == 'trust_release_fee']
-            investment['trust_release_fee'] = filtered_sales_parameters[0]['rate']
-        if investment['unforseen'] == 0:
-            filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
-                                         sales_parameter['Development'] == investment['Category'] and
-                                         sales_parameter['Description'] == 'unforseen']
-            investment['unforseen'] = filtered_sales_parameters[0]['rate']
-
-    # if the investor_acc_number = "ZCAM01" and the opportunity_code = "HFA101" and the investment_amount =
-    # 400000.0 then filter this record out of final_investors_list
-
-    final_investors_list = [investor for investor in final_investors_list if
-                            not (investor['investor_acc_number'] == "ZCAM01" and investor[
-                                'opportunity_code'] == "HFA101" and investor['investment_amount'] == 400000.0)]
-
-    # if investor_acc_number = "ZJHO01" and opportunity_code = "HFA304" and investment_number = 1 then filter this
-    # record out of final_investors_list
-
-    final_investors_list = [investor for investor in final_investors_list if
-                            not (investor['investor_acc_number'] == "ZJHO01" and investor[
-                                'opportunity_code'] == "HFA304" and investor['investment_number'] == 1)]
-
-    final_investors_list = [investor for investor in final_investors_list if
-                            not (investor['investor_acc_number'] == "ZPJB01" and investor[
-                                'opportunity_code'] == "HFA205" and investor['investment_number'] == 1)]
-
-    final_investors_list = [investor for investor in final_investors_list if
-                            not (investor['investor_acc_number'] == "ZERA01" and investor[
-                                'opportunity_code'] == "EA205" and investor['investment_number'] == 3)]
-
-    final_investors_list = [investor for investor in final_investors_list if
-                            not (investor['investor_acc_number'] == "ZVOL01" and investor[
-                                'opportunity_code'] == "EA103" and investor['investment_number'] == 3)]
-
-    final_investors_list = [investor for investor in final_investors_list if
-                            not (investor['investor_acc_number'] == "ZLEW03" and investor[
-                                'opportunity_code'] == "EA205" and investor['investment_number'] == 1)]
-
-    # get unallocated_investments from mongo db where the request['Category'] is in the Category in the DB
-
-    for unallocated_investment in unallocated_investments_list:
-        unallocated_investment['id'] = str(unallocated_investment['_id'])
-        del unallocated_investment['_id']
-
-    # Filter unallocated_investments_list where deposit_date = "" using list comprehension
-    unallocated_investments_list = [unallocated_investment for unallocated_investment in
-                                    unallocated_investments_list if
-                                    unallocated_investment['deposit_date'] != ""]
-
-    for investor in final_investors_list:
-
-        # Filter unallocated_investments_list where opportunity_code is equal to investor['opportunity_code'] and
-        # investor_acc_number is equal to 'ZZUN01' using list comprehension
-        if investor['investor_acc_number'] == "ZZUN01":
-            filtered_unallocated_investments = [unallocated_investment for unallocated_investment in
-                                                unallocated_investments_list if
-                                                unallocated_investment['opportunity_code'] == investor[
-                                                    'opportunity_code']]
-
-            if len(filtered_unallocated_investments) > 0:
-
-                investor['deposit_date'] = str(filtered_unallocated_investments[0]['deposit_date'])
-                investor['release_date'] = str(filtered_unallocated_investments[0]['release_date'])
-                investor['planned_release_date'] = str(filtered_unallocated_investments[0]['release_date'])
-
-                # investor['project_interest_rate'] = float(filtered_unallocated_investments[0][
-                # 'project_interest_rate'])
-                investor['project_interest_rate'] = float(
-                    filtered_unallocated_investments[0]['project_interest_rate'])
-
-                interest_to_be_raised_for_momentum = 0
-                interest_to_be_raised_for_released = 0
-                # Do Interest Calcs
-                deposit_date = investor['deposit_date'].replace("-", "/")
-                deposit_date = datetime.strptime(deposit_date, "%Y/%m/%d")
-
-                # int_release_date = investor['release_date'].replace("-", "/")
-                # int_release_date = datetime.strptime(int_release_date, "%Y/%m/%d")
-
-                int_planned_release_date = investor['planned_release_date'].replace("-", "/")
-                int_planned_release_date = datetime.strptime(int_planned_release_date, "%Y/%m/%d")
-
-                # convert investor['opportunity_final_transfer_date'] from a datetime to a string with format
-                # YYYY/MM/DD
-
-                opportunity_final_transfer_date = str(investor['opportunity_final_transfer_date']).split(" ")[0]
-
-                # opportunity_final_transfer_date = investor['opportunity_final_transfer_date'].replace("-", "/")
-                opportunity_final_transfer_date = datetime.strptime(opportunity_final_transfer_date, "%Y-%m-%d")
-
-                # add 1 day to deposit date
-                deposit_date = deposit_date + timedelta(days=1)
-                while deposit_date <= int_planned_release_date:
-                    # get rate from rate_list as a float where date less than or equal to deposit_date
-                    rate = float([rate for rate in rates_list if rate['Efective_date'] <= deposit_date][0]['rate'])
-
-                    interest_to_be_raised_for_momentum += (filtered_unallocated_investments[0][
-                                                               'unallocated_investment'] * rate / 100) / 365
+                    investment_interest_today = investment_interest_today + (
+                            float(investment["investment_amount"]) * interim_rate / 100 / 365)
 
                     deposit_date = deposit_date + timedelta(days=1)
+                investment["investment_interest_today"] = round(investment_interest_today, 2)
 
-                # add 1 day to release date
-                int_planned_release_date = int_planned_release_date + timedelta(days=1)
-                while int_planned_release_date <= opportunity_final_transfer_date:
-                    interest_to_be_raised_for_released += (filtered_unallocated_investments[0][
-                                                               'unallocated_investment'] * investor[
-                                                               'project_interest_rate'] / 100) / 365
+                # Days between planned_release_date and opportunity_final_transfer_date
+                days_between = (today_transfer - planned_release_date).days
 
-                    # add a day to int_planned_release_date
+                released_interest_today = released_interest_today + (float(investment["investment_amount"]) * float(
+                    investment["investment_interest_rate"]) / 100 / 365 * days_between)
+                investment["released_interest_today"] = round(released_interest_today, 2)
+
+        for investment in final_investors_list:
+            filtered_rollovers = [rollover for rollover in rollovers_list if
+                                  rollover['investor_acc_number'] == investment['investor_acc_number']
+                                  and rollover['investment_number'] == investment['investment_number']
+                                  and rollover['opportunity_code'] == investment['opportunity_code']]
+
+            if len(filtered_rollovers) > 0:
+                investment['rollover_amount'] = filtered_rollovers[0]['rollover_amount']
+                investment['rollover_date'] = filtered_rollovers[0]['end_date']
+            else:
+                investment['rollover_amount'] = 0
+                investment['rollover_date'] = ""
+
+        # LOOP THROUGH AND FILL OPPORTUNITIES
+        report_date = datetime.strptime(request['date'], '%Y/%m/%d')
+
+        for opportunity in opportunities_list:
+
+            opportunity['opportunity_end_date'] = opportunity['opportunity_end_date'].replace('/', '-')
+            # opportunity['opportunity_end_date'] = opportunity['opportunity_end_date'].split(" ")[0]
+            opportunity['opportunity_end_date'] = datetime.strptime(opportunity['opportunity_end_date'], '%Y-%m-%d')
+            # if opportunity_final_transfer_date in opportunity and if it is not empty then do as above
+            if opportunity['opportunity_final_transfer_date'] != "":
+                opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_final_transfer_date'].replace(
+                    '/', '-')
+                # opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_final_transfer_date'].split(
+                #     " ")[0]
+                opportunity['opportunity_final_transfer_date'] = datetime.strptime(
+                    opportunity['opportunity_final_transfer_date'], '%Y-%m-%d')
+
+                if opportunity['opportunity_end_date'] > report_date or opportunity[
+                    'opportunity_final_transfer_date'] > report_date:
+                    opportunity['opportunity_transferred'] = False
+
+            # Filter final_investors_list where opportunity_code is equal to opportunity['opportunity_code']
+            # using list comprehension
+            filtered_investors = [investor for investor in final_investors_list if
+                                  investor['opportunity_code'] == opportunity['opportunity_code']]
+
+            opportunity_required = float(opportunity['opportunity_amount_required'])
+
+            # sum the investment_amounts in filtered_investors list using list comprehension
+            opportunity_invested = sum(float(investor['investment_amount']) for investor in filtered_investors)
+            if 0 < opportunity_invested < opportunity_required:
+                insert = {"investor_surname": "UnAllocated", "investor_name": "",
+                          "investor_acc_number": "ZZUN01",
+                          "investment_amount": 0, "deposit_date": "",
+                          "release_date": "", "opportunity_code": opportunity['opportunity_code'],
+                          "investment_number": 0,
+                          "project_interest_rate": opportunity["opportunity_interest_rate"],
+                          "planned_release_date": "",
+                          "trust_interest": 0.00,
+                          "investment_interest_rate": opportunity["opportunity_interest_rate"],
+                          "investment_end_date": "", "Category": opportunity['Category'],
+                          "opportunity_sold": opportunity['opportunity_sold'],
+                          "opportunity_end_date": opportunity['opportunity_end_date'],
+                          "opportunity_final_transfer_date": opportunity['opportunity_final_transfer_date'],
+                          "opportunity_amount_required": float(opportunity['opportunity_amount_required']),
+                          "opportunity_sale_price": float(opportunity['opportunity_sale_price']),
+                          "investment_interest_today": 0, "released_interest_today": 0, "trust_interest_total": 0,
+                          "released_interest_total": 0,
+                          "opportunity_transferred": opportunity["opportunity_transferred"],
+                          "raising_commission": 0, "structuring_fee": 0, "commission": 0, "transfer_fees": 0,
+                          "bond_registration": 0, "trust_release_fee": 0, "unforseen": 0,
+                          "interest_to_date_still_to_be_raised": 0, "interest_total_still_to_be_raised": 0,
+                          "early_release": False
+                          }
+
+                final_investors_list.append(insert)
+
+        for investment in final_investors_list:
+
+            # filter sales_parameters_list where Development is equal to investment['Category'] using list comprehension
+
+            if investment['raising_commission'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'raising_commission']
+                investment['raising_commission'] = filtered_sales_parameters[0]['rate']
+            if investment['structuring_fee'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'structuring_fee']
+                investment['structuring_fee'] = filtered_sales_parameters[0]['rate']
+
+            if investment['commission'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'commission']
+                investment['commission'] = filtered_sales_parameters[0]['rate']
+            if investment['transfer_fees'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'transfer_fees']
+                investment['transfer_fees'] = filtered_sales_parameters[0]['rate']
+            if investment['bond_registration'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'bond_registration']
+                investment['bond_registration'] = filtered_sales_parameters[0]['rate']
+            if investment['trust_release_fee'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'trust_release_fee']
+                investment['trust_release_fee'] = filtered_sales_parameters[0]['rate']
+            if investment['unforseen'] == 0:
+                filtered_sales_parameters = [sales_parameter for sales_parameter in sales_parameters_list if
+                                             sales_parameter['Development'] == investment['Category'] and
+                                             sales_parameter['Description'] == 'unforseen']
+                investment['unforseen'] = filtered_sales_parameters[0]['rate']
+
+        # if the investor_acc_number = "ZCAM01" and the opportunity_code = "HFA101" and the investment_amount =
+        # 400000.0 then filter this record out of final_investors_list
+
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZCAM01" and investor[
+                                    'opportunity_code'] == "HFA101" and investor['investment_amount'] == 400000.0)]
+
+        # if investor_acc_number = "ZJHO01" and opportunity_code = "HFA304" and investment_number = 1 then filter this
+        # record out of final_investors_list
+
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZJHO01" and investor[
+                                    'opportunity_code'] == "HFA304" and investor['investment_number'] == 1)]
+
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZPJB01" and investor[
+                                    'opportunity_code'] == "HFA205" and investor['investment_number'] == 1)]
+
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZERA01" and investor[
+                                    'opportunity_code'] == "EA205" and investor['investment_number'] == 3)]
+
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZVOL01" and investor[
+                                    'opportunity_code'] == "EA103" and investor['investment_number'] == 3)]
+
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZLEW03" and investor[
+                                    'opportunity_code'] == "EA205" and investor['investment_number'] == 1)]
+
+        # get unallocated_investments from mongo db where the request['Category'] is in the Category in the DB
+
+        for unallocated_investment in unallocated_investments_list:
+            unallocated_investment['id'] = str(unallocated_investment['_id'])
+            del unallocated_investment['_id']
+
+        # Filter unallocated_investments_list where deposit_date = "" using list comprehension
+        unallocated_investments_list = [unallocated_investment for unallocated_investment in
+                                        unallocated_investments_list if
+                                        unallocated_investment['deposit_date'] != ""]
+
+        for investor in final_investors_list:
+
+            # Filter unallocated_investments_list where opportunity_code is equal to investor['opportunity_code'] and
+            # investor_acc_number is equal to 'ZZUN01' using list comprehension
+            if investor['investor_acc_number'] == "ZZUN01":
+                filtered_unallocated_investments = [unallocated_investment for unallocated_investment in
+                                                    unallocated_investments_list if
+                                                    unallocated_investment['opportunity_code'] == investor[
+                                                        'opportunity_code']]
+
+                if len(filtered_unallocated_investments) > 0:
+
+                    investor['deposit_date'] = str(filtered_unallocated_investments[0]['deposit_date'])
+                    investor['release_date'] = str(filtered_unallocated_investments[0]['release_date'])
+                    investor['planned_release_date'] = str(filtered_unallocated_investments[0]['release_date'])
+
+                    # investor['project_interest_rate'] = float(filtered_unallocated_investments[0][
+                    # 'project_interest_rate'])
+                    investor['project_interest_rate'] = float(
+                        filtered_unallocated_investments[0]['project_interest_rate'])
+
+                    interest_to_be_raised_for_momentum = 0
+                    interest_to_be_raised_for_released = 0
+                    # Do Interest Calcs
+                    deposit_date = investor['deposit_date'].replace("-", "/")
+                    deposit_date = datetime.strptime(deposit_date, "%Y/%m/%d")
+
+                    # int_release_date = investor['release_date'].replace("-", "/")
+                    # int_release_date = datetime.strptime(int_release_date, "%Y/%m/%d")
+
+                    int_planned_release_date = investor['planned_release_date'].replace("-", "/")
+                    int_planned_release_date = datetime.strptime(int_planned_release_date, "%Y/%m/%d")
+
+                    # convert investor['opportunity_final_transfer_date'] from a datetime to a string with format
+                    # YYYY/MM/DD
+
+                    opportunity_final_transfer_date = str(investor['opportunity_final_transfer_date']).split(" ")[0]
+
+                    # opportunity_final_transfer_date = investor['opportunity_final_transfer_date'].replace("-", "/")
+                    opportunity_final_transfer_date = datetime.strptime(opportunity_final_transfer_date, "%Y-%m-%d")
+
+                    # add 1 day to deposit date
+                    deposit_date = deposit_date + timedelta(days=1)
+                    while deposit_date <= int_planned_release_date:
+                        # get rate from rate_list as a float where date less than or equal to deposit_date
+                        rate = float([rate for rate in rates_list if rate['Efective_date'] <= deposit_date][0]['rate'])
+
+                        interest_to_be_raised_for_momentum += (filtered_unallocated_investments[0][
+                                                                   'unallocated_investment'] * rate / 100) / 365
+
+                        deposit_date = deposit_date + timedelta(days=1)
+
+                    # add 1 day to release date
                     int_planned_release_date = int_planned_release_date + timedelta(days=1)
+                    while int_planned_release_date <= opportunity_final_transfer_date:
+                        interest_to_be_raised_for_released += (filtered_unallocated_investments[0][
+                                                                   'unallocated_investment'] * investor[
+                                                                   'project_interest_rate'] / 100) / 365
 
-                # investor["interest_to_date_still_to_be_raised"] = 4000
-                investor[
-                    "interest_total_still_to_be_raised"] = \
-                    interest_to_be_raised_for_released + interest_to_be_raised_for_momentum
+                        # add a day to int_planned_release_date
+                        int_planned_release_date = int_planned_release_date + timedelta(days=1)
 
-        # if investor['opportunity_code'] == "HVG101" and investor['investor_acc_number'] == "ZWIL02":
-        #     print(investor)
+                    # investor["interest_to_date_still_to_be_raised"] = 4000
+                    investor[
+                        "interest_total_still_to_be_raised"] = \
+                        interest_to_be_raised_for_released + interest_to_be_raised_for_momentum
 
-    # sort final investors list by Category, opportunity_code, investor_acc_number
-    final_investors_list = sorted(final_investors_list,
-                                  key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
+            # if investor['opportunity_code'] == "HVG101" and investor['investor_acc_number'] == "ZWIL02":
+            #     print(investor)
 
-    for investor in final_investors_list:
-        # if investor['opportunity_code'] == "HVG101" and investor['investor_acc_number'] == "ZWIL02":
-        #     print(investor)
+        # sort final investors list by Category, opportunity_code, investor_acc_number
+        final_investors_list = sorted(final_investors_list,
+                                      key=lambda k: (k['Category'], k['opportunity_code'], k['investor_acc_number']))
 
-        if 'early_release' not in investor:
-            investor['early_release'] = False
-        # create a variable called report date and make it the same as request['date'] as a datetime
-        report_date = datetime.strptime(request['date'], "%Y/%m/%d")
-        if investor['early_release']:
-            investor['investment_end_date'] = investor['investment_end_date'].replace("-", "/")
+        for investor in final_investors_list:
+            # if investor['opportunity_code'] == "HVG101" and investor['investor_acc_number'] == "ZWIL02":
+            #     print(investor)
 
-            # datetime then set investor['early_release'] to false
-            if datetime.strptime(investor['investment_end_date'], "%Y/%m/%d") >= report_date:
+            if 'early_release' not in investor:
                 investor['early_release'] = False
-            investor['opportunity_final_transfer_date'] = investor['opportunity_final_transfer_date'].replace("-",
-                                                                                                              "/")
-            if datetime.strptime(investor['opportunity_final_transfer_date'], "%Y/%m/%d") > report_date:
-                investor['opportunity_transferred'] = False
+            # create a variable called report date and make it the same as request['date'] as a datetime
+            report_date = datetime.strptime(request['date'], "%Y/%m/%d")
+            if investor['early_release']:
+                investor['investment_end_date'] = investor['investment_end_date'].replace("-", "/")
 
-            # if investor['opportunity_transferred']:
-            #     investor['early_release'] = False
+                # datetime then set investor['early_release'] to false
+                if datetime.strptime(investor['investment_end_date'], "%Y/%m/%d") >= report_date:
+                    investor['early_release'] = False
+                investor['opportunity_final_transfer_date'] = investor['opportunity_final_transfer_date'].replace("-",
+                                                                                                                  "/")
+                if datetime.strptime(investor['opportunity_final_transfer_date'], "%Y/%m/%d") > report_date:
+                    investor['opportunity_transferred'] = False
+
+                # if investor['opportunity_transferred']:
+                #     investor['early_release'] = False
+
+            for investor in final_investors_list:
+
+                if investor['investor_acc_number'] != "ZZUN01":
+                    report_date = datetime.strptime(request['date'], "%Y/%m/%d")
+                    if investor['release_date'] != "":
+                        start_date_total = datetime.strptime(investor['release_date'].replace("-", "/"), "%Y/%m/%d")
+                        start_date_today = datetime.strptime(investor['release_date'].replace("-", "/"), "%Y/%m/%d")
+                    else:
+                        start_date_total = datetime.strptime(investor['deposit_date'].replace("-", "/"),
+                                                             "%Y/%m/%d") + timedelta(days=30)
+                        start_date_today = None
+                    if investor['investment_end_date'] != "":
+                        end_date_total = datetime.strptime(investor['investment_end_date'].replace("-", "/"),
+                                                           "%Y/%m/%d")
+                        if end_date_total < report_date:
+                            end_date_today = end_date_total
+                        else:
+                            end_date_today = report_date
+                    elif investor['opportunity_final_transfer_date'] != "":
+                        end_date_total = datetime.strptime(
+                            investor['opportunity_final_transfer_date'].replace("-", "/"),
+                            "%Y/%m/%d")
+                        if end_date_total < report_date:
+                            end_date_today = end_date_total
+                        else:
+                            end_date_today = report_date
+                    else:
+                        end_date_total = datetime.strptime(investor['opportunity_end_date'].replace("-", "/"),
+                                                           "%Y/%m/%d")
+                        if end_date_total < report_date:
+                            end_date_today = end_date_total
+                        else:
+                            end_date_today = report_date
+                    interest_rate = float(investor['investment_interest_rate'])
+                    if start_date_today is not None:
+                        released_interest_today = (end_date_today - start_date_today).days * (
+                                investor['investment_amount'] * interest_rate / 100) / 365
+                    else:
+                        released_interest_today = 0
+                    if start_date_total is not None:
+                        released_interest_total = (end_date_total - start_date_total).days * (
+                                investor['investment_amount'] * interest_rate / 100) / 365
+                    else:
+                        released_interest_total = 0
+                    investor['released_interest_today'] = released_interest_today
+                    investor['released_interest_total'] = released_interest_total
+
+            for investor in final_investors_list:
+                filtered_opps = [opp for opp in opportunities_list if opp['opportunity_code']
+                                 == investor['opportunity_code']]
+
+                investor["rental_marked_for_rent"] = filtered_opps[0].get("rental_marked_for_rent", False)
+
+                investor["rental_rented_out"] = filtered_opps[0].get("rental_rented_out", False)
+                investor["rental_start_date"] = filtered_opps[0].get("rental_start_date", "")
+                investor["rental_end_date"] = filtered_opps[0].get("rental_end_date", "")
+                investor["rental_income_to_date"] = float(filtered_opps[0].get("rental_income_to_date", 0))
+                investor["rental_income_to_contract_end"] = float(
+                    filtered_opps[0].get("rental_income_to_contract_end", 0))
+                investor["rental_gross_amount"] = float(filtered_opps[0].get("rental_gross_amount", 0))
+                investor["rental_deposit_amount"] = filtered_opps[0].get("rental_deposit_amount", 0)
+                if investor["rental_deposit_amount"] == "":
+                    investor["rental_deposit_amount"] = 0
+                else:
+                    investor["rental_deposit_amount"] = float(investor["rental_deposit_amount"])
+                investor["rental_levy_amount"] = float(filtered_opps[0].get("rental_levy_amount", 0))
+                investor["rental_commission"] = float(filtered_opps[0].get("rental_commission", 0))
+                investor["rental_rates"] = float(filtered_opps[0].get("rental_rates", 0))
+                investor["rental_other_expenses"] = float(filtered_opps[0].get("rental_other_expenses", 0))
+                investor["rental_nett_amount"] = filtered_opps[0].get("rental_nett_amount", 0)
+                if investor["rental_nett_amount"] == "" or investor["rental_nett_amount"] is None:
+                    investor["rental_nett_amount"] = 0
+                else:
+                    investor["rental_nett_amount"] = float(investor["rental_nett_amount"])
+                if investor["rental_marked_for_rent"]:
+                    investor["potential_income"] = investor["rental_nett_amount"]
+                    investor["rental_start_date"] = ""
+                    investor["rental_end_date"] = ""
+                    investor["rental_income_to_date"] = 0
+                    investor["rental_income_to_contract_end"] = 0
+                    investor["rental_gross_amount"] = 0
+                    investor["rental_deposit_amount"] = 0
+                    investor["rental_levy_amount"] = 0
+                    investor["rental_commission"] = 0
+                    investor["rental_rates"] = 0
+                    investor["rental_other_expenses"] = 0
+                    investor["rental_nett_amount"] = 0
+                else:
+                    investor["potential_income"] = 0
 
         for investor in final_investors_list:
+            if investor['release_date'] == "" and investor['planned_release_date'] != "":
+                final_transfer_date = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"),
+                                                        "%Y/%m/%d")
+                planned_release_date = datetime.strptime(investor['planned_release_date'].replace("-", "/"), "%Y/%m/%d")
 
-            if investor['investor_acc_number'] != "ZZUN01":
-                report_date = datetime.strptime(request['date'], "%Y/%m/%d")
-                if investor['release_date'] != "":
-                    start_date_total = datetime.strptime(investor['release_date'].replace("-", "/"), "%Y/%m/%d")
-                    start_date_today = datetime.strptime(investor['release_date'].replace("-", "/"), "%Y/%m/%d")
-                else:
-                    start_date_total = datetime.strptime(investor['deposit_date'].replace("-", "/"),
-                                                         "%Y/%m/%d") + timedelta(days=30)
-                    start_date_today = None
-                if investor['investment_end_date'] != "":
-                    end_date_total = datetime.strptime(investor['investment_end_date'].replace("-", "/"),
-                                                       "%Y/%m/%d")
-                    if end_date_total < report_date:
-                        end_date_today = end_date_total
-                    else:
-                        end_date_today = report_date
-                elif investor['opportunity_final_transfer_date'] != "":
-                    end_date_total = datetime.strptime(
-                        investor['opportunity_final_transfer_date'].replace("-", "/"),
-                        "%Y/%m/%d")
-                    if end_date_total < report_date:
-                        end_date_today = end_date_total
-                    else:
-                        end_date_today = report_date
-                else:
-                    end_date_total = datetime.strptime(investor['opportunity_end_date'].replace("-", "/"),
-                                                       "%Y/%m/%d")
-                    if end_date_total < report_date:
-                        end_date_today = end_date_total
-                    else:
-                        end_date_today = report_date
-                interest_rate = float(investor['investment_interest_rate'])
-                if start_date_today is not None:
-                    released_interest_today = (end_date_today - start_date_today).days * (
-                            investor['investment_amount'] * interest_rate / 100) / 365
-                else:
-                    released_interest_today = 0
-                if start_date_total is not None:
-                    released_interest_total = (end_date_total - start_date_total).days * (
-                            investor['investment_amount'] * interest_rate / 100) / 365
-                else:
-                    released_interest_total = 0
-                investor['released_interest_today'] = released_interest_today
-                investor['released_interest_total'] = released_interest_total
+                days_difference = (final_transfer_date - planned_release_date).days
+
+                investment_amount = float(investor['investment_amount'])
+                investment_interest_rate = float(investor['investment_interest_rate'])
+                investment_interest = (investment_amount * investment_interest_rate / 100) / 365 * days_difference
+                investor['released_interest_total'] = investment_interest
+
+            if investor['investor_acc_number'] == "ZZUN01" and investor["investment_interest_rate"] == 0:
+                investor["investment_interest_rate"] = investor['project_interest_rate']
+
+                # end_date_total = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"),
+                # "%Y/%m/%d")
+
+        ## DEVELOPMENT UNITS
+        # create a new list called development_list which includes all the records in final_investors_list where the
+        # opportunity_code is equal to HB215 or HFB315
+        development_list = [opportunity for opportunity in final_investors_list if
+                            opportunity['opportunity_code'] == "HFB215" or opportunity['opportunity_code'] == "HFB315"]
+
+        listData = investment_status(request)
+
+        for devunit in development_list:
+            listData.append(devunit)
+
+        for choice in portal_choice:
+            del choice['_id']
+
+        # print(portal_choice)
 
         for investor in final_investors_list:
-            filtered_opps = [opp for opp in opportunities_list if opp['opportunity_code']
-                             == investor['opportunity_code']]
+            filtered_choice = [choice for choice in portal_choice if
+                               choice['investor_acc_number'] == investor['investor_acc_number'] and choice[
+                                   'opportunity_code'] == investor['opportunity_code']]
+            filtered_sales_processed = [sale for sale in sales_processed if
+                                        sale['opportunity_code'] == investor['opportunity_code']]
 
-            investor["rental_marked_for_rent"] = filtered_opps[0].get("rental_marked_for_rent", False)
+            if len(filtered_sales_processed) > 0:
+                investor['transfer_fees'] = float(filtered_sales_processed[0]['opportunity_transfer_fees'])
+                investor['bond_registration'] = float(filtered_sales_processed[0]['opportunity_bond_registration'])
 
-            investor["rental_rented_out"] = filtered_opps[0].get("rental_rented_out", False)
-            investor["rental_start_date"] = filtered_opps[0].get("rental_start_date", "")
-            investor["rental_end_date"] = filtered_opps[0].get("rental_end_date", "")
-            investor["rental_income_to_date"] = float(filtered_opps[0].get("rental_income_to_date", 0))
-            investor["rental_income_to_contract_end"] = float(
-                filtered_opps[0].get("rental_income_to_contract_end", 0))
-            investor["rental_gross_amount"] = float(filtered_opps[0].get("rental_gross_amount", 0))
-            investor["rental_deposit_amount"] = filtered_opps[0].get("rental_deposit_amount", 0)
-            if investor["rental_deposit_amount"] == "":
-                investor["rental_deposit_amount"] = 0
+            if len(filtered_choice) > 0:
+                investor['from_portal'] = True
+                if filtered_choice[0]['full_exit']:
+                    investor['rollover_amount_chosen'] = 0
+                elif filtered_choice[0]['full_rollover']:
+                    investor['rollover_amount_chosen'] = filtered_choice[0]['balance']
+                elif filtered_choice[0]['partial_exit']:
+                    investor['rollover_amount_chosen'] = filtered_choice[0]['balance'] - filtered_choice[0][
+                        'exit_amount']
             else:
-                investor["rental_deposit_amount"] = float(investor["rental_deposit_amount"])
-            investor["rental_levy_amount"] = float(filtered_opps[0].get("rental_levy_amount", 0))
-            investor["rental_commission"] = float(filtered_opps[0].get("rental_commission", 0))
-            investor["rental_rates"] = float(filtered_opps[0].get("rental_rates", 0))
-            investor["rental_other_expenses"] = float(filtered_opps[0].get("rental_other_expenses", 0))
-            investor["rental_nett_amount"] = filtered_opps[0].get("rental_nett_amount", 0)
-            if investor["rental_nett_amount"] == "" or investor["rental_nett_amount"] is None:
-                investor["rental_nett_amount"] = 0
-            else:
-                investor["rental_nett_amount"] = float(investor["rental_nett_amount"])
-            if investor["rental_marked_for_rent"]:
-                investor["potential_income"] = investor["rental_nett_amount"]
-                investor["rental_start_date"] = ""
-                investor["rental_end_date"] = ""
-                investor["rental_income_to_date"] = 0
-                investor["rental_income_to_contract_end"] = 0
-                investor["rental_gross_amount"] = 0
-                investor["rental_deposit_amount"] = 0
-                investor["rental_levy_amount"] = 0
-                investor["rental_commission"] = 0
-                investor["rental_rates"] = 0
-                investor["rental_other_expenses"] = 0
-                investor["rental_nett_amount"] = 0
-            else:
-                investor["potential_income"] = 0
-
-    for investor in final_investors_list:
-        if investor['release_date'] == "" and investor['planned_release_date'] != "":
-            final_transfer_date = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"),
-                                                    "%Y/%m/%d")
-            planned_release_date = datetime.strptime(investor['planned_release_date'].replace("-", "/"), "%Y/%m/%d")
-
-            days_difference = (final_transfer_date - planned_release_date).days
-
-            investment_amount = float(investor['investment_amount'])
-            investment_interest_rate = float(investor['investment_interest_rate'])
-            investment_interest = (investment_amount * investment_interest_rate / 100) / 365 * days_difference
-            investor['released_interest_total'] = investment_interest
-
-        if investor['investor_acc_number'] == "ZZUN01" and investor["investment_interest_rate"] == 0:
-            investor["investment_interest_rate"] = investor['project_interest_rate']
-
-            # end_date_total = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"),
-            # "%Y/%m/%d")
-
-    ## DEVELOPMENT UNITS
-    # create a new list called development_list which includes all the records in final_investors_list where the
-    # opportunity_code is equal to HB215 or HFB315
-    development_list = [opportunity for opportunity in final_investors_list if
-                        opportunity['opportunity_code'] == "HFB215" or opportunity['opportunity_code'] == "HFB315"]
-
-    listData = investment_status(request)
-
-    for devunit in development_list:
-        listData.append(devunit)
-
-    for choice in portal_choice:
-        del choice['_id']
-
-    # print(portal_choice)
-
-    for investor in final_investors_list:
-        filtered_choice = [choice for choice in portal_choice if
-                           choice['investor_acc_number'] == investor['investor_acc_number'] and choice[
-                               'opportunity_code'] == investor['opportunity_code']]
-        filtered_sales_processed = [sale for sale in sales_processed if
-                                    sale['opportunity_code'] == investor['opportunity_code']]
-
-        if len(filtered_sales_processed) > 0:
-            investor['transfer_fees'] = float(filtered_sales_processed[0]['opportunity_transfer_fees'])
-            investor['bond_registration'] = float(filtered_sales_processed[0]['opportunity_bond_registration'])
-
-        if len(filtered_choice) > 0:
-            investor['from_portal'] = True
-            if filtered_choice[0]['full_exit']:
+                investor['from_portal'] = False
                 investor['rollover_amount_chosen'] = 0
-            elif filtered_choice[0]['full_rollover']:
-                investor['rollover_amount_chosen'] = filtered_choice[0]['balance']
-            elif filtered_choice[0]['partial_exit']:
-                investor['rollover_amount_chosen'] = filtered_choice[0]['balance'] - filtered_choice[0][
-                    'exit_amount']
-        else:
-            investor['from_portal'] = False
-            investor['rollover_amount_chosen'] = 0
 
-    background_tasks.add_task(create_sales_forecast_file, final_investors_list, request, pledges, firstName,
-                              listData, request)
+        background_tasks.add_task(create_sales_forecast_file, final_investors_list, request, pledges, firstName,
+                                  listData, request)
 
-    end = time.time()
-    print("Time Taken: ", end - start)
+        end = time.time()
+        print("Time Taken: ", end - start)
 
-    # print("filename", filename)
+        # print("filename", filename)
 
-    return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
-    # return {"filename": f'{filename}.xlsx'}
-    # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
+        return {"message": "The server is busy processing the data, please be patient.", "filename": f'{filename}'}
+        # return {"filename": f'{filename}.xlsx'}
+        # return "Time Taken: ", end - start, len(final_investors_list), final_investors_list
 
-    # except Exception as e:
-    #     print("Error:", e)
-    #     return {"error": e}
+    except Exception as e:
+        print("Error:", e)
+        return {"error": e}
 
 
 def investment_status(request):
@@ -1817,7 +1817,7 @@ async def process_draw(data: Request):
                         'investment_amount': momentum['investment_amount'], 'draw': momentum['draw'],
                         'release_date': momentum['release_date'], 'email_sent': False, 'end_date': "",
                         'Category': momentum['Category'], "interest": momentum['interest'],
-                        'investment_interest_rate': momentum['project_interest_rate'],
+                        'investment_interest_rate': momentum.get('project_interest_rate',0),
                         'dateCreated': momentum['creation_date'], 'interest': '', 'rollover_amount': 0,
                         'rollover_date': '', 'rollover_interest_rate': 0, 'rollover_interest': 0,
                         'interestPaidOnTransfer': 0}

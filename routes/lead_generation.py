@@ -1012,7 +1012,7 @@ def check_emails_p24():
                     "email": email_address,
                     "message": f"{message} [{address}]",
                     "development": "",
-                    "origin": "property24",
+                    "origin": "Property24",
                     "type": "sales",
                     "submission_date": formatted_date,
                     "contact_time": "ASAP"
@@ -1078,7 +1078,7 @@ def check_emails_p24():
                     "email": email_address_in_mail,
                     "message": message,
                     "development": "",
-                    "origin": "opportunityProp",
+                    "origin": "OpportunityProp",
                     "type": "sales",
                     "submission_date": formatted_date,
                     "contact_time": "ASAP"
@@ -1204,3 +1204,38 @@ async def check_emails_omh_app():
 # @leads.on_event("shutdown")
 # def shutdown_event():
 #     scheduler.shutdown()
+
+# def check_drawdowns():
+#     import pandas as pd
+#     # get investors from db
+#     investors = list(db.investors.find())
+#     for investor in investors:
+#         del investor['_id']
+#     # filter investors where investments array is not empty
+#     investors = list(filter(lambda x: x['investments'] != [], investors))
+#     for investor in investors:
+#         # filter investments array where Category is 'Heron View' or 'Heron Fields'
+#         investor['investments'] = list(filter(lambda x: x['Category'] in ['Heron View', 'Heron Fields'], investor['investments']))
+#     final_array = []
+#     for investor in investors:
+#         for item in investor['investments']:
+#             insert = {}
+#             insert['investor'] = investor['investor_surname']
+#             insert['code'] = investor['investor_acc_number']
+#             insert['investment'] = float(item['investment_amount'])
+#             insert['date'] = item['release_date']
+#             insert['unit'] = item['opportunity_code']
+#             final_array.append(insert)
+#     print(final_array)
+#     # save final_array to csv called drawdowns.csv
+#     df = pd.DataFrame(final_array)
+#     df.to_csv('drawdowns.csv', index=False)
+
+
+    # print(investors[0])
+
+
+
+    # print("investors", investors)
+
+# check_drawdowns()
