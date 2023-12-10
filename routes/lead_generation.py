@@ -1006,6 +1006,7 @@ def check_emails_p24():
                     # decoded_address = html.unescape(raw_address)
                     address = raw_address.replace("&#xD;", "")
                     address = address.replace("&#xA;", "")
+                    address = address.replace("&#x27;", "'")
                     # print(f'Address: {address}')
                 else:
                     print('Address information not found in the HTML.')
@@ -1043,6 +1044,9 @@ def check_emails_p24():
                     # split message by < and get the first item in the list
                     message = message.split("<")[0].strip()
                     message = message.replace("&#x27;", "'")
+                    message = message.replace("&#xD;", "")
+                    message = message.replace("&#xA;", "")
+
 
                 else:
                     print('Message information not found in the HTML.')
