@@ -5,7 +5,6 @@ from fastapi import APIRouter, Request, BackgroundTasks
 # from fastapi.encoders import jsonable_encoder
 from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
 
-
 from config.db import db
 
 import random
@@ -26,6 +25,11 @@ from datetime import datetime, timedelta
 from email.header import decode_header
 import re
 
+import vonage
+
+API_KEY_VONAGE = config("VONAGE_API_KEY")
+API_SECRET_VONAGE = config("VONAGE_API_SECRET")
+
 leads = APIRouter()
 
 
@@ -38,6 +42,7 @@ leads = APIRouter()
 async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request):
     request = await data.json()
     sales_people = list(db.lead_sales_people.find({"active": True}))
+    # print("sales_people", sales_people)
     for person in sales_people:
         person["_id"] = str(person["_id"])
 
@@ -52,6 +57,8 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
     else:
         sales_person = random.choice(sales_people)
 
+    # print("sales_person", sales_person)
+
     request.update({
         'origin': request['source']['source'],
         'type': request['source']['type'],
@@ -64,8 +71,44 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
     db.leads_sales.insert_one(request)
     background_tasks.add_task(send_email_to_sales_person, sales_person, request)
     background_tasks.add_task(send_email_to_sales_lead, sales_person, request)
+    name = request['name'] + " " + request['surname']
+    send_sms(sales_person['cell'], name)
 
     return {"message": "success", "sales_person": request["sales_person"]}
+
+
+def send_sms(number, lead):
+    client = vonage.Client(key=API_KEY_VONAGE, secret=API_SECRET_VONAGE)
+    sms = vonage.Sms(client)
+    # print("number", number)
+
+    to_number = number.replace(" ", "")
+    to_number = to_number.replace("-", "")
+    to_number = to_number.replace("(", "")
+    to_number = to_number.replace(")", "")
+    # replace only leading 0 with +27
+    to_number = re.sub(r"^0", "+27", to_number)
+    # print("to_number", to_number)
+
+    responseData = sms.send_message(
+        {
+            "from": "OMH-APP",
+            # "from": "Vonage APIs",
+            "to": to_number,
+            "text": f"New lead assigned to you – Log into https://www.opportunitymanagement.co.za to view details. "
+                    f"Lead Name: {lead}",
+        }
+    )
+
+    if responseData["messages"][0]["status"] == "0":
+        print("Message sent successfully.")
+        print("RESPONSE DATA", responseData['messages'][0])
+        return {"message": "SMS sent successfully"}
+        # print("Message sent successfully.")
+
+    else:
+        print(f"Message failed with error: {responseData['messages'][0]['error-text']}")
+        return {"message": "SMS not sent XXX"}
 
 
 @leads.post("/post_investments_lead_form")
@@ -1020,7 +1063,6 @@ def check_emails_p24():
 
                 final_data.append(data)
 
-
         if sender == "webmaster@opportunityprop.co.za" and subject == "Message via website":
 
             enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
@@ -1086,13 +1128,10 @@ def check_emails_p24():
 
                 final_data.append(data)
 
-
-
-
     # Logout from the email account
     mail.logout()
 
-    if len(final_data) > 0:
+    if final_data:
         while not done:
             process_property_24_leads(final_data)
             done = True
@@ -1132,7 +1171,7 @@ def process_property_24_leads(data):
 
         if result is not None:
             print(f"Lead already exists: {index}")
-            print("result",result)
+            print("result", result)
             continue
 
         # print("email_id", email_data["email_id"])
@@ -1192,7 +1231,6 @@ async def check_emails_omh_app():
         print("Error:", e)
         return {"message": "Emails not checked"}
 
-
 # SET UP CRON JOB FOR BELOW
 # check_emails_p24()
 # scheduler = BackgroundScheduler()
@@ -1232,10 +1270,9 @@ async def check_emails_omh_app():
 #     df.to_csv('drawdowns.csv', index=False)
 
 
-    # print(investors[0])
+# print(investors[0])
 
 
-
-    # print("investors", investors)
+# print("investors", investors)
 
 # check_drawdowns()
