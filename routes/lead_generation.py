@@ -72,7 +72,8 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
     background_tasks.add_task(send_email_to_sales_person, sales_person, request)
     background_tasks.add_task(send_email_to_sales_lead, sales_person, request)
     name = request['name'] + " " + request['surname']
-    send_sms(sales_person['cell'], name)
+    # send sms as background task
+    background_tasks.add_task(send_sms, sales_person['cell'], name)
 
     return {"message": "success", "sales_person": request["sales_person"]}
 
@@ -80,15 +81,9 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
 def send_sms(number, lead):
     client = vonage.Client(key=API_KEY_VONAGE, secret=API_SECRET_VONAGE)
     sms = vonage.Sms(client)
-    # print("number", number)
-
-    to_number = number.replace(" ", "")
-    to_number = to_number.replace("-", "")
-    to_number = to_number.replace("(", "")
-    to_number = to_number.replace(")", "")
+    to_number = re.sub(r"[ \-()]", "", number)
     # replace only leading 0 with +27
     to_number = re.sub(r"^0", "+27", to_number)
-    # print("to_number", to_number)
 
     responseData = sms.send_message(
         {
@@ -101,13 +96,9 @@ def send_sms(number, lead):
     )
 
     if responseData["messages"][0]["status"] == "0":
-        print("Message sent successfully.")
-        print("RESPONSE DATA", responseData['messages'][0])
         return {"message": "SMS sent successfully"}
-        # print("Message sent successfully.")
 
     else:
-        print(f"Message failed with error: {responseData['messages'][0]['error-text']}")
         return {"message": "SMS not sent XXX"}
 
 
@@ -138,11 +129,15 @@ async def post_investments_lead_form(background_tasks: BackgroundTasks, data: Re
     background_tasks.add_task(send_email_to_consultant, consultant_person, request)
     background_tasks.add_task(send_email_to_investment_lead, consultant_person, request)
 
+    name = request['name'] + " " + request['surname']
+    # send sms as background task
+    background_tasks.add_task(send_sms, consultant_person['cell'], name)
+
     return {"message": "success", "consultant": request["consultant"]}
 
 
 @leads.post("/opportunity_contact_form")
-async def opportunity_contact_form(data: Request):
+async def opportunity_contact_form(background_tasks: BackgroundTasks, data: Request):
     request = await data.form()
     print("request", request)
 
@@ -215,9 +210,13 @@ async def opportunity_contact_form(data: Request):
 
         db.leads_investments.insert_one(data_investments)
 
-        consultant_email = send_email_to_consultant(consultant_person, data_investments)
+        # send email to consultant as background task
+        background_tasks.add_task(send_email_to_consultant, consultant_person, data_investments)
+        # send email to client as background task
+        background_tasks.add_task(send_email_to_investment_lead, consultant_person, data_investments)
 
-        client_email = send_email_to_investment_lead(consultant_person, data_investments)
+        name = data_investments['name'] + " " + data_investments['surname']
+        background_tasks.add_task(send_sms, consultant_person['cell'], name)
 
         return {"message": "success"}
 
@@ -1204,6 +1203,11 @@ def process_property_24_leads(data):
 
         sp_email = send_email_to_sales_person(sales_person, email_data)
         client_email = send_email_to_sales_lead(sales_person, email_data)
+
+        name = email_data['name'] + " " + email_data['surname']
+        send_sms(sales_person['cell'], name)
+
+        # send_sms(email_data)
 
     return {"message": "success"}
 
