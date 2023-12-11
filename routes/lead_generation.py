@@ -393,6 +393,8 @@ async def get_investment_leads():
     # sort leads by created_at descending
     leads = sorted(leads, key=lambda x: x['created_at'], reverse=True)
 
+    check_unanswered_leads()
+
     return {"message": "success", "leads": leads}
 
 
