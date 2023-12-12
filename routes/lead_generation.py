@@ -90,7 +90,7 @@ def send_sms(number, lead):
             "from": "OMH-APP",
             # "from": "Vonage APIs",
             "to": to_number,
-            "text": f"New lead assigned to you – Log into https://www.opportunitymanagement.co.za to view details. "
+            "text": f"New lead assigned to you, Log into https://www.opportunitymanagement.co.za to view details. "
                     f"Lead Name: {lead}",
         }
     )
@@ -1133,6 +1133,84 @@ def check_emails_p24():
 
                 final_data.append(data)
 
+        if sender == "noreply@opportunityprop.co.za" and subject == "Inquiry from https://opportunityprop.co.za/":
+
+            enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
+                = "", "", "", "", "", "", ""
+
+            original_date_string = msg["Date"]
+
+            # Convert to datetime object
+            original_date = datetime.strptime(original_date_string, "%a, %d %b %Y %H:%M:%S %z")
+
+            # Format the date as "yyyy-mm-dd h:mm:ss"
+            formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
+
+            content_type = msg.get_content_type()
+
+            body = msg.get_payload(decode=True).decode()
+
+            if content_type == "text/html":
+
+
+
+                body = body.split("<br>")
+                # filter out empty strings
+                body = list(filter(None, body))
+
+                # filter out "---" string
+                body = list(filter(lambda x: x != "---", body))
+                # # filter out where string starts with "Date:
+                body = list(filter(lambda x: not x.startswith("Date:"), body))
+                # # filter out where string contand \r
+                body = list(filter(lambda x: not x.startswith("\r"), body))
+
+                # remove all html tags
+                body = [re.sub('<[^<]+?>', '', item) for item in body]
+                # print("body", body)
+                for index, item in enumerate(body):
+                    item = item.replace("<strong>", "")
+                    item = item.replace("</strong>", "")
+                    # print("item", item, index)
+                    # if item contains "Name:" then split by "Name:" and get the last item in the list
+                    if "Name:" in item:
+                        enquiry_by = item.split("Name:")[-1].strip()
+                        # print("enquiry_by", enquiry_by)
+                    elif item.startswith("Phone:"):
+                        contact_number = item.split("Phone:")[-1].strip()
+                        # print("contact_number", contact_number)
+                    elif item.startswith("Email:"):
+                        email_address_in_mail = item.split("Email:")[-1].strip()
+                        # print("email_address_in_mail", email_address_in_mail)
+                    elif item.startswith("Message:") and index + 1 < len(body):
+                        message = body[index + 1].strip()
+                        # print("message", message)
+                    elif 'Sent From:' in item:
+                        address = item.split("Sent From:")[-1].strip()
+                        # address = item.split(\r)[0].strip()
+                        # right split address on last '/'
+                        address = address.rsplit('/', 1)[0].strip()
+                        # print("sent from:", address)
+
+
+                data = {
+                    "email_id": email_id,
+                    "name": enquiry_by,
+                    "surname": "",
+                    "contact": contact_number,
+                    "email": email_address_in_mail,
+                    "message": message + " [" + address + "]",
+                    "development": "",
+                    "origin": "OpportunityProp",
+                    "type": "sales",
+                    "submission_date": formatted_date,
+                    "contact_time": "ASAP"
+                }
+
+                # print("data", data)
+                #
+                final_data.append(data)
+
     # Logout from the email account
     mail.logout()
 
@@ -1213,7 +1291,7 @@ def process_property_24_leads(data):
 
     return {"message": "success"}
 
-
+# check_emails_p24()
 def check_unanswered_leads():
     leads = list(db.leads_investments.find({"action_taken": "Called - No Answer"}))
     for lead in leads:
