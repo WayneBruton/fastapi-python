@@ -8,6 +8,15 @@ def create_pdf(statement_type, data, rolled_from):
     print(rolled_from)
     data1 = []
     data1 = data
+    for item in data1:
+        if item['Category'] == "Goodwood":
+            item['Category'] = "Goodwood Bulk Refurbishment"
+            item['borrower'] = "Purple Blok"
+        elif item['Category'] == "Endulini":
+            item['borrower'] = "Quinate"
+        else:
+            item['borrower'] = "Heron Projects"
+
     print(data1)
 
     filename = f"{data1[0]['investor_acc_number']}_{data1[0]['opportunity_code']}_" \
@@ -43,7 +52,7 @@ def create_pdf(statement_type, data, rolled_from):
         },
         {
             "title": "**BORROWER NAME**",
-            "value": "Heron Projects",
+            "value": f"{data1[0]['borrower']}",
         },
         {
             "title": "**LENDER NAME**",
