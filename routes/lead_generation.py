@@ -1,3 +1,4 @@
+import json
 from time import sleep
 
 from bson.objectid import ObjectId
@@ -1364,3 +1365,14 @@ async def check_emails_omh_app():
 # print("investors", investors)
 
 # check_drawdowns()
+
+def import_new_goodwood_opportunities():
+    # import json file called GoodwoodImport.json
+    with open('GoodwoodImport.json') as f:
+        data = json.load(f)
+    print(data)
+    # post to opportunities collection
+    db.opportunities.insert_many(data)
+
+
+# import_new_goodwood_opportunities()

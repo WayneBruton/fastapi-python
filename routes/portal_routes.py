@@ -60,12 +60,23 @@ async def create_portal_statements(data: Request):
     trust = investors.find_one(
         {"investor_acc_number": data[0]['investor_acc_number'], "trust.opportunity_code": data[0]['opportunity_code'],
          "trust.investment_number": data[0]['investment_number']},
-        {"trust.opportunity_code_rolled_from": 1, "_id": 0})
+        {"trust.opportunity_code_rolled_from": 1,"trust.investment_number": 1,"trust.opportunity_code": 1, "_id": 0})
 
     trust = trust['trust']
+    # print("DATA",data[0])
+    # print()
+    # print("trust", trust)
 
     # remove all empty dictionaries from trust
     trust = list(filter(lambda x: x != {}, trust))
+    # filter trust where opportunity_code = data[0]['opportunity_code'] and investment_number = data[0][
+    # 'investment_number']
+    trust = list(
+        filter(lambda x: x.get('opportunity_code', False) == data[0]['opportunity_code'] and x.get('investment_number', False) == data[0]['investment_number'], trust))
+    # print("trust", trust)
+
+
+
     if len(trust) > 0:
         rolled_from = trust[0]['opportunity_code_rolled_from']
     else:
@@ -290,6 +301,25 @@ async def add_investor(data: Request):
     except Exception as e:
 
         return {"ERROR": f"Please Try again: {e}"}
+
+
+@portal_info.post("/update_user")
+async def update_user(data: Request):
+    request = await data.json()
+    print(request)
+    try:
+        id = request['_id']
+        del request['_id']
+        # update the document in the portalUsers collection where _id = id as an objectId with the request
+        # document
+        portalUsers.update_one({"_id": ObjectId(id)}, {"$set": request})
+        return {"message": "User updated successfully"}
+
+    except Exception as e:
+        return {"error": f"Please Try again: {e}"}
+
+    # print(request)
+    # return {"awesome": "It Works"}
 
 
 @portal_info.post("/investment_termination")

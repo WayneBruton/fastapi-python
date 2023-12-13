@@ -8,7 +8,7 @@ def create_pdf(statement_type, data, rolled_from):
     print(rolled_from)
     data1 = []
     data1 = data
-    # print(data1)
+    print(data1)
 
     filename = f"{data1[0]['investor_acc_number']}_{data1[0]['opportunity_code']}_" \
                f"{data1[0]['investment_number']}_type{statement_type}.pdf"
