@@ -78,7 +78,7 @@ async def create_portal_statements(data: Request):
 
 
     if len(trust) > 0:
-        rolled_from = trust[0]['opportunity_code_rolled_from']
+        rolled_from = trust[0].get('opportunity_code_rolled_from',"")
     else:
         rolled_from = ""
 

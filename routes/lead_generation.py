@@ -1366,13 +1366,13 @@ async def check_emails_omh_app():
 
 # check_drawdowns()
 
-def import_new_goodwood_opportunities():
-    # import json file called GoodwoodImport.json
-    with open('GoodwoodImport.json') as f:
-        data = json.load(f)
-    print(data)
-    # post to opportunities collection
-    db.opportunities.insert_many(data)
+# def import_new_goodwood_opportunities():
+#     # import json file called GoodwoodImport.json
+#     with open('GoodwoodImport.json') as f:
+#         data = json.load(f)
+#     print(data)
+#     # post to opportunities collection
+#     db.opportunities.insert_many(data)
 
 
 # import_new_goodwood_opportunities()
