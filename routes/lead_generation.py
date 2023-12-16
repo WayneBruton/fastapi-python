@@ -1132,7 +1132,11 @@ def check_emails_p24():
                     "contact_time": "ASAP"
                 }
 
-                final_data.append(data)
+                # if data['message'] contains <br> then do nothing, otherwise append to final_data
+                if "<br>" in data['message']:
+                    pass
+                else:
+                    final_data.append(data)
 
         if sender == "noreply@opportunityprop.co.za" and subject == "Inquiry from https://opportunityprop.co.za/":
 
@@ -1152,8 +1156,6 @@ def check_emails_p24():
             body = msg.get_payload(decode=True).decode()
 
             if content_type == "text/html":
-
-
 
                 body = body.split("<br>")
                 # filter out empty strings
@@ -1192,7 +1194,6 @@ def check_emails_p24():
                         # right split address on last '/'
                         address = address.rsplit('/', 1)[0].strip()
                         # print("sent from:", address)
-
 
                 data = {
                     "email_id": email_id,
@@ -1292,6 +1293,7 @@ def process_property_24_leads(data):
 
     return {"message": "success"}
 
+
 # check_emails_p24()
 def check_unanswered_leads():
     leads = list(db.leads_investments.find({"action_taken": "Called - No Answer"}))
@@ -1332,47 +1334,4 @@ async def check_emails_omh_app():
 # def shutdown_event():
 #     scheduler.shutdown()
 
-# def check_drawdowns():
-#     import pandas as pd
-#     # get investors from db
-#     investors = list(db.investors.find())
-#     for investor in investors:
-#         del investor['_id']
-#     # filter investors where investments array is not empty
-#     investors = list(filter(lambda x: x['investments'] != [], investors))
-#     for investor in investors:
-#         # filter investments array where Category is 'Heron View' or 'Heron Fields'
-#         investor['investments'] = list(filter(lambda x: x['Category'] in ['Heron View', 'Heron Fields'], investor['investments']))
-#     final_array = []
-#     for investor in investors:
-#         for item in investor['investments']:
-#             insert = {}
-#             insert['investor'] = investor['investor_surname']
-#             insert['code'] = investor['investor_acc_number']
-#             insert['investment'] = float(item['investment_amount'])
-#             insert['date'] = item['release_date']
-#             insert['unit'] = item['opportunity_code']
-#             final_array.append(insert)
-#     print(final_array)
-#     # save final_array to csv called drawdowns.csv
-#     df = pd.DataFrame(final_array)
-#     df.to_csv('drawdowns.csv', index=False)
 
-
-# print(investors[0])
-
-
-# print("investors", investors)
-
-# check_drawdowns()
-
-# def import_new_goodwood_opportunities():
-#     # import json file called GoodwoodImport.json
-#     with open('GoodwoodImport.json') as f:
-#         data = json.load(f)
-#     print(data)
-#     # post to opportunities collection
-#     db.opportunities.insert_many(data)
-
-
-# import_new_goodwood_opportunities()

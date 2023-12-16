@@ -60,7 +60,7 @@ async def create_portal_statements(data: Request):
     trust = investors.find_one(
         {"investor_acc_number": data[0]['investor_acc_number'], "trust.opportunity_code": data[0]['opportunity_code'],
          "trust.investment_number": data[0]['investment_number']},
-        {"trust.opportunity_code_rolled_from": 1,"trust.investment_number": 1,"trust.opportunity_code": 1, "_id": 0})
+        {"trust.opportunity_code_rolled_from": 1, "trust.investment_number": 1, "trust.opportunity_code": 1, "_id": 0})
 
     trust = trust['trust']
     # print("DATA",data[0])
@@ -72,13 +72,13 @@ async def create_portal_statements(data: Request):
     # filter trust where opportunity_code = data[0]['opportunity_code'] and investment_number = data[0][
     # 'investment_number']
     trust = list(
-        filter(lambda x: x.get('opportunity_code', False) == data[0]['opportunity_code'] and x.get('investment_number', False) == data[0]['investment_number'], trust))
+        filter(lambda x: x.get('opportunity_code', False) == data[0]['opportunity_code'] and x.get('investment_number',
+                                                                                                   False) == data[0][
+                             'investment_number'], trust))
     # print("trust", trust)
 
-
-
     if len(trust) > 0:
-        rolled_from = trust[0].get('opportunity_code_rolled_from',"")
+        rolled_from = trust[0].get('opportunity_code_rolled_from', "")
     else:
         rolled_from = ""
 

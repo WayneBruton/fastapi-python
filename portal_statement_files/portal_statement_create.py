@@ -204,9 +204,12 @@ def create_pdf(statement_type, data, rolled_from):
             item['cumulative_interest'] = "R " + item['interest']
         if item['balance'] != "":
             item['balance'] = f"R {str(item['balance'])}"
-        # if item['investment_amount'] != "" then item['effective_date'] = item['effective_date'] else item['effective_date'] = the last day of the month in item['effective_date'] as a datetime and formated as a string in the format of YYYY-MM-DD
+        # if item['investment_amount'] != "" then item['effective_date'] = item['effective_date'] else item[
+        # 'effective_date'] = the last day of the month in item['effective_date'] as a datetime and formated as a
+        # string in the format of YYYY-MM-DD
         if item['investment_amount'] != "":
-            # item['effective_date'] = the end of the current month of item['effective_date'] as a datetime and formated as a string in the format of YYYY-MM-DD
+            # item['effective_date'] = the end of the current month of item['effective_date'] as a datetime and
+            # formated as a string in the format of YYYY-MM-DD
 
             item['interest_until'] = datetime.strptime(item['interest_until'], '%Y-%m-%d').strftime('%Y-%m-%d')
 
