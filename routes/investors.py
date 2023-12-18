@@ -376,7 +376,8 @@ async def get_early_releases():
 
         for investor in investors:
             for inv in investor['investments']:
-                # filter opportunity_list to only include opportunities where opportunity_code == inv['opportunity_code']
+                # filter opportunity_list to only include opportunities where opportunity_code == inv[
+                # 'opportunity_code']
                 opportunity_list_filtered = list(filter(lambda x: x['opportunity_code'] == inv['opportunity_code'],
                                                         opportunities_list))
                 insert = {}
