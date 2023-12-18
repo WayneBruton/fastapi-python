@@ -48,7 +48,7 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
         person["_id"] = str(person["_id"])
 
     if last_leads_generated := list(
-            db.leads_sales.find().sort("created_at", -1).limit(len(sales_people))
+            db.leads_sales.find({"rental_enquiry": False}).sort("created_at", -1).limit(len(sales_people))
     ):
         sales_people_ids_with_recent_leads = {lead["sales_person_id"] for lead in last_leads_generated}
         # Choose from sales people who haven't received a lead recently, or the last one if all have.
@@ -323,6 +323,7 @@ async def get_sales_leads():
     for lead in leads:
         lead["_id"] = str(lead["_id"])
         lead["created_at"] = lead["created_at"].strftime("%Y-%m-%d %H:%M:%S")
+        lead['rental_enquiry'] = lead.get('rental_enquiry', False)
         for key, default in default_values.items():
             lead[key] = lead.get(key, default)
 
@@ -400,11 +401,29 @@ async def get_investment_leads():
 
 
 @leads.post('/edit_sales_lead')
-async def edit_sales_lead(data: Request):
+async def edit_sales_lead(background_task: BackgroundTasks, data: Request):
     request = await data.json()
 
     try:
+        # print("request",request)
+
+
         lead_id = request['_id']
+        # find the lead by id
+        old_lead = db.leads_sales.find_one({"_id": ObjectId(lead_id)})
+        # print("old_lead", old_lead)
+        if (old_lead['rental_enquiry'] != request['rental_enquiry']) and old_lead['rental_enquiry'] == False and request['rental_enquiry'] == True:
+            # print("send email")
+            # print()
+            # print(request)
+            # send_email_to_mario(request)
+            # send as background task
+            background_task.add_task(send_email_to_mario, request)
+            # send email to sales person as background task
+            # background_tasks.add_task(send_email_to_sales_person, old_lead, request)
+            # # send email to client as background task
+            # background_tasks.add_task(send_email_to_sales_lead, old_lead, request)
+
         del request['_id']
         request['created_at'] = datetime.strptime(request['created_at'], "%Y-%m-%d %H:%M:%S")
         db.leads_sales.update_one({"_id": ObjectId(lead_id)}, {"$set": request})
@@ -565,6 +584,52 @@ def send_email_to_leandri(lead):
                     <p>Dear Leandri,<br>
                     <br>
                     A new investment lead has been categorised as {lead['category']}:<br>
+                    <br>
+                    <b>Lead Details</b><br>
+                    <br>
+                    <b>First Name:</b> {lead['name']}<br>
+                    <b>Last Name:</b> {lead['surname']}<br>
+                    <b>Cell:</b> {lead['contact']}<br>
+                    <b>Email:</b> {lead['email']}<br>
+                    <b>Message:</b> {lead['message']}<br>
+                    <br>
+                    Kind Regards,<br>
+                    OMH App<br>
+                  </body>
+                </html>
+                """
+
+    msg = EmailMessage()
+    msg['Subject'] = "Investment Lead"
+    msg['From'] = sender_email
+    msg['To'] = email_sp
+    msg.set_content(message, subtype='html')
+
+    try:
+        with smtplib.SMTP_SSL(smtp_server, port) as server:
+            server.ehlo()
+            server.login(sender_email, password=password)
+            server.send_message(msg)
+            return {"message": "Email sent successfully"}
+    except Exception as e:
+        print("Error:", e)
+        return {"message": "Email not sent"}
+
+
+def send_email_to_mario(lead):
+    email_sp = 'mario@opportunityprop.co.za'
+    # email_sp = 'wayne@opportunity.co.za'
+    smtp_server = config('SMTP_SERVER')
+    port = config('SMTP_PORT')
+    sender_email = config('SENDER_EMAIL')
+    password = config('EMAIL_PASSWORD')
+
+    message = f"""
+                <html>
+                  <body>
+                    <p>Dear Mario,<br>
+                    <br>
+                    A new investment lead has been categorised as Rental:<br>
                     <br>
                     <b>Lead Details</b><br>
                     <br>
@@ -2103,3 +2168,18 @@ def insert_goodwood():
 
 
 # insert_goodwood()
+
+# create a function to insert data into lead_sales collection where if rental_enquiry does not exist make rental_enquiry = False for each document
+def insert_lead_sales():
+    # get all the documents from the lead_sales collection
+    lead_sales = list(db.leads_sales.find())
+    for lead in lead_sales:
+        lead['_id'] = str(lead['_id'])
+        lead['rental_enquiry'] = lead.get('rental_enquiry', False)
+        id = lead['_id']
+        del lead['_id']
+        # update the document in the lead_sales collection with the new data
+        db.leads_sales.update_one({'_id': ObjectId(id)}, {'$set': lead})
+    print("lead_sales", lead_sales)
+
+# insert_lead_sales()
