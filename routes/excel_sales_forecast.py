@@ -1543,12 +1543,11 @@ async def create_cashflow(data: Request):
         # print()
         # print(request)
 
-
-
         filename = create_cash_flow(final_cashFlow_list, request, opportunities_list)
 
         # print()
         # print("trust", trust)
+        print("filename", filename)
         end = time.time()
         print("Time taken: ", end - start)
         return {"filename": filename}
@@ -1817,7 +1816,7 @@ async def process_draw(data: Request):
                         'investment_amount': momentum['investment_amount'], 'draw': momentum['draw'],
                         'release_date': momentum['release_date'], 'email_sent': False, 'end_date': "",
                         'Category': momentum['Category'], "interest": momentum['interest'],
-                        'investment_interest_rate': momentum.get('project_interest_rate',0),
+                        'investment_interest_rate': momentum.get('project_interest_rate', 0),
                         'dateCreated': momentum['creation_date'], 'interest': '', 'rollover_amount': 0,
                         'rollover_date': '', 'rollover_interest_rate': 0, 'rollover_interest': 0,
                         'interestPaidOnTransfer': 0}

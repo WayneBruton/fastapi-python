@@ -412,7 +412,7 @@ async def edit_sales_lead(background_task: BackgroundTasks, data: Request):
         # find the lead by id
         old_lead = db.leads_sales.find_one({"_id": ObjectId(lead_id)})
         # print("old_lead", old_lead)
-        if (old_lead['rental_enquiry'] != request['rental_enquiry']) and old_lead['rental_enquiry'] == False and request['rental_enquiry'] == True:
+        if (old_lead.get('rental_enquiry',False) != request['rental_enquiry']) and old_lead.get('rental_enquiry',False) == False and request['rental_enquiry'] == True:
             # print("send email")
             # print()
             # print(request)
@@ -426,7 +426,8 @@ async def edit_sales_lead(background_task: BackgroundTasks, data: Request):
 
         del request['_id']
         request['created_at'] = datetime.strptime(request['created_at'], "%Y-%m-%d %H:%M:%S")
-        db.leads_sales.update_one({"_id": ObjectId(lead_id)}, {"$set": request})
+        test = db.leads_sales.update_one({"_id": ObjectId(lead_id)}, {"$set": request})
+        print("test", test)
 
         return {"message": "success"}
 
