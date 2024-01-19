@@ -327,12 +327,21 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
 # GET LOAN AGREEMENT AS A ZIP FILE
 @investor.get("/get_loan_agreement")
 async def loan_agreement(loan_agreement_name):
+
     loan_agreement_name = loan_agreement_name.replace('$', '&').split('/')[1]
+    print("HellOOOOOOO")
+    print("loan_agreement_name",loan_agreement_name)
+    extension = loan_agreement_name.split('.')[1]
+    print("extension",extension)
     dir_path = "loan_agreements"
     dir_list = os.listdir(dir_path)
 
     if loan_agreement_name in dir_list:
-        return FileResponse(f"{dir_path}/{loan_agreement_name}", media_type="application/docx/zip")
+        if extension == "zip":
+            return FileResponse(f"{dir_path}/{loan_agreement_name}", media_type="application/zip")
+        else:
+            return FileResponse(f"{dir_path}/{loan_agreement_name}", media_type="application/docx")
+        # return FileResponse(f"{dir_path}/{loan_agreement_name}", media_type="application/zip")
     else:
         return {"ERROR": "File does not exist!!"}
 
