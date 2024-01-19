@@ -5,7 +5,7 @@ import pandas as pd
 from fastapi import APIRouter
 # from fastapi.responses import FileResponse
 # from portal_statement_files.portal_statement_create import create_pdf
-from config.db import db
+from configuration.db import db
 # from bson import ObjectId
 
 data_analysis = APIRouter()

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Request, BackgroundTasks
 from fastapi.responses import FileResponse
 from excel_sf_functions.sales_forecast_excel import create_sales_forecast_file
 from excel_sf_functions.sales_forecast_excel import create_cash_flow
-from config.db import db
+from configuration.db import db
 import time
 from datetime import datetime
 from datetime import timedelta

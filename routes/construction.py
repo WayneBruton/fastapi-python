@@ -12,7 +12,7 @@ from bson import ObjectId
 from fastapi import APIRouter, Request, BackgroundTasks
 from fastapi.responses import FileResponse
 
-from config.db import db
+from configuration.db import db
 
 from docxtpl import DocxTemplate
 

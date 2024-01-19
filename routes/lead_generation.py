@@ -6,7 +6,7 @@ from fastapi import APIRouter, Request, BackgroundTasks
 # from fastapi.encoders import jsonable_encoder
 from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
 
-from config.db import db
+
 
 import random
 
@@ -24,6 +24,7 @@ from decouple import config
 from datetime import datetime, timedelta
 # from distutils.command.clean import clean
 from email.header import decode_header
+from configuration.db import db
 import re
 
 import vonage
@@ -35,7 +36,7 @@ leads = APIRouter()
 
 
 # get AWS_BUCKET_NAME from .env file
-# SMTP_SERVER = config("SMTP_SERVER")
+# SMTP_SERVER = configuration("SMTP_SERVER")
 # print("SMTP_SERVER", SMTP_SERVER)
 
 
@@ -1419,7 +1420,8 @@ async def check_emails_omh_app():
 
 
 
-# create a function to insert data into lead_sales collection where if rental_enquiry does not exist make rental_enquiry = False for each document
+# create a function to insert data into lead_sales collection where if rental_enquiry does not exist make
+# rental_enquiry = False for each document
 def insert_lead_sales():
     # get all the documents from the lead_sales collection
     lead_sales = list(db.leads_sales.find())

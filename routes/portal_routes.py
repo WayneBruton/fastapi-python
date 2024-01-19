@@ -24,7 +24,7 @@ import time
 import smtplib
 from email.message import EmailMessage
 
-from config.db import db
+from configuration.db import db
 
 import vonage
 

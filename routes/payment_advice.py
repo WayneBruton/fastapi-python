@@ -3,10 +3,10 @@
 # from botocore.exceptions import ClientError
 from fastapi import APIRouter, Request
 # from fastapi.responses import FileResponse
-from config.db import db
+from configuration.db import db
 from bson.objectid import ObjectId
 
-# from decouple import config
+# from decouple import configuration
 
 advices = APIRouter()
 

@@ -43,6 +43,7 @@ def create_goodwood_la(data):
         investor = data.get('investor_name', "") + ' ' + data.get('investor_surname', "") + '(' + data.get(
             'investor_id_number', "") + ')'
     bank_account_holder = data.get('bank_account_holder', "")
+    investor_id_number = data.get('investor_id_number', "")
     bank_name = data.get('bank_name', "")
     bank_account_type = data.get('bank_account_type', "")
     bank_branch = data.get('bank_branch', "")
@@ -121,6 +122,7 @@ def create_goodwood_la(data):
         'interest_rate': interest_rate,
         'investment_amount': investment_amount,
         'investor_name': investor_name,
+        'investor_id_number': investor_id_number,
 
     }
     doc.render(context)

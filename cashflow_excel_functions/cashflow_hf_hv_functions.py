@@ -1,4 +1,4 @@
-# from config.db import db
+# from configuration.db import db
 from datetime import datetime, timedelta
 
 from openpyxl import Workbook

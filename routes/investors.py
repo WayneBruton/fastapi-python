@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse
-from config.db import db
+
 import os
 from pydantic import BaseModel
 import loan_agreement_files.lender as l1
@@ -10,6 +10,7 @@ from email.message import EmailMessage
 
 from early_releases_excel_generation.early_releases_excel import early_release_creation
 from loan_agreement_files.goodwood_loan_agreement_files.goodwood_loan_agreement import create_goodwood_la
+from configuration.db import db
 
 
 
