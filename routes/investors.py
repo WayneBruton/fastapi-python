@@ -437,37 +437,22 @@ async def deliver_early_releases(file_name):
         return {"ERROR": "Please Try again"}
 
 
-# @investor.get("/test_investors")
-# async def test_investors():
-#     investors = list(db.investors.aggregate(
-#         [
-#             {
-#                 '$project': {
-#                     'investor_acc_number': 1,
-#                     'investor_name': 1,
-#                     'investor_surname': 1,
-#                     'investments': 1,
-#                     '_id': 0,
-#                 }
-#             }
-#         ]
-#     ))
-#     final_data = []
+# def get_sales(): #get opportunities from opportunities collection where Category is Heron Fields or Category is
+# Heron View, and project only the opportunity_code, end_date, final_transfer_date and sales_price opportunities_list
+# = list(db.opportunities.aggregate( [ { '$match': { '$or': [ { 'Category': 'Heron Fields' }, { 'Category': 'Heron
+# View' }, { 'Category': 'Endulini' } ] } }, { '$project': { 'opportunity_code': 1, 'opportunity_end_date': 1,
+# 'opportunity_final_transfer_date': 1, 'opportunity_sale_price': 1, 'opportunity_sold': 1, '_id': 0 } } ] )) print(
+# "opportunities_list",opportunities_list[0], len(opportunities_list)) # save opportunities_list to a csv file import
+# csv
 #
-#     for inv in investors:
-#         for item in inv['investments']:
-#             if (item['Category'] == "Heron View" or item['Category'] == "Heron Fields") and item['release_date'][
-#                                                                                             :7] == "2022/02":
-#                 # take the first 7 characters of the release_date
-#                 # item['release_date'] = item['release_date'][:10]
-#                 insert = {}
-#                 insert['investor_acc_number'] = inv['investor_acc_number']
-#                 insert['investor_name'] = inv['investor_name']
-#                 insert['investor_surname'] = inv['investor_surname']
-#                 insert['opportunity_code'] = item['opportunity_code']
-#                 insert['release_date'] = item['release_date']
-#                 insert['investment_amount'] = item['investment_amount']
+#     with open('opportunities.csv', 'w', newline='') as csvfile:
+#         fieldnames = ['opportunity_code', 'opportunity_end_date', 'opportunity_final_transfer_date',
+#                       'opportunity_sale_price', 'opportunity_sold']
+#         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+#         writer.writeheader()
+#         for i in opportunities_list:
+#             writer.writerow(i)
 #
-#                 final_data.append(insert)
-#
-#     return {"length": len(final_data), "data": final_data}
+# get_sales()
+
+

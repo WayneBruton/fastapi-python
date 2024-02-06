@@ -695,8 +695,54 @@ async def get_profit_and_loss(file_name):
 
 @xero.post("/process_profit_and_loss")
 async def process_profit_and_loss(data: Request):
-    global count_received, count_received4, count_received3, count_received2, count_received1, count_exited4, count_exited3, count_exited2, count_exited1, count_units4, count_units3, count_units2, count_units1, transferred_units4, transferred_units3, transferred_units2, transferred_units1, sold_units4, sold_units3, sold_units2, sold_units1, remaining_units4, remaining_units3, remaining_units2, remaining_units1, transferred_units_sold_value4, transferred_units_sold_value3, transferred_units_sold_value2, transferred_units_sold_value1, value_exited4, current_investor_capital_deployed4, value_still_to_be_raised4, value_exited3, current_investor_capital_deployed3, value_still_to_be_raised3, value_exited2, current_investor_capital_deployed2, value_exited1, current_investor_capital_deployed1, value_still_to_be_raised1, value_still_to_be_raised2, total_units_sales_value4, total_units_sales_value3, total_units_sales_value2, total_units_sales_value1, remaining_units_value4, remaining_units_value3, remaining_units_value2, remaining_units_value1, sold_units_value4, sold_units_value3, sold_units_value2, sold_units_value1, remaining_units_commission4, remaining_units_commission3, remaining_units_commission2, remaining_units_commission1, total_units_commission4, transferred_units_commission4, sold_units_commission4, total_units_commission3, transferred_units_commission3, sold_units_commission3, total_units_commission2, transferred_units_commission2, sold_units_commission2, total_units_commission1, transferred_units_commission1, sold_units_commission1, sold_units_transfer_fees4, sold_units_transfer_fees3, sold_units_transfer_fees2, sold_units_transfer_fees1, total_units_transfer_fees4, remaining_units_transfer_fees4, total_units_transfer_fees3, total_units_transfer_fees2, total_units_transfer_fees2, remaining_units_transfer_fees2, remaining_units_transfer_fees2, total_units_transfer_fees1, remaining_units_transfer_fees1, transferred_units_transfer_fees4, transferred_units_transfer_fees3, transferred_units_transfer_fees2, transferred_units_transfer_fees1, remaining_units_transfer_fees3, sold_units_bond_registration4, sold_units_bond_registration3, sold_units_bond_registration2, sold_units_bond_registration1, total_units_bond_registration4, remaining_units_bond_registration4, total_units_bond_registration3, remaining_units_bond_registration3, total_units_bond_registration2, remaining_units_bond_registration2, total_units_bond_registration1, remaining_units_bond_registration1, transferred_units_bond_registration4, transferred_units_bond_registration3, transferred_units_bond_registration2, transferred_units_bond_registration1, sold_units_trust_release_fee4, sold_units_trust_release_fee3, sold_units_trust_release_fee2, sold_units_trust_release_fee1, total_units_trust_release_fee4, remaining_units_trust_release_fee4, total_units_trust_release_fee3, remaining_units_trust_release_fee3, total_units_trust_release_fee2, remaining_units_trust_release_fee2, total_units_trust_release_fee1, remaining_units_trust_release_fee1, transferred_units_trust_release_fee4, transferred_units_trust_release_fee3, transferred_units_trust_release_fee2, transferred_units_trust_release_fee1, remaining_units_unforseen4, remaining_units_unforseen3, remaining_units_unforseen2, remaining_units_unforseen1, total_units_unforseen4, total_units_unforseen3, total_units_unforseen2, total_units_unforseen1, transferred_units_unforseen4, transferred_units_unforseen3, transferred_units_unforseen2, transferred_units_unforseen1, sold_units_unforseen4, sold_units_unforseen3, sold_units_unforseen2, sold_units_unforseen1, interest_paid_to_date4, interest_paid_to_date3, interest_paid_to_date2, interest_paid_to_date1
+    global count_received, count_received4, count_received3, count_received2, count_received1, count_exited4, \
+        count_exited3, count_exited2, count_exited1, count_units4, count_units3, count_units2, count_units1, \
+        transferred_units4, transferred_units3, transferred_units2, transferred_units1, sold_units4, sold_units3, \
+        sold_units2, sold_units1, remaining_units4, remaining_units3, remaining_units2, remaining_units1, \
+        transferred_units_sold_value4, transferred_units_sold_value3, transferred_units_sold_value2, \
+        transferred_units_sold_value1, value_exited4, current_investor_capital_deployed4, value_still_to_be_raised4, \
+        value_exited3, current_investor_capital_deployed3, value_still_to_be_raised3, value_exited2, \
+        current_investor_capital_deployed2, value_exited1, current_investor_capital_deployed1, \
+        value_still_to_be_raised1, value_still_to_be_raised2, total_units_sales_value4, total_units_sales_value3, \
+        total_units_sales_value2, total_units_sales_value1, remaining_units_value4, remaining_units_value3, \
+        remaining_units_value2, remaining_units_value1, sold_units_value4, sold_units_value3, sold_units_value2, \
+        sold_units_value1, remaining_units_commission4, remaining_units_commission3, remaining_units_commission2, \
+        remaining_units_commission1, total_units_commission4, transferred_units_commission4, sold_units_commission4, \
+        total_units_commission3, transferred_units_commission3, sold_units_commission3, total_units_commission2, \
+        transferred_units_commission2, sold_units_commission2, total_units_commission1, transferred_units_commission1, \
+        sold_units_commission1, sold_units_transfer_fees4, sold_units_transfer_fees3, sold_units_transfer_fees2, \
+        sold_units_transfer_fees1, total_units_transfer_fees4, remaining_units_transfer_fees4, \
+        total_units_transfer_fees3, total_units_transfer_fees2, total_units_transfer_fees2, \
+        remaining_units_transfer_fees2, remaining_units_transfer_fees2, total_units_transfer_fees1, \
+        remaining_units_transfer_fees1, transferred_units_transfer_fees4, transferred_units_transfer_fees3, \
+        transferred_units_transfer_fees2, transferred_units_transfer_fees1, remaining_units_transfer_fees3, \
+        sold_units_bond_registration4, sold_units_bond_registration3, sold_units_bond_registration2, \
+        sold_units_bond_registration1, total_units_bond_registration4, remaining_units_bond_registration4, \
+        total_units_bond_registration3, remaining_units_bond_registration3, total_units_bond_registration2, \
+        remaining_units_bond_registration2, total_units_bond_registration1, remaining_units_bond_registration1, \
+        transferred_units_bond_registration4, transferred_units_bond_registration3, \
+        transferred_units_bond_registration2, transferred_units_bond_registration1, sold_units_trust_release_fee4, \
+        sold_units_trust_release_fee3, sold_units_trust_release_fee2, sold_units_trust_release_fee1, \
+        total_units_trust_release_fee4, remaining_units_trust_release_fee4, total_units_trust_release_fee3, \
+        remaining_units_trust_release_fee3, total_units_trust_release_fee2, remaining_units_trust_release_fee2, \
+        total_units_trust_release_fee1, remaining_units_trust_release_fee1, transferred_units_trust_release_fee4, \
+        transferred_units_trust_release_fee3, transferred_units_trust_release_fee2, \
+        transferred_units_trust_release_fee1, remaining_units_unforseen4, remaining_units_unforseen3, \
+        remaining_units_unforseen2, remaining_units_unforseen1, total_units_unforseen4, total_units_unforseen3, \
+        total_units_unforseen2, total_units_unforseen1, transferred_units_unforseen4, transferred_units_unforseen3, \
+        transferred_units_unforseen2, transferred_units_unforseen1, sold_units_unforseen4, sold_units_unforseen3, \
+        sold_units_unforseen2, sold_units_unforseen1, interest_paid_to_date4, interest_paid_to_date3, \
+        interest_paid_to_date2, interest_paid_to_date1
     request = await data.json()
+    for i in range(0, 4):
+        for data in cpc_data_fields.base_data:
+            data["Amount"].append(0.00)
+        for data in cpc_data_fields.base_data_HF_PandL:
+            data["Amount"].append(0.00)
+        for data in cpc_data_fields.base_data_HV_PandL:
+            data["Amount"].append(0.00)
+
+    print("2nd Print: ", cpc_data_fields.base_data_HV_PandL[len(cpc_data_fields.base_data_HV_PandL) - 2]['Amount'])
 
     year = request['from_date'].split("-")[0]
     month = request['from_date'].split("-")[1]
@@ -2467,6 +2513,32 @@ async def process_profit_and_loss(data: Request):
         print(e)
         return {"ERROR": "Please Try again"}
 
+
+# insert into profit_and_loss collection the contents of P&LRest_of_year.json
+# def get_json_file():
+#     import json
+#
+#     # Specify the path to your JSON file
+#     file_path = 'P&LRest_of_year.json'
+#
+#     # Open the JSON file for reading
+#     try:
+#         with open(file_path, 'r') as json_file:
+#             data = json.load(json_file)
+#     except (FileNotFoundError, json.JSONDecodeError) as e:
+#         print(f"Error opening or parsing the JSON file: {e}")
+#
+#     try:
+#         # input data into profit_and_loss in the db
+#         db.profit_and_loss.insert_many(data)
+#         print("Data inserted successfully")
+#     except Exception as e:
+#         print(e)
+#         return {"ERROR": "Please Try again"}
+#
+#     print(len(data))
+
+# get_json_file()
 
 @xero.get("/get_profit_and_loss_data")
 def get_profit_and_loss_data():
