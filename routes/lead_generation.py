@@ -50,19 +50,45 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
 
     # generate a list of leads limited to the number of sales people
 
-    last_leads_generated = list(db.leads_sales.find().sort("created_at", -1).limit(len(sales_people)))
+    last_leads_generated = list(db.leads_sales.find().sort("created_at", -1).limit(len(sales_people) + 1))
+    print("last_leads_generated", len(last_leads_generated))
+    print()
+    # print("last_leads_generated", last_leads_generated)
+    for lead_generated in last_leads_generated:
+        lead_generated["_id"] = str(lead_generated["_id"])
+        print("lead_generated", lead_generated)
+        print()
+
     for lead in last_leads_generated:
         lead["_id"] = str(lead["_id"])
         print("lead", lead["sales_person_id"])
         print("sales_people", lead['sales_person'])
         print()
 
+
+    # loop through sales_people and see if the sales_person_id is in the last_leads_generated list excluding the last lead
+    for person in sales_people:
+        # print("person", person["_id"])
+        # print()
+        # if the person id is not in the last_leads_generated list
+        if person["_id"] not in [lead["sales_person_id"] for lead in last_leads_generated[:-1]]:
+            # print("person", person["_id"])
+            # print()
+            sales_person_chosen = person["_id"]
+            # print("sales_person_chosen_id", sales_person_chosen)
+            # get the sales_person_chosen from the sales_people list
+            sales_person = list(filter(lambda x: x["_id"] == sales_person_chosen, sales_people))[0]
+            # print("sales_person_chosen", sales_person)
+            break
+        else:
+            sales_person_chosen = last_leads_generated[len(last_leads_generated) - 1]["sales_person_id"]
+
     # get the sales_person who is in the last record of the last_leads_generated list
-    sales_person_chosen = last_leads_generated[len(last_leads_generated) - 1]["sales_person_id"]
-    print("sales_person", sales_person_chosen)
+    # sales_person_chosen = last_leads_generated[len(last_leads_generated) - 1]["sales_person_id"]
+    # print("sales_person", sales_person_chosen)
     # get the sales_person_chsen from the sales_people list
     sales_person = list(filter(lambda x: x["_id"] == sales_person_chosen, sales_people))[0]
-    print("sales_person", sales_person)
+    # print("sales_person", sales_person)
 
     # if last_leads_generated := list(
     #         db.leads_sales.find({"rental_enquiry": False}).sort("created_at", -1).limit(len(sales_people))

@@ -1177,7 +1177,6 @@ async def process_profit_and_loss(data: Request):
         else:
             print("data_from_xero is empty")
 
-
         if len(data_from_xero_HF_PandL) > 0:
             global amount
             amount = 0
@@ -1197,7 +1196,6 @@ async def process_profit_and_loss(data: Request):
                         item[1] = item[1] + amount
                         # print("item[1]", item[1])
 
-
                     index = comparison_data_hf.index(comparison_data_hf_filtered[0])
                     comparison_data_hf[index]['Amount'].insert(0, item[1])
                     # JUST TO CHECK
@@ -1206,7 +1204,6 @@ async def process_profit_and_loss(data: Request):
                     # print()
         else:
             print("data_from_xero is empty")
-
 
         if len(data_from_xero_HV_PandL) > 0:
             # global amount
@@ -1220,13 +1217,11 @@ async def process_profit_and_loss(data: Request):
                 #     print("Amount", amount)
 
                 if len(comparison_data_hv_filtered) > 0:
-
                     # if comparison_data_hf_filtered[0]['Account'] == 'Security - ADT':
                     #     print("Amount", amount)
                     #
                     #     item[1] = item[1] + amount
                     #     print("item[1]", item[1])
-
 
                     index = comparison_data_hv.index(comparison_data_hv_filtered[0])
                     comparison_data_hv[index]['Amount'].insert(0, item[1])
@@ -1248,7 +1243,6 @@ async def process_profit_and_loss(data: Request):
         periods_to_report_comparison = list(filter(lambda x: x['period'] <= request['period'], periods_to_report))
         # reverse periods_to_report_comparison
         periods_to_report_comparison.reverse()
-
 
         final_data_for_profit_loss_to_update = []
         final_data_for_profit_loss_to_insert = []
@@ -2624,6 +2618,7 @@ def get_json_file():
 
     print(len(data))
 
+
 # get_json_file()
 
 
@@ -2855,3 +2850,40 @@ def get_json_file():
 #
 #
 # endulini()
+
+
+# TEMP FUNCTION TO UPDATE PROFIT AND LOSS
+def update_profit_and_loss_from_cf_file():
+    input_p_and_l = [
+        {"Account": "Sales - Heron View Sales", "Month": "Oct-24", "Forecast": 7999478.26086957},
+        {"Account": "Sales - Heron View Sales", "Month": "Nov-24", "Forecast": 8156000},
+        {"Account": "Sales - Heron View Sales", "Month": "Dec-24", "Forecast": 8042956.52173913},
+        {"Account": "Sales - Heron View Sales", "Month": "Feb-24", "Forecast": 11086260.8695652},
+        {"Account": "Sales - Heron View Sales", "Month": "Mar-24", "Forecast": 2608521.73913044},
+        {"Account": "Sales - Heron View Sales", "Month": "May-24", "Forecast": 3860608.69565217},
+        {"Account": "Sales - Heron View Sales", "Month": "Jun-24", "Forecast": 32903036.5217391},
+        {"Account": "Sales - Heron View Sales", "Month": "Jul-24", "Forecast": 17512000},
+        {"Account": "Sales - Heron View Sales", "Month": "Aug-24", "Forecast": 17729391.3043478},
+        {"Account": "Sales - Heron View Sales", "Month": "Sep-24", "Forecast": 13512260.8695652},
+        {"Account": "COS - Heron View - Construction", "Month": "Jan-24", "Forecast": 2696525.1269841},
+        {"Account": "COS - Heron View - Construction", "Month": "Feb-24", "Forecast": 5760663.04514261},
+        {"Account": "COS - Heron View - Construction", "Month": "Mar-24", "Forecast": 10042490.8633602},
+        {"Account": "COS - Heron View - Construction", "Month": "Apr-24", "Forecast": 6644697.30778797},
+        {"Account": "COS - Heron View - Construction", "Month": "May-24", "Forecast": 9067916.29306447},
+        {"Account": "COS - Heron View - Construction", "Month": "Jun-24", "Forecast": 7381385.27235665},
+        {"Account": "COS - Heron View - Construction", "Month": "Jul-24", "Forecast": 3648699.27027617},
+        {"Account": "COS - Heron View - Construction", "Month": "Aug-24", "Forecast": 1000594.94489614},
+        {"Account": "COS - Heron View - Construction", "Month": "Sep-24", "Forecast": 512305.573497741},
+        {"Account": "COS - Heron View - Construction", "Month": "Oct-24", "Forecast": 754779.014486066},
+    ]
+    try:
+        for item in input_p_and_l:
+            # round item['Forecast'] to 2 decimal places
+            item['Forecast'] = round(item['Forecast'], 2)
+            db.profit_and_loss.update_one({"Account": item['Account'], "Month": item['Month']}, {"$set": item})
+        print("Data updated successfully")
+    except Exception as e:
+        print(e)
+        return {"ERROR": "Please Try again"}
+
+# update_profit_and_loss_from_cf_file()
