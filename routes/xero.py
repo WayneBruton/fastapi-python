@@ -734,7 +734,7 @@ async def process_profit_and_loss(data: Request):
         sold_units_unforseen2, sold_units_unforseen1, interest_paid_to_date4, interest_paid_to_date3, \
         interest_paid_to_date2, interest_paid_to_date1
     request = await data.json()
-    for i in range(0, 4):
+    for i in range(0, 12):
         for data in cpc_data_fields.base_data:
             data["Amount"].append(0.00)
         for data in cpc_data_fields.base_data_HF_PandL:
