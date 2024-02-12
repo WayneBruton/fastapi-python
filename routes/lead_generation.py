@@ -6,8 +6,6 @@ from fastapi import APIRouter, Request, BackgroundTasks
 # from fastapi.encoders import jsonable_encoder
 from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
 
-
-
 import random
 
 import smtplib
@@ -52,56 +50,47 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
 
     last_leads_generated = list(db.leads_sales.find().sort("created_at", -1).limit(len(sales_people) + 1))
     print("last_leads_generated", len(last_leads_generated))
+    print("last_leads_generated", last_leads_generated)
     print()
     # print("last_leads_generated", last_leads_generated)
-    for lead_generated in last_leads_generated:
-        lead_generated["_id"] = str(lead_generated["_id"])
-        print("lead_generated", lead_generated)
-        print()
+    # for lead_generated in last_leads_generated:
+    #     lead_generated["_id"] = str(lead_generated["_id"])
+    #     print("lead_generated", lead_generated)
+    #     print()
 
-    for lead in last_leads_generated:
-        lead["_id"] = str(lead["_id"])
-        print("lead", lead["sales_person_id"])
-        print("sales_people", lead['sales_person'])
-        print()
+    # for lead in last_leads_generated:
+    #     lead["_id"] = str(lead["_id"])
+    #     print("lead", lead["sales_person_id"])
+    #     print("sales_people", lead['sales_person'])
+    #     print()
 
-
-    # loop through sales_people and see if the sales_person_id is in the last_leads_generated list excluding the last lead
+    # loop through sales_people and see if the sales_person_id is in the last_leads_generated list excluding the last
+    # lead
     for person in sales_people:
         # print("person", person["_id"])
         # print()
         # if the person id is not in the last_leads_generated list
         if person["_id"] not in [lead["sales_person_id"] for lead in last_leads_generated[:-1]]:
-            # print("person", person["_id"])
+            print("person 1", person["_id"])
+            print("person 1 name", person["name"])
             # print()
             sales_person_chosen = person["_id"]
             # print("sales_person_chosen_id", sales_person_chosen)
             # get the sales_person_chosen from the sales_people list
-            sales_person = list(filter(lambda x: x["_id"] == sales_person_chosen, sales_people))[0]
+            # sales_person = list(filter(lambda x: x["_id"] == sales_person_chosen, sales_people))[0]
             # print("sales_person_chosen", sales_person)
             break
         else:
-            sales_person_chosen = last_leads_generated[len(last_leads_generated) - 1]["sales_person_id"]
+            sales_person_chosen = last_leads_generated[len(last_leads_generated) - 2]["sales_person_id"]
+            print("person 2", last_leads_generated[len(last_leads_generated) - 2]["sales_person"])
+            break
+            # print("person", person["name"])
+
 
     # get the sales_person who is in the last record of the last_leads_generated list
-    # sales_person_chosen = last_leads_generated[len(last_leads_generated) - 1]["sales_person_id"]
-    # print("sales_person", sales_person_chosen)
-    # get the sales_person_chsen from the sales_people list
+
+    # get the sales_person_chosen from the sales_people list
     sales_person = list(filter(lambda x: x["_id"] == sales_person_chosen, sales_people))[0]
-    # print("sales_person", sales_person)
-
-    # if last_leads_generated := list(
-    #         db.leads_sales.find({"rental_enquiry": False}).sort("created_at", -1).limit(len(sales_people))
-    # ):
-    # sales_people_ids_with_recent_leads = {lead["sales_person_id"] for lead in last_leads_generated}
-    # Choose from sales people who haven't received a lead recently, or the last one if all have.
-    # sales_people_to_choose = [person for person in sales_people if
-    #                           person["_id"] not in sales_people_ids_with_recent_leads] or [sales_people[-1]]
-    # sales_person = random.choice(sales_people_to_choose)
-    # else:
-    #     sales_person = random.choice(sales_people)
-
-    # print("sales_person", sales_person)
 
     request.update({
         'origin': request['source']['source'],
@@ -450,12 +439,13 @@ async def edit_sales_lead(background_task: BackgroundTasks, data: Request):
     try:
         # print("request",request)
 
-
         lead_id = request['_id']
         # find the lead by id
         old_lead = db.leads_sales.find_one({"_id": ObjectId(lead_id)})
         # print("old_lead", old_lead)
-        if (old_lead.get('rental_enquiry',False) != request['rental_enquiry']) and old_lead.get('rental_enquiry',False) == False and request['rental_enquiry'] == True:
+        if (old_lead.get('rental_enquiry', False) != request['rental_enquiry']) and old_lead.get('rental_enquiry',
+                                                                                                 False) == False and \
+                request['rental_enquiry'] == True:
             # print("send email")
             # print()
             # print(request)
@@ -1443,7 +1433,6 @@ async def check_emails_omh_app():
 # @leads.on_event("shutdown")
 # def shutdown_event():
 #     scheduler.shutdown()
-
 
 
 # create a function to insert data into lead_sales collection where if rental_enquiry does not exist make
