@@ -25,6 +25,7 @@ def cashflow_hf_hv(data, data2, report_date):
         # loop through data and convert 'Month' to a datetime object on the last day of the month formatted as dd MMM
         # yyyy
         for item in data:
+
             del item['_id']
             date_string = item['Month']
             month_str, year_str = date_string.split('-')
@@ -34,6 +35,7 @@ def cashflow_hf_hv(data, data2, report_date):
             formatted_date = last_day.strftime('%Y-%m-%d')
             item['Month'] = formatted_date
             # print("Hello")
+
             formatted_date = datetime.strptime(formatted_date, '%Y-%m-%d')
             if formatted_date > report_date:
                 # print("Good Bye")
@@ -42,10 +44,12 @@ def cashflow_hf_hv(data, data2, report_date):
                 item['use'] = item['Forecast']
             else:
                 item['use'] = item['Actual']
+
             if item['Account'] == 'Consulting Fees - Admin and Finance' or item['Account'] == 'Management fees - OMH':
                 item['Category'] = 'Ignore per Deric'
 
         # print(data[0])
+
         # print()
         # for item in data:
         #     print(item)

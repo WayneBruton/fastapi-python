@@ -1,0 +1,1226 @@
+[
+ {
+   "Account": "COS - Commission HV Units",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CPSD",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Early Exit Loan",
+   "Category": "Early Exit Loan",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Opp Invest",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Rent Salaries and Wages",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron View Sales",
+   "Category": "Trading Income",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HV Units",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CPSD",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Early Exit Loan",
+   "Category": "Early Exit Loan",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Opp Invest",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Rent Salaries and Wages",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron View Sales",
+   "Category": "Trading Income",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HV Units",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CPSD",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Early Exit Loan",
+   "Category": "Early Exit Loan",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Opp Invest",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Rent Salaries and Wages",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron View Sales",
+   "Category": "Trading Income",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HV Units",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CPSD",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Early Exit Loan",
+   "Category": "Early Exit Loan",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Opp Invest",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Rent Salaries and Wages",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron View Sales",
+   "Category": "Trading Income",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HV Units",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CPSD",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Early Exit Loan",
+   "Category": "Early Exit Loan",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Opp Invest",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Rent Salaries and Wages",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron View Sales",
+   "Category": "Trading Income",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HV Units",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CPSD",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Early Exit Loan",
+   "Category": "Early Exit Loan",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Opp Invest",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Rent Salaries and Wages",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron View Sales",
+   "Category": "Trading Income",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HV Units",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CPSD",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Early Exit Loan",
+   "Category": "Early Exit Loan",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Opp Invest",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Rent Salaries and Wages",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron View Sales",
+   "Category": "Trading Income",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HV Units",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CPSD",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Early Exit Loan",
+   "Category": "Early Exit Loan",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Opp Invest",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Rent Salaries and Wages",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron View Sales",
+   "Category": "Trading Income",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-25",
+   "Actual": 0,
+   "Forecast": 0
+ }
+]

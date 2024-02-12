@@ -1637,6 +1637,7 @@ async def process_profit_and_loss(data: Request):
 
                     released_investments.append(insert)
 
+
         # sort trust_investments_received by opportunity_code, investor_acc_number
         trust_investments_received = sorted(trust_investments_received,
                                             key=lambda i: (i['opportunity_code'], i['investor_acc_number']))
@@ -2115,6 +2116,8 @@ async def process_profit_and_loss(data: Request):
 
             remaining_units_unforseen = total_units_unforseen - transferred_units_unforseen - sold_units_unforseen
 
+
+
             if index == 1:
                 month_1_received = month_received
                 month_1released = month_released
@@ -2318,6 +2321,8 @@ async def process_profit_and_loss(data: Request):
         # filter investors where trust array is not empty
         investors = list(filter(lambda x: len(x['trust']) > 0, investors))
 
+
+
         row1 = ["", "", "", "", "C.3_d", "", "", "", "", "C.3_d", "", "", "", "", "C.3_d", "", "", "", "", "C.3_d"]
         row2 = ["NSST HERON PROJECT REPORT", "", "", "", "", "NSST HERON PROJECT REPORT", "", "", "", "",
                 "NSST HERON PROJECT REPORT", "", "", "", "", "NSST HERON PROJECT REPORT", "", "", "", ""]
@@ -2513,7 +2518,7 @@ async def process_profit_and_loss(data: Request):
 #     import json
 #
 #     # Specify the path to your JSON file
-#     file_path = 'P&LRest_of_year.json'
+#     file_path = 'P&LAug25.json'
 #
 #     # Open the JSON file for reading
 #     try:
