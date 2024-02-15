@@ -1,4 +1,5 @@
 import copy
+import math
 import os
 from datetime import datetime, timedelta
 import xmltodict
@@ -15,6 +16,7 @@ from fastapi.responses import RedirectResponse
 from configuration.db import db
 from bson.objectid import ObjectId
 from decouple import config
+import time
 
 from cashflow_excel_functions.cpc_profit_loss_files import insert_data_from_xero_profit_loss
 import cashflow_excel_functions.cpc_data_fields as cpc_data_fields
@@ -130,567 +132,990 @@ async def xero_callback(request: Request, code: str):
     return RedirectResponse(url="http://localhost:8080/finance")
 
 
-@xero.post("/get_profit_and_loss")
-async def get_profit_and_loss(data: Request):
+# @xero.post("/get_profit_and_loss")
+# async def get_profit_and_loss(data: Request):
+#     request = await data.json()
+#
+#     year = request['from_date'].split("-")[0]
+#     month = request['from_date'].split("-")[1]
+#
+#     try:
+#         start_time = time.time()
+#
+#         if int(month) < 10:
+#             current_year = int(year)
+#         else:
+#             current_year = int(year) - 1
+#
+#         periods_to_report = [
+#             {
+#                 "period": 1,
+#                 "from_date": f"{current_year}-03-01",
+#                 "to_date": f"{current_year}-03-31"
+#             },
+#             {
+#                 "period": 2,
+#                 "from_date": f"{current_year}-04-01",
+#                 "to_date": f"{current_year}-04-30"
+#             },
+#             {
+#                 "period": 3,
+#                 "from_date": f"{current_year}-05-01",
+#                 "to_date": f"{current_year}-05-31"
+#             },
+#             {
+#                 "period": 4,
+#                 "from_date": f"{current_year}-06-01",
+#                 "to_date": f"{current_year}-06-30"
+#             },
+#             {
+#                 "period": 5,
+#                 "from_date": f"{current_year}-07-01",
+#                 "to_date": f"{current_year}-07-31"
+#             },
+#             {
+#                 "period": 6,
+#                 "from_date": f"{current_year}-08-01",
+#                 "to_date": f"{current_year}-08-31"
+#             },
+#             {
+#                 "period": 7,
+#                 "from_date": f"{current_year}-09-01",
+#                 "to_date": f"{current_year}-09-30"
+#             },
+#             {
+#                 "period": 8,
+#                 "from_date": f"{current_year}-10-01",
+#                 "to_date": f"{current_year}-10-31"
+#             },
+#             {
+#                 "period": 9,
+#                 "from_date": f"{current_year}-11-01",
+#                 "to_date": f"{current_year}-11-30"
+#             },
+#             {
+#                 "period": 10,
+#                 "from_date": f"{current_year}-12-01",
+#                 "to_date": f"{current_year}-12-31"
+#             },
+#             {
+#                 "period": 11,
+#                 "from_date": f"{current_year + 1}-01-01",
+#                 "to_date": f"{current_year + 1}-01-31"
+#             },
+#             {
+#                 "period": 12,
+#                 "from_date": f"{current_year + 1}-02-01",
+#                 "to_date": f"{current_year + 1}-02-29"
+#             }
+#         ]
+#
+#         data_from_xero = []
+#         data_from_xero_HF_PandL = []
+#         data_from_xero_HV_PandL = []
+#
+#         base_data = cpc_data_fields.base_data.copy()
+#
+#         for record in base_data:
+#             for i in range(request['period']):
+#                 record['Amount'][i] = 0.0
+#
+#         base_data_HF_PandL = cpc_data_fields.base_data_HF_PandL.copy()
+#
+#         for record in base_data_HF_PandL:
+#             for i in range(request['period']):
+#                 record['Amount'][i] = 0.0
+#
+#         base_data_HV_PandL = cpc_data_fields.base_data_HV_PandL.copy()
+#
+#         for record in base_data_HV_PandL:
+#             for i in range(0, request['period']):
+#                 # print(request['period'])
+#                 record['Amount'][i] = 0.0
+#
+#         credentials_string = f"{clientId}:{xerosecret}".encode("utf-8")
+#
+#         # Encode the combined string in base64
+#         encoded_credentials = b64encode(credentials_string).decode("utf-8")
+#
+#         # get data from xeroCredentials and save to variable credentials
+#         credentials = xeroCredentials.find_one({})
+#         id = str(credentials["_id"])
+#         del credentials["_id"]
+#
+#         access_token = credentials["access_token"]
+#         refresh_token = credentials["refresh_token"]
+#
+#         if isinstance(credentials["refresh_expires"], str):
+#             credentials["refresh_expires"] = datetime.strptime(credentials["refresh_expires"], "%Y-%m-%d %H:%M:%S")
+#         if credentials["refresh_expires"] > datetime.now():
+#
+#             url_refresh = "https://identity.xero.com/connect/token"
+#
+#             # Define the headers
+#             headers = {
+#                 "Content-Type": "application/x-www-form-urlencoded",
+#                 "Authorization": f"Basic {encoded_credentials}",  # Replace token with your base64-encoded credentials
+#             }
+#
+#             # Define the form data
+#             data = {
+#                 "grant_type": "refresh_token",
+#                 "refresh_token": refresh_token,
+#             }
+#
+#             # Send the POST request
+#             response = requests.post(url_refresh, headers=headers, data=data)
+#
+#             # Check the response
+#             if response.status_code == 200:
+#                 # Request was successful, you can access response data like JSON content
+#                 response_data = response.json()
+#                 access_token = response_data.get("access_token")
+#                 expires_in = response_data.get("expires_in")
+#                 refresh_token = response_data.get("refresh_token")
+#                 refresh_expires = datetime.now() + timedelta(days=60)
+#                 insert = {
+#                     "access_token": access_token,
+#                     "expires_in": expires_in,
+#                     "refresh_token": refresh_token,
+#                     "refresh_expires": refresh_expires,
+#                 }
+#                 # update the document in the database
+#                 xeroCredentials.update_one({"_id": ObjectId(id)}, {"$set": insert})
+#
+#             else:
+#                 # Request failed, handle the error
+#                 print(f"Error: {response.status_code} - {response.text}")
+#
+#         else:
+#             print("refresh_expires is in the past")
+#
+#         tenant_id = "30b5d5a0-cf38-4bdb-baa1-9dda35b278a2"
+#         tenant_id_HF = "9c4ba92b-93b0-4358-9ff8-141aa0718242"
+#
+#         tenant_id_HV = "4af624e3-6de5-4cc7-9123-36d63d2acbb4"
+#
+#         tenants = [tenant_id, tenant_id_HF, tenant_id_HV]
+#
+#         tenants_tb = [tenant_id_HF, tenant_id_HV]
+#
+#         hv_tb = []
+#         hf_tb = []
+#
+#         for index, tenant in enumerate(tenants_tb):
+#             report_date = request['to_date']
+#
+#             try:
+#                 async with httpx.AsyncClient() as client:
+#                     response = await client.get(
+#                         f"https://api.xero.com/api.xro/2.0/Reports/TrialBalance?date={report_date}",
+#                         headers={
+#                             "Content-Type": "application/xml",
+#                             "Authorization": f"Bearer {access_token}",
+#                             "xero-tenant-id": tenant,
+#                         },
+#                     )
+#             except httpx.HTTPError as exc:
+#                 print(f"HTTP Error: {exc}")
+#                 return {"Success": False, "Error": "HTTP Error"}
+#
+#             # Check the HTTP status code
+#             if response.status_code != 200:
+#                 return {"Success": False, "Error": "Non-200 Status Code"}
+#
+#             # print("Hello")
+#
+#             python_dict = xmltodict.parse(response.text)
+#
+#             python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+#
+#             python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
+#
+#             for item in python_dict:
+#                 new_item = item['Rows']['Row']
+#                 for cells in new_item:
+#
+#                     if isinstance(cells, dict):
+#                         insert = {}
+#
+#                         for new_index, cell in enumerate(cells['Cells']['Cell']):
+#
+#                             # put all the above as key value pairs in a dictionary
+#                             if new_index == 0:
+#                                 clean_account = cell.get('Value', 0)
+#                                 if clean_account != 0:
+#                                     clean_account_list = clean_account.split("(")
+#                                     clean_account_list[0] = clean_account_list[0].strip()
+#                                     clean_account_list[1] = clean_account_list[1].replace(")", "")
+#                                     clean_account_list[1] = clean_account_list[1].strip()
+#
+#                                 insert['Account Code'] = clean_account_list[1]
+#                                 insert['Account'] = clean_account_list[0]
+#                                 insert['Account Type'] = ''
+#
+#                             if new_index == 3:
+#                                 insert['debit_ytd'] = float(cell.get('Value', 0))
+#                             if new_index == 4:
+#                                 insert['credit_ytd'] = float(cell.get('Value', 0))
+#
+#                         if index == 0:
+#                             hf_tb.append(insert)
+#                         elif index == 1:
+#                             hv_tb.append(insert)
+#
+#         short_months = [2, 4, 6, 8, 12]
+#         comparison_data_cpc = []
+#         comparison_data_hf = []
+#         comparison_data_hv = []
+#
+#         # Make a GET request to the connections endpoint
+#         for index1, tenant in enumerate(tenants):
+#
+#             if request['period'] in short_months:
+#
+#                 for period in range(request['period'], request['period'] + 1):
+#
+#                     filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
+#
+#                     report_from_date = filtered_xero[0]['from_date']
+#                     report_to_date = filtered_xero[0]['to_date']
+#                     period = filtered_xero[0]['period']
+#                     try:
+#                         async with httpx.AsyncClient() as client:
+#                             response = await client.get(
+#                                 f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&toDate="
+#                                 f"{report_to_date}",
+#                                 headers={
+#                                     "Content-Type": "application/xml",
+#                                     "Authorization": f"Bearer {access_token}",
+#                                     "xero-tenant-id": tenant,
+#                                 },
+#                             )
+#                     except httpx.HTTPError as exc:
+#                         print(f"HTTP Error: {exc}")
+#                         return {"Success": False, "Error": "HTTP Error"}
+#
+#                     # Check the HTTP status code
+#                     if response.status_code != 200:
+#                         # print("HTTP Status Code:", response.status_code)
+#                         return {"Success": False, "Error": "Non-200 Status Code"}
+#
+#                     python_dict = xmltodict.parse(response.text)
+#
+#                     python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+#
+#                     for item in python_dict:
+#
+#                         if 'Rows' in item:
+#                             if isinstance(item['Rows']['Row'], list):
+#                                 data = item['Rows']['Row']
+#                                 for row in data:
+#                                     if row['RowType'] == 'Row':
+#
+#                                         final_line_data = row['Cells']['Cell']
+#                                         insert = {}
+#                                         for index, line_item in enumerate(final_line_data):
+#
+#                                             try:
+#                                                 insert[index] = float(line_item['Value'])
+#                                             except:
+#                                                 insert[index] = line_item['Value']
+#                                         insert['period'] = period
+#                                         if index1 == 0:
+#                                             data_from_xero.append(insert)
+#
+#                                         elif index1 == 1:
+#                                             data_from_xero_HF_PandL.append(insert)
+#
+#                                         elif index1 == 2:
+#                                             data_from_xero_HV_PandL.append(insert)
+#
+#                 period = request['period'] - 1
+#
+#                 filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
+#
+#                 report_from_date = filtered_xero[0]['from_date']
+#                 report_to_date = filtered_xero[0]['to_date']
+#                 period = filtered_xero[0]['period']
+#
+#                 try:
+#                     async with httpx.AsyncClient() as client:
+#                         response = await client.get(
+#                             f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&"
+#                             f"toDate={report_to_date}&periods={period - 1}&timeframe=MONTH",
+#                             headers={
+#                                 "Content-Type": "application/xml",
+#                                 "Authorization": f"Bearer {access_token}",
+#                                 "xero-tenant-id": tenant,
+#                             },
+#                         )
+#                 except httpx.HTTPError as exc:
+#                     print(f"HTTP Error: {exc}")
+#                     return {"Success": False, "Error": "HTTP Error"}
+#
+#                 # Check the HTTP status code
+#                 if response.status_code != 200:
+#                     return {"Success": False, "Error": "Non-200 Status Code"}
+#
+#                 python_dict = xmltodict.parse(response.text)
+#
+#                 python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+#
+#                 python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
+#
+#                 for item in python_dict:
+#
+#                     if 'Rows' in item:
+#                         if isinstance(item['Rows']['Row'], list):
+#                             data = item['Rows']['Row']
+#                             for row in data:
+#                                 # print("row", row)
+#                                 if row['RowType'] == 'Row':
+#
+#                                     insert = {}
+#                                     values = []
+#                                     if isinstance(row['Cells']['Cell'], list):
+#                                         newData = row['Cells']['Cell']
+#                                         for index, line_item in enumerate(newData):
+#
+#                                             if index == 0:
+#                                                 insert['Account'] = line_item['Value']
+#                                             else:
+#                                                 values.append(line_item['Value'])
+#                                     insert['Amount'] = values
+#                                     if index1 == 0:
+#                                         comparison_data_cpc.append(insert)
+#
+#                                     elif index1 == 1:
+#                                         comparison_data_hf.append(insert)
+#
+#                                     elif index1 == 2:
+#                                         comparison_data_hv.append(insert)
+#
+#
+#             else:
+#
+#                 period = request['period']
+#
+#                 filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
+#
+#                 report_from_date = filtered_xero[0]['from_date']
+#                 report_to_date = filtered_xero[0]['to_date']
+#                 period = filtered_xero[0]['period']
+#
+#                 try:
+#                     async with httpx.AsyncClient() as client:
+#                         response = await client.get(
+#                             f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&toDate={report_to_date}&periods={period - 1}&timeframe=MONTH",
+#                             headers={
+#                                 "Content-Type": "application/xml",
+#                                 "Authorization": f"Bearer {access_token}",
+#                                 "xero-tenant-id": tenant,
+#                             },
+#                         )
+#                 except httpx.HTTPError as exc:
+#                     print(f"HTTP Error: {exc}")
+#                     return {"Success": False, "Error": "HTTP Error"}
+#
+#                 # Check the HTTP status code
+#                 if response.status_code != 200:
+#                     return {"Success": False, "Error": "Non-200 Status Code"}
+#
+#                 python_dict = xmltodict.parse(response.text)
+#
+#                 python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+#
+#                 python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
+#
+#                 for item in python_dict:
+#
+#                     if 'Rows' in item:
+#                         if isinstance(item['Rows']['Row'], list):
+#                             data = item['Rows']['Row']
+#                             for row in data:
+#
+#                                 if row['RowType'] == 'Row':
+#
+#                                     insert = {}
+#                                     values = []
+#                                     if isinstance(row['Cells']['Cell'], list):
+#                                         newData = row['Cells']['Cell']
+#                                         for index, line_item in enumerate(newData):
+#
+#                                             if index == 0:
+#                                                 insert['Account'] = line_item['Value']
+#                                             else:
+#                                                 values.append(line_item['Value'])
+#                                     insert['Amount'] = values
+#                                     if index1 == 0:
+#                                         comparison_data_cpc.append(insert)
+#
+#                                     elif index1 == 1:
+#                                         comparison_data_hf.append(insert)
+#
+#                                     elif index1 == 2:
+#                                         comparison_data_hv.append(insert)
+#                                         print("comparison_data_hv", comparison_data_hv)
+#
+#         for item in comparison_data_cpc:
+#             item['Amount'].reverse()
+#             insert = {}
+#             for idx, value in enumerate(item['Amount'], start=1):
+#                 insert[0] = item['Account']
+#                 insert[1] = float(value)
+#                 insert['period'] = idx
+#
+#                 data_from_xero.append(insert)
+#                 insert = {}
+#
+#         for item in comparison_data_hf:
+#             item['Amount'].reverse()
+#             insert = {}
+#             for idx, value in enumerate(item['Amount'], start=1):
+#                 insert[0] = item['Account']
+#                 insert[1] = float(value)
+#                 insert['period'] = idx
+#
+#                 data_from_xero_HF_PandL.append(insert)
+#                 insert = {}
+#
+#         # print("comparison_data_hv", comparison_data_hv)
+#         for item in comparison_data_hv:
+#             item['Amount'].reverse()
+#             insert = {}
+#             for idx, value in enumerate(item['Amount'], start=1):
+#                 insert[0] = item['Account']
+#                 insert[1] = float(value)
+#                 insert['period'] = idx
+#
+#                 data_from_xero_HV_PandL.append(insert)
+#                 insert = {}
+#
+#         data_from_xero.sort(key=lambda x: (x[0], x['period']))
+#
+#         data_from_xero_HF_PandL.sort(key=lambda x: (x[0], x['period']))
+#
+#         data_from_xero_HV_PandL.sort(key=lambda x: (x[0], x['period']))
+#
+#         for final_record in base_data:
+#
+#             filtered_data_from_xero = list(filter(lambda x: x[0] == final_record['Account'], data_from_xero))
+#
+#             for record in filtered_data_from_xero:
+#                 final_record['Amount'][record['period'] - 1] = record[1]
+#
+#             final_record['Amount'].reverse()
+#
+#         for final_record in base_data_HF_PandL:
+#
+#             filtered_data_from_xero = list(filter(lambda x: x[0] == final_record['Account'], data_from_xero_HF_PandL))
+#
+#             for record in filtered_data_from_xero:
+#                 final_record['Amount'][record['period'] - 1] = record[1]
+#
+#             final_record['Amount'].reverse()
+#
+#         for record in base_data_HF_PandL:
+#             if record['Account'] == 'Accounting Fees':
+#
+#                 filtered_data_from_xero = list(
+#                     filter(lambda x: x['Account'] == 'Accounting - CIPC', base_data_HF_PandL))
+#
+#                 for index, item in enumerate(record['Amount']):
+#                     record['Amount'][index] = record['Amount'][index] + filtered_data_from_xero[0]['Amount'][index]
+#
+#             if record['Account'] == 'Staff welfare':
+#
+#                 filtered_data_from_xero1 = list(
+#                     filter(lambda x: x['Account'] == 'Entertainment Expenses', base_data_HF_PandL))
+#
+#                 filtered_data_from_xero2 = list(
+#                     filter(lambda x: x['Account'] == 'General Expenses', base_data_HF_PandL))
+#
+#                 for index, item in enumerate(record['Amount']):
+#                     record['Amount'][index] = filtered_data_from_xero1[0]['Amount'][index] + \
+#                                               filtered_data_from_xero2[0]['Amount'][index]
+#
+#             if record['Account'] == 'Repairs _AND_ Maintenance':
+#                 # print("record", record)
+#                 filtered_data_from_xero = list(
+#                     filter(lambda x: x['Account'] == 'Motor Vehicle Expenses', base_data_HF_PandL))
+#
+#                 for index, item in enumerate(record['Amount']):
+#                     record['Amount'][index] = record['Amount'][index] + filtered_data_from_xero[0]['Amount'][index]
+#
+#         for final_record in base_data_HV_PandL:
+#
+#             filtered_data_from_xero = list(filter(lambda x: x[0] == final_record['Account'], data_from_xero_HV_PandL))
+#
+#             for record in filtered_data_from_xero:
+#                 final_record['Amount'][record['period'] - 1] = record[1]
+#
+#             final_record['Amount'].reverse()
+#
+#         # sort data_from_xero_HF_PandL first by '0' then by 'period'
+#         data_from_xero_HF_PandL.sort(key=lambda x: (x[0], x['period']))
+#         data_from_xero_HV_PandL.sort(key=lambda x: (x[0], x['period']))
+#
+#         returned_data = insert_data_from_xero_profit_loss(base_data, base_data_HF_PandL, base_data_HV_PandL, hf_tb,
+#                                                           hv_tb, request['to_date'])
+#
+#         end_time = time.time()
+#
+#         if returned_data['Success']:
+#             return {"Success": True, "time_taken": end_time - start_time}
+#         else:
+#             return {"Success": False, "Error": returned_data['Error']}
+#
+#
+#
+#     except Exception as e:
+#         print("Error", e)
+#         return {"Success": False, "Error": str(e)}
+#
+#
+# @xero.get("/get_profit_and_loss")
+# async def get_profit_and_loss(file_name):
+#     try:
+#         file_name = file_name + ".xlsx"
+#         file_name = file_name.replace("_", " ")
+#         file_name = file_name.replace("xx", "&")
+#
+#         dir_path = "cashflow_p&l_files"
+#         dir_list = os.listdir(dir_path)
+#
+#         if file_name in dir_list:
+#
+#             return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
+#         else:
+#             return {"ERROR": "File does not exist!!"}
+#     except Exception as e:
+#         print(e)
+#         return {"ERROR": "Please Try again"}
+
+
+@xero.post("/get_bank_transactions")
+async def get_bank_transactions(data: Request):
     request = await data.json()
+    print("Request", request)
 
-    year = request['from_date'].split("-")[0]
-    month = request['from_date'].split("-")[1]
+    # CONNECT TO XERO
+    credentials_string = f"{clientId}:{xerosecret}".encode("utf-8")
 
-    try:
-        start_time = time.time()
+    # Encode the combined string in base64
+    encoded_credentials = b64encode(credentials_string).decode("utf-8")
 
-        if int(month) < 10:
-            current_year = int(year)
-        else:
-            current_year = int(year) - 1
+    # get data from xeroCredentials and save to variable credentials
+    credentials = xeroCredentials.find_one({})
+    id = str(credentials["_id"])
+    del credentials["_id"]
 
-        periods_to_report = [
-            {
-                "period": 1,
-                "from_date": f"{current_year}-03-01",
-                "to_date": f"{current_year}-03-31"
-            },
-            {
-                "period": 2,
-                "from_date": f"{current_year}-04-01",
-                "to_date": f"{current_year}-04-30"
-            },
-            {
-                "period": 3,
-                "from_date": f"{current_year}-05-01",
-                "to_date": f"{current_year}-05-31"
-            },
-            {
-                "period": 4,
-                "from_date": f"{current_year}-06-01",
-                "to_date": f"{current_year}-06-30"
-            },
-            {
-                "period": 5,
-                "from_date": f"{current_year}-07-01",
-                "to_date": f"{current_year}-07-31"
-            },
-            {
-                "period": 6,
-                "from_date": f"{current_year}-08-01",
-                "to_date": f"{current_year}-08-31"
-            },
-            {
-                "period": 7,
-                "from_date": f"{current_year}-09-01",
-                "to_date": f"{current_year}-09-30"
-            },
-            {
-                "period": 8,
-                "from_date": f"{current_year}-10-01",
-                "to_date": f"{current_year}-10-31"
-            },
-            {
-                "period": 9,
-                "from_date": f"{current_year}-11-01",
-                "to_date": f"{current_year}-11-30"
-            },
-            {
-                "period": 10,
-                "from_date": f"{current_year}-12-01",
-                "to_date": f"{current_year}-12-31"
-            },
-            {
-                "period": 11,
-                "from_date": f"{current_year + 1}-01-01",
-                "to_date": f"{current_year + 1}-01-31"
-            },
-            {
-                "period": 12,
-                "from_date": f"{current_year + 1}-02-01",
-                "to_date": f"{current_year + 1}-02-29"
-            }
-        ]
+    access_token = credentials["access_token"]
+    refresh_token = credentials["refresh_token"]
 
-        data_from_xero = []
-        data_from_xero_HF_PandL = []
-        data_from_xero_HV_PandL = []
+    if isinstance(credentials["refresh_expires"], str):
+        credentials["refresh_expires"] = datetime.strptime(credentials["refresh_expires"], "%Y-%m-%d %H:%M:%S")
+    if credentials["refresh_expires"] > datetime.now():
 
-        base_data = cpc_data_fields.base_data.copy()
+        url_refresh = "https://identity.xero.com/connect/token"
 
-        for record in base_data:
-            for i in range(request['period']):
-                record['Amount'][i] = 0.0
+        # Define the headers
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": f"Basic {encoded_credentials}",  # Replace token with your base64-encoded credentials
+        }
 
-        base_data_HF_PandL = cpc_data_fields.base_data_HF_PandL.copy()
+        # Define the form data
+        data = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+        }
 
-        for record in base_data_HF_PandL:
-            for i in range(request['period']):
-                record['Amount'][i] = 0.0
+        # Send the POST request
+        response = requests.post(url_refresh, headers=headers, data=data)
 
-        base_data_HV_PandL = cpc_data_fields.base_data_HV_PandL.copy()
-
-        for record in base_data_HV_PandL:
-            for i in range(0, request['period']):
-                # print(request['period'])
-                record['Amount'][i] = 0.0
-
-        credentials_string = f"{clientId}:{xerosecret}".encode("utf-8")
-
-        # Encode the combined string in base64
-        encoded_credentials = b64encode(credentials_string).decode("utf-8")
-
-        # get data from xeroCredentials and save to variable credentials
-        credentials = xeroCredentials.find_one({})
-        id = str(credentials["_id"])
-        del credentials["_id"]
-
-        access_token = credentials["access_token"]
-        refresh_token = credentials["refresh_token"]
-
-        if isinstance(credentials["refresh_expires"], str):
-            credentials["refresh_expires"] = datetime.strptime(credentials["refresh_expires"], "%Y-%m-%d %H:%M:%S")
-        if credentials["refresh_expires"] > datetime.now():
-
-            url_refresh = "https://identity.xero.com/connect/token"
-
-            # Define the headers
-            headers = {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": f"Basic {encoded_credentials}",  # Replace token with your base64-encoded credentials
-            }
-
-            # Define the form data
-            data = {
-                "grant_type": "refresh_token",
+        # Check the response
+        if response.status_code == 200:
+            # Request was successful, you can access response data like JSON content
+            response_data = response.json()
+            access_token = response_data.get("access_token")
+            expires_in = response_data.get("expires_in")
+            refresh_token = response_data.get("refresh_token")
+            refresh_expires = datetime.now() + timedelta(days=60)
+            insert = {
+                "access_token": access_token,
+                "expires_in": expires_in,
                 "refresh_token": refresh_token,
+                "refresh_expires": refresh_expires,
             }
-
-            # Send the POST request
-            response = requests.post(url_refresh, headers=headers, data=data)
-
-            # Check the response
-            if response.status_code == 200:
-                # Request was successful, you can access response data like JSON content
-                response_data = response.json()
-                access_token = response_data.get("access_token")
-                expires_in = response_data.get("expires_in")
-                refresh_token = response_data.get("refresh_token")
-                refresh_expires = datetime.now() + timedelta(days=60)
-                insert = {
-                    "access_token": access_token,
-                    "expires_in": expires_in,
-                    "refresh_token": refresh_token,
-                    "refresh_expires": refresh_expires,
-                }
-                # update the document in the database
-                xeroCredentials.update_one({"_id": ObjectId(id)}, {"$set": insert})
-
-            else:
-                # Request failed, handle the error
-                print(f"Error: {response.status_code} - {response.text}")
+            # update the document in the database
+            xeroCredentials.update_one({"_id": ObjectId(id)}, {"$set": insert})
 
         else:
-            print("refresh_expires is in the past")
+            # Request failed, handle the error
+            print(f"Error: {response.status_code} - {response.text}")
 
-        tenant_id = "30b5d5a0-cf38-4bdb-baa1-9dda35b278a2"
-        tenant_id_HF = "9c4ba92b-93b0-4358-9ff8-141aa0718242"
+    else:
+        print("refresh_expires is in the past")
 
-        tenant_id_HV = "4af624e3-6de5-4cc7-9123-36d63d2acbb4"
+    # get XERO TENANTS
+    tenants = list(xeroTenants.find({}))
+    # Manipulate request dates
+    start_date = request['start_date'].replace("-", ", ")
+    end_date = request['end_date'].replace("-", ", ")
 
-        tenants = [tenant_id, tenant_id_HF, tenant_id_HV]
+    bank_transactions = []
 
-        tenants_tb = [tenant_id_HF, tenant_id_HV]
+    for index, tenant in enumerate(tenants):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"https://api.xero.com/api.xro/2.0/BankTransactions?where=Date >= DateTime({start_date}) && Date < DateTime({end_date})",
+                    headers={
+                        "Content-Type": "application/xml",
+                        "Authorization": f"Bearer {access_token}",
+                        "xero-tenant-id": tenant['tenantId'],
+                    },
+                )
+        except httpx.HTTPError as exc:
+            print(f"HTTP Error: {exc}")
+            return {"Success": False, "Error": "HTTP Error"}
 
-        hv_tb = []
-        hf_tb = []
+        # Check the HTTP status code
+        if response.status_code != 200:
+            print("HTTP Status Code:", response.status_code)
+            return {"Success": False, "Error": "Non-200 Status Code - First"}
 
-        for index, tenant in enumerate(tenants_tb):
-            report_date = request['to_date']
+        python_dict = xmltodict.parse(response.text)
 
-            try:
-                async with httpx.AsyncClient() as client:
-                    response = await client.get(
-                        f"https://api.xero.com/api.xro/2.0/Reports/TrialBalance?date={report_date}",
-                        headers={
-                            "Content-Type": "application/xml",
-                            "Authorization": f"Bearer {access_token}",
-                            "xero-tenant-id": tenant,
-                        },
-                    )
-            except httpx.HTTPError as exc:
-                print(f"HTTP Error: {exc}")
-                return {"Success": False, "Error": "HTTP Error"}
+        if 'BankTransactions' in python_dict['Response']:
 
-            # Check the HTTP status code
-            if response.status_code != 200:
-                return {"Success": False, "Error": "Non-200 Status Code"}
+            for transaction in python_dict['Response']['BankTransactions']['BankTransaction']:
+                print("Transaction", transaction)
+                print()
 
-            # print("Hello")
+                try:
+                    contact = transaction['Contact']['Name']
 
-            python_dict = xmltodict.parse(response.text)
+                except KeyError:
+                    contact = ""
 
-            python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+                insert = {
+                    "Company": tenant['tenantName'],
+                    "TenantID": tenant['tenantId'],
+                    "Date": transaction['Date'],
+                    "Subtotal": transaction.get('SubTotal', 0),
+                    "TotalTax": transaction.get('TotalTax', 0),
+                    "Amount": transaction.get('Total', 0),
+                    "Status": transaction['Status'],
+                    "Type": transaction['Type'],
+                    "isReconciled": transaction['IsReconciled'],
+                    "BankAccount": transaction['BankAccount']['Code'],
+                    "Contact": contact,
+                    "BankTransactionID": transaction['BankTransactionID'],
+                }
 
-            python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
+                bank_transactions.append(insert)
 
-            for item in python_dict:
-                new_item = item['Rows']['Row']
-                for cells in new_item:
+    interim_bank_transactions = []
 
-                    if isinstance(cells, dict):
-                        insert = {}
+    print("Length of bank_transactions", len(bank_transactions))
 
-                        for new_index, cell in enumerate(cells['Cells']['Cell']):
+    no_of_requests = len(bank_transactions) / 50
+    # round up to the nearest whole number
+    no_of_requests = math.ceil(no_of_requests)
 
-                            # put all the above as key value pairs in a dictionary
-                            if new_index == 0:
-                                clean_account = cell.get('Value', 0)
-                                if clean_account != 0:
-                                    clean_account_list = clean_account.split("(")
-                                    clean_account_list[0] = clean_account_list[0].strip()
-                                    clean_account_list[1] = clean_account_list[1].replace(")", "")
-                                    clean_account_list[1] = clean_account_list[1].strip()
+    this_request = 0
+    while this_request <= no_of_requests:
+        start = this_request * 50
+        end = ((this_request + 1) * 50)
+        filtered_bank_transactions = bank_transactions[start:end]
 
-                                insert['Account Code'] = clean_account_list[1]
-                                insert['Account'] = clean_account_list[0]
-                                insert['Account Type'] = ''
-
-                            if new_index == 3:
-                                insert['debit_ytd'] = float(cell.get('Value', 0))
-                            if new_index == 4:
-                                insert['credit_ytd'] = float(cell.get('Value', 0))
-
-                        if index == 0:
-                            hf_tb.append(insert)
-                        elif index == 1:
-                            hv_tb.append(insert)
-
-        short_months = [2, 4, 6, 8, 12]
-        comparison_data_cpc = []
-        comparison_data_hf = []
-        comparison_data_hv = []
-
-        # Make a GET request to the connections endpoint
-        for index1, tenant in enumerate(tenants):
-
-            if request['period'] in short_months:
-
-                for period in range(request['period'], request['period'] + 1):
-
-                    filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
-
-                    report_from_date = filtered_xero[0]['from_date']
-                    report_to_date = filtered_xero[0]['to_date']
-                    period = filtered_xero[0]['period']
-                    try:
-                        async with httpx.AsyncClient() as client:
-                            response = await client.get(
-                                f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&toDate="
-                                f"{report_to_date}",
-                                headers={
-                                    "Content-Type": "application/xml",
-                                    "Authorization": f"Bearer {access_token}",
-                                    "xero-tenant-id": tenant,
-                                },
-                            )
-                    except httpx.HTTPError as exc:
-                        print(f"HTTP Error: {exc}")
-                        return {"Success": False, "Error": "HTTP Error"}
+        if len(filtered_bank_transactions) > 0:
+            for transaction in filtered_bank_transactions:
+                try:
+                    async with httpx.AsyncClient() as client:
+                        transaction_id = transaction['BankTransactionID']
+                        tenant_id = transaction['TenantID']
+                        response = await client.get(
+                            f"https://api.xero.com/api.xro/2.0/BankTransactions/{transaction_id}",
+                            headers={
+                                "Content-Type": "application/xml",
+                                "Authorization": f"Bearer {access_token}",
+                                "xero-tenant-id": tenant_id,
+                            },
+                        )
+                except httpx.HTTPError as exc:
+                    print(f"HTTP Error: {exc}")
+                    return {"Success": False, "Error": "HTTP Error"}
 
                     # Check the HTTP status code
-                    if response.status_code != 200:
-                        # print("HTTP Status Code:", response.status_code)
-                        return {"Success": False, "Error": "Non-200 Status Code"}
+                if response.status_code != 200:
 
-                    python_dict = xmltodict.parse(response.text)
+                    return {"Success": False, "Error": "Non-200 Status Code - Second"}
 
-                    python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
 
-                    for item in python_dict:
+                python_dict = xmltodict.parse(response.text)
 
-                        if 'Rows' in item:
-                            if isinstance(item['Rows']['Row'], list):
-                                data = item['Rows']['Row']
-                                for row in data:
-                                    if row['RowType'] == 'Row':
+                python_dict['Response']['Company'] = transaction['Company']
+                interim_bank_transactions.append(python_dict['Response'])
 
-                                        final_line_data = row['Cells']['Cell']
-                                        insert = {}
-                                        for index, line_item in enumerate(final_line_data):
 
-                                            try:
-                                                insert[index] = float(line_item['Value'])
-                                            except:
-                                                insert[index] = line_item['Value']
-                                        insert['period'] = period
-                                        if index1 == 0:
-                                            data_from_xero.append(insert)
+        this_request += 1
+        if len(filtered_bank_transactions) < 50:
+            break
+        time.sleep(60)
 
-                                        elif index1 == 1:
-                                            data_from_xero_HF_PandL.append(insert)
 
-                                        elif index1 == 2:
-                                            data_from_xero_HV_PandL.append(insert)
+    final_data = []
+    for tr in interim_bank_transactions:
+        insert_a = {
+            "Company": tr['Company'],
+            "Type": tr['BankTransactions']['BankTransaction']['Type'],
+            "isReconciled": tr['BankTransactions']['BankTransaction']['IsReconciled'],
+            "Date": tr['BankTransactions']['BankTransaction']['Date'],
+            "Status": tr['BankTransactions']['BankTransaction']['Status'],
+            "AccountCode": tr['BankTransactions']['BankTransaction']['LineItems']['LineItem']['AccountCode'],
+            "Description": tr['BankTransactions']['BankTransaction']['LineItems']['LineItem'].get('Description',
+                                                                                                  "Not Found"),
+            "Amount": tr['BankTransactions']['BankTransaction']['Total'],
+            "BankAccountCode": tr['BankTransactions']['BankTransaction']['BankAccount']['Code'],
+            "BankAccountName": tr['BankTransactions']['BankTransaction']['BankAccount']['Name'],
+            "BankTransactionID": tr.get('Id', "Cannot Find")
+        }
 
-                period = request['period'] - 1
+        final_data.append(insert_a)
 
-                filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
 
-                report_from_date = filtered_xero[0]['from_date']
-                report_to_date = filtered_xero[0]['to_date']
-                period = filtered_xero[0]['period']
+    #     return {"Success": True, "length": len(test), "BankTransactions": interim_bank_transactions}
+    print("complete!!!")
+    return {"Success": True, "length": len(final_data), "Final Data": final_data, "BankTransactions": bank_transactions }
+    # return {"Success": True, "length": len(bank_transactions), "BankTransactions": bank_transactions}
 
+
+@xero.post("/get_bank_payments")
+async def get_bank_payments(data: Request):
+    request = await data.json()
+    print("Request", request)
+
+    # CONNECT TO XERO
+    credentials_string = f"{clientId}:{xerosecret}".encode("utf-8")
+
+    # Encode the combined string in base64
+    encoded_credentials = b64encode(credentials_string).decode("utf-8")
+
+    # get data from xeroCredentials and save to variable credentials
+    credentials = xeroCredentials.find_one({})
+    id = str(credentials["_id"])
+    del credentials["_id"]
+
+    access_token = credentials["access_token"]
+    refresh_token = credentials["refresh_token"]
+
+    if isinstance(credentials["refresh_expires"], str):
+        credentials["refresh_expires"] = datetime.strptime(credentials["refresh_expires"], "%Y-%m-%d %H:%M:%S")
+    if credentials["refresh_expires"] > datetime.now():
+
+        url_refresh = "https://identity.xero.com/connect/token"
+
+        # Define the headers
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": f"Basic {encoded_credentials}",  # Replace token with your base64-encoded credentials
+        }
+
+        # Define the form data
+        data = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+        }
+
+        # Send the POST request
+        response = requests.post(url_refresh, headers=headers, data=data)
+
+        # Check the response
+        if response.status_code == 200:
+            # Request was successful, you can access response data like JSON content
+            response_data = response.json()
+            access_token = response_data.get("access_token")
+            expires_in = response_data.get("expires_in")
+            refresh_token = response_data.get("refresh_token")
+            refresh_expires = datetime.now() + timedelta(days=60)
+            insert = {
+                "access_token": access_token,
+                "expires_in": expires_in,
+                "refresh_token": refresh_token,
+                "refresh_expires": refresh_expires,
+            }
+            # update the document in the database
+            xeroCredentials.update_one({"_id": ObjectId(id)}, {"$set": insert})
+
+        else:
+            # Request failed, handle the error
+            print(f"Error: {response.status_code} - {response.text}")
+
+    else:
+        print("refresh_expires is in the past")
+
+    # get XERO TENANTS
+    tenants = list(xeroTenants.find({}))
+    # Manipulate request dates
+    start_date = request['start_date'].replace("-", ", ")
+    end_date = request['end_date'].replace("-", ", ")
+
+    payment_transactions = []
+
+    for index, tenant in enumerate(tenants):
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"https://api.xero.com/api.xro/2.0/Payments?where=Date >= DateTime({start_date}) && Date < DateTime({end_date})",
+                    headers={
+                        "Content-Type": "application/xml",
+                        "Authorization": f"Bearer {access_token}",
+                        "xero-tenant-id": tenant['tenantId'],
+                    },
+                )
+        except httpx.HTTPError as exc:
+            print(f"HTTP Error: {exc}")
+            return {"Success": False, "Error": "HTTP Error"}
+
+        # Check the HTTP status code
+        if response.status_code != 200:
+            print("HTTP Status Code:", response.status_code)
+            return {"Success": False, "Error": "Non-200 Status Code - First"}
+
+        python_dict = xmltodict.parse(response.text)
+
+        # print("Python Dict", python_dict)
+        if 'Payments' in python_dict['Response']:
+            for payment in python_dict['Response']['Payments']['Payment']:
+
+                insert = {
+                    "PaymentID": payment['PaymentID'],
+                    "Date": payment['Date'],
+                    "BankAmount": payment['BankAmount'],
+                    "Company": tenant['tenantName'],
+                    "TenantID": tenant['tenantId'],
+
+                }
+                payment_transactions.append(insert)
+                # print("Payment", payment)
+                # print()
+
+
+
+    #     if 'BankTransactions' in python_dict['Response']:
+    #
+    #         for transaction in python_dict['Response']['BankTransactions']['BankTransaction']:
+    #             print("Transaction", transaction)
+    #             print()
+    #
+    #             try:
+    #                 contact = transaction['Contact']['Name']
+    #
+    #             except KeyError:
+    #                 contact = ""
+    #
+    #             insert = {
+    #                 "Company": tenant['tenantName'],
+    #                 "TenantID": tenant['tenantId'],
+    #                 "Date": transaction['Date'],
+    #                 "Subtotal": transaction.get('SubTotal', 0),
+    #                 "TotalTax": transaction.get('TotalTax', 0),
+    #                 "Amount": transaction.get('Total', 0),
+    #                 "Status": transaction['Status'],
+    #                 "Type": transaction['Type'],
+    #                 "isReconciled": transaction['IsReconciled'],
+    #                 "BankAccount": transaction['BankAccount']['Code'],
+    #                 "Contact": contact,
+    #                 "BankTransactionID": transaction['BankTransactionID'],
+    #             }
+    #
+    #             bank_transactions.append(insert)
+    #
+    interim_bank_transactions = []
+
+    print("Length of bank_transactions", len(payment_transactions))
+
+    no_of_requests = len(payment_transactions) / 50
+    # round up to the nearest whole number
+    no_of_requests = math.ceil(no_of_requests)
+
+    this_request = 0
+    while this_request <= no_of_requests:
+        start = this_request * 50
+        end = ((this_request + 1) * 50)
+        filtered_payment_transactions = payment_transactions[start:end]
+
+        if len(filtered_payment_transactions) > 0:
+            for transaction in filtered_payment_transactions:
                 try:
                     async with httpx.AsyncClient() as client:
+                        transaction_id = transaction['PaymentID']
+                        tenant_id = transaction['TenantID']
                         response = await client.get(
-                            f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&"
-                            f"toDate={report_to_date}&periods={period - 1}&timeframe=MONTH",
+                            f"https://api.xero.com/api.xro/2.0/Payments/{transaction_id}",
                             headers={
                                 "Content-Type": "application/xml",
                                 "Authorization": f"Bearer {access_token}",
-                                "xero-tenant-id": tenant,
+                                "xero-tenant-id": tenant_id,
                             },
                         )
                 except httpx.HTTPError as exc:
                     print(f"HTTP Error: {exc}")
                     return {"Success": False, "Error": "HTTP Error"}
 
-                # Check the HTTP status code
+                    # Check the HTTP status code
                 if response.status_code != 200:
-                    return {"Success": False, "Error": "Non-200 Status Code"}
+
+                    return {"Success": False, "Error": "Non-200 Status Code - Second"}
+
 
                 python_dict = xmltodict.parse(response.text)
 
-                python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
-
-                python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
-
-                for item in python_dict:
-
-                    if 'Rows' in item:
-                        if isinstance(item['Rows']['Row'], list):
-                            data = item['Rows']['Row']
-                            for row in data:
-                                # print("row", row)
-                                if row['RowType'] == 'Row':
-
-                                    insert = {}
-                                    values = []
-                                    if isinstance(row['Cells']['Cell'], list):
-                                        newData = row['Cells']['Cell']
-                                        for index, line_item in enumerate(newData):
-
-                                            if index == 0:
-                                                insert['Account'] = line_item['Value']
-                                            else:
-                                                values.append(line_item['Value'])
-                                    insert['Amount'] = values
-                                    if index1 == 0:
-                                        comparison_data_cpc.append(insert)
-
-                                    elif index1 == 1:
-                                        comparison_data_hf.append(insert)
-
-                                    elif index1 == 2:
-                                        comparison_data_hv.append(insert)
+                # print("Python Dict", python_dict)
 
 
-            else:
 
-                period = request['period']
+                python_dict['Response']['Company'] = transaction['Company']
+                interim_bank_transactions.append(python_dict['Response'])
 
-                filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
 
-                report_from_date = filtered_xero[0]['from_date']
-                report_to_date = filtered_xero[0]['to_date']
-                period = filtered_xero[0]['period']
+        this_request += 1
+        if len(filtered_payment_transactions) < 50:
+            break
+        time.sleep(60)
 
-                try:
-                    async with httpx.AsyncClient() as client:
-                        response = await client.get(
-                            f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&toDate={report_to_date}&periods={period - 1}&timeframe=MONTH",
-                            headers={
-                                "Content-Type": "application/xml",
-                                "Authorization": f"Bearer {access_token}",
-                                "xero-tenant-id": tenant,
-                            },
-                        )
-                except httpx.HTTPError as exc:
-                    print(f"HTTP Error: {exc}")
-                    return {"Success": False, "Error": "HTTP Error"}
 
-                # Check the HTTP status code
-                if response.status_code != 200:
-                    return {"Success": False, "Error": "Non-200 Status Code"}
-
-                python_dict = xmltodict.parse(response.text)
-
-                python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
-
-                python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
-
-                for item in python_dict:
-
-                    if 'Rows' in item:
-                        if isinstance(item['Rows']['Row'], list):
-                            data = item['Rows']['Row']
-                            for row in data:
-
-                                if row['RowType'] == 'Row':
-
-                                    insert = {}
-                                    values = []
-                                    if isinstance(row['Cells']['Cell'], list):
-                                        newData = row['Cells']['Cell']
-                                        for index, line_item in enumerate(newData):
-
-                                            if index == 0:
-                                                insert['Account'] = line_item['Value']
-                                            else:
-                                                values.append(line_item['Value'])
-                                    insert['Amount'] = values
-                                    if index1 == 0:
-                                        comparison_data_cpc.append(insert)
-
-                                    elif index1 == 1:
-                                        comparison_data_hf.append(insert)
-
-                                    elif index1 == 2:
-                                        comparison_data_hv.append(insert)
-                                        print("comparison_data_hv", comparison_data_hv)
-
-        for item in comparison_data_cpc:
-            item['Amount'].reverse()
-            insert = {}
-            for idx, value in enumerate(item['Amount'], start=1):
-                insert[0] = item['Account']
-                insert[1] = float(value)
-                insert['period'] = idx
-
-                data_from_xero.append(insert)
-                insert = {}
-
-        for item in comparison_data_hf:
-            item['Amount'].reverse()
-            insert = {}
-            for idx, value in enumerate(item['Amount'], start=1):
-                insert[0] = item['Account']
-                insert[1] = float(value)
-                insert['period'] = idx
-
-                data_from_xero_HF_PandL.append(insert)
-                insert = {}
-
-        # print("comparison_data_hv", comparison_data_hv)
-        for item in comparison_data_hv:
-            item['Amount'].reverse()
-            insert = {}
-            for idx, value in enumerate(item['Amount'], start=1):
-                insert[0] = item['Account']
-                insert[1] = float(value)
-                insert['period'] = idx
-
-                data_from_xero_HV_PandL.append(insert)
-                insert = {}
-
-        data_from_xero.sort(key=lambda x: (x[0], x['period']))
-
-        data_from_xero_HF_PandL.sort(key=lambda x: (x[0], x['period']))
-
-        data_from_xero_HV_PandL.sort(key=lambda x: (x[0], x['period']))
-
-        for final_record in base_data:
-
-            filtered_data_from_xero = list(filter(lambda x: x[0] == final_record['Account'], data_from_xero))
-
-            for record in filtered_data_from_xero:
-                final_record['Amount'][record['period'] - 1] = record[1]
-
-            final_record['Amount'].reverse()
-
-        for final_record in base_data_HF_PandL:
-
-            filtered_data_from_xero = list(filter(lambda x: x[0] == final_record['Account'], data_from_xero_HF_PandL))
-
-            for record in filtered_data_from_xero:
-                final_record['Amount'][record['period'] - 1] = record[1]
-
-            final_record['Amount'].reverse()
-
-        for record in base_data_HF_PandL:
-            if record['Account'] == 'Accounting Fees':
-
-                filtered_data_from_xero = list(
-                    filter(lambda x: x['Account'] == 'Accounting - CIPC', base_data_HF_PandL))
-
-                for index, item in enumerate(record['Amount']):
-                    record['Amount'][index] = record['Amount'][index] + filtered_data_from_xero[0]['Amount'][index]
-
-            if record['Account'] == 'Staff welfare':
-
-                filtered_data_from_xero1 = list(
-                    filter(lambda x: x['Account'] == 'Entertainment Expenses', base_data_HF_PandL))
-
-                filtered_data_from_xero2 = list(
-                    filter(lambda x: x['Account'] == 'General Expenses', base_data_HF_PandL))
-
-                for index, item in enumerate(record['Amount']):
-                    record['Amount'][index] = filtered_data_from_xero1[0]['Amount'][index] + \
-                                              filtered_data_from_xero2[0]['Amount'][index]
-
-            if record['Account'] == 'Repairs _AND_ Maintenance':
-                # print("record", record)
-                filtered_data_from_xero = list(
-                    filter(lambda x: x['Account'] == 'Motor Vehicle Expenses', base_data_HF_PandL))
-
-                for index, item in enumerate(record['Amount']):
-                    record['Amount'][index] = record['Amount'][index] + filtered_data_from_xero[0]['Amount'][index]
-
-        for final_record in base_data_HV_PandL:
-
-            filtered_data_from_xero = list(filter(lambda x: x[0] == final_record['Account'], data_from_xero_HV_PandL))
-
-            for record in filtered_data_from_xero:
-                final_record['Amount'][record['period'] - 1] = record[1]
-
-            final_record['Amount'].reverse()
-
-        # sort data_from_xero_HF_PandL first by '0' then by 'period'
-        data_from_xero_HF_PandL.sort(key=lambda x: (x[0], x['period']))
-        data_from_xero_HV_PandL.sort(key=lambda x: (x[0], x['period']))
-
-        returned_data = insert_data_from_xero_profit_loss(base_data, base_data_HF_PandL, base_data_HV_PandL, hf_tb,
-                                                          hv_tb, request['to_date'])
-
-        end_time = time.time()
-
-        if returned_data['Success']:
-            return {"Success": True, "time_taken": end_time - start_time}
+    final_data = []
+    for tr in interim_bank_transactions:
+        # print(type(tr['Payments']['Payment']['Invoice']['LineItems']['LineItem']))
+        if type(tr['Payments']['Payment']['Invoice']['LineItems']['LineItem']) == list:
+            paid_account = tr['Payments']['Payment']['Invoice']['LineItems']['LineItem'][0].get('AccountCode',"Unknown")
         else:
-            return {"Success": False, "Error": returned_data['Error']}
+            paid_account = tr['Payments']['Payment']['Invoice']['LineItems']['LineItem']['AccountCode']
+
+        insert_a = {
+            "PaymentID": tr['Payments']['Payment']['PaymentID'],
+            "Date": tr['Payments']['Payment']['Date'],
+            "Company": tr['Company'],
+            "Amount": tr['Payments']['Payment']['Amount'],
+            "Reference": tr['Payments']['Payment'].get('Reference',"None"),
+            "IsReconciled": tr['Payments']['Payment']['IsReconciled'],
+            "AccountCode": tr['Payments']['Payment']['Account']['Code'],
+            "AccountName": tr['Payments']['Payment']['Account']['Name'],
+            "paid_account": paid_account,
+        }
+
+        final_data.append(insert_a)
 
 
-
-    except Exception as e:
-        print("Error", e)
-        return {"Success": False, "Error": str(e)}
-
-
-@xero.get("/get_profit_and_loss")
-async def get_profit_and_loss(file_name):
-    try:
-        file_name = file_name + ".xlsx"
-        file_name = file_name.replace("_", " ")
-        file_name = file_name.replace("xx", "&")
-
-        dir_path = "cashflow_p&l_files"
-        dir_list = os.listdir(dir_path)
-
-        if file_name in dir_list:
-
-            return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
-        else:
-            return {"ERROR": "File does not exist!!"}
-    except Exception as e:
-        print(e)
-        return {"ERROR": "Please Try again"}
+    #     return {"Success": True, "length": len(test), "BankTransactions": interim_bank_transactions}
+    print("complete!!!")
+    return {"Success": True, "Length": len(final_data), "PaymentTransactions": final_data}
+    # return {"Success": True, "length": len(bank_transactions), "BankTransactions": bank_transactions}
 
 
 @xero.post("/process_profit_and_loss")
@@ -1637,7 +2062,6 @@ async def process_profit_and_loss(data: Request):
 
                     released_investments.append(insert)
 
-
         # sort trust_investments_received by opportunity_code, investor_acc_number
         trust_investments_received = sorted(trust_investments_received,
                                             key=lambda i: (i['opportunity_code'], i['investor_acc_number']))
@@ -2116,8 +2540,6 @@ async def process_profit_and_loss(data: Request):
 
             remaining_units_unforseen = total_units_unforseen - transferred_units_unforseen - sold_units_unforseen
 
-
-
             if index == 1:
                 month_1_received = month_received
                 month_1released = month_released
@@ -2321,8 +2743,6 @@ async def process_profit_and_loss(data: Request):
         # filter investors where trust array is not empty
         investors = list(filter(lambda x: len(x['trust']) > 0, investors))
 
-
-
         row1 = ["", "", "", "", "C.3_d", "", "", "", "", "C.3_d", "", "", "", "", "C.3_d", "", "", "", "", "C.3_d"]
         row2 = ["NSST HERON PROJECT REPORT", "", "", "", "", "NSST HERON PROJECT REPORT", "", "", "", "",
                 "NSST HERON PROJECT REPORT", "", "", "", "", "NSST HERON PROJECT REPORT", "", "", "", ""]
@@ -2513,32 +2933,6 @@ async def process_profit_and_loss(data: Request):
         return {"ERROR": "Please Try again"}
 
 
-# insert into profit_and_loss collection the contents of P&LRest_of_year.json
-# def get_json_file():
-#     import json
-#
-#     # Specify the path to your JSON file
-#     file_path = 'P&LAug25.json'
-#
-#     # Open the JSON file for reading
-#     try:
-#         with open(file_path, 'r') as json_file:
-#             data = json.load(json_file)
-#     except (FileNotFoundError, json.JSONDecodeError) as e:
-#         print(f"Error opening or parsing the JSON file: {e}")
-#
-#     try:
-#         # input data into profit_and_loss in the db
-#         db.profit_and_loss.insert_many(data)
-#         print("Data inserted successfully")
-#     except Exception as e:
-#         print(e)
-#         return {"ERROR": "Please Try again"}
-#
-#     print(len(data))
-
-# get_json_file()
-
 @xero.get("/get_profit_and_loss_data")
 def get_profit_and_loss_data():
     try:
@@ -2600,261 +2994,31 @@ async def get_profit_and_loss_report(profit_and_loss_name):
         return {"ERROR": "File does not exist!!"}
 
 
-def get_json_file():
-    import json
-
-    # Specify the path to your JSON file
-    file_path = 'HeronFieldsP&L2023A.json'
-
-    # Open the JSON file for reading
-    try:
-        with open(file_path, 'r') as json_file:
-            data = json.load(json_file)
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"Error opening or parsing the JSON file: {e}")
-
-    try:
-        # input data into profit_and_loss in the db
-        db.profit_and_loss.insert_many(data)
-        print("Data inserted successfully")
-    except Exception as e:
-        print(e)
-        return {"ERROR": "Please Try again"}
-
-    print(len(data))
-
-
-# get_json_file()
-
-
-# def check_legal_fees():
-#     # get all profit_and_loss from db where Development = 'Heron Fields' and Account = 'COS - Legal Fees' and oder by Month ascending
-#     profit_and_loss = list(db.profit_and_loss.find({"Development": "Heron Fields", "Account": "COS - Legal Fees"}).sort(
-#         [("Month", 1)]))
-#     # print(profit_and_loss)
-#     # for item in profit_and_loss:
-#     #     item['_id'] = str(item['_id'])
-#     #     print(item)
-#     #     print()
-
-
-# check_legal_fees()
-# def endulini():
-#     # print("Hello World")
-#     investors = list(db.investors.find({}))
-#     for investor in investors:
-#         investor['id'] = str(investor['_id'])
-#         del investor['_id']
-#         # filter trust array to show only trust investments where Category is equal to 'Endulini'
-#         investor['trust'] = list(filter(lambda x: x['Category'] == 'Endulini', investor['trust']))
-#         # do the same for the investments array
-#         investor['investments'] = list(filter(lambda x: x['Category'] == 'Endulini', investor['investments']))
-#         # print("investor", investor)
-#     # filter investors where trust array is not empty
-#     investors = list(filter(lambda x: len(x['trust']) > 0, investors))
-#     final_investors = []
-#     # print(investors[0])
-#     # print(investors[0]['trust'])
-#     # print()
-#     # print(investors[0]['investments'])
+# def get_json_file():
+#     import json
 #
-#     rates = list(db.rates.find({}))
-#     for rate in rates:
-#         rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace("-", "/"), "%Y/%m/%d")
-#         rate['rate'] = float(rate['rate'])
-#         rate["_id"] = str(rate["_id"])
+#     # Specify the path to your JSON file
+#     file_path = 'HeronFieldsP&L2023A.json'
 #
-#     # sort rates by Efective date in descending order
-#     rates = sorted(rates, key=lambda x: x['Efective_date'], reverse=True)
+#     # Open the JSON file for reading
+#     try:
+#         with open(file_path, 'r') as json_file:
+#             data = json.load(json_file)
+#     except (FileNotFoundError, json.JSONDecodeError) as e:
+#         print(f"Error opening or parsing the JSON file: {e}")
 #
-#     for investor in investors:
-#         insert = {}
+#     try:
+#         # input data into profit_and_loss in the db
+#         db.profit_and_loss.insert_many(data)
+#         print("Data inserted successfully")
+#     except Exception as e:
+#         print(e)
+#         return {"ERROR": "Please Try again"}
 #
-#         insert['name'] = investor['investor_name']
-#         insert['investor_surname'] = investor['investor_surname']
-#         insert['investor_acc_number'] = investor['investor_acc_number']
-#         for trust in investor['trust']:
-#             # filter investor['investments'] to show only investments where opportunity_code is equal to trust['opportunity_code'] and investor_acc_number is equal to trust['investor_acc_number']
-#             investments_filtered = list(filter(
-#                 lambda x: x['opportunity_code'] == trust['opportunity_code'] and x['investment_number'] == trust[
-#                     'investment_number'], investor['investments']))
-#             insert['opportunity_code'] = trust['opportunity_code']
-#             insert['investment_amount'] = float(trust['investment_amount'])
-#             insert['deposit_date'] = datetime.strptime(trust['deposit_date'].replace("-", "/"), "%Y/%m/%d")
-#             insert['release_date'] = datetime.strptime(trust['release_date'].replace("-", "/"), "%Y/%m/%d")
-#             if len(investments_filtered) > 0:
-#                 insert['investment_interest_rate'] = float(investments_filtered[0]['investment_interest_rate'])
-#                 if investments_filtered[0]['end_date'] != "":
-#                     insert['end_date'] = datetime.strptime(investments_filtered[0]['end_date'].replace("-", "/"),
-#                                                            "%Y/%m/%d")
-#                     insert['transferred'] = True
-#                 else:
-#                     insert['end_date'] = ""
-#                     insert['transferred'] = False
-#
-#             else:
-#                 insert['investment_interest_rate'] = 0
-#                 insert['end_date'] = ""
-#                 insert['transferred'] = False
-#         final_investors.append(insert)
-#
-#     # print()
-#     # print(final_investors[0])
-#     # make a deep copy if final_investors called final_investors_2022
-#     final_investors_2022 = copy.deepcopy(final_investors)
-#     # make a deep copy if final_investors called final_investors_2023
-#     final_investors_2023 = copy.deepcopy(final_investors)
-#     # in final_investors_2022 filter where deposit_date is greater than or equal to 2022/02/28
-#     final_investors_2022 = list(
-#         filter(lambda x: x['deposit_date'] <= datetime.strptime("2022/02/28", "%Y/%m/%d"), final_investors_2022))
-#     # in final_investors_2023 filter where deposit_date is greater than or equal to 2023/02/28
-#     final_investors_2023 = list(
-#         filter(lambda x: x['deposit_date'] <= datetime.strptime("2023/02/28", "%Y/%m/%d"), final_investors_2023))
-#     FYE_22 = "2022/02/28"
-#     FYE_23 = "2023/02/28"
-#     # convert FYE_22 to datetime
-#     FYE_22 = datetime.strptime(FYE_22, "%Y/%m/%d")
-#     # convert FYE_23 to datetime
-#     FYE_23 = datetime.strptime(FYE_23, "%Y/%m/%d")
-#
-#     for investor in final_investors_2022:
-#         if investor['end_date'] != "":
-#             if investor['end_date'] > FYE_22:
-#                 investor['end_date'] = FYE_22
-#             else:
-#                 investor['end_date'] = ""
-#         if investor['release_date'] != "":
-#             if investor['release_date'] > FYE_22:
-#                 investor['release_date'] = FYE_22
-#                 investor['end_date'] = ""
-#             else:
-#                 investor['end_date'] = FYE_22
-#
-#         else:
-#             investor['release_date'] = FYE_22
-#
-#     for investor in final_investors_2023:
-#         if investor['end_date'] != "":
-#             if investor['end_date'] > FYE_23:
-#                 investor['end_date'] = FYE_23
-#             else:
-#                 investor['end_date'] = investor['end_date']
-#         if investor['release_date'] != "":
-#             if investor['release_date'] > FYE_23:
-#                 investor['release_date'] = FYE_23
-#                 investor['end_date'] = ""
-#             else:
-#                 investor['end_date'] = investor['end_date']
-#
-#         else:
-#             investor['release_date'] = FYE_23
-#
-#     for investor in final_investors_2022:
-#         start_momentum_date = investor['deposit_date']
-#         # Add 1 day to start_momentum_date
-#         start_momentum_date += timedelta(days=1)
-#         end_momentum_date = investor['release_date']
-#         momentum_interest = 0
-#         while start_momentum_date <= end_momentum_date:
-#             rate = list(filter(lambda x: x['Efective_date'] <= start_momentum_date, rates))[0]['rate']
-#             momentum_interest += investor['investment_amount'] * (rate / 100) / 365
-#             start_momentum_date += timedelta(days=1)
-#         investor['momentum_interest'] = momentum_interest
-#         released_interest = 0
-#         if investor['release_date'] != "" and investor['release_date'] < FYE_22:
-#
-#             released_start_date = investor['release_date']
-#             # released_start_date += timedelta(days=1)
-#             if investor['end_date'] != "":
-#                 released_end_date = investor['end_date']
-#             else:
-#                 released_end_date = FYE_22
-#             # released_end_date = investor['end_date']
-#
-#             released_interest = investor['investment_amount'] * (investor['investment_interest_rate'] / 100) / 365 * (
-#                         released_end_date - released_start_date).days
-#             investor['released_interest'] = released_interest
-#
-#     for investor in final_investors_2023:
-#         start_momentum_date = investor['deposit_date']
-#         # Add 1 day to start_momentum_date
-#         start_momentum_date += timedelta(days=1)
-#         end_momentum_date = investor['release_date']
-#         momentum_interest = 0
-#         while start_momentum_date <= end_momentum_date:
-#             rate = list(filter(lambda x: x['Efective_date'] <= start_momentum_date, rates))[0]['rate']
-#             momentum_interest += investor['investment_amount'] * (rate / 100) / 365
-#             start_momentum_date += timedelta(days=1)
-#         investor['momentum_interest'] = momentum_interest
-#         released_interest = 0
-#         released_start_date = investor['release_date']
-#
-#         # released_end_date = investor['end_date']
-#         if investor['end_date'] != "":
-#             released_end_date = investor['end_date']
-#         else:
-#             released_end_date = FYE_23
-#
-#         # if investor['release_date'] < FYE_23:
-#
-#         if investor['investor_acc_number'] == "ZBEL01" and investor['opportunity_code'] == "EC102":
-#             print("released_start_date", released_start_date)
-#             print("released_end_date", released_end_date)
-#             print("days", (released_end_date - released_start_date).days)
-#
-#         released_interest = investor['investment_amount'] * (investor['investment_interest_rate'] / 100) / 365 * (
-#                     released_end_date - released_start_date).days
-#         investor['released_interest'] = released_interest
-#
-#     print()
-#     print(final_investors_2022[0:1])
-#     print()
-#     print(final_investors_2023[1:2])
-#
-#     from openpyxl import Workbook
-#     # from openpyxl.utils import get_column_letter, column_index_from_string
-#
-#     from openpyxl.styles import PatternFill
-#     from openpyxl.styles.borders import Border, Side
-#     from openpyxl.styles import Font, Alignment
-#     from openpyxl.utils import get_column_letter
-#
-#     wb = Workbook()
-#     ws = wb.active
-#     ws.title = "Endulini 2022"
-#     ws['A1'] = 2022
-#     headings = []
-#     heading_data = final_investors_2022[0]
-#     for key in heading_data.keys():
-#         headings.append(key)
-#
-#     ws.append(headings)
-#     for investor in final_investors_2022:
-#         row = []
-#         for key in investor.keys():
-#             row.append(investor[key])
-#         ws.append(row)
-#
-#     ws = wb.create_sheet("Endulini 2023")
-#     ws['A1'] = 2023
-#     headings = []
-#     heading_data = final_investors_2023[0]
-#     for key in heading_data.keys():
-#         headings.append(key)
-#
-#     ws.append(headings)
-#     for investor in final_investors_2023:
-#         row = []
-#         for key in investor.keys():
-#             row.append(investor[key])
-#         ws.append(row)
-#
-#     wb.save("Endulini.xlsx")
-#
-#     print("Done")
+#     print(len(data))
 #
 #
-# endulini()
+# # get_json_file()
 
 
 # TEMP FUNCTION TO UPDATE PROFIT AND LOSS

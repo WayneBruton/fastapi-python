@@ -42,13 +42,13 @@ leads = APIRouter()
 async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request):
     request = await data.json()
     sales_people = list(db.lead_sales_people.find({"active": True}))
-    # print("sales_people", sales_people)
+    print("sales_people", sales_people)
     for person in sales_people:
         person["_id"] = str(person["_id"])
 
     # generate a list of leads limited to the number of sales people
 
-    last_leads_generated = list(db.leads_sales.find().sort("created_at", -1).limit(len(sales_people) + 1))
+    last_leads_generated = list(db.leads_sales.find().sort("created_at", -1).limit(len(sales_people)))
     print("last_leads_generated", len(last_leads_generated))
     print("last_leads_generated", last_leads_generated)
     print()
@@ -66,25 +66,40 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
 
     # loop through sales_people and see if the sales_person_id is in the last_leads_generated list excluding the last
     # lead
+
+    # Flag to track if a suitable salesperson has been found
+    salesperson_found = False
+
     for person in sales_people:
-        # print("person", person["_id"])
-        # print()
-        # if the person id is not in the last_leads_generated list
-        if person["_id"] not in [lead["sales_person_id"] for lead in last_leads_generated[:-1]]:
-            print("person 1", person["_id"])
-            print("person 1 name", person["name"])
-            # print()
+        if person["_id"] not in [lead["sales_person_id"] for lead in last_leads_generated[-3:]]:
             sales_person_chosen = person["_id"]
-            # print("sales_person_chosen_id", sales_person_chosen)
-            # get the sales_person_chosen from the sales_people list
-            # sales_person = list(filter(lambda x: x["_id"] == sales_person_chosen, sales_people))[0]
-            # print("sales_person_chosen", sales_person)
+            salesperson_found = True
             break
-        else:
-            sales_person_chosen = last_leads_generated[len(last_leads_generated) - 2]["sales_person_id"]
-            print("person 2", last_leads_generated[len(last_leads_generated) - 2]["sales_person"])
-            break
-            # print("person", person["name"])
+
+    if not salesperson_found:
+        # If all salespeople are in the last 3 leads, fairly allocate the next lead
+        sales_person_chosen = min(sales_people, key=lambda person: len(
+            [lead for lead in last_leads_generated[-3:] if lead["sales_person_id"] == person["_id"]]))["_id"]
+
+    # for person in sales_people:
+    #     # print("person", person["_id"])
+    #     # print()
+    #     # if the person id is not in the last_leads_generated list
+    #     if person["_id"] not in [lead["sales_person_id"] for lead in last_leads_generated[:-1]]:
+    #         print("person 1", person["_id"])
+    #         print("person 1 name", person["name"])
+    #         # print()
+    #         sales_person_chosen = person["_id"]
+    #         # print("sales_person_chosen_id", sales_person_chosen)
+    #         # get the sales_person_chosen from the sales_people list
+    #         # sales_person = list(filter(lambda x: x["_id"] == sales_person_chosen, sales_people))[0]
+    #         # print("sales_person_chosen", sales_person)
+    #         break
+    #     else:
+    #         sales_person_chosen = last_leads_generated[len(last_leads_generated) - 2]["sales_person_id"]
+    #         print("person 2", last_leads_generated[len(last_leads_generated) - 2]["sales_person"])
+    #         break
+    #         # print("person", person["name"])
 
 
     # get the sales_person who is in the last record of the last_leads_generated list
