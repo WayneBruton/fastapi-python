@@ -852,21 +852,17 @@ async def get_bank_transactions(data: Request):
 
                     # Check the HTTP status code
                 if response.status_code != 200:
-
                     return {"Success": False, "Error": "Non-200 Status Code - Second"}
-
 
                 python_dict = xmltodict.parse(response.text)
 
                 python_dict['Response']['Company'] = transaction['Company']
                 interim_bank_transactions.append(python_dict['Response'])
 
-
         this_request += 1
         if len(filtered_bank_transactions) < 50:
             break
         time.sleep(60)
-
 
     final_data = []
     for tr in interim_bank_transactions:
@@ -887,10 +883,9 @@ async def get_bank_transactions(data: Request):
 
         final_data.append(insert_a)
 
-
     #     return {"Success": True, "length": len(test), "BankTransactions": interim_bank_transactions}
     print("complete!!!")
-    return {"Success": True, "length": len(final_data), "Final Data": final_data, "BankTransactions": bank_transactions }
+    return {"Success": True, "length": len(final_data), "Final Data": final_data, "BankTransactions": bank_transactions}
     # return {"Success": True, "length": len(bank_transactions), "BankTransactions": bank_transactions}
 
 
@@ -989,22 +984,30 @@ async def get_bank_payments(data: Request):
         python_dict = xmltodict.parse(response.text)
 
         # print("Python Dict", python_dict)
+
         if 'Payments' in python_dict['Response']:
-            for payment in python_dict['Response']['Payments']['Payment']:
+            if 'Payment' in python_dict['Response']['Payments']:
+                for payment in python_dict['Response']['Payments']['Payment']:
+                    print("Payment", payment)
+                    print()
+                    print("Type", type(payment))
+                    print()
+                    # try:
+                    if type(payment) == dict:
+                        insert = {
+                            "PaymentID": payment.get('PaymentID',"None"),
+                            "Date": payment['Date'],
+                            "BankAmount": payment['BankAmount'],
+                            "Company": tenant['tenantName'],
+                            "TenantID": tenant['tenantId'],
 
-                insert = {
-                    "PaymentID": payment['PaymentID'],
-                    "Date": payment['Date'],
-                    "BankAmount": payment['BankAmount'],
-                    "Company": tenant['tenantName'],
-                    "TenantID": tenant['tenantId'],
-
-                }
-                payment_transactions.append(insert)
+                        }
+                        payment_transactions.append(insert)
+                    # except KeyError:
+                    #     print("Key Error", payment)
+                    # print("Payment Transactions", payment_transactions)
                 # print("Payment", payment)
                 # print()
-
-
 
     #     if 'BankTransactions' in python_dict['Response']:
     #
@@ -1069,31 +1072,26 @@ async def get_bank_payments(data: Request):
 
                     # Check the HTTP status code
                 if response.status_code != 200:
-
                     return {"Success": False, "Error": "Non-200 Status Code - Second"}
-
 
                 python_dict = xmltodict.parse(response.text)
 
                 # print("Python Dict", python_dict)
 
-
-
                 python_dict['Response']['Company'] = transaction['Company']
                 interim_bank_transactions.append(python_dict['Response'])
-
 
         this_request += 1
         if len(filtered_payment_transactions) < 50:
             break
         time.sleep(60)
 
-
     final_data = []
     for tr in interim_bank_transactions:
         # print(type(tr['Payments']['Payment']['Invoice']['LineItems']['LineItem']))
         if type(tr['Payments']['Payment']['Invoice']['LineItems']['LineItem']) == list:
-            paid_account = tr['Payments']['Payment']['Invoice']['LineItems']['LineItem'][0].get('AccountCode',"Unknown")
+            paid_account = tr['Payments']['Payment']['Invoice']['LineItems']['LineItem'][0].get('AccountCode',
+                                                                                                "Unknown")
         else:
             paid_account = tr['Payments']['Payment']['Invoice']['LineItems']['LineItem']['AccountCode']
 
@@ -1102,7 +1100,7 @@ async def get_bank_payments(data: Request):
             "Date": tr['Payments']['Payment']['Date'],
             "Company": tr['Company'],
             "Amount": tr['Payments']['Payment']['Amount'],
-            "Reference": tr['Payments']['Payment'].get('Reference',"None"),
+            "Reference": tr['Payments']['Payment'].get('Reference', "None"),
             "IsReconciled": tr['Payments']['Payment']['IsReconciled'],
             "AccountCode": tr['Payments']['Payment']['Account']['Code'],
             "AccountName": tr['Payments']['Payment']['Account']['Name'],
@@ -1110,7 +1108,6 @@ async def get_bank_payments(data: Request):
         }
 
         final_data.append(insert_a)
-
 
     #     return {"Success": True, "length": len(test), "BankTransactions": interim_bank_transactions}
     print("complete!!!")
@@ -3024,19 +3021,21 @@ async def get_profit_and_loss_report(profit_and_loss_name):
 # TEMP FUNCTION TO UPDATE PROFIT AND LOSS
 def update_profit_and_loss_from_cf_file():
     input_p_and_l = [
-        {"Account": "Sales - Heron View Sales", "Month": "Oct-24", "Forecast": 7999478.26086957},
-        {"Account": "Sales - Heron View Sales", "Month": "Nov-24", "Forecast": 8156000},
-        {"Account": "Sales - Heron View Sales", "Month": "Dec-24", "Forecast": 8042956.52173913},
-        {"Account": "Sales - Heron View Sales", "Month": "Feb-24", "Forecast": 11086260.8695652},
-        {"Account": "Sales - Heron View Sales", "Month": "Mar-24", "Forecast": 2608521.73913044},
-        {"Account": "Sales - Heron View Sales", "Month": "May-24", "Forecast": 3860608.69565217},
-        {"Account": "Sales - Heron View Sales", "Month": "Jun-24", "Forecast": 32903036.5217391},
-        {"Account": "Sales - Heron View Sales", "Month": "Jul-24", "Forecast": 17512000},
-        {"Account": "Sales - Heron View Sales", "Month": "Aug-24", "Forecast": 17729391.3043478},
-        {"Account": "Sales - Heron View Sales", "Month": "Sep-24", "Forecast": 13512260.8695652},
+
+        {"Account": "Sales - Heron View Sales", "Month": "Nov-24", "Forecast": 17659826.0869565},
+        {"Account": "Sales - Heron View Sales", "Month": "Feb-24", "Forecast": 7008260.86956522},
+        {"Account": "Sales - Heron View Sales", "Month": "Mar-24", "Forecast": 4086695.65217391},
+        {"Account": "Sales - Heron View Sales", "Month": "May-24", "Forecast": 24859304.3478261},
+        {"Account": "Sales - Heron View Sales", "Month": "Jun-24", "Forecast": 19450956.5217391},
+        {"Account": "Sales - Heron View Sales", "Month": "Jul-24", "Forecast": 54997297.3913044},
+        {"Account": "Sales - Heron View Sales", "Month": "Aug-24", "Forecast": 0},
+        # N/A
+        # N/A
+        # N/A
+
         {"Account": "COS - Heron View - Construction", "Month": "Jan-24", "Forecast": 2696525.1269841},
-        {"Account": "COS - Heron View - Construction", "Month": "Feb-24", "Forecast": 5760663.04514261},
-        {"Account": "COS - Heron View - Construction", "Month": "Mar-24", "Forecast": 10042490.8633602},
+        {"Account": "COS - Heron View - Construction", "Month": "Feb-24", "Forecast": 5707656.42066916},
+        {"Account": "COS - Heron View - Construction", "Month": "Mar-24", "Forecast": 10095497.4878337},
         {"Account": "COS - Heron View - Construction", "Month": "Apr-24", "Forecast": 6644697.30778797},
         {"Account": "COS - Heron View - Construction", "Month": "May-24", "Forecast": 9067916.29306447},
         {"Account": "COS - Heron View - Construction", "Month": "Jun-24", "Forecast": 7381385.27235665},
@@ -3044,6 +3043,8 @@ def update_profit_and_loss_from_cf_file():
         {"Account": "COS - Heron View - Construction", "Month": "Aug-24", "Forecast": 1000594.94489614},
         {"Account": "COS - Heron View - Construction", "Month": "Sep-24", "Forecast": 512305.573497741},
         {"Account": "COS - Heron View - Construction", "Month": "Oct-24", "Forecast": 754779.014486066},
+        {"Account": "COS - Heron View - Construction", "Month": "Nov-24", "Forecast": 0},
+        {"Account": "COS - Heron View - Construction", "Month": "Dec-24", "Forecast": 0},
     ]
     try:
         for item in input_p_and_l:

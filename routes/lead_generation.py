@@ -3,6 +3,7 @@ from time import sleep
 
 from bson.objectid import ObjectId
 from fastapi import APIRouter, Request, BackgroundTasks
+from collections import Counter
 # from fastapi.encoders import jsonable_encoder
 from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
 
@@ -37,6 +38,13 @@ leads = APIRouter()
 # SMTP_SERVER = configuration("SMTP_SERVER")
 # print("SMTP_SERVER", SMTP_SERVER)
 
+def fair_allocate_lead(sales_people, last_leads_generated):
+    sales_person_allocations = Counter(lead["sales_person_id"] for lead in last_leads_generated[-3:])
+
+    sales_person_chosen = min(sales_people, key=lambda person: sales_person_allocations.get(person["_id"], 0))
+
+    return sales_person_chosen["_id"]
+
 
 @leads.post("/post_sales_lead_form")
 async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request):
@@ -52,6 +60,8 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
     print("last_leads_generated", len(last_leads_generated))
     print("last_leads_generated", last_leads_generated)
     print()
+
+    sales_person_chosen = fair_allocate_lead(sales_people, last_leads_generated)
     # print("last_leads_generated", last_leads_generated)
     # for lead_generated in last_leads_generated:
     #     lead_generated["_id"] = str(lead_generated["_id"])
@@ -68,18 +78,18 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
     # lead
 
     # Flag to track if a suitable salesperson has been found
-    salesperson_found = False
+    # salesperson_found = False
+    #
+    # for person in sales_people:
+    #     if person["_id"] not in [lead["sales_person_id"] for lead in last_leads_generated[-3:]]:
+    #         sales_person_chosen = person["_id"]
+    #         salesperson_found = True
+    #         break
+    #
+    # if not salesperson_found:
+    #     # If all salespeople are in the last 3 leads, fairly allocate the third last lead
+    #     sales_person_chosen = last_leads_generated[-3]["sales_person_id"]
 
-    for person in sales_people:
-        if person["_id"] not in [lead["sales_person_id"] for lead in last_leads_generated[-3:]]:
-            sales_person_chosen = person["_id"]
-            salesperson_found = True
-            break
-
-    if not salesperson_found:
-        # If all salespeople are in the last 3 leads, fairly allocate the next lead
-        sales_person_chosen = min(sales_people, key=lambda person: len(
-            [lead for lead in last_leads_generated[-3:] if lead["sales_person_id"] == person["_id"]]))["_id"]
 
     # for person in sales_people:
     #     # print("person", person["_id"])
