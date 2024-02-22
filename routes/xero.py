@@ -1115,6 +1115,7 @@ async def get_bank_payments(data: Request):
     # return {"Success": True, "length": len(bank_transactions), "BankTransactions": bank_transactions}
 
 
+
 @xero.post("/process_profit_and_loss")
 async def process_profit_and_loss(data: Request):
     global count_received, count_received4, count_received3, count_received2, count_received1, count_exited4, \
@@ -1156,6 +1157,21 @@ async def process_profit_and_loss(data: Request):
         sold_units_unforseen2, sold_units_unforseen1, interest_paid_to_date4, interest_paid_to_date3, \
         interest_paid_to_date2, interest_paid_to_date1
     request = await data.json()
+
+    # for index, item in enumerate(cpc_data_fields.base_data,1):
+    #     # make all the values in item['Amount'] list equal 0
+    #     item['Amount'] = [0.00] * 12
+    #
+    # for index, item in enumerate(cpc_data_fields.base_data_HF_PandL,1):
+    #     # make all the values in item['Amount'] list equal 0
+    #     item['Amount'] = [0.00] * 12
+    #
+    # for index, item in enumerate(cpc_data_fields.base_data_HV_PandL,1):
+    #     # make all the values in item['Amount'] list equal 0
+    #     item['Amount'] = [0.00] * 12
+
+
+# Was 12
     for i in range(0, 12):
         for data in cpc_data_fields.base_data:
             data["Amount"].append(0.00)
@@ -1164,254 +1180,197 @@ async def process_profit_and_loss(data: Request):
         for data in cpc_data_fields.base_data_HV_PandL:
             data["Amount"].append(0.00)
 
+    # print(cpc_data_fields.base_data)
+
     print("2nd Print: ", cpc_data_fields.base_data_HV_PandL[len(cpc_data_fields.base_data_HV_PandL) - 2]['Amount'])
 
     year = request['from_date'].split("-")[0]
     month = request['from_date'].split("-")[1]
-    print("Request", request)
+    # print("Request", request)
+    # print("month", month)
 
-    try:
+    # try:
         # remove cashflow_p&l_files/cashflow_hf_hv.xlsx if it exists
-        if os.path.exists("cashflow_p&l_files/cashflow_hf_hv.xlsx"):
-            os.remove("cashflow_p&l_files/cashflow_hf_hv.xlsx")
+    if os.path.exists("cashflow_p&l_files/cashflow_hf_hv.xlsx"):
+        os.remove("cashflow_p&l_files/cashflow_hf_hv.xlsx")
 
-        start_time = time.time()
-        if int(month) - 2 < 10:
-            current_year = int(year)
-            short_year = int(str(current_year)[2:4])
+    start_time = time.time()
+    if int(month) - 2 < 11:
+        current_year = int(year)
+        short_year = int(str(current_year)[2:4])
 
-        else:
-            current_year = int(year) - 1
-            short_year = int(str(current_year)[2:4])
+    else:
+        current_year = int(year) - 1
+        short_year = int(str(current_year)[2:4])
 
-        periods_to_report = [
-            {
-                "period": 1,
-                "from_date": f"{current_year}-03-01",
-                "to_date": f"{current_year}-03-31",
-                "Month": f"Mar-{short_year}"
-            },
-            {
-                "period": 2,
-                "from_date": f"{current_year}-04-01",
-                "to_date": f"{current_year}-04-30",
-                "Month": f"Apr-{short_year}"
-            },
-            {
-                "period": 3,
-                "from_date": f"{current_year}-05-01",
-                "to_date": f"{current_year}-05-31",
-                "Month": f"May-{short_year}"
-            },
-            {
-                "period": 4,
-                "from_date": f"{current_year}-06-01",
-                "to_date": f"{current_year}-06-30",
-                "Month": f"Jun-{short_year}"
-            },
-            {
-                "period": 5,
-                "from_date": f"{current_year}-07-01",
-                "to_date": f"{current_year}-07-31",
-                "Month": f"Jul-{short_year}"
+    periods_to_report = [
+        {
+            "period": 1,
+            "from_date": f"{current_year}-03-01",
+            "to_date": f"{current_year}-03-31",
+            "Month": f"Mar-{short_year}"
+        },
+        {
+            "period": 2,
+            "from_date": f"{current_year}-04-01",
+            "to_date": f"{current_year}-04-30",
+            "Month": f"Apr-{short_year}"
+        },
+        {
+            "period": 3,
+            "from_date": f"{current_year}-05-01",
+            "to_date": f"{current_year}-05-31",
+            "Month": f"May-{short_year}"
+        },
+        {
+            "period": 4,
+            "from_date": f"{current_year}-06-01",
+            "to_date": f"{current_year}-06-30",
+            "Month": f"Jun-{short_year}"
+        },
+        {
+            "period": 5,
+            "from_date": f"{current_year}-07-01",
+            "to_date": f"{current_year}-07-31",
+            "Month": f"Jul-{short_year}"
 
-            },
-            {
-                "period": 6,
-                "from_date": f"{current_year}-08-01",
-                "to_date": f"{current_year}-08-31",
-                "Month": f"Aug-{short_year}"
-            },
-            {
-                "period": 7,
-                "from_date": f"{current_year}-09-01",
-                "to_date": f"{current_year}-09-30",
-                "Month": f"Sep-{short_year}"
-            },
-            {
-                "period": 8,
-                "from_date": f"{current_year}-10-01",
-                "to_date": f"{current_year}-10-31",
-                "Month": f"Oct-{short_year}"
-            },
-            {
-                "period": 9,
-                "from_date": f"{current_year}-11-01",
-                "to_date": f"{current_year}-11-30",
-                "Month": f"Nov-{short_year}"
-            },
-            {
-                "period": 10,
-                "from_date": f"{current_year}-12-01",
-                "to_date": f"{current_year}-12-31",
-                "Month": f"Dec-{short_year}"
-            },
-            {
-                "period": 11,
-                "from_date": f"{current_year + 1}-01-01",
-                "to_date": f"{current_year + 1}-01-31",
-                "Month": f"Jan-{short_year + 1}"
-            },
-            {
-                "period": 12,
-                "from_date": f"{current_year + 1}-02-01",
-                "to_date": f"{current_year + 1}-02-29",
-                "Month": f"Feb-{short_year + 1}"
-            }
-        ]
+        },
+        {
+            "period": 6,
+            "from_date": f"{current_year}-08-01",
+            "to_date": f"{current_year}-08-31",
+            "Month": f"Aug-{short_year}"
+        },
+        {
+            "period": 7,
+            "from_date": f"{current_year}-09-01",
+            "to_date": f"{current_year}-09-30",
+            "Month": f"Sep-{short_year}"
+        },
+        {
+            "period": 8,
+            "from_date": f"{current_year}-10-01",
+            "to_date": f"{current_year}-10-31",
+            "Month": f"Oct-{short_year}"
+        },
+        {
+            "period": 9,
+            "from_date": f"{current_year}-11-01",
+            "to_date": f"{current_year}-11-30",
+            "Month": f"Nov-{short_year}"
+        },
+        {
+            "period": 10,
+            "from_date": f"{current_year}-12-01",
+            "to_date": f"{current_year}-12-31",
+            "Month": f"Dec-{short_year}"
+        },
+        {
+            "period": 11,
+            "from_date": f"{current_year + 1}-01-01",
+            "to_date": f"{current_year + 1}-01-31",
+            "Month": f"Jan-{short_year + 1}"
+        },
+        {
+            "period": 12,
+            "from_date": f"{current_year + 1}-02-01",
+            "to_date": f"{current_year + 1}-02-29",
+            "Month": f"Feb-{short_year + 1}"
+        }
+    ]
 
-        credentials_string = f"{clientId}:{xerosecret}".encode("utf-8")
+    credentials_string = f"{clientId}:{xerosecret}".encode("utf-8")
 
-        # Encode the combined string in base64
-        encoded_credentials = b64encode(credentials_string).decode("utf-8")
+    # Encode the combined string in base64
+    encoded_credentials = b64encode(credentials_string).decode("utf-8")
 
-        # get data from xeroCredentials and save to variable credentials
-        credentials = xeroCredentials.find_one({})
-        id = str(credentials["_id"])
-        del credentials["_id"]
+    # get data from xeroCredentials and save to variable credentials
+    credentials = xeroCredentials.find_one({})
+    id = str(credentials["_id"])
+    del credentials["_id"]
 
-        access_token = credentials["access_token"]
-        refresh_token = credentials["refresh_token"]
+    access_token = credentials["access_token"]
+    refresh_token = credentials["refresh_token"]
 
-        if isinstance(credentials["refresh_expires"], str):
-            credentials["refresh_expires"] = datetime.strptime(credentials["refresh_expires"], "%Y-%m-%d %H:%M:%S")
-        if credentials["refresh_expires"] > datetime.now():
+    if isinstance(credentials["refresh_expires"], str):
+        credentials["refresh_expires"] = datetime.strptime(credentials["refresh_expires"], "%Y-%m-%d %H:%M:%S")
+    if credentials["refresh_expires"] > datetime.now():
 
-            url_refresh = "https://identity.xero.com/connect/token"
+        url_refresh = "https://identity.xero.com/connect/token"
 
-            # Define the headers
-            headers = {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": f"Basic {encoded_credentials}",  # Replace token with your base64-encoded credentials
-            }
+        # Define the headers
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": f"Basic {encoded_credentials}",  # Replace token with your base64-encoded credentials
+        }
 
-            # Define the form data
-            data = {
-                "grant_type": "refresh_token",
+        # Define the form data
+        data = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+        }
+
+        # Send the POST request
+        response = requests.post(url_refresh, headers=headers, data=data)
+
+        # Check the response
+        if response.status_code == 200:
+            # Request was successful, you can access response data like JSON content
+            response_data = response.json()
+            access_token = response_data.get("access_token")
+            expires_in = response_data.get("expires_in")
+            refresh_token = response_data.get("refresh_token")
+            refresh_expires = datetime.now() + timedelta(days=60)
+            insert = {
+                "access_token": access_token,
+                "expires_in": expires_in,
                 "refresh_token": refresh_token,
+                "refresh_expires": refresh_expires,
             }
+            # update the document in the database
+            xeroCredentials.update_one({"_id": ObjectId(id)}, {"$set": insert})
 
-            # Send the POST request
-            response = requests.post(url_refresh, headers=headers, data=data)
-
-            # Check the response
-            if response.status_code == 200:
-                # Request was successful, you can access response data like JSON content
-                response_data = response.json()
-                access_token = response_data.get("access_token")
-                expires_in = response_data.get("expires_in")
-                refresh_token = response_data.get("refresh_token")
-                refresh_expires = datetime.now() + timedelta(days=60)
-                insert = {
-                    "access_token": access_token,
-                    "expires_in": expires_in,
-                    "refresh_token": refresh_token,
-                    "refresh_expires": refresh_expires,
-                }
-                # update the document in the database
-                xeroCredentials.update_one({"_id": ObjectId(id)}, {"$set": insert})
-
-                # print("SUCCESS")
-
-            else:
-                # Request failed, handle the error
-                print(f"Error: {response.status_code} - {response.text}")
+            # print("SUCCESS")
 
         else:
-            print("refresh_expires is in the past")
+            # Request failed, handle the error
+            print(f"Error: {response.status_code} - {response.text}")
 
-        tenant_id = "30b5d5a0-cf38-4bdb-baa1-9dda35b278a2"
-        tenant_id_HF = "9c4ba92b-93b0-4358-9ff8-141aa0718242"
+    else:
+        print("refresh_expires is in the past")
 
-        tenant_id_HV = "4af624e3-6de5-4cc7-9123-36d63d2acbb4"
+    tenant_id = "30b5d5a0-cf38-4bdb-baa1-9dda35b278a2"
+    tenant_id_HF = "9c4ba92b-93b0-4358-9ff8-141aa0718242"
 
-        tenants = [tenant_id, tenant_id_HF, tenant_id_HV]
+    tenant_id_HV = "4af624e3-6de5-4cc7-9123-36d63d2acbb4"
 
-        data_from_xero = []
-        data_from_xero_HF_PandL = []
-        data_from_xero_HV_PandL = []
+    tenants = [tenant_id, tenant_id_HF, tenant_id_HV]
 
-        short_months = [2, 4, 7, 9, 12]
-        comparison_data_cpc = []
-        comparison_data_hf = []
-        comparison_data_hv = []
+    data_from_xero = []
+    data_from_xero_HF_PandL = []
+    data_from_xero_HV_PandL = []
 
-        for index1, tenant in enumerate(tenants):
+    short_months = [2, 4, 7, 9, 12]
+    comparison_data_cpc = []
+    comparison_data_hf = []
+    comparison_data_hv = []
 
-            if request['period'] in short_months:
+    for index1, tenant in enumerate(tenants):
 
-                for period in range(request['period'], request['period'] + 1):
+        if request['period'] in short_months:
 
-                    filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
-
-                    report_from_date = filtered_xero[0]['from_date']
-                    report_to_date = filtered_xero[0]['to_date']
-                    period = filtered_xero[0]['period']
-                    try:
-                        async with httpx.AsyncClient() as client:
-                            response = await client.get(
-                                f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&toDate="
-                                f"{report_to_date}",
-                                headers={
-                                    "Content-Type": "application/xml",
-                                    "Authorization": f"Bearer {access_token}",
-                                    "xero-tenant-id": tenant,
-                                },
-                            )
-                    except httpx.HTTPError as exc:
-                        print(f"HTTP Error: {exc}")
-                        return {"Success": False, "Error": "HTTP Error"}
-
-                    # Check the HTTP status code
-                    if response.status_code != 200:
-                        # print("HTTP Status Code:", response.status_code)
-                        return {"Success": False, "Error": "Non-200 Status Code"}
-
-                    python_dict = xmltodict.parse(response.text)
-
-                    python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
-
-                    for item in python_dict:
-
-                        if 'Rows' in item:
-                            if isinstance(item['Rows']['Row'], list):
-                                data = item['Rows']['Row']
-                                for row in data:
-                                    if row['RowType'] == 'Row':
-
-                                        final_line_data = row['Cells']['Cell']
-                                        insert = {}
-                                        for index, line_item in enumerate(final_line_data):
-
-                                            try:
-                                                insert[index] = float(line_item['Value'])
-                                            except:
-                                                insert[index] = line_item['Value']
-                                        insert['period'] = period
-                                        if index1 == 0:
-                                            data_from_xero.append(insert)
-                                            # if insert['period'] == 1 or insert['period'] == 2:
-                                            # print("insert 1", insert)
-
-                                        elif index1 == 1:
-                                            data_from_xero_HF_PandL.append(insert)
-
-                                        elif index1 == 2:
-                                            data_from_xero_HV_PandL.append(insert)
-
-                period = request['period'] - 1
+            for period in range(request['period'], request['period'] + 1):
 
                 filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
 
                 report_from_date = filtered_xero[0]['from_date']
                 report_to_date = filtered_xero[0]['to_date']
                 period = filtered_xero[0]['period']
-
                 try:
                     async with httpx.AsyncClient() as client:
                         response = await client.get(
-                            f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&"
-                            f"toDate={report_to_date}&periods={period - 1}&timeframe=MONTH",
+                            f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&toDate="
+                            f"{report_to_date}",
                             headers={
                                 "Content-Type": "application/xml",
                                 "Authorization": f"Bearer {access_token}",
@@ -1424,13 +1383,12 @@ async def process_profit_and_loss(data: Request):
 
                 # Check the HTTP status code
                 if response.status_code != 200:
+                    # print("HTTP Status Code:", response.status_code)
                     return {"Success": False, "Error": "Non-200 Status Code"}
 
                 python_dict = xmltodict.parse(response.text)
 
                 python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
-
-                python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
 
                 for item in python_dict:
 
@@ -1438,1496 +1396,1557 @@ async def process_profit_and_loss(data: Request):
                         if isinstance(item['Rows']['Row'], list):
                             data = item['Rows']['Row']
                             for row in data:
-                                # print("row", row)
                                 if row['RowType'] == 'Row':
 
+                                    final_line_data = row['Cells']['Cell']
                                     insert = {}
-                                    values = []
-                                    if isinstance(row['Cells']['Cell'], list):
+                                    for index, line_item in enumerate(final_line_data):
 
-                                        newData = row['Cells']['Cell']
-
-                                        for index, line_item in enumerate(newData):
-
-                                            if index == 0:
-                                                insert['Account'] = line_item['Value']
-                                            else:
-                                                values.append(line_item['Value'])
-                                    insert['Amount'] = values
-                                    # print(len(values))
-
+                                        try:
+                                            insert[index] = float(line_item['Value'])
+                                        except:
+                                            insert[index] = line_item['Value']
+                                    insert['period'] = period
                                     if index1 == 0:
+                                        data_from_xero.append(insert)
                                         # if insert['period'] == 1 or insert['period'] == 2:
-                                        #     print("insertA", insert)
-
-                                        comparison_data_cpc.append(insert)
-                                        # print("insert 2", insert)
-
+                                        # print("insert 1", insert)
 
                                     elif index1 == 1:
-
-                                        comparison_data_hf.append(insert)
-
+                                        data_from_xero_HF_PandL.append(insert)
 
                                     elif index1 == 2:
-                                        # print("Insert", insert)
-                                        comparison_data_hv.append(insert)
+                                        # print("Insert A", insert)
+                                        data_from_xero_HV_PandL.append(insert)
+
+            period = request['period'] - 1
+
+            filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
+
+            report_from_date = filtered_xero[0]['from_date']
+            report_to_date = filtered_xero[0]['to_date']
+            period = filtered_xero[0]['period']
+
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(
+                        f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&"
+                        f"toDate={report_to_date}&periods={period - 1}&timeframe=MONTH",
+                        headers={
+                            "Content-Type": "application/xml",
+                            "Authorization": f"Bearer {access_token}",
+                            "xero-tenant-id": tenant,
+                        },
+                    )
+            except httpx.HTTPError as exc:
+                print(f"HTTP Error: {exc}")
+                return {"Success": False, "Error": "HTTP Error"}
+
+            # Check the HTTP status code
+            if response.status_code != 200:
+                return {"Success": False, "Error": "Non-200 Status Code"}
+
+            python_dict = xmltodict.parse(response.text)
+
+            python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+
+            python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
+
+            for item in python_dict:
+
+                if 'Rows' in item:
+                    if isinstance(item['Rows']['Row'], list):
+                        data = item['Rows']['Row']
+                        for row in data:
+                            # print("row", row)
+                            if row['RowType'] == 'Row':
+
+                                insert = {}
+                                values = []
+                                if isinstance(row['Cells']['Cell'], list):
+
+                                    newData = row['Cells']['Cell']
+
+                                    for index, line_item in enumerate(newData):
+
+                                        if index == 0:
+                                            insert['Account'] = line_item['Value']
+                                        else:
+                                            values.append(line_item['Value'])
+                                insert['Amount'] = values
+                                # print(len(values))
+
+                                if index1 == 0:
+                                    # if insert['period'] == 1 or insert['period'] == 2:
+                                    #     print("insertA", insert)
+
+                                    comparison_data_cpc.append(insert)
+                                    # print("insert 2", insert)
 
 
+                                elif index1 == 1:
 
-            else:
-                # XXXXX
-                period = request['period']
-
-                filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
-
-                report_from_date = filtered_xero[0]['from_date']
-                report_to_date = filtered_xero[0]['to_date']
-                period = filtered_xero[0]['period']
-
-                try:
-                    async with httpx.AsyncClient() as client:
-                        response = await client.get(
-                            f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&toDate={report_to_date}&periods={period - 1}&timeframe=MONTH",
-                            headers={
-                                "Content-Type": "application/xml",
-                                "Authorization": f"Bearer {access_token}",
-                                "xero-tenant-id": tenant,
-                            },
-                        )
-                except httpx.HTTPError as exc:
-                    print(f"HTTP Error: {exc}")
-                    return {"Success": False, "Error": "HTTP Error"}
-
-                # Check the HTTP status code
-                if response.status_code != 200:
-                    return {"Success": False, "Error": "Non-200 Status Code"}
-
-                python_dict = xmltodict.parse(response.text)
-
-                python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
-
-                python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
-
-                # print("python_dict", python_dict[0])
-
-                for item in python_dict:
-                    # print("item", item)
-                    # print()
-                    if item['RowType'] == 'Section':
-                        if 'Title' in item:
-                            category = item['Title']
-                            # print("category", category)
-                            if category == 'Income':
-                                category = 'Trading Income'
-                            elif category == 'Less Cost of Sales':
-                                category = 'COS'
-                            elif category == 'Plus Other Income':
-                                category = 'Other Income'
-                            elif category == 'Less Operating Expenses':
-                                category = 'Operating Expenses'
-                            # print("category2", category)
-
-                    if 'Rows' in item:
-                        if isinstance(item['Rows']['Row'], list):
-                            data = item['Rows']['Row']
-                            for row in data:
-                                # print("row", row)
-                                # print()
-
-                                if row['RowType'] == 'Row':
-
-                                    insert = {}
-                                    values = []
-                                    if isinstance(row['Cells']['Cell'], list):
-                                        newData = row['Cells']['Cell']
-                                        for index, line_item in enumerate(newData):
-
-                                            if index == 0:
-                                                insert['Account'] = line_item['Value']
-                                                insert['Category'] = category
-                                                # print("insert['Account']", insert['Account'])
-                                                # print("insert['Category']", insert['Category'])
+                                    comparison_data_hf.append(insert)
 
 
-                                            else:
-                                                values.append(line_item['Value'])
-                                            # if index > 0 and index1 == 2:
-                                            #     if insert['Account'] == 'Subscriptions - Xero':
-                                            #         print("line_item['Value']", line_item['Value'])
+                                elif index1 == 2:
+                                    # print("Insert B", insert)
+                                    comparison_data_hv.append(insert)
 
-                                    insert['Amount'] = values
-                                    if index1 == 0:
-                                        comparison_data_cpc.append(insert)
-                                        # if insert['period'] == 1 or insert['period'] == 2:
-                                        print("insert", insert)
 
-                                    elif index1 == 1:
-                                        comparison_data_hf.append(insert)
-
-                                    elif index1 == 2:
-
-                                        comparison_data_hv.append(insert)
-
-        # filter comparison_data_cpc by Account contains 'Heron'
-        # print("data_from_xero", data_from_xero)
-        # filter out of data_from_xero where Account does not contain 'Heron'
-        data_from_xero = list(filter(lambda x: 'Heron' in x[0], data_from_xero))
-
-        data_from_xero = list(filter(lambda x: 'Fees - Construction' not in x[0], data_from_xero))
-
-        comparison_data_cpc = list(filter(lambda x: 'Heron' in x['Account'], comparison_data_cpc))
-        # filter out of comparison_data_cpc where Account contains 'Fees - Construction'
-        comparison_data_cpc = list(filter(lambda x: 'Fees - Construction' not in x['Account'], comparison_data_cpc))
-
-        if len(data_from_xero) > 0:
-            for item in data_from_xero:
-                # print("item XX", item)
-                comparison_data_cpc_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_cpc))
-                # print("comparison_data_cpc_filtered", comparison_data_cpc_filtered)
-                # if len(comparison_data_cpc_filtered) is greater than 0 then find the index of the item in
-                # comparison_data_cpc and insert index 1 of item into comparison_data_cpc[index]['Amount'] at the
-                # beginning
-                if len(comparison_data_cpc_filtered) > 0:
-                    index = comparison_data_cpc.index(comparison_data_cpc_filtered[0])
-                    comparison_data_cpc[index]['Amount'].insert(0, item[1])
-                    # JUST TO CHECK
-                    # comparison_data_cpc_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_cpc))
-                    # print("comparison_data_cpc_filtered 2", comparison_data_cpc_filtered)
-                # else:
 
         else:
-            print("data_from_xero is empty")
+            # print('XXXXX')
+            period = request['period'] - 1
+            # print("request", request)
 
-        if len(data_from_xero_HF_PandL) > 0:
-            global amount
-            amount = 0
-            for item in data_from_xero_HF_PandL:
-                # print("item YY", item)
-                comparison_data_hf_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_hf))
-                # print("comparison_data_hf_filtered", comparison_data_hf_filtered)
-                if len(comparison_data_hf_filtered) == 0 and item[0] == 'Security':
-                    amount = item[1]
+            filtered_xero = list(filter(lambda x: x['period'] == period, periods_to_report))
+
+            report_from_date = request['from_date']
+            report_to_date = request['to_date']
+            period = request['period']
+            # print("Report From Date", report_from_date)
+            # print("Report To Date", report_to_date)
+            # print("Period", period)
+
+            try:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(
+                        f"https://api.xero.com/api.xro/2.0/Reports/ProfitAndLoss?fromDate={report_from_date}&"
+                        f"toDate={report_to_date}&periods={period - 1}&timeframe=MONTH",
+                        headers={
+                            "Content-Type": "application/xml",
+                            "Authorization": f"Bearer {access_token}",
+                            "xero-tenant-id": tenant,
+                        },
+                    )
+            except httpx.HTTPError as exc:
+                print(f"HTTP Error: {exc}")
+                return {"Success": False, "Error": "HTTP Error"}
+
+            # Check the HTTP status code
+            if response.status_code != 200:
+                return {"Success": False, "Error": "Non-200 Status Code"}
+
+            python_dict = xmltodict.parse(response.text)
+
+            python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+
+            python_dict = list(filter(lambda x: x['RowType'] == 'Section', python_dict))
+
+            for item in python_dict:
+                # print("Item", item)
+                # print()
+
+                if 'Rows' in item:
+                    if isinstance(item['Rows']['Row'], list):
+                        data = item['Rows']['Row']
+                        for row in data:
+                            # print("row", row)
+                            if row['RowType'] == 'Row':
+
+                                insert = {}
+                                values = []
+                                if isinstance(row['Cells']['Cell'], list):
+
+                                    newData = row['Cells']['Cell']
+
+                                    for index, line_item in enumerate(newData):
+
+                                        if index == 0:
+                                            insert['Account'] = line_item['Value']
+                                        else:
+                                            values.append(line_item['Value'])
+                                insert['Amount'] = values
+                                # print(len(values))
+
+                                if index1 == 0:
+                                    # if insert['period'] == 1 or insert['period'] == 2:
+                                    #     print("insertA", insert)
+
+                                    comparison_data_cpc.append(insert)
+                                    # print("insert 2", insert)
+
+
+                                elif index1 == 1:
+
+                                    comparison_data_hf.append(insert)
+
+
+                                elif index1 == 2:
+                                    # print("Insert Long", insert)
+                                    comparison_data_hv.append(insert)
+
+    # filter comparison_data_cpc by Account contains 'Heron'
+
+    # print("data_from_xero", data_from_xero)
+    # filter out of data_from_xero where Account does not contain 'Heron'
+    data_from_xero = list(filter(lambda x: 'Heron' in x[0], data_from_xero))
+
+    data_from_xero = list(filter(lambda x: 'Fees - Construction' not in x[0], data_from_xero))
+
+    comparison_data_cpc = list(filter(lambda x: 'Heron' in x['Account'], comparison_data_cpc))
+    # filter out of comparison_data_cpc where Account contains 'Fees - Construction'
+    comparison_data_cpc = list(filter(lambda x: 'Fees - Construction' not in x['Account'], comparison_data_cpc))
+
+    if len(data_from_xero) > 0:
+        for item in data_from_xero:
+            # print("item XX", item)
+            comparison_data_cpc_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_cpc))
+            # print("comparison_data_cpc_filtered", comparison_data_cpc_filtered)
+            # if len(comparison_data_cpc_filtered) is greater than 0 then find the index of the item in
+            # comparison_data_cpc and insert index 1 of item into comparison_data_cpc[index]['Amount'] at the
+            # beginning
+            if len(comparison_data_cpc_filtered) > 0:
+                index = comparison_data_cpc.index(comparison_data_cpc_filtered[0])
+                comparison_data_cpc[index]['Amount'].insert(0, item[1])
+                # JUST TO CHECK
+                # comparison_data_cpc_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_cpc))
+                # print("comparison_data_cpc_filtered 2", comparison_data_cpc_filtered)
+            # else:
+
+    else:
+        print("data_from_xero is empty")
+
+    if len(data_from_xero_HF_PandL) > 0:
+        global amount
+        amount = 0
+        for item in data_from_xero_HF_PandL:
+            # print("item YY", item)
+            comparison_data_hf_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_hf))
+            # print("comparison_data_hf_filtered", comparison_data_hf_filtered)
+            if len(comparison_data_hf_filtered) == 0 and item[0] == 'Security':
+                amount = item[1]
+                # print("Amount", amount)
+
+            if len(comparison_data_hf_filtered) > 0:
+
+                if comparison_data_hf_filtered[0]['Account'] == 'Security - ADT':
                     # print("Amount", amount)
 
-                if len(comparison_data_hf_filtered) > 0:
+                    item[1] = item[1] + amount
+                    # print("item[1]", item[1])
 
-                    if comparison_data_hf_filtered[0]['Account'] == 'Security - ADT':
-                        # print("Amount", amount)
-
-                        item[1] = item[1] + amount
-                        # print("item[1]", item[1])
-
-                    index = comparison_data_hf.index(comparison_data_hf_filtered[0])
-                    comparison_data_hf[index]['Amount'].insert(0, item[1])
-                    # JUST TO CHECK
-                    # comparison_data_hf_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_hf))
-                    # print("comparison_data_hf_filtered 2", comparison_data_hf_filtered)
-                    # print()
-        else:
-            print("data_from_xero is empty")
-
-        if len(data_from_xero_HV_PandL) > 0:
-            # global amount
-            # amount = 0
-            for item in data_from_xero_HV_PandL:
-                # print("item YY", item)
-                comparison_data_hv_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_hv))
-                # print("comparison_data_hV_filtered", comparison_data_hv_filtered)
-                # if len(comparison_data_hv_filtered) == 0 and item[0] == 'Security':
-                #     amount = item[1]
-                #     print("Amount", amount)
-
-                if len(comparison_data_hv_filtered) > 0:
-                    # if comparison_data_hf_filtered[0]['Account'] == 'Security - ADT':
-                    #     print("Amount", amount)
-                    #
-                    #     item[1] = item[1] + amount
-                    #     print("item[1]", item[1])
-
-                    index = comparison_data_hv.index(comparison_data_hv_filtered[0])
-                    comparison_data_hv[index]['Amount'].insert(0, item[1])
-                    # JUST TO CHECK
-                    comparison_data_hv_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_hv))
-                    # print("comparison_data_hf_filtered 2", comparison_data_hv_filtered)
-                    # print()
-        else:
-            print("data_from_xero is empty")
-
-        # create a variable called profit_loss and fetch all the data from the profit_and_loss collection
-        profit_loss = list(db.profit_and_loss.find({}))
-        for item in profit_loss:
-            item['id'] = str(item['_id'])
-            del item['_id']
-
-        # create a new variable from periods_to_report and filter it by period where period is less than or equal to
-        # request['period'] - 2 this will be used to get the data from xero for the comparison data
-        periods_to_report_comparison = list(filter(lambda x: x['period'] <= request['period'], periods_to_report))
-        # reverse periods_to_report_comparison
-        periods_to_report_comparison.reverse()
-
-        final_data_for_profit_loss_to_update = []
-        final_data_for_profit_loss_to_insert = []
-
-        for item in comparison_data_hv:
-
-            for index, value in enumerate(periods_to_report_comparison):
-
-                profit_loss_filtered = list(filter(
-                    lambda x: x['Account'] == item['Account'] and x['Development'] == 'Heron View' and x['Month'] ==
-                              value['Month'], profit_loss))
-
-                if len(profit_loss_filtered) > 0:
-                    # insert = {}
-                    insert = profit_loss_filtered[0]
-                    try:
-                        if float(insert['Actual']) != float(item['Amount'][index]):
-                            insert['Actual'] = float(item['Amount'][index])
-                            # print("update", insert)
-                            # print("Got this far!!!", item)
-                            final_data_for_profit_loss_to_update.append(insert)
-                    except IndexError:
-                        insert['Actual'] = 0
-                        # insert[]
-                        final_data_for_profit_loss_to_update.append(insert)
-
-                        # print("item", item)
-                        # print("insert", insert)
-                        # print("index", index)
-                        # print("profit_loss_filtered", profit_loss_filtered)
-
-                        # break
-
-                else:
-                    if 'Category' not in item:
-                        if item['Account'].startswith("COS"):
-                            item['Category'] = 'COS'
-
-                        elif item['Account'].startswith("Bond") or item['Account'].startswith("Sale"):
-                            item['Category'] = 'Trading Income'
-
-                        elif item['Account'].startswith("Rental") or item['Account'].startswith("Interest Received"):
-                            item['Category'] = 'Other Income'
-
-                        else:
-                            item['Category'] = 'Operating Expenses'
-
-                    insert = {'Account': item['Account'], 'Actual': item['Amount'][index], 'Forecast': 0,
-                              'Development': 'Heron View', 'Applicable_dev': 'Heron View', 'Month': value['Month'],
-                              "Category": item['Category']}
-                    # print("insert", insert)
-
-                    final_data_for_profit_loss_to_insert.append(insert)
-
-        for item in comparison_data_hf:
-
-            for index, value in enumerate(periods_to_report_comparison):
-
-                profit_loss_filtered = list(filter(
-                    lambda x: x['Account'] == item['Account'] and x['Development'] == 'Heron Fields' and x[
-                        'Month'] == value[
-                                  'Month'], profit_loss))
-
-                if len(profit_loss_filtered) > 0:
-                    # insert = {}
-                    insert = profit_loss_filtered[0]
-                    try:
-                        if float(insert['Actual']) != float(item['Amount'][index]):
-                            # print("profit_loss_filtered", profit_loss_filtered)
-                            insert['Actual'] = float(item['Amount'][index])
-                            final_data_for_profit_loss_to_update.append(insert)
-                    except IndexError:
-                        insert['Actual'] = 0
-                        final_data_for_profit_loss_to_update.append(insert)
-
-                else:
-                    if 'Category' not in item:
-                        if item['Account'].startswith("COS"):
-                            item['Category'] = 'COS'
-
-                        elif item['Account'].startswith("Bond") or item['Account'].startswith("Sale"):
-                            item['Category'] = 'Trading Income'
-
-                        elif item['Account'].startswith("Rental") or item['Account'].startswith("Interest Received"):
-                            item['Category'] = 'Other Income'
-
-                        else:
-                            item['Category'] = 'Operating Expenses'
-                    # print("item", item)
-                    insert = {'Account': item['Account'], 'Actual': item['Amount'][index], 'Forecast': 0,
-                              'Development': 'Heron Fields', 'Applicable_dev': 'Heron Fields', 'Month': value['Month'],
-                              "Category": item['Category']}
-
-                    final_data_for_profit_loss_to_insert.append(insert)
-
-        for item in comparison_data_cpc:
-
-            for index, value in enumerate(periods_to_report_comparison):
-
-                profit_loss_filtered = list(filter(
-                    lambda x: x['Account'] == item['Account'] and x['Development'] == 'CPC' and x[
-                        'Month'] == value[
-                                  'Month'], profit_loss))
-
+                index = comparison_data_hf.index(comparison_data_hf_filtered[0])
+                comparison_data_hf[index]['Amount'].insert(0, item[1])
+                # JUST TO CHECK
+                # comparison_data_hf_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_hf))
+                # print("comparison_data_hf_filtered 2", comparison_data_hf_filtered)
                 # print()
-                # print("profit_loss_filtered", profit_loss_filtered)
+    else:
+        print("data_from_xero is empty")
 
-                if len(profit_loss_filtered) > 0:
+    # print(data_from_xero_HV_PandL)
 
-                    insert = profit_loss_filtered[0]
-                    # if insert['Account'] == 'COS - Heron View - Construction':
-                    #     print("insert XX", insert)
-                    #     print("item XX", item)
-                    #     print("index XX", index)
-                    #     print("value XX", value)
-                    try:
-                        if float(insert['Actual']) != float(item['Amount'][index]):
-                            insert['Actual'] = float(item['Amount'][index])
-                            final_data_for_profit_loss_to_update.append(insert)
-                            # if insert['Account'] == 'COS - Heron View - Construction':
-                            #     print("insert", insert)
-                            #     print("item", item)
-                            #     print("index", index)
-                            #     print("value", value)
-                    except IndexError:
-                        # if insert['Account'] == 'COS - Heron View - Construction':
-                        #     print("insertXX", insert)
-                        #     print("itemXX", item)
-                        #     print("indexXX", index)
-                        #     print("valueXX", value)
-                        #     insert['Actual'] = 0
+    # print("comparison_data_hv", comparison_data_hv)
+
+    if len(data_from_xero_HV_PandL) > 0:
+        # global amount
+        # amount = 0
+        for item in data_from_xero_HV_PandL:
+
+            # print("item YY", item)
+            comparison_data_hv_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_hv))
+            # print("comparison_data_hV_filtered", comparison_data_hv_filtered)
+            # if len(comparison_data_hv_filtered) == 0 and item[0] == 'Security':
+            #     amount = item[1]
+            #     print("Amount", amount)
+
+            if len(comparison_data_hv_filtered) > 0:
+                # if comparison_data_hf_filtered[0]['Account'] == 'Security - ADT':
+                #     print("Amount", amount)
+                #
+                #     item[1] = item[1] + amount
+                #     print("item[1]", item[1])
+
+                index = comparison_data_hv.index(comparison_data_hv_filtered[0])
+                comparison_data_hv[index]['Amount'].insert(0, item[1])
+                # JUST TO CHECK
+                comparison_data_hv_filtered = list(filter(lambda x: x['Account'] == item[0], comparison_data_hv))
+                # print("comparison_data_hf_filtered 2", comparison_data_hv_filtered)
+                # print()
+    else:
+        print("data_from_xero is empty")
+
+    # create a variable called profit_loss and fetch all the data from the profit_and_loss collection
+    profit_loss = list(db.profit_and_loss.find({}))
+    for item in profit_loss:
+        item['id'] = str(item['_id'])
+        del item['_id']
+
+    # create a new variable from periods_to_report and filter it by period where period is less than or equal to
+    # request['period'] - 2 this will be used to get the data from xero for the comparison data
+    periods_to_report_comparison = list(filter(lambda x: x['period'] <= request['period'], periods_to_report))
+    # reverse periods_to_report_comparison
+    periods_to_report_comparison.reverse()
+
+    final_data_for_profit_loss_to_update = []
+    final_data_for_profit_loss_to_insert = []
+
+    for item in comparison_data_hv:
+        # print("item", item)
+        # print()
+        # print("periods_to_report_comparison", periods_to_report_comparison)
+
+        for index, value in enumerate(periods_to_report_comparison):
+
+            profit_loss_filtered = list(filter(
+                lambda x: x['Account'] == item['Account'] and x['Development'] == 'Heron View' and x['Month'] ==
+                          value['Month'], profit_loss))
+
+            if len(profit_loss_filtered) > 0:
+                # insert = {}
+                insert = profit_loss_filtered[0]
+                try:
+                    if float(insert['Actual']) != float(item['Amount'][index]):
+                        insert['Actual'] = float(item['Amount'][index])
+                        # print("update", insert)
+                        # print("Got this far!!!", item)
                         final_data_for_profit_loss_to_update.append(insert)
+                except IndexError:
+                    insert['Actual'] = 0
+                    # insert[]
+                    final_data_for_profit_loss_to_update.append(insert)
+
+                    # print("item", item)
+                    # print("insert", insert)
+                    # print("index", index)
+                    # print("profit_loss_filtered", profit_loss_filtered)
+
+                    # break
+
+            else:
+                if 'Category' not in item:
+                    if item['Account'].startswith("COS"):
+                        item['Category'] = 'COS'
+
+                    elif item['Account'].startswith("Bond") or item['Account'].startswith("Sale"):
+                        item['Category'] = 'Trading Income'
+
+                    elif item['Account'].startswith("Rental") or item['Account'].startswith("Interest Received"):
+                        item['Category'] = 'Other Income'
+
+                    else:
+                        item['Category'] = 'Operating Expenses'
+
+                insert = {'Account': item['Account'], 'Actual': item['Amount'][index], 'Forecast': 0,
+                          'Development': 'Heron View', 'Applicable_dev': 'Heron View', 'Month': value['Month'],
+                          "Category": item['Category']}
+                # print("insert", insert)
+
+                final_data_for_profit_loss_to_insert.append(insert)
+
+    for item in comparison_data_hf:
+
+        for index, value in enumerate(periods_to_report_comparison):
+
+            profit_loss_filtered = list(filter(
+                lambda x: x['Account'] == item['Account'] and x['Development'] == 'Heron Fields' and x[
+                    'Month'] == value[
+                              'Month'], profit_loss))
+
+            if len(profit_loss_filtered) > 0:
+                # insert = {}
+                insert = profit_loss_filtered[0]
+                try:
+                    if float(insert['Actual']) != float(item['Amount'][index]):
+                        # print("profit_loss_filtered", profit_loss_filtered)
+                        insert['Actual'] = float(item['Amount'][index])
+                        final_data_for_profit_loss_to_update.append(insert)
+                except IndexError:
+                    insert['Actual'] = 0
+                    final_data_for_profit_loss_to_update.append(insert)
+
+            else:
+                if 'Category' not in item:
+                    if item['Account'].startswith("COS"):
+                        item['Category'] = 'COS'
+
+                    elif item['Account'].startswith("Bond") or item['Account'].startswith("Sale"):
+                        item['Category'] = 'Trading Income'
+
+                    elif item['Account'].startswith("Rental") or item['Account'].startswith("Interest Received"):
+                        item['Category'] = 'Other Income'
+
+                    else:
+                        item['Category'] = 'Operating Expenses'
+                # print("item", item)
+                insert = {'Account': item['Account'], 'Actual': item['Amount'][index], 'Forecast': 0,
+                          'Development': 'Heron Fields', 'Applicable_dev': 'Heron Fields', 'Month': value['Month'],
+                          "Category": item['Category']}
+
+                final_data_for_profit_loss_to_insert.append(insert)
+
+    for item in comparison_data_cpc:
+
+        for index, value in enumerate(periods_to_report_comparison):
+
+            profit_loss_filtered = list(filter(
+                lambda x: x['Account'] == item['Account'] and x['Development'] == 'CPC' and x[
+                    'Month'] == value[
+                              'Month'], profit_loss))
+
+            # print()
+            # print("profit_loss_filtered", profit_loss_filtered)
+
+            if len(profit_loss_filtered) > 0:
+
+                insert = profit_loss_filtered[0]
+                # if insert['Account'] == 'COS - Heron View - Construction':
+                #     print("insert XX", insert)
+                #     print("item XX", item)
+                #     print("index XX", index)
+                #     print("value XX", value)
+                try:
+                    if float(insert['Actual']) != float(item['Amount'][index]):
+                        insert['Actual'] = float(item['Amount'][index])
+                        final_data_for_profit_loss_to_update.append(insert)
+                        # if insert['Account'] == 'COS - Heron View - Construction':
+                        #     print("insert", insert)
+                        #     print("item", item)
+                        #     print("index", index)
+                        #     print("value", value)
+                except IndexError:
+                    # if insert['Account'] == 'COS - Heron View - Construction':
+                    #     print("insertXX", insert)
+                    #     print("itemXX", item)
+                    #     print("indexXX", index)
+                    #     print("valueXX", value)
+                    #     insert['Actual'] = 0
+                    final_data_for_profit_loss_to_update.append(insert)
+
+            else:
+
+                if 'Category' not in item:
+                    if item['Account'].startswith("COS"):
+                        item['Category'] = 'COS'
+
+                    elif item['Account'].startswith("Bond") or item['Account'].startswith("Sale"):
+                        item['Category'] = 'Trading Income'
+
+                    elif item['Account'].startswith("Rental") or item['Account'].startswith("Interest Received"):
+                        item['Category'] = 'Other Income'
+
+                    else:
+                        item['Category'] = 'Operating Expenses'
+
+                insert = {'Account': item['Account'], 'Actual': item['Amount'][index], 'Forecast': 0,
+                          'Development': 'CPC', 'Applicable_dev': 'Heron View', 'Month': value['Month'],
+                          "Category": item['Category']}
+
+                final_data_for_profit_loss_to_insert.append(insert)
+
+    # update the data in the profit_and_loss collection with the data in final_data_for_profit_loss_to_update
+
+    # print("final_data_for_profit_loss_to_update", final_data_for_profit_loss_to_update)
+
+    if len(final_data_for_profit_loss_to_update) > 0:
+        for item in final_data_for_profit_loss_to_update:
+            id = item['id']
+            del item['id']
+            db.profit_and_loss.update_one({"_id": ObjectId(id)}, {"$set": item})
+
+    # insert the data in the profit_and_loss collection with the data in final_data_for_profit_loss_to_insert
+    if len(final_data_for_profit_loss_to_insert) > 0:
+        db.profit_and_loss.insert_many(final_data_for_profit_loss_to_insert)
+
+    # GET FINAL DATA FROM DB
+    profit_and_loss = list(db.profit_and_loss.find({}))
+
+    # GET PRINT FORM DATA
+    # get opportunities from db where Category is equal to 'Heron Fields' or 'Heron View'
+    opportunities = list(db.opportunities.find({"Category": {"$in": ["Heron Fields", "Heron View"]}}))
+    # sales_processed from the db where development is equal to 'Heron Fields' or 'Heron View', project only
+    # opportunity_code and opportunity_sales_date
+    sales_processed = list(db.sales_processed.find({"development": {"$in": ["Heron Fields", "Heron View"]}},
+                                                   {"opportunity_code": 1, "opportunity_sales_date": 1,
+                                                    "opportunity_transfer_fees": 1,
+                                                    "opportunity_bond_registration": 1,
+                                                    "opportunity_trust_release_fee": 1, "opportunity_unforseen": 1,
+                                                    "opportunity_commission": 1}))
+
+    # create a variable called sum_to_raise which is the sum of
+    opportunity_amount_required = sum([float(item['opportunity_amount_required']) for item in opportunities])
+    # do the same as the above, but only where Category = 'Heron Fields'
+    opportunity_amount_required_hf = sum(
+        [float(item['opportunity_amount_required']) for item in opportunities if
+         item['Category'] == 'Heron Fields'])
+    # print("opportunity_amount_required_hf", opportunity_amount_required_hf)
+    # print("opportunity_amount_required", opportunity_amount_required)
+    # from investors in the db get all investors where 'Category' in the trust array is equal to 'Heron Fields'
+    # or 'Heron View'
+    for sales in sales_processed:
+        sales['id'] = str(sales['_id'])
+        del sales['_id']
+        sales['opportunity_bond_registration'] = float(sales.get('opportunity_bond_registration', 0))
+        sales['opportunity_transfer_fees'] = float(sales.get('opportunity_transfer_fees', 0))
+        sales['opportunity_trust_release_fee'] = float(sales.get('opportunity_trust_release_fee', 0))
+        sales['opportunity_unforseen'] = float(sales.get('opportunity_unforseen', 0))
+        sales['opportunity_commission'] = float(sales.get('opportunity_commission', 0))
+        # print("sales", sales)
+
+    # print("to_date", request['to_date'])
+    # convert request['to_date'] to datetime as a variable called to_date
+    to_date = datetime.strptime(request['to_date'], "%Y-%m-%d")
+    dates = []
+    for i in range(-3, 0):
+        dates.append(to_date + relativedelta(months=i))
+    dates.append(to_date)
+
+    trust_investments_received = []
+    released_investments = []
+
+    investors = list(db.investors.find({}))
+
+    for investor in investors:
+        investor['id'] = str(investor['_id'])
+        del investor['_id']
+        if investor['investor_acc_number'] == "ZCAM01":
+            # filter out the first item in the trust array and the first item in the investments array
+            investor['trust'] = investor['trust'][1:]
+            investor['investments'] = investor['investments'][1:]
+        if investor['investor_acc_number'] == "ZJHO01":
+            # filter out of trust and investments where opportunity_code is equal to 'HFA205' and
+            # investment_number is equal to 1
+            investor['trust'] = list(filter(lambda x: not (x['investment_number'] == 1), investor['trust']))
+            investor['investments'] = list(
+                filter(lambda x: not (x['investment_number'] == 1), investor['investments']))
+        if investor['investor_acc_number'] == "ZPJB01":
+            # filter out of trust and investments where opportunity_code is equal to 'HFA205' and
+            # investment_number is equal to 1
+            investor['trust'] = list(
+                filter(lambda x: not (x['opportunity_code'] == "HFA205" and x['investment_number'] == 1),
+                       investor['trust']))
+            investor['investments'] = list(
+                filter(lambda x: not (x['opportunity_code'] == "HFA205" and x['investment_number'] == 1),
+                       investor['investments']))
+        if investor['investor_acc_number'] == "ZERA01":
+            # filter out of trust and investments where opportunity_code is equal to 'EA205' and
+            # investment_number is equal to 3
+            investor['trust'] = list(
+                filter(lambda x: not (x['opportunity_code'] == "EA205" and x['investment_number'] == 3),
+                       investor['trust']))
+            investor['investments'] = list(
+                filter(lambda x: not (x['opportunity_code'] == "EA205" and x['investment_number'] == 3),
+                       investor['investments']))
+        if investor['investor_acc_number'] == "ZVOL01":
+            # filter out of trust and investments where opportunity_code is equal to 'EA103' and
+            # investment_number is equal to 3
+            investor['trust'] = list(
+                filter(lambda x: not (x['opportunity_code'] == "EA103" and x['investment_number'] == 3),
+                       investor['trust']))
+            investor['investments'] = list(
+                filter(lambda x: not (x['opportunity_code'] == "EA103" and x['investment_number'] == 3),
+                       investor['investments']))
+        if investor['investor_acc_number'] == "ZLEW03":
+            # filter out of trust and investments where opportunity_code is equal to 'EA205' and
+            # investment_number is equal to 1
+            investor['trust'] = list(
+                filter(lambda x: not (x['opportunity_code'] == "EA205" and x['investment_number'] == 1),
+                       investor['trust']))
+            investor['investments'] = list(
+                filter(lambda x: not (x['opportunity_code'] == "EA205" and x['investment_number'] == 1),
+                       investor['investments']))
+
+        # filter trust array by 'Category' in the trust array is equal to 'Heron Fields' or 'Heron View'
+        investor['trust'] = list(
+            filter(lambda x: x['Category'] in ['Heron Fields', 'Heron View'], investor['trust']))
+        # filter investments array by 'Category' in the trust array is equal to 'Heron Fields' or 'Heron View'
+        investor['investments'] = list(
+            filter(lambda x: x['Category'] in ['Heron Fields', 'Heron View'], investor['investments']))
+
+        # loop through trust array and convert 'deposit_date' to datetime
+        if len(investor['trust']) > 0:
+            for item in investor['trust']:
+                item['deposit_date'] = datetime.strptime(item['deposit_date'], "%Y/%m/%d")
+                item['release_date'] = item.get('release_date', "")
+                if item['release_date'] != "":
+                    item['release_date'] = datetime.strptime(item['release_date'], "%Y/%m/%d")
+                    item['planned_release_date'] = item['release_date']
 
                 else:
+                    item['release_date'] = "2099/12/31"
+                    item['release_date'] = datetime.strptime(item['release_date'], "%Y/%m/%d")
+                    item['planned_release_date'] = datetime.strptime(
+                        item.get('planned_release_date', "2099/12/31").replace("-", "/"), "%Y/%m/%d")
 
-                    if 'Category' not in item:
-                        if item['Account'].startswith("COS"):
-                            item['Category'] = 'COS'
+                opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
+                                                     opportunities))
+                if opportunities_filtered[0]['opportunity_final_transfer_date'] == "":
+                    estimated_final_date = opportunities_filtered[0]['opportunity_end_date'].replace("-", "/")
+                    estimated_final_date = datetime.strptime(estimated_final_date, "%Y/%m/%d")
+                else:
+                    estimated_final_date = opportunities_filtered[0]['opportunity_final_transfer_date'].replace(
+                        "-", "/")
+                    estimated_final_date = datetime.strptime(estimated_final_date, "%Y/%m/%d")
 
-                        elif item['Account'].startswith("Bond") or item['Account'].startswith("Sale"):
-                            item['Category'] = 'Trading Income'
+                insert = {}
 
-                        elif item['Account'].startswith("Rental") or item['Account'].startswith("Interest Received"):
-                            item['Category'] = 'Other Income'
+                insert['opportunity_code'] = item['opportunity_code']
+                insert['investor_acc_number'] = investor['investor_acc_number']
+                insert['planned_release_date'] = item['planned_release_date']
+                # print("insert['planned_release_date']", insert['planned_release_date'])
+                insert['investment_number'] = item['investment_number']
+                insert['deposit_date'] = item['deposit_date']
+                insert['release_date'] = item['release_date']
+                insert['amount'] = float(item['investment_amount'])
+                insert['estimated_final_date'] = estimated_final_date
+                insert['interest_rate'] = float(item.get('investment_interest_rate', 18))
 
-                        else:
-                            item['Category'] = 'Operating Expenses'
+                filtered_opportunities = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
+                                                     opportunities))
+                insert['amount_required'] = float(filtered_opportunities[0]['opportunity_amount_required'])
 
-                    insert = {'Account': item['Account'], 'Actual': item['Amount'][index], 'Forecast': 0,
-                              'Development': 'CPC', 'Applicable_dev': 'Heron View', 'Month': value['Month'],
-                              "Category": item['Category']}
+                trust_investments_received.append(insert)
 
-                    final_data_for_profit_loss_to_insert.append(insert)
+        if len(investor['investments']) > 0:
+            for index, item in enumerate(investor['investments']):
+                opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
+                                                     opportunities))
+                # print("opportunities_filtered", opportunities_filtered[0])
+                item['sold'] = opportunities_filtered[0]['opportunity_sold']
 
-        # update the data in the profit_and_loss collection with the data in final_data_for_profit_loss_to_update
+                if opportunities_filtered[0]['opportunity_sold'] == True:
+                    # print(item['opportunity_code'], index, investor['investor_acc_number'])
+                    sales_processed_filtered = list(
+                        filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
+                               sales_processed))
 
-        # print("final_data_for_profit_loss_to_update", final_data_for_profit_loss_to_update)
+                    item['sale_date'] = datetime.strptime(
+                        sales_processed_filtered[0]['opportunity_sales_date'].replace('-', '/'), "%Y/%m/%d")
 
-        if len(final_data_for_profit_loss_to_update) > 0:
-            for item in final_data_for_profit_loss_to_update:
-                id = item['id']
-                del item['id']
-                db.profit_and_loss.update_one({"_id": ObjectId(id)}, {"$set": item})
-
-        # insert the data in the profit_and_loss collection with the data in final_data_for_profit_loss_to_insert
-        if len(final_data_for_profit_loss_to_insert) > 0:
-            db.profit_and_loss.insert_many(final_data_for_profit_loss_to_insert)
-
-        # GET FINAL DATA FROM DB
-        profit_and_loss = list(db.profit_and_loss.find({}))
-
-        # GET PRINT FORM DATA
-        # get opportunities from db where Category is equal to 'Heron Fields' or 'Heron View'
-        opportunities = list(db.opportunities.find({"Category": {"$in": ["Heron Fields", "Heron View"]}}))
-        # sales_processed from the db where development is equal to 'Heron Fields' or 'Heron View', project only
-        # opportunity_code and opportunity_sales_date
-        sales_processed = list(db.sales_processed.find({"development": {"$in": ["Heron Fields", "Heron View"]}},
-                                                       {"opportunity_code": 1, "opportunity_sales_date": 1,
-                                                        "opportunity_transfer_fees": 1,
-                                                        "opportunity_bond_registration": 1,
-                                                        "opportunity_trust_release_fee": 1, "opportunity_unforseen": 1,
-                                                        "opportunity_commission": 1}))
-
-        # create a variable called sum_to_raise which is the sum of
-        opportunity_amount_required = sum([float(item['opportunity_amount_required']) for item in opportunities])
-        # do the same as the above, but only where Category = 'Heron Fields'
-        opportunity_amount_required_hf = sum(
-            [float(item['opportunity_amount_required']) for item in opportunities if
-             item['Category'] == 'Heron Fields'])
-        # print("opportunity_amount_required_hf", opportunity_amount_required_hf)
-        # print("opportunity_amount_required", opportunity_amount_required)
-        # from investors in the db get all investors where 'Category' in the trust array is equal to 'Heron Fields'
-        # or 'Heron View'
-        for sales in sales_processed:
-            sales['id'] = str(sales['_id'])
-            del sales['_id']
-            sales['opportunity_bond_registration'] = float(sales.get('opportunity_bond_registration', 0))
-            sales['opportunity_transfer_fees'] = float(sales.get('opportunity_transfer_fees', 0))
-            sales['opportunity_trust_release_fee'] = float(sales.get('opportunity_trust_release_fee', 0))
-            sales['opportunity_unforseen'] = float(sales.get('opportunity_unforseen', 0))
-            sales['opportunity_commission'] = float(sales.get('opportunity_commission', 0))
-            # print("sales", sales)
-
-        # print("to_date", request['to_date'])
-        # convert request['to_date'] to datetime as a variable called to_date
-        to_date = datetime.strptime(request['to_date'], "%Y-%m-%d")
-        dates = []
-        for i in range(-3, 0):
-            dates.append(to_date + relativedelta(months=i))
-        dates.append(to_date)
-
-        trust_investments_received = []
-        released_investments = []
-
-        investors = list(db.investors.find({}))
-
-        for investor in investors:
-            investor['id'] = str(investor['_id'])
-            del investor['_id']
-            if investor['investor_acc_number'] == "ZCAM01":
-                # filter out the first item in the trust array and the first item in the investments array
-                investor['trust'] = investor['trust'][1:]
-                investor['investments'] = investor['investments'][1:]
-            if investor['investor_acc_number'] == "ZJHO01":
-                # filter out of trust and investments where opportunity_code is equal to 'HFA205' and
-                # investment_number is equal to 1
-                investor['trust'] = list(filter(lambda x: not (x['investment_number'] == 1), investor['trust']))
-                investor['investments'] = list(
-                    filter(lambda x: not (x['investment_number'] == 1), investor['investments']))
-            if investor['investor_acc_number'] == "ZPJB01":
-                # filter out of trust and investments where opportunity_code is equal to 'HFA205' and
-                # investment_number is equal to 1
-                investor['trust'] = list(
-                    filter(lambda x: not (x['opportunity_code'] == "HFA205" and x['investment_number'] == 1),
-                           investor['trust']))
-                investor['investments'] = list(
-                    filter(lambda x: not (x['opportunity_code'] == "HFA205" and x['investment_number'] == 1),
-                           investor['investments']))
-            if investor['investor_acc_number'] == "ZERA01":
-                # filter out of trust and investments where opportunity_code is equal to 'EA205' and
-                # investment_number is equal to 3
-                investor['trust'] = list(
-                    filter(lambda x: not (x['opportunity_code'] == "EA205" and x['investment_number'] == 3),
-                           investor['trust']))
-                investor['investments'] = list(
-                    filter(lambda x: not (x['opportunity_code'] == "EA205" and x['investment_number'] == 3),
-                           investor['investments']))
-            if investor['investor_acc_number'] == "ZVOL01":
-                # filter out of trust and investments where opportunity_code is equal to 'EA103' and
-                # investment_number is equal to 3
-                investor['trust'] = list(
-                    filter(lambda x: not (x['opportunity_code'] == "EA103" and x['investment_number'] == 3),
-                           investor['trust']))
-                investor['investments'] = list(
-                    filter(lambda x: not (x['opportunity_code'] == "EA103" and x['investment_number'] == 3),
-                           investor['investments']))
-            if investor['investor_acc_number'] == "ZLEW03":
-                # filter out of trust and investments where opportunity_code is equal to 'EA205' and
-                # investment_number is equal to 1
-                investor['trust'] = list(
-                    filter(lambda x: not (x['opportunity_code'] == "EA205" and x['investment_number'] == 1),
-                           investor['trust']))
-                investor['investments'] = list(
-                    filter(lambda x: not (x['opportunity_code'] == "EA205" and x['investment_number'] == 1),
-                           investor['investments']))
-
-            # filter trust array by 'Category' in the trust array is equal to 'Heron Fields' or 'Heron View'
-            investor['trust'] = list(
-                filter(lambda x: x['Category'] in ['Heron Fields', 'Heron View'], investor['trust']))
-            # filter investments array by 'Category' in the trust array is equal to 'Heron Fields' or 'Heron View'
-            investor['investments'] = list(
-                filter(lambda x: x['Category'] in ['Heron Fields', 'Heron View'], investor['investments']))
-
-            # loop through trust array and convert 'deposit_date' to datetime
-            if len(investor['trust']) > 0:
-                for item in investor['trust']:
-                    item['deposit_date'] = datetime.strptime(item['deposit_date'], "%Y/%m/%d")
-                    item['release_date'] = item.get('release_date', "")
-                    if item['release_date'] != "":
-                        item['release_date'] = datetime.strptime(item['release_date'], "%Y/%m/%d")
-                        item['planned_release_date'] = item['release_date']
-
-                    else:
-                        item['release_date'] = "2099/12/31"
-                        item['release_date'] = datetime.strptime(item['release_date'], "%Y/%m/%d")
-                        item['planned_release_date'] = datetime.strptime(
-                            item.get('planned_release_date', "2099/12/31").replace("-", "/"), "%Y/%m/%d")
-
-                    opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
-                                                         opportunities))
-                    if opportunities_filtered[0]['opportunity_final_transfer_date'] == "":
-                        estimated_final_date = opportunities_filtered[0]['opportunity_end_date'].replace("-", "/")
-                        estimated_final_date = datetime.strptime(estimated_final_date, "%Y/%m/%d")
-                    else:
-                        estimated_final_date = opportunities_filtered[0]['opportunity_final_transfer_date'].replace(
-                            "-", "/")
-                        estimated_final_date = datetime.strptime(estimated_final_date, "%Y/%m/%d")
-
-                    insert = {}
-
-                    insert['opportunity_code'] = item['opportunity_code']
-                    insert['investor_acc_number'] = investor['investor_acc_number']
-                    insert['planned_release_date'] = item['planned_release_date']
-                    # print("insert['planned_release_date']", insert['planned_release_date'])
-                    insert['investment_number'] = item['investment_number']
-                    insert['deposit_date'] = item['deposit_date']
-                    insert['release_date'] = item['release_date']
-                    insert['amount'] = float(item['investment_amount'])
-                    insert['estimated_final_date'] = estimated_final_date
-                    insert['interest_rate'] = float(item.get('investment_interest_rate', 18))
-
-                    filtered_opportunities = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
-                                                         opportunities))
-                    insert['amount_required'] = float(filtered_opportunities[0]['opportunity_amount_required'])
-
-                    trust_investments_received.append(insert)
-
-            if len(investor['investments']) > 0:
-                for index, item in enumerate(investor['investments']):
-                    opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
-                                                         opportunities))
-                    # print("opportunities_filtered", opportunities_filtered[0])
-                    item['sold'] = opportunities_filtered[0]['opportunity_sold']
-
-                    if opportunities_filtered[0]['opportunity_sold'] == True:
-                        # print(item['opportunity_code'], index, investor['investor_acc_number'])
-                        sales_processed_filtered = list(
-                            filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
-                                   sales_processed))
-
-                        item['sale_date'] = datetime.strptime(
-                            sales_processed_filtered[0]['opportunity_sales_date'].replace('-', '/'), "%Y/%m/%d")
-
-                        if opportunities_filtered[0]['opportunity_final_transfer_date'] != "":
-                            item['transferred'] = True
-                            item['transfer_date'] = datetime.strptime(
-                                opportunities_filtered[0]['opportunity_final_transfer_date'].replace('-', '/'),
-                                "%Y/%m/%d")
-                        else:
-                            item['transferred'] = False
-                            item['transfer_date'] = "2099/12/31"
-                            item['transfer_date'] = datetime.strptime(item['transfer_date'], "%Y/%m/%d")
+                    if opportunities_filtered[0]['opportunity_final_transfer_date'] != "":
+                        item['transferred'] = True
+                        item['transfer_date'] = datetime.strptime(
+                            opportunities_filtered[0]['opportunity_final_transfer_date'].replace('-', '/'),
+                            "%Y/%m/%d")
                     else:
                         item['transferred'] = False
                         item['transfer_date'] = "2099/12/31"
                         item['transfer_date'] = datetime.strptime(item['transfer_date'], "%Y/%m/%d")
-                        item['sale_date'] = "2099/12/31"
-                        item['sale_date'] = datetime.strptime(item['sale_date'], "%Y/%m/%d")
+                else:
+                    item['transferred'] = False
+                    item['transfer_date'] = "2099/12/31"
+                    item['transfer_date'] = datetime.strptime(item['transfer_date'], "%Y/%m/%d")
+                    item['sale_date'] = "2099/12/31"
+                    item['sale_date'] = datetime.strptime(item['sale_date'], "%Y/%m/%d")
 
-                    # item['deposit_date'] = datetime.strptime(item['deposit_date'], "%Y/%m/%d")
-                    item['end_date'] = item.get('end_date', "2099/12/31")
-                    item['early_release'] = item.get('early_release', False)
-                    item['release_date'] = item.get('release_date', "2099/12/31")
-                    if item['release_date'] != "":
-                        item['release_date'] = datetime.strptime(item['release_date'], "%Y/%m/%d")
-                    else:
-                        item['release_date'] = "2099/12/31"
-                        item['release_date'] = datetime.strptime(item['release_date'], "%Y/%m/%d")
-                    if item['end_date'] != "":
-                        item['end_date'] = datetime.strptime(item['end_date'], "%Y/%m/%d")
-                    else:
-                        item['end_date'] = "2099/12/31"
-                        item['end_date'] = datetime.strptime(item['end_date'], "%Y/%m/%d")
+                # item['deposit_date'] = datetime.strptime(item['deposit_date'], "%Y/%m/%d")
+                item['end_date'] = item.get('end_date', "2099/12/31")
+                item['early_release'] = item.get('early_release', False)
+                item['release_date'] = item.get('release_date', "2099/12/31")
+                if item['release_date'] != "":
+                    item['release_date'] = datetime.strptime(item['release_date'], "%Y/%m/%d")
+                else:
+                    item['release_date'] = "2099/12/31"
+                    item['release_date'] = datetime.strptime(item['release_date'], "%Y/%m/%d")
+                if item['end_date'] != "":
+                    item['end_date'] = datetime.strptime(item['end_date'], "%Y/%m/%d")
+                else:
+                    item['end_date'] = "2099/12/31"
+                    item['end_date'] = datetime.strptime(item['end_date'], "%Y/%m/%d")
 
-                    if opportunities_filtered[0]['opportunity_final_transfer_date'] == "":
-                        estimated_final_date = opportunities_filtered[0]['opportunity_end_date'].replace("-", "/")
-                        estimated_final_date = datetime.strptime(estimated_final_date, "%Y/%m/%d")
-                    else:
-                        estimated_final_date = opportunities_filtered[0]['opportunity_final_transfer_date'].replace(
-                            "-", "/")
-                        estimated_final_date = datetime.strptime(estimated_final_date, "%Y/%m/%d")
-
-                    insert = {}
-                    insert['opportunity_code'] = item['opportunity_code']
-                    insert['investor_acc_number'] = investor['investor_acc_number']
-                    insert['investment_number'] = item['investment_number']
-                    insert['early_release'] = item['early_release']
-                    insert['sold'] = item['sold']
-                    insert['sale_date'] = item['sale_date']
-                    insert['transferred'] = item['transferred']
-                    insert['transfer_date'] = item['transfer_date']
-                    insert['interest_rate'] = float(item['investment_interest_rate'])
-                    insert['estimated_final_date'] = estimated_final_date
-
-                    insert['end_date'] = item['end_date']
-                    insert['release_date'] = item['release_date']
-                    insert['amount'] = float(item['investment_amount'])
-
-                    filtered_opportunities = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
-                                                         opportunities))
-                    insert['amount_required'] = float(filtered_opportunities[0]['opportunity_amount_required'])
-
-                    released_investments.append(insert)
-
-        # sort trust_investments_received by opportunity_code, investor_acc_number
-        trust_investments_received = sorted(trust_investments_received,
-                                            key=lambda i: (i['opportunity_code'], i['investor_acc_number']))
-        # sort released_investments by opportunity_code, investor_acc_number
-        released_investments = sorted(released_investments,
-                                      key=lambda i: (i['opportunity_code'], i['investor_acc_number']))
-
-        # print("trust_investments_received", trust_investments_received[0], len(trust_investments_received))
-        # print()
-        # print("released_investments", released_investments[0], len(released_investments))
-        # print()
-
-        sales_units = []
-
-        for investment in released_investments:
-            insert = {}
-            opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == investment['opportunity_code'],
-                                                 opportunities))
-
-            insert['opportunity_code'] = investment['opportunity_code']
-            insert['sold'] = investment['sold']
-            insert['sale_date'] = investment['sale_date']
-            insert['sales_price'] = float(opportunities_filtered[0]['opportunity_sale_price'])
-            insert['transferred'] = investment['transferred']
-            insert['transfer_date'] = investment['transfer_date']
-            sales_units.append(insert)
-
-        # remove all duplicates from sales_units
-        sales_units = [i for n, i in enumerate(sales_units) if i not in sales_units[n + 1:]]
-
-        for opportunity in opportunities:
-            sales_units_filtered = list(
-                filter(lambda x: x['opportunity_code'] == opportunity['opportunity_code'], sales_units))
-
-            if len(sales_units_filtered) == 0:
+                if opportunities_filtered[0]['opportunity_final_transfer_date'] == "":
+                    estimated_final_date = opportunities_filtered[0]['opportunity_end_date'].replace("-", "/")
+                    estimated_final_date = datetime.strptime(estimated_final_date, "%Y/%m/%d")
+                else:
+                    estimated_final_date = opportunities_filtered[0]['opportunity_final_transfer_date'].replace(
+                        "-", "/")
+                    estimated_final_date = datetime.strptime(estimated_final_date, "%Y/%m/%d")
 
                 insert = {}
-                insert['opportunity_code'] = opportunity['opportunity_code']
-                insert['sold'] = opportunity['opportunity_sold']
-                if opportunity['opportunity_sold'] == True:
-                    sales_processed_filtered = list(
-                        filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
-                               sales_processed))
-                    if len(sales_processed_filtered) > 0:
-                        sale_date = sales_processed_filtered[0]['opportunity_sales_date'].replace('-', '/')
-                    else:
-                        sale_date = "2099/12/31"
+                insert['opportunity_code'] = item['opportunity_code']
+                insert['investor_acc_number'] = investor['investor_acc_number']
+                insert['investment_number'] = item['investment_number']
+                insert['early_release'] = item['early_release']
+                insert['sold'] = item['sold']
+                insert['sale_date'] = item['sale_date']
+                insert['transferred'] = item['transferred']
+                insert['transfer_date'] = item['transfer_date']
+                insert['interest_rate'] = float(item['investment_interest_rate'])
+                insert['estimated_final_date'] = estimated_final_date
+
+                insert['end_date'] = item['end_date']
+                insert['release_date'] = item['release_date']
+                insert['amount'] = float(item['investment_amount'])
+
+                filtered_opportunities = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
+                                                     opportunities))
+                insert['amount_required'] = float(filtered_opportunities[0]['opportunity_amount_required'])
+
+                released_investments.append(insert)
+
+    # sort trust_investments_received by opportunity_code, investor_acc_number
+    trust_investments_received = sorted(trust_investments_received,
+                                        key=lambda i: (i['opportunity_code'], i['investor_acc_number']))
+    # sort released_investments by opportunity_code, investor_acc_number
+    released_investments = sorted(released_investments,
+                                  key=lambda i: (i['opportunity_code'], i['investor_acc_number']))
+
+    # print("trust_investments_received", trust_investments_received[0], len(trust_investments_received))
+    # print()
+    # print("released_investments", released_investments[0], len(released_investments))
+    # print()
+
+    sales_units = []
+
+    for investment in released_investments:
+        insert = {}
+        opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == investment['opportunity_code'],
+                                             opportunities))
+
+        insert['opportunity_code'] = investment['opportunity_code']
+        insert['sold'] = investment['sold']
+        insert['sale_date'] = investment['sale_date']
+        insert['sales_price'] = float(opportunities_filtered[0]['opportunity_sale_price'])
+        insert['transferred'] = investment['transferred']
+        insert['transfer_date'] = investment['transfer_date']
+        sales_units.append(insert)
+
+    # remove all duplicates from sales_units
+    sales_units = [i for n, i in enumerate(sales_units) if i not in sales_units[n + 1:]]
+
+    for opportunity in opportunities:
+        sales_units_filtered = list(
+            filter(lambda x: x['opportunity_code'] == opportunity['opportunity_code'], sales_units))
+
+        if len(sales_units_filtered) == 0:
+
+            insert = {}
+            insert['opportunity_code'] = opportunity['opportunity_code']
+            insert['sold'] = opportunity['opportunity_sold']
+            if opportunity['opportunity_sold'] == True:
+                sales_processed_filtered = list(
+                    filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
+                           sales_processed))
+                if len(sales_processed_filtered) > 0:
+                    sale_date = sales_processed_filtered[0]['opportunity_sales_date'].replace('-', '/')
                 else:
                     sale_date = "2099/12/31"
-                if opportunity['opportunity_final_transfer_date'] != "":
-                    insert['transferred'] = True
-                    transfer_date = opportunity['opportunity_final_transfer_date']
-                else:
-                    insert['transferred'] = False
-                    transfer_date = "2099/12/31"
-                insert['sale_date'] = datetime.strptime(sale_date.replace('-', '/'), "%Y/%m/%d")
-                insert['sales_price'] = float(opportunity['opportunity_sale_price'])
-
-                insert['transfer_date'] = datetime.strptime(transfer_date.replace('-', '/'), "%Y/%m/%d")
-                sales_units.append(insert)
-
-        # sort sales_units by opportunity_code
-        sales_units = sorted(sales_units, key=lambda i: i['opportunity_code'])
-
-        print()
-        month_4 = 0
-        month_3 = 0
-        month_2 = 0
-        month_1 = 0
-
-        month_4released = 0
-        month_3released = 0
-        month_2released = 0
-        month_1released = 0
-
-        month_4mom = 0
-        month_3mom = 0
-        month_2mom = 0
-        month_1mom = 0
-
-        # SALES_PARAMETERS
-        # get sales_parameters from db where Development is equal to 'Heron View'
-        sales_parameters = list(db.salesParameters.find({"Development": "Heron View"}))
-        for sale in sales_parameters:
-            sale['id'] = str(sale['_id'])
-            del sale['_id']
-            # print("sale", sale)
-
-        for sale in sales_units:
-            for param in sales_parameters:
-                # make the sale key equal to the param['Description'] and the value equal to the param['rate'] as a
-                # float
-                sale[param['Description']] = float(param['rate'])
-
-        for sale in sales_units:
-            sales_processed_filtered = list(
-                filter(lambda x: x['opportunity_code'] == sale['opportunity_code'],
-                       sales_processed))
-            if len(sales_processed_filtered) > 0:
-                sale_date = sales_processed_filtered[0]['opportunity_sales_date'].replace('-', '/')
-                sale['sale_date'] = datetime.strptime(sale_date, "%Y/%m/%d")
-                sale['sold'] = True
-
-                if sales_processed_filtered[0]['opportunity_trust_release_fee'] != 0:
-                    sale['trust_release_fee'] = sales_processed_filtered[0]['opportunity_trust_release_fee']
-                if sales_processed_filtered[0]['opportunity_bond_registration'] != 0:
-                    sale['bond_registration'] = sales_processed_filtered[0]['opportunity_bond_registration']
-                if sales_processed_filtered[0]['opportunity_transfer_fees'] != 0:
-                    sale['transfer_fees'] = sales_processed_filtered[0]['opportunity_transfer_fees']
-                if sales_processed_filtered[0]['opportunity_unforseen'] != 0:
-                    sale['unforseen'] = sales_processed_filtered[0]['opportunity_unforseen']
-                if sales_processed_filtered[0]['opportunity_commission'] != 0:
-                    sale['commission'] = sales_processed_filtered[0]['opportunity_commission']
-
-        value_to_be_raised = []
-
-        # the above again using list comprehension
-        units = [investment['opportunity_code'] for investment in opportunities]
-        # eliminate duplicates from units which is a list of strings
-        units = list(dict.fromkeys(units))
-        # sort units by opportunity_code
-        units = sorted(units)
-
-        for index, unit in enumerate(units):
-            opportunities_filtered = list(
-                filter(lambda x: x['opportunity_code'] == unit, opportunities))
-            insert = {}
-            insert['opportunity_code'] = unit
-            insert['amount'] = 0
-            insert['amount_required'] = float(opportunities_filtered[0]['opportunity_amount_required'])
-            if opportunities_filtered[0]['opportunity_final_transfer_date'] == "":
-                insert['transferred'] = False
-                insert['transfer_date'] = "2099/12/31"
-                insert['transfer_date'] = datetime.strptime(insert['transfer_date'], "%Y/%m/%d")
             else:
+                sale_date = "2099/12/31"
+            if opportunity['opportunity_final_transfer_date'] != "":
                 insert['transferred'] = True
-                insert['transfer_date'] = datetime.strptime(
-                    opportunities_filtered[0]['opportunity_final_transfer_date'].replace('-', '/'), "%Y/%m/%d")
-            trust_investments_received_filtered = list(
-                filter(lambda x: x['opportunity_code'] == unit, trust_investments_received))
-            if len(trust_investments_received_filtered) > 0:
-                insert['amount'] = sum([item['amount'] for item in trust_investments_received_filtered])
+                transfer_date = opportunity['opportunity_final_transfer_date']
             else:
-                released_investments_filtered = list(
-                    filter(lambda x: x['opportunity_code'] == unit, released_investments))
-                if len(released_investments_filtered) > 0:
-                    insert['amount'] = sum([item['amount'] for item in released_investments_filtered])
-            value_to_be_raised.append(insert)
+                insert['transferred'] = False
+                transfer_date = "2099/12/31"
+            insert['sale_date'] = datetime.strptime(sale_date.replace('-', '/'), "%Y/%m/%d")
+            insert['sales_price'] = float(opportunity['opportunity_sale_price'])
 
-        # get rates from the db
-        rates = list(db.rates.find({}))
+            insert['transfer_date'] = datetime.strptime(transfer_date.replace('-', '/'), "%Y/%m/%d")
+            sales_units.append(insert)
 
-        for rate in rates:
-            rate['id'] = str(rate['_id'])
-            del rate['_id']
-            # convert rate['Efective_date'] to datetime
-            rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace('-', '/'), "%Y/%m/%d")
-            rate['rate'] = float(rate['rate']) / 100
-        # sort rates by Efective_date descending
-        rates = sorted(rates, key=lambda i: i['Efective_date'], reverse=True)
+    # sort sales_units by opportunity_code
+    sales_units = sorted(sales_units, key=lambda i: i['opportunity_code'])
 
-        # SALES_UNITS COSTS
-        # print()
-        # print("sales_units", sales_units[0])
-        # print()
+    print()
+    month_4 = 0
+    month_3 = 0
+    month_2 = 0
+    month_1 = 0
+
+    month_4released = 0
+    month_3released = 0
+    month_2released = 0
+    month_1released = 0
+
+    month_4mom = 0
+    month_3mom = 0
+    month_2mom = 0
+    month_1mom = 0
+
+    # SALES_PARAMETERS
+    # get sales_parameters from db where Development is equal to 'Heron View'
+    sales_parameters = list(db.salesParameters.find({"Development": "Heron View"}))
+    for sale in sales_parameters:
+        sale['id'] = str(sale['_id'])
+        del sale['_id']
+        # print("sale", sale)
+
+    for sale in sales_units:
+        for param in sales_parameters:
+            # make the sale key equal to the param['Description'] and the value equal to the param['rate'] as a
+            # float
+            sale[param['Description']] = float(param['rate'])
+
+    for sale in sales_units:
+        sales_processed_filtered = list(
+            filter(lambda x: x['opportunity_code'] == sale['opportunity_code'],
+                   sales_processed))
+        if len(sales_processed_filtered) > 0:
+            # print("sales_processed_filtered", sales_processed_filtered[0])
+
+            sale_date = sales_processed_filtered[0]['opportunity_sales_date'].replace('-', '/')
+            sale['sale_date'] = datetime.strptime(sale_date, "%Y/%m/%d")
+            sale['sold'] = True
+
+            if sales_processed_filtered[0]['opportunity_trust_release_fee'] != 0:
+                sale['trust_release_fee'] = sales_processed_filtered[0]['opportunity_trust_release_fee']
+            if sales_processed_filtered[0]['opportunity_bond_registration'] != 0:
+                sale['bond_registration'] = sales_processed_filtered[0]['opportunity_bond_registration']
+            if sales_processed_filtered[0]['opportunity_transfer_fees'] != 0:
+                sale['transfer_fees'] = sales_processed_filtered[0]['opportunity_transfer_fees']
+            if sales_processed_filtered[0]['opportunity_unforseen'] != 0:
+                sale['unforseen'] = sales_processed_filtered[0]['opportunity_unforseen']
+            if sales_processed_filtered[0]['opportunity_commission'] != 0:
+                sale['commission'] = sales_processed_filtered[0]['opportunity_commission']
+
+    value_to_be_raised = []
+
+    # the above again using list comprehension
+    units = [investment['opportunity_code'] for investment in opportunities]
+    # eliminate duplicates from units which is a list of strings
+    units = list(dict.fromkeys(units))
+    # sort units by opportunity_code
+    units = sorted(units)
+
+    for index, unit in enumerate(units):
+        opportunities_filtered = list(
+            filter(lambda x: x['opportunity_code'] == unit, opportunities))
+        insert = {}
+        insert['opportunity_code'] = unit
+        insert['amount'] = 0
+        insert['amount_required'] = float(opportunities_filtered[0]['opportunity_amount_required'])
+        if opportunities_filtered[0]['opportunity_final_transfer_date'] == "":
+            insert['transferred'] = False
+            insert['transfer_date'] = "2099/12/31"
+            insert['transfer_date'] = datetime.strptime(insert['transfer_date'], "%Y/%m/%d")
+        else:
+            insert['transferred'] = True
+            insert['transfer_date'] = datetime.strptime(
+                opportunities_filtered[0]['opportunity_final_transfer_date'].replace('-', '/'), "%Y/%m/%d")
+        trust_investments_received_filtered = list(
+            filter(lambda x: x['opportunity_code'] == unit, trust_investments_received))
+        if len(trust_investments_received_filtered) > 0:
+            insert['amount'] = sum([item['amount'] for item in trust_investments_received_filtered])
+        else:
+            released_investments_filtered = list(
+                filter(lambda x: x['opportunity_code'] == unit, released_investments))
+            if len(released_investments_filtered) > 0:
+                insert['amount'] = sum([item['amount'] for item in released_investments_filtered])
+        value_to_be_raised.append(insert)
+
+    # get rates from the db
+    rates = list(db.rates.find({}))
+
+    for rate in rates:
+        rate['id'] = str(rate['_id'])
+        del rate['_id']
+        # convert rate['Efective_date'] to datetime
+        rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace('-', '/'), "%Y/%m/%d")
+        rate['rate'] = float(rate['rate']) / 100
+    # sort rates by Efective_date descending
+    rates = sorted(rates, key=lambda i: i['Efective_date'], reverse=True)
+
+    # SALES_UNITS COSTS
+    # print()
+    # print("sales_units", sales_units[0])
+    # print()
+
+    for item in trust_investments_received:
+        released_investments_filtered = list(
+            filter(lambda x: x['opportunity_code'] == item['opportunity_code'] and
+                             x['investor_acc_number'] == item['investor_acc_number'] and
+                             x['investment_number'] == item['investment_number'],
+                   released_investments))
+        if len(released_investments_filtered) > 0:
+            item['transferred'] = released_investments_filtered[0]['transferred']
+            item['transfer_date'] = released_investments_filtered[0]['transfer_date']
+            item['interest_rate'] = float(released_investments_filtered[0]['interest_rate'])
+            if released_investments_filtered[0]['early_release'] == True:
+                item['estimated_final_date'] = released_investments_filtered[0]['end_date']
+        else:
+            item['transferred'] = False
+            item['transfer_date'] = "2099/12/31"
+            item['transfer_date'] = datetime.strptime(item['transfer_date'], "%Y/%m/%d")
+
+    # get unallocated_investments from the db
+    unallocated_investments = list(db.unallocated_investments.find({}))
+    for item in unallocated_investments:
+        item['id'] = str(item['_id'])
+        del item['_id']
+
+        if item['opportunity_final_transfer_date'] == "":
+            item['end_date'] = item['opportunity_end_date']
+        else:
+            item['end_date'] = item['opportunity_final_transfer_date']
+        item['end_date'] = datetime.strptime(item['end_date'].replace('-', '/'), "%Y/%m/%d")
+        item['deposit_date'] = datetime.strptime(item['deposit_date'].replace('-', '/'), "%Y/%m/%d")
+        item['release_date'] = datetime.strptime(item['release_date'].replace('-', '/'), "%Y/%m/%d")
+
+    for index, date in enumerate(dates, 1):
+
+        unallocated_investment_released_interest = 0
+        unallocated_investment_capital = 0
+        unallocated_investment_momentum_interest = 0
+
+        for item in unallocated_investments:
+            unallocated_investment_capital += item['unallocated_investment']
+            unallocated_investment_released_interest += (item['unallocated_investment'] * item[
+                'project_interest_rate'] / 100 / 365) * (item['end_date'] - item['release_date']).days
+            momentum_interest = 0
+            start_date = item['deposit_date']
+            start_date += timedelta(days=1)
+            end_date = item['release_date']
+            while start_date <= end_date:
+                rate = list(filter(lambda x: x['Efective_date'] <= start_date, rates))[0]['rate']
+                momentum_interest += item['unallocated_investment'] * rate / 365
+                start_date += timedelta(days=1)
+            unallocated_investment_momentum_interest += momentum_interest
+
+        total_unallocated_interest = unallocated_investment_released_interest + unallocated_investment_momentum_interest
 
         for item in trust_investments_received:
-            released_investments_filtered = list(
-                filter(lambda x: x['opportunity_code'] == item['opportunity_code'] and
-                                 x['investor_acc_number'] == item['investor_acc_number'] and
-                                 x['investment_number'] == item['investment_number'],
-                       released_investments))
-            if len(released_investments_filtered) > 0:
-                item['transferred'] = released_investments_filtered[0]['transferred']
-                item['transfer_date'] = released_investments_filtered[0]['transfer_date']
-                item['interest_rate'] = float(released_investments_filtered[0]['interest_rate'])
-                if released_investments_filtered[0]['early_release'] == True:
-                    item['estimated_final_date'] = released_investments_filtered[0]['end_date']
-            else:
-                item['transferred'] = False
-                item['transfer_date'] = "2099/12/31"
-                item['transfer_date'] = datetime.strptime(item['transfer_date'], "%Y/%m/%d")
+            amount = item['amount']
+            start_date = item['deposit_date']
+            start_date += timedelta(days=1)
+            if item['transferred'] == True and item['transfer_date'] <= date:
 
-        # get unallocated_investments from the db
-        unallocated_investments = list(db.unallocated_investments.find({}))
-        for item in unallocated_investments:
-            item['id'] = str(item['_id'])
-            del item['_id']
-
-            if item['opportunity_final_transfer_date'] == "":
-                item['end_date'] = item['opportunity_end_date']
-            else:
-                item['end_date'] = item['opportunity_final_transfer_date']
-            item['end_date'] = datetime.strptime(item['end_date'].replace('-', '/'), "%Y/%m/%d")
-            item['deposit_date'] = datetime.strptime(item['deposit_date'].replace('-', '/'), "%Y/%m/%d")
-            item['release_date'] = datetime.strptime(item['release_date'].replace('-', '/'), "%Y/%m/%d")
-
-        for index, date in enumerate(dates, 1):
-
-            unallocated_investment_released_interest = 0
-            unallocated_investment_capital = 0
-            unallocated_investment_momentum_interest = 0
-
-            for item in unallocated_investments:
-                unallocated_investment_capital += item['unallocated_investment']
-                unallocated_investment_released_interest += (item['unallocated_investment'] * item[
-                    'project_interest_rate'] / 100 / 365) * (item['end_date'] - item['release_date']).days
-                momentum_interest = 0
-                start_date = item['deposit_date']
-                start_date += timedelta(days=1)
-                end_date = item['release_date']
-                while start_date <= end_date:
-                    rate = list(filter(lambda x: x['Efective_date'] <= start_date, rates))[0]['rate']
-                    momentum_interest += item['unallocated_investment'] * rate / 365
-                    start_date += timedelta(days=1)
-                unallocated_investment_momentum_interest += momentum_interest
-
-            total_unallocated_interest = unallocated_investment_released_interest + unallocated_investment_momentum_interest
-
-            for item in trust_investments_received:
-                amount = item['amount']
-                start_date = item['deposit_date']
-                start_date += timedelta(days=1)
-                if item['transferred'] == True and item['transfer_date'] <= date:
-
-                    if item['release_date'] != "":
-                        if item['release_date'] > date:
-                            end_date = date
-                        else:
-                            end_date = item['release_date']
-                    else:
+                if item['release_date'] != "":
+                    if item['release_date'] > date:
                         end_date = date
-
-                    interest = 0
-                    interest_all_mom = 0
-                    while start_date <= end_date:
-                        rate = list(filter(lambda x: x['Efective_date'] <= start_date, rates))[0]['rate']
-                        interest += amount * rate / 365
-                        start_date += timedelta(days=1)
-                    item['interest'] = interest
-                    item['interest_other'] = 0
-                else:
-                    item['interest'] = 0
-                    item['interest_other'] = 0
-                    interest = 0
-                    if item['release_date'] >= item['planned_release_date']:
-                        end_date = item['planned_release_date']
                     else:
                         end_date = item['release_date']
+                else:
+                    end_date = date
 
-                    while start_date <= end_date:
-                        rate = list(filter(lambda x: x['Efective_date'] <= start_date, rates))[0]['rate']
-                        interest += amount * rate / 365
-                        start_date += timedelta(days=1)
-                    item['interest'] = 0
-                    item['interest_other'] = interest
-                released_interest = 0
-                new_start_date = end_date
-                # new_start_date += timedelta(days=1)
-                new_end_date = item['estimated_final_date']
-                released_interest = amount * item['interest_rate'] / 100 / 365 * (new_end_date - new_start_date).days
-                item['released_interest'] = released_interest
-
-            interest_mom = sum([item['interest'] for item in trust_investments_received])
-            # print("interestMom", interest_mom)
-            interest_mom_other = sum([item['interest_other'] for item in trust_investments_received])
-            # print("interestMomOther", interest_mom_other)
-            released_interest = sum([item['released_interest'] for item in trust_investments_received])
-            # print("releasedInterest", released_interest)
-
-            for item in released_investments:
                 interest = 0
-                if item['transferred'] == True and item['transfer_date'] <= date:
-                    amount = item['amount']
-                    start_date = item['release_date']
-                    if item['end_date'] != "":
-                        end_date = item['end_date']
-                    else:
-                        end_date = item['transfer_date']
-                    interest = 0
-                    interest = (amount * item['interest_rate'] / 100) / 365 * (end_date - start_date).days
-                    item['interest'] = interest
+                interest_all_mom = 0
+                while start_date <= end_date:
+                    rate = list(filter(lambda x: x['Efective_date'] <= start_date, rates))[0]['rate']
+                    interest += amount * rate / 365
+                    start_date += timedelta(days=1)
+                item['interest'] = interest
+                item['interest_other'] = 0
+            else:
+                item['interest'] = 0
+                item['interest_other'] = 0
+                interest = 0
+                if item['release_date'] >= item['planned_release_date']:
+                    end_date = item['planned_release_date']
                 else:
-                    item['interest'] = 0
-                # if item['opportunity_code'] == 'HFA101':
-                #     print("item", item)
+                    end_date = item['release_date']
 
-            interest_released = sum([item['interest'] for item in released_investments])
-            # print("interestReleased", interest_released)
+                while start_date <= end_date:
+                    rate = list(filter(lambda x: x['Efective_date'] <= start_date, rates))[0]['rate']
+                    interest += amount * rate / 365
+                    start_date += timedelta(days=1)
+                item['interest'] = 0
+                item['interest_other'] = interest
+            released_interest = 0
+            new_start_date = end_date
+            # new_start_date += timedelta(days=1)
+            new_end_date = item['estimated_final_date']
+            released_interest = amount * item['interest_rate'] / 100 / 365 * (new_end_date - new_start_date).days
+            item['released_interest'] = released_interest
 
-            interest_paid_to_date = interest_mom + interest_released
+        interest_mom = sum([item['interest'] for item in trust_investments_received])
+        # print("interestMom", interest_mom)
+        interest_mom_other = sum([item['interest_other'] for item in trust_investments_received])
+        # print("interestMomOther", interest_mom_other)
+        released_interest = sum([item['released_interest'] for item in trust_investments_received])
+        # print("releasedInterest", released_interest)
 
-            total_estimated_interest = interest_mom_other + released_interest + interest_mom + total_unallocated_interest
-            # print("totalEstimatedInterest", total_estimated_interest + total_unallocated_interest)
-            # print("interest", interest)
-
-            # sum all the amounts in trust_investments_received where deposit_date is less than or equal to date
-            month_received = sum(
-                [item['amount'] for item in trust_investments_received if item['deposit_date'] <= date])
-
-            # do exactly as above but only where the opportunity_code begins with 'HF'
-            month_hf_received = sum([item['amount'] for item in trust_investments_received if
-                                     item['deposit_date'] <= date and item['opportunity_code'].startswith('HF')])
-
-            # print("month_hf", month_hf_received)
-            # print("Capital_not Raised", opportunity_amount_required_hf - month_hf_received)
-            capital_not_raised = opportunity_amount_required_hf - month_hf_received
-
-            # sum all the amounts in trust_investments_received where release_date is less than or equal to date if
-            # released_date is not equal to ""
-            month_released = sum(
-                [item['amount'] for item in trust_investments_received if item['release_date'] != "" and
-                 item['release_date'] <= date])
-            # sum all the amounts in trust_investments_received where deposit_date is less than or equal to date AND
-            # release_date is greater than to date or release_date is equal to ""
-            month_mom = sum(
-                [item['amount'] for item in trust_investments_received if
-                 item['deposit_date'] <= date and (item['release_date'] > date or item['release_date'] == "")])
-
-            count_received = len(
-                [item['amount'] for item in trust_investments_received if item['deposit_date'] != "" and
-                 item['deposit_date'] <= date])
-
-            count_exited = len(
-                [item['amount'] for item in released_investments if item['transfer_date'] != "" and
-                 item['transfer_date'] <= date])
-
-            value_exited = sum(
-                [item['amount'] for item in released_investments if item['transfer_date'] != "" and
-                 item['transfer_date'] <= date])
-
-            early_release = sum(
-                [item['amount'] for item in released_investments if
-                 item['early_release'] == True and item['transferred'] == False and
-                 item['end_date'] <= date])
-
-            current_investor_capital_deployed = month_released - value_exited - early_release
-
-            # make a deep copy of value_to_be_raised
-            value_to_be_raised_list = copy.deepcopy(value_to_be_raised)
-
-            for item in value_to_be_raised_list:
-                if item['transferred']:
-
-                    if item['transfer_date'] > date:
-                        item['transferred'] = False
-
-                # value_to_be_raised_list.append(insert)
-
-            value_still_to_be_raised = sum(
-                [item['amount_required'] - item['amount'] for item in value_to_be_raised_list if
-                 item['transferred'] == False and item['transfer_date'] > date])
-
-            # get the length of sales_units
-            count_units = len(sales_units)
-
-            # transferred_units is length of sales_units where transferred is equal to True and transfer_date is less
-            # than or equal to date
-            transferred_units = len(
-                [item['sales_price'] for item in sales_units if
-                 item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date])
-
-            transferred_units_sold_value = sum(
-                [item['sales_price'] for item in sales_units if
-                 item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date]) / 1.15
-
-            transferred_units_commission = sum(
-                [(item['sales_price'] / 1.15) * (item['commission'] / 1.15) for item in sales_units if
-                 item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date])
-
-            transferred_units_transfer_fees = sum(
-                [item['transfer_fees'] for item in sales_units if
-                 item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date]) / 1.15
-
-            transferred_units_bond_registration = sum(
-                [item['bond_registration'] for item in sales_units if
-                 item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date]) / 1.15
-
-            transferred_units_trust_release_fee = sum(
-                [(item['trust_release_fee'] / 1.15) for item in sales_units if
-                 item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date])
-
-            transferred_units_unforseen = sum(
-                [(item['sales_price'] / 1.15) * (item['unforseen']) for item in sales_units if
-                 item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date])
-
-            total_sale_value = sum(
-                [item['sales_price'] for item in sales_units if
-                 item['sale_date'] <= date]) / 1.15
-
-            completely_unsold_units = len(
-                [item['sales_price'] for item in sales_units if
-                 item['sold'] == False and item['transferred'] == False])
-
-            sold_after_date = len(
-                [item['sales_price'] for item in sales_units if
-                 item['sold'] == True and item['sale_date'] > date])
-
-            total_units_sales_value = sum(
-                [item['sales_price'] for item in sales_units]) / 1.15
-
-            total_units_commission = sum(
-                [(item['sales_price'] / 1.15) * (item['commission'] / 1.15) for item in sales_units])
-
-            total_units_transfer_fees = sum(
-                [item['transfer_fees'] for item in sales_units]) / 1.15
-
-            total_units_bond_registration = sum(
-                [item['bond_registration'] for item in sales_units]) / 1.15
-
-            total_units_trust_release_fee = sum(
-                [(item['trust_release_fee'] / 1.15) for item in sales_units])
-
-            total_units_unforseen = sum(
-                [(item['sales_price'] / 1.15) * (item['unforseen']) for item in sales_units])
-
-            remaining_units_value = completely_unsold_units + sold_after_date
-
-            # create a variable called adjusted_sales_units and deep copy sales_units
-            adjusted_sales_units = copy.deepcopy(sales_units)
-
-            sold_units_filterred = []
-            for item in adjusted_sales_units:
-                insert = item
-                if item['sold'] == True and item['sale_date'] <= date:
-
-                    insert['sold'] = True
+        for item in released_investments:
+            interest = 0
+            if item['transferred'] == True and item['transfer_date'] <= date:
+                amount = item['amount']
+                start_date = item['release_date']
+                if item['end_date'] != "":
+                    end_date = item['end_date']
                 else:
+                    end_date = item['transfer_date']
+                interest = 0
+                interest = (amount * item['interest_rate'] / 100) / 365 * (end_date - start_date).days
+                item['interest'] = interest
+            else:
+                item['interest'] = 0
+            # if item['opportunity_code'] == 'HFA101':
+            #     print("item", item)
 
-                    insert['sold'] = False
-                if item['transferred'] == True and item['transfer_date'] <= date:
-                    insert['transferred'] = True
-                else:
-                    insert['transferred'] = False
-                sold_units_filterred.append(insert)
+        interest_released = sum([item['interest'] for item in released_investments])
+        # print("interestReleased", interest_released)
 
-            sold_units = len(
-                [item['sales_price'] for item in sold_units_filterred if
-                 item['sold'] == True and item['transferred'] == False])
+        interest_paid_to_date = interest_mom + interest_released
 
-            sold_units_value = sum(
-                [item['sales_price'] for item in sold_units_filterred if
-                 item['sold'] == True and item['transferred'] == False]) / 1.15
+        total_estimated_interest = interest_mom_other + released_interest + interest_mom + total_unallocated_interest
+        # print("totalEstimatedInterest", total_estimated_interest + total_unallocated_interest)
+        # print("interest", interest)
 
-            sold_units_commission = sum(
-                [(item['sales_price'] / 1.15) * (item['commission'] / 1.15) for item in sold_units_filterred if
-                 item['sold'] == True and item['transferred'] == False])
+        # sum all the amounts in trust_investments_received where deposit_date is less than or equal to date
+        month_received = sum(
+            [item['amount'] for item in trust_investments_received if item['deposit_date'] <= date])
 
-            sold_units_transfer_fees = sum(
-                [item['transfer_fees'] for item in sold_units_filterred if
-                 item['sold'] == True and item['transferred'] == False]) / 1.15
+        # do exactly as above but only where the opportunity_code begins with 'HF'
+        month_hf_received = sum([item['amount'] for item in trust_investments_received if
+                                 item['deposit_date'] <= date and item['opportunity_code'].startswith('HF')])
 
-            sold_units_bond_registration = sum(
-                [item['bond_registration'] for item in sold_units_filterred if
-                 item['sold'] == True and item['transferred'] == False]) / 1.15
+        # print("month_hf", month_hf_received)
+        # print("Capital_not Raised", opportunity_amount_required_hf - month_hf_received)
+        capital_not_raised = opportunity_amount_required_hf - month_hf_received
 
-            sold_units_trust_release_fee = sum(
-                [(item['trust_release_fee'] / 1.15) for item in sold_units_filterred if
-                 item['sold'] == True and item['transferred'] == False])
+        # sum all the amounts in trust_investments_received where release_date is less than or equal to date if
+        # released_date is not equal to ""
+        month_released = sum(
+            [item['amount'] for item in trust_investments_received if item['release_date'] != "" and
+             item['release_date'] <= date])
+        # sum all the amounts in trust_investments_received where deposit_date is less than or equal to date AND
+        # release_date is greater than to date or release_date is equal to ""
+        month_mom = sum(
+            [item['amount'] for item in trust_investments_received if
+             item['deposit_date'] <= date and (item['release_date'] > date or item['release_date'] == "")])
 
-            sold_units_unforseen = sum(
-                [(item['sales_price'] / 1.15) * (item['unforseen']) for item in sold_units_filterred if
-                 item['sold'] == True and item['transferred'] == False])
+        count_received = len(
+            [item['amount'] for item in trust_investments_received if item['deposit_date'] != "" and
+             item['deposit_date'] <= date])
 
-            remaining_units = count_units - transferred_units - sold_units
+        count_exited = len(
+            [item['amount'] for item in released_investments if item['transfer_date'] != "" and
+             item['transfer_date'] <= date])
 
-            remaining_units_value = total_units_sales_value - transferred_units_sold_value - sold_units_value
+        value_exited = sum(
+            [item['amount'] for item in released_investments if item['transfer_date'] != "" and
+             item['transfer_date'] <= date])
 
-            remaining_units_commission = total_units_commission - transferred_units_commission - sold_units_commission
+        early_release = sum(
+            [item['amount'] for item in released_investments if
+             item['early_release'] == True and item['transferred'] == False and
+             item['end_date'] <= date])
 
-            remaining_units_transfer_fees = total_units_transfer_fees - transferred_units_transfer_fees - sold_units_transfer_fees
+        current_investor_capital_deployed = month_released - value_exited - early_release
 
-            remaining_units_bond_registration = total_units_bond_registration - transferred_units_bond_registration - sold_units_bond_registration
+        # make a deep copy of value_to_be_raised
+        value_to_be_raised_list = copy.deepcopy(value_to_be_raised)
 
-            remaining_units_trust_release_fee = total_units_trust_release_fee - transferred_units_trust_release_fee - sold_units_trust_release_fee
+        for item in value_to_be_raised_list:
+            if item['transferred']:
 
-            remaining_units_unforseen = total_units_unforseen - transferred_units_unforseen - sold_units_unforseen
+                if item['transfer_date'] > date:
+                    item['transferred'] = False
 
-            if index == 1:
-                month_1_received = month_received
-                month_1released = month_released
-                capital_not_raised1 = capital_not_raised
+            # value_to_be_raised_list.append(insert)
 
-                month_1mom = month_mom
-                count_received1 = count_received
-                count_exited1 = count_exited
-                count_units1 = count_units
+        value_still_to_be_raised = sum(
+            [item['amount_required'] - item['amount'] for item in value_to_be_raised_list if
+             item['transferred'] == False and item['transfer_date'] > date])
 
-                value_exited1 = value_exited
+        # get the length of sales_units
+        count_units = len(sales_units)
 
-                current_investor_capital_deployed1 = current_investor_capital_deployed
+        # transferred_units is length of sales_units where transferred is equal to True and transfer_date is less
+        # than or equal to date
+        transferred_units = len(
+            [item['sales_price'] for item in sales_units if
+             item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date])
 
-                value_still_to_be_raised1 = value_still_to_be_raised
+        transferred_units_sold_value = sum(
+            [item['sales_price'] for item in sales_units if
+             item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date]) / 1.15
 
-                transferred_units1 = transferred_units
-                sold_units1 = sold_units
-                remaining_units1 = remaining_units
-                transferred_units_sold_value1 = transferred_units_sold_value
-                sold_units_value1 = sold_units_value
-                remaining_units_value1 = remaining_units_value
-                total_sale_value1 = total_sale_value
-                total_units_sales_value1 = total_units_sales_value
+        transferred_units_commission = sum(
+            [(item['sales_price'] / 1.15) * (item['commission'] / 1.15) for item in sales_units if
+             item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date])
 
-                total_units_commission1 = total_units_commission
-                transferred_units_commission1 = transferred_units_commission
-                sold_units_commission1 = sold_units_commission
-                remaining_units_commission1 = remaining_units_commission
+        transferred_units_transfer_fees = sum(
+            [item['transfer_fees'] for item in sales_units if
+             item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date]) / 1.15
 
-                total_units_transfer_fees1 = total_units_transfer_fees
-                transferred_units_transfer_fees1 = transferred_units_transfer_fees
-                sold_units_transfer_fees1 = sold_units_transfer_fees
-                remaining_units_transfer_fees1 = remaining_units_transfer_fees
+        transferred_units_bond_registration = sum(
+            [item['bond_registration'] for item in sales_units if
+             item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date]) / 1.15
 
-                total_units_bond_registration1 = total_units_bond_registration
-                transferred_units_bond_registration1 = transferred_units_bond_registration
-                sold_units_bond_registration1 = sold_units_bond_registration
-                remaining_units_bond_registration1 = remaining_units_bond_registration
+        transferred_units_trust_release_fee = sum(
+            [(item['trust_release_fee'] / 1.15) for item in sales_units if
+             item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date])
 
-                total_units_trust_release_fee1 = total_units_trust_release_fee
-                transferred_units_trust_release_fee1 = transferred_units_trust_release_fee
-                sold_units_trust_release_fee1 = sold_units_trust_release_fee
-                remaining_units_trust_release_fee1 = remaining_units_trust_release_fee
+        transferred_units_unforseen = sum(
+            [(item['sales_price'] / 1.15) * (item['unforseen']) for item in sales_units if
+             item['transferred'] == True and item['sold'] == True and item['transfer_date'] <= date])
 
-                total_units_unforseen1 = total_units_unforseen
-                transferred_units_unforseen1 = transferred_units_unforseen
-                sold_units_unforseen1 = sold_units_unforseen
-                remaining_units_unforseen1 = remaining_units_unforseen
+        total_sale_value = sum(
+            [item['sales_price'] for item in sales_units if
+             item['sale_date'] <= date]) / 1.15
 
-                total_estimated_interest1 = total_estimated_interest
-                interest_paid_to_date1 = interest_paid_to_date
+        completely_unsold_units = len(
+            [item['sales_price'] for item in sales_units if
+             item['sold'] == False and item['transferred'] == False])
 
-            if index == 2:
-                month_2_received = month_received
-                month_2released = month_released
-                capital_not_raised2 = capital_not_raised
-                month_2mom = month_mom
-                count_received2 = count_received
-                count_exited2 = count_exited
-                count_units2 = count_units
-                value_still_to_be_raised2 = value_still_to_be_raised
+        sold_after_date = len(
+            [item['sales_price'] for item in sales_units if
+             item['sold'] == True and item['sale_date'] > date])
 
-                value_exited2 = value_exited
-                current_investor_capital_deployed2 = current_investor_capital_deployed
-                transferred_units2 = transferred_units
-                sold_units2 = sold_units
-                remaining_units2 = remaining_units
-                transferred_units_sold_value2 = transferred_units_sold_value
-                sold_units_value2 = sold_units_value
-                remaining_units_value2 = remaining_units_value
-                total_sale_value2 = total_sale_value
-                total_units_sales_value2 = total_units_sales_value
+        total_units_sales_value = sum(
+            [item['sales_price'] for item in sales_units]) / 1.15
 
-                total_units_commission2 = total_units_commission
-                transferred_units_commission2 = transferred_units_commission
-                sold_units_commission2 = sold_units_commission
-                remaining_units_commission2 = remaining_units_commission
+        total_units_commission = sum(
+            [(item['sales_price'] / 1.15) * (item['commission'] / 1.15) for item in sales_units])
 
-                total_units_transfer_fees2 = total_units_transfer_fees
-                transferred_units_transfer_fees2 = transferred_units_transfer_fees
-                sold_units_transfer_fees2 = sold_units_transfer_fees
-                remaining_units_transfer_fees2 = remaining_units_transfer_fees
+        total_units_transfer_fees = sum(
+            [item['transfer_fees'] for item in sales_units]) / 1.15
 
-                total_units_bond_registration2 = total_units_bond_registration
-                transferred_units_bond_registration2 = transferred_units_bond_registration
-                sold_units_bond_registration2 = sold_units_bond_registration
-                remaining_units_bond_registration2 = remaining_units_bond_registration
+        total_units_bond_registration = sum(
+            [item['bond_registration'] for item in sales_units]) / 1.15
 
-                total_units_trust_release_fee2 = total_units_trust_release_fee
-                transferred_units_trust_release_fee2 = transferred_units_trust_release_fee
-                sold_units_trust_release_fee2 = sold_units_trust_release_fee
-                remaining_units_trust_release_fee2 = remaining_units_trust_release_fee
+        total_units_trust_release_fee = sum(
+            [(item['trust_release_fee'] / 1.15) for item in sales_units])
 
-                total_units_unforseen2 = total_units_unforseen
-                transferred_units_unforseen2 = transferred_units_unforseen
-                sold_units_unforseen2 = sold_units_unforseen
-                remaining_units_unforseen2 = remaining_units_unforseen
+        total_units_unforseen = sum(
+            [(item['sales_price'] / 1.15) * (item['unforseen']) for item in sales_units])
 
-                interest_paid_to_date2 = interest_paid_to_date
-                total_estimated_interest2 = total_estimated_interest
+        remaining_units_value = completely_unsold_units + sold_after_date
 
-            if index == 3:
-                month_3_received = month_received
-                month_3released = month_released
-                capital_not_raised3 = capital_not_raised
-                month_3mom = month_mom
-                count_received3 = count_received
-                count_exited3 = count_exited
-                count_units3 = count_units
-                value_still_to_be_raised3 = value_still_to_be_raised
+        # create a variable called adjusted_sales_units and deep copy sales_units
+        adjusted_sales_units = copy.deepcopy(sales_units)
 
-                value_exited3 = value_exited
-                current_investor_capital_deployed3 = current_investor_capital_deployed
-                transferred_units3 = transferred_units
-                sold_units3 = sold_units
-                remaining_units3 = remaining_units
-                transferred_units_sold_value3 = transferred_units_sold_value
-                sold_units_value3 = sold_units_value
-                remaining_units_value3 = remaining_units_value
-                total_sale_value3 = total_sale_value
-                total_units_sales_value3 = total_units_sales_value
+        sold_units_filterred = []
+        for item in adjusted_sales_units:
+            insert = item
+            if item['sold'] == True and item['sale_date'] <= date:
 
-                total_units_commission3 = total_units_commission
-                transferred_units_commission3 = transferred_units_commission
-                sold_units_commission3 = sold_units_commission
-                remaining_units_commission3 = remaining_units_commission
+                insert['sold'] = True
+            else:
 
-                total_units_transfer_fees3 = total_units_transfer_fees
-                transferred_units_transfer_fees3 = transferred_units_transfer_fees
-                sold_units_transfer_fees3 = sold_units_transfer_fees
-                remaining_units_transfer_fees3 = remaining_units_transfer_fees
+                insert['sold'] = False
+            if item['transferred'] == True and item['transfer_date'] <= date:
+                insert['transferred'] = True
+            else:
+                insert['transferred'] = False
+            sold_units_filterred.append(insert)
 
-                total_units_bond_registration3 = total_units_bond_registration
-                transferred_units_bond_registration3 = transferred_units_bond_registration
-                sold_units_bond_registration3 = sold_units_bond_registration
-                remaining_units_bond_registration3 = remaining_units_bond_registration
+        sold_units = len(
+            [item['sales_price'] for item in sold_units_filterred if
+             item['sold'] == True and item['transferred'] == False])
 
-                total_units_trust_release_fee3 = total_units_trust_release_fee
-                transferred_units_trust_release_fee3 = transferred_units_trust_release_fee
-                sold_units_trust_release_fee3 = sold_units_trust_release_fee
-                remaining_units_trust_release_fee3 = remaining_units_trust_release_fee
+        sold_units_value = sum(
+            [item['sales_price'] for item in sold_units_filterred if
+             item['sold'] == True and item['transferred'] == False]) / 1.15
 
-                total_units_unforseen3 = total_units_unforseen
-                transferred_units_unforseen3 = transferred_units_unforseen
-                sold_units_unforseen3 = sold_units_unforseen
-                remaining_units_unforseen3 = remaining_units_unforseen
+        sold_units_commission = sum(
+            [(item['sales_price'] / 1.15) * (item['commission'] / 1.15) for item in sold_units_filterred if
+             item['sold'] == True and item['transferred'] == False])
 
-                interest_paid_to_date3 = interest_paid_to_date
-                total_estimated_interest3 = total_estimated_interest
+        sold_units_transfer_fees = sum(
+            [item['transfer_fees'] for item in sold_units_filterred if
+             item['sold'] == True and item['transferred'] == False]) / 1.15
 
-            if index == 4:
-                month_4_received = month_received
-                month_4released = month_released
-                capital_not_raised4 = capital_not_raised
-                month_4mom = month_mom
-                count_received4 = count_received
-                count_exited4 = count_exited
-                count_units4 = count_units
-                value_still_to_be_raised4 = value_still_to_be_raised
+        sold_units_bond_registration = sum(
+            [item['bond_registration'] for item in sold_units_filterred if
+             item['sold'] == True and item['transferred'] == False]) / 1.15
 
-                value_exited4 = value_exited
-                current_investor_capital_deployed4 = current_investor_capital_deployed
-                transferred_units4 = transferred_units
-                sold_units4 = sold_units
-                remaining_units4 = remaining_units
-                transferred_units_sold_value4 = transferred_units_sold_value
-                sold_units_value4 = sold_units_value
-                remaining_units_value4 = remaining_units_value
-                total_sale_value4 = total_sale_value
-                total_units_sales_value4 = total_units_sales_value
+        sold_units_trust_release_fee = sum(
+            [(item['trust_release_fee'] / 1.15) for item in sold_units_filterred if
+             item['sold'] == True and item['transferred'] == False])
 
-                total_units_commission4 = total_units_commission
-                transferred_units_commission4 = transferred_units_commission
-                sold_units_commission4 = sold_units_commission
-                remaining_units_commission4 = remaining_units_commission
+        sold_units_unforseen = sum(
+            [(item['sales_price'] / 1.15) * (item['unforseen']) for item in sold_units_filterred if
+             item['sold'] == True and item['transferred'] == False])
 
-                total_units_transfer_fees4 = total_units_transfer_fees
-                transferred_units_transfer_fees4 = transferred_units_transfer_fees
-                sold_units_transfer_fees4 = sold_units_transfer_fees
-                remaining_units_transfer_fees4 = remaining_units_transfer_fees
+        remaining_units = count_units - transferred_units - sold_units
 
-                total_units_bond_registration4 = total_units_bond_registration
-                transferred_units_bond_registration4 = transferred_units_bond_registration
-                sold_units_bond_registration4 = sold_units_bond_registration
-                remaining_units_bond_registration4 = remaining_units_bond_registration
+        remaining_units_value = total_units_sales_value - transferred_units_sold_value - sold_units_value
 
-                total_units_trust_release_fee4 = total_units_trust_release_fee
-                transferred_units_trust_release_fee4 = transferred_units_trust_release_fee
-                sold_units_trust_release_fee4 = sold_units_trust_release_fee
-                remaining_units_trust_release_fee4 = remaining_units_trust_release_fee
+        remaining_units_commission = total_units_commission - transferred_units_commission - sold_units_commission
 
-                total_units_unforseen4 = total_units_unforseen
-                transferred_units_unforseen4 = transferred_units_unforseen
-                sold_units_unforseen4 = sold_units_unforseen
-                remaining_units_unforseen4 = remaining_units_unforseen
+        remaining_units_transfer_fees = total_units_transfer_fees - transferred_units_transfer_fees - sold_units_transfer_fees
 
-                interest_paid_to_date4 = interest_paid_to_date
-                total_estimated_interest4 = total_estimated_interest
+        remaining_units_bond_registration = total_units_bond_registration - transferred_units_bond_registration - sold_units_bond_registration
 
-        # filter investors where trust array is not empty
-        investors = list(filter(lambda x: len(x['trust']) > 0, investors))
+        remaining_units_trust_release_fee = total_units_trust_release_fee - transferred_units_trust_release_fee - sold_units_trust_release_fee
 
-        row1 = ["", "", "", "", "C.3_d", "", "", "", "", "C.3_d", "", "", "", "", "C.3_d", "", "", "", "", "C.3_d"]
-        row2 = ["NSST HERON PROJECT REPORT", "", "", "", "", "NSST HERON PROJECT REPORT", "", "", "", "",
-                "NSST HERON PROJECT REPORT", "", "", "", "", "NSST HERON PROJECT REPORT", "", "", "", ""]
-        row3 = ["Report Date", dates[3], "", "", "", "Report Date", dates[2], "", "", "", "Report Date", dates[1], "",
-                "", "", "Report Date", dates[0], "", "", ""]
-        row4 = ["Development", "Heron Fields and Heron View", "", "", "", "Development", "Heron Fields and Heron View",
-                "", "", "", "Development", "Heron Fields and Heron View", "", "", "", "Development",
-                "Heron Fields and Heron View", "", "", ""]
-        row5 = ["CAPITAL", "", "", "", "", "CAPITAL", "", "", "", "", "CAPITAL", "", "", "", "", "CAPITAL", "", "", "",
-                ""]
-        row6 = ["Total Investment capital to be raised (Estimated)", opportunity_amount_required, "", "", "",
-                "Total Investment capital to be raised (Estimated)", opportunity_amount_required, "", "", "",
-                "Total Investment capital to be raised (Estimated)", opportunity_amount_required, "", "", "",
-                "Total Investment capital to be raised (Estimated)", opportunity_amount_required, "", "", ""]
-        row7 = ["Total Investment capital received", month_4_received, "", "", "", "Total Investment capital received",
-                month_3_received, "", "", "", "Total Investment capital received", month_2_received, "", "", "",
-                "Total Investment capital received", month_1_received, "", "", ""]
-        row8 = ["Total Funds Drawn Down into Development", month_4released, "", "", "",
-                "Total Funds Drawn Down into Development", month_3released, "", "", "",
-                "Total Funds Drawn Down into Development", month_2released, "", "", "",
-                "Total Funds Drawn Down into Development", month_1released, "", "", ""]
-        row9 = ["Momentum Investment Account", month_4mom, "", "", "", "Momentum Investment Account", month_3mom, "",
-                "", "", "Momentum Investment Account", month_2mom, "", "", "", "Momentum Investment Account",
-                month_1mom, "", "", ""]
-        row10 = ["Capital not Raised", capital_not_raised4, "", "", "", "Capital not Raised", capital_not_raised3, "",
-                 "", "", "Capital not Raised", capital_not_raised2, "", "", "", "Capital not Raised",
-                 capital_not_raised1, "", "", ""]
-        row11 = ["Available to be raised (Estimated)", value_still_to_be_raised4, "", "", "",
-                 "Available to be raised (Estimated)", value_still_to_be_raised3, "", "", "",
-                 "Available to be raised (Estimated)", value_still_to_be_raised2, "", "", "",
-                 "Available to be raised (Estimated)", value_still_to_be_raised1, "", "", ""]
-        row12 = ["Capital repaid", value_exited4, "", "", "", "Capital repaid", value_exited3, "", "", "",
-                 "Capital repaid", value_exited2, "", "", "", "Capital repaid", value_exited1, "", "", ""]
-        row13 = ["Current Investor Capital deployed", current_investor_capital_deployed4, "", "", "",
-                 "Current Investor Capital deployed", current_investor_capital_deployed3, "", "", "",
-                 "Current Investor Capital deployed", current_investor_capital_deployed2, "", "", "",
-                 "Current Investor Capital deployed", current_investor_capital_deployed1, "", "", ""]
-        row14 = ["INVESTMENTS", "", "", "", "", "INVESTMENTS", "", "", "", "", "INVESTMENTS", "", "", "", "",
-                 "INVESTMENTS", "", "", "", ""]
-        row15 = ["No. of Capital Investments received", count_received4, "", "", "",
-                 "No. of Capital Investments received", count_received3, "", "", "",
-                 "No. of Capital Investments received", count_received2, "", "", "",
-                 "No. of Capital Investments received", count_received1, "", "", ""]
-        row16 = ["No. Investments exited to date", count_exited4, "", "", "", "No. Investments exited to date",
-                 count_exited3, "", "", "", "No. Investments exited to date", count_exited2, "", "", "",
-                 "No. Investments exited to date", count_exited1, "", "", ""]
-        row17 = ["No. Investments still in Development", count_received4 - count_exited4, "", "", "",
-                 "No. Investments still in Development", count_received3 - count_exited3, "", "", "",
-                 "No. Investments still in Development", count_received2 - count_exited2, "", "", "",
-                 "No. Investments still in Development", count_received1 - count_exited1, "", "", ""]
-        row18 = ["SALES INCOME", "", "", "", "", "SALES INCOME", "", "", "", "", "SALES INCOME", "", "", "", "",
-                 "SALES INCOME", "", "", "", ""]
-        row19 = ["", "Total", "Transferred", "Sold", "Remaining", "", "Total", "Transferred", "Sold", "Remaining", "",
-                 "Total", "Transferred", "Sold", "Remaining", "", "Total", "Transferred", "Sold", "Remaining"]
-        row20 = ["Units", count_units4, transferred_units4, sold_units4, remaining_units4, "Units", count_units3,
-                 transferred_units3, sold_units3, remaining_units3, "Units", count_units2, transferred_units2,
-                 sold_units2, remaining_units2, "Units", count_units1, transferred_units1, sold_units1,
-                 remaining_units1]
-        row21 = ["Sales Income", total_units_sales_value4, transferred_units_sold_value4, sold_units_value4,
-                 remaining_units_value4, "Sales Income", total_units_sales_value3, transferred_units_sold_value3,
-                 sold_units_value3, remaining_units_value3, "Sales Income", total_units_sales_value2,
-                 transferred_units_sold_value2, sold_units_value2, remaining_units_value2, "Sales Income",
-                 total_units_sales_value1, transferred_units_sold_value1, sold_units_value1, remaining_units_value1]
-        row22 = ["Commission", total_units_commission4, transferred_units_commission4, sold_units_commission4,
-                 remaining_units_commission4, "Commission", total_units_commission3, transferred_units_commission3,
-                 sold_units_commission3, remaining_units_commission3, "Commission", total_units_commission2,
-                 transferred_units_commission2, sold_units_commission2, remaining_units_commission2, "Commission",
-                 total_units_commission1, transferred_units_commission1, sold_units_commission1,
-                 remaining_units_commission1]
-        row23 = ["Transfer Fees", total_units_transfer_fees4, transferred_units_transfer_fees4,
-                 sold_units_transfer_fees4, remaining_units_transfer_fees4, "Transfer Fees", total_units_transfer_fees3,
-                 transferred_units_transfer_fees3, sold_units_transfer_fees3, remaining_units_transfer_fees3,
-                 "Transfer Fees", total_units_transfer_fees2, transferred_units_transfer_fees2,
-                 sold_units_transfer_fees2, remaining_units_transfer_fees2, "Transfer Fees", total_units_transfer_fees1,
-                 transferred_units_transfer_fees1, sold_units_transfer_fees1, remaining_units_transfer_fees1]
-        row24 = ["Bond Registration", total_units_bond_registration4, transferred_units_bond_registration4,
-                 sold_units_bond_registration4, remaining_units_bond_registration4, "Bond Registration",
-                 total_units_bond_registration3, transferred_units_bond_registration3, sold_units_bond_registration3,
-                 remaining_units_bond_registration3, "Bond Registration", total_units_bond_registration2,
-                 transferred_units_bond_registration2, sold_units_bond_registration2,
-                 remaining_units_bond_registration2, "Bond Registration", total_units_bond_registration1,
-                 transferred_units_bond_registration1, sold_units_bond_registration1,
-                 remaining_units_bond_registration1]
-        row25 = ["Security Release Fee", total_units_trust_release_fee4, transferred_units_trust_release_fee4,
-                 sold_units_trust_release_fee4, remaining_units_trust_release_fee4, "Security Release Fee",
-                 total_units_trust_release_fee3, transferred_units_trust_release_fee3, sold_units_trust_release_fee3,
-                 remaining_units_trust_release_fee3, "Security Release Fee", total_units_trust_release_fee2,
-                 transferred_units_trust_release_fee2, sold_units_trust_release_fee2,
-                 remaining_units_trust_release_fee2, "Security Release Fee", total_units_trust_release_fee1,
-                 transferred_units_trust_release_fee1, sold_units_trust_release_fee1,
-                 remaining_units_trust_release_fee1]
-        row26 = ["Unforseen (0.05%)", total_units_unforseen4, transferred_units_unforseen4, sold_units_unforseen4,
-                 remaining_units_unforseen4, "Unforseen", total_units_unforseen3, transferred_units_unforseen3,
-                 sold_units_unforseen3, remaining_units_unforseen3, "Unforseen", total_units_unforseen2,
-                 transferred_units_unforseen2, sold_units_unforseen2, remaining_units_unforseen2, "Unforseen",
-                 total_units_unforseen1, transferred_units_unforseen1, sold_units_unforseen1,
-                 remaining_units_unforseen1]
-        row27 = ["Transfer Income", 0, 0, 0, 0, "Transfer Income", 0, 0, 0, 0, "Transfer Income", 0, 0, 0, 0,
-                 "Transfer Income", 0, 0, 0, 0]
-        row28 = ["INTEREST", "", "", "", "", "INTEREST", "", "", "", "", "INTEREST", "", "", "", "", "INTEREST", "", "",
-                 "", ""]
-        row29 = ["Total Estimated Interest", f"={total_estimated_interest4}+C48", "", "", "",
-                 "Total Estimated Interest",
-                 total_estimated_interest3, "", "", "", "Total Estimated Interest", total_estimated_interest2, "", "",
-                 "", "Total Estimated Interest", total_estimated_interest1, "", "", ""]
-        row30 = ["Interest Paid to Date", interest_paid_to_date4, "", "", "", "Interest Paid to Date",
-                 interest_paid_to_date3, "", "", "", "Interest Paid to Date", interest_paid_to_date2, "", "", "",
-                 "Interest Paid to Date", interest_paid_to_date1, "", "", ""]
-        row31 = ["FUNDING AVAILABLE", "", "", "", "", "FUNDING AVAILABLE", "", "", "", "", "FUNDING AVAILABLE", "", "",
-                 "", "", "FUNDING AVAILABLE", "", "", "", ""]
-        row32 = ["Total Draw funds available", 0, "", "", "", "Total Draw funds available", 0, "", "", "",
-                 "Total Draw funds available", 0, "", "", "", "Total Draw funds available", 0, "", "", ""]
-        row33 = ["Projected Heron Projects Income", 0, "", "", "", "Projected Heron Projects Income", 0, "", "", "",
-                 "Projected Heron Projects Income", 0, "", "", "", "Projected Heron Projects Income", 0, "", "", ""]
-        row34 = ["Total Funds Available", 0, "", "", "", "Total Funds Available", 0, "", "", "",
-                 "Total Funds Available", 0, "", "", "", "Total Funds Available", 0, "", "", ""]
-        row35 = ["Total Cost to Complete", 0, "", "", "", "Total Cost to Complete", 0, "", "", "",
-                 "Total Cost to Complete", 0, "", "", "", "Total Cost to Complete", 0, "", "", ""]
-        row36 = ["Total funds (required)/Surplus", 0, "", "", "", "Total funds (required)/Surplus", 0, "", "", "",
-                 "Total funds (required)/Surplus", 0, "", "", "", "Total funds (required)/Surplus", 0, "", "", ""]
-        row37 = ["PROJECTED PROFIT", "", "", "", "", "PROJECTED PROFIT", "", "", "", "", "PROJECTED PROFIT", "", "", "",
-                 "", "PROJECTED PROFIT", "", "", "", ""]
-        row38 = ["Projected Nett Revenue", total_units_sales_value4, "", "", "", "Projected Nett Revenue",
-                 total_units_sales_value3, "", "", "", "Projected Nett Revenue", total_units_sales_value2, "", "", "",
-                 "Projected Nett Revenue", total_units_sales_value1, "", "", ""]
-        row39 = ["Other Income (interest received)", 0, "", "", "", "Other Income (interest received)", 0, "", "", "",
-                 "Other Income (interest received)", 0, "", "", "", "Other Income (interest received)", 0, "", "", ""]
-        row40 = ["Total Estimated Development Cost", 0, "", "", "", "Total Estimated Development Cost", 0, "", "", "",
-                 "Total Estimated Development Cost", 0, "", "", "", "Total Estimated Development Cost", 0, "", "", ""]
-        row41 = ["Interest Expense", 0, "", "", "", "Interest Expense", 0, "", "", "", "Interest Expense", 0, "", "",
-                 "", "Interest Expense", 0, "", "", ""]
-        row42 = ["Profit", 0, "", "", "", "Profit", 0, "", "", "", "Profit", 0, "", "", "", "Profit", 0, "", "", ""]
-        row43 = ["Sales Increase", 0, 0, 0]
-        row44 = ["CPC Construction", 0, 0, 0]
-        row45 = ["Rent Salaries and wages", 0, 0, 0]
-        row46 = ["CPSD", 0, 0, 0]
-        row47 = ["Opp Invest", 0, 0, 0]
-        row48 = ["investor interest", 0, 0, 0]
-        row49 = ["Commissions", 0, 0, 0]
-        row50 = ["Unforseen", 0, 0, 0]
-        row51 = ["Cash to flow to Heron from Quinate early exits", 0, 0, 0]
+        remaining_units_unforseen = total_units_unforseen - transferred_units_unforseen - sold_units_unforseen
 
-        # row44 = ["", 0, "CPC Construction", 0, "", "", 0, "CPC Construction", 0, "", "", 0, "CPC Construction", 0, "",
-        #          "", 0, "CPC Construction", 0, ""]
-        # row45 = ["", 0, " Rent Salaries and wages", 0, "", "", 0, " Rent Salaries and wages", 0, "", "", 0,
-        #          " Rent Salaries and wages", 0, "", "", 0, " Rent Salaries and wages", 0, "", ""]
-        # row46 = ["", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", ""]
-        # row47 = ["", 0, "Opp Invest", 0, "", "", 0, "Opp Invest", 0, "", "", 0, "Opp Invest", 0, "", "", 0,
-        #          "Opp Invest", 0, "", ""]
-        # row48 = ["", 0, "investor interest", 0, "", "", 0, "investor interest", 0, "", "", 0, "investor interest", 0,
-        #          "", "", 0, "investor interest", 0, ""]
-        # row49 = ["", 0, "Commissions", 0, "", "", 0, "Commissions", 0, "", "", 0, "Commissions", 0, "", "", 0,
-        #          "Commissions", 0, ""]
-        # row50 = ["", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0,
-        #          "", ""]
-        # row51 = ["", 0, "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
-        #          "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
-        #          "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
-        #          "Cash to flow to Heron from Quinate early exits", "", 0]
-        row52 = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
-        row53 = ["Sales Income", total_units_sales_value4, transferred_units_sold_value4, sold_units_value4,
-                 remaining_units_value4, "Sales Income", total_units_sales_value3, transferred_units_sold_value3,
-                 sold_units_value3, remaining_units_value3, "Sales Income", total_units_sales_value2,
-                 transferred_units_sold_value2, sold_units_value2, remaining_units_value2, "Sales Income",
-                 total_units_sales_value1, transferred_units_sold_value1, sold_units_value1, remaining_units_value1]
+        if index == 1:
+            month_1_received = month_received
+            month_1released = month_released
+            capital_not_raised1 = capital_not_raised
 
-        # append all rows to nsst_print_report
-        nsss_print_report = [row1, row2, row3, row4, row5, row6, row7, row8, row9, row10, row11,
-                             row12, row13, row14, row15, row16, row17, row18, row19, row20,
-                             row21, row22, row23, row24, row25, row26, row27, row28, row29,
-                             row30, row31, row32, row33, row34, row35, row36, row37, row38, row39, row40, row41, row42,
-                             row43, row44, row45, row46, row47, row48, row49, row50, row51, row52, row53]
+            month_1mom = month_mom
+            count_received1 = count_received
+            count_exited1 = count_exited
+            count_units1 = count_units
 
-        # print(len(investors))
-        report_date = request['to_date']
+            value_exited1 = value_exited
 
-        # CREATE SPREADSHEET
+            current_investor_capital_deployed1 = current_investor_capital_deployed
 
-        # print("profit_and_loss", profit_and_loss)
-        result = cashflow_hf_hv(profit_and_loss, nsss_print_report, report_date)
-        print("result", result)
+            value_still_to_be_raised1 = value_still_to_be_raised
 
-        end_time = time.time()
-        return {"Success": True, "time_taken": end_time - start_time, "file": "cashflow_p&l_files/cashflow_hf_hv.xlsx"}
+            transferred_units1 = transferred_units
+            sold_units1 = sold_units
+            remaining_units1 = remaining_units
+            transferred_units_sold_value1 = transferred_units_sold_value
+            sold_units_value1 = sold_units_value
+            remaining_units_value1 = remaining_units_value
+            total_sale_value1 = total_sale_value
+            total_units_sales_value1 = total_units_sales_value
 
-    except Exception as e:
-        print(e)
-        return {"ERROR": "Please Try again"}
+            total_units_commission1 = total_units_commission
+            transferred_units_commission1 = transferred_units_commission
+            sold_units_commission1 = sold_units_commission
+            remaining_units_commission1 = remaining_units_commission
+
+            total_units_transfer_fees1 = total_units_transfer_fees
+            transferred_units_transfer_fees1 = transferred_units_transfer_fees
+            sold_units_transfer_fees1 = sold_units_transfer_fees
+            remaining_units_transfer_fees1 = remaining_units_transfer_fees
+
+            total_units_bond_registration1 = total_units_bond_registration
+            transferred_units_bond_registration1 = transferred_units_bond_registration
+            sold_units_bond_registration1 = sold_units_bond_registration
+            remaining_units_bond_registration1 = remaining_units_bond_registration
+
+            total_units_trust_release_fee1 = total_units_trust_release_fee
+            transferred_units_trust_release_fee1 = transferred_units_trust_release_fee
+            sold_units_trust_release_fee1 = sold_units_trust_release_fee
+            remaining_units_trust_release_fee1 = remaining_units_trust_release_fee
+
+            total_units_unforseen1 = total_units_unforseen
+            transferred_units_unforseen1 = transferred_units_unforseen
+            sold_units_unforseen1 = sold_units_unforseen
+            remaining_units_unforseen1 = remaining_units_unforseen
+
+            total_estimated_interest1 = total_estimated_interest
+            interest_paid_to_date1 = interest_paid_to_date
+
+        if index == 2:
+            month_2_received = month_received
+            month_2released = month_released
+            capital_not_raised2 = capital_not_raised
+            month_2mom = month_mom
+            count_received2 = count_received
+            count_exited2 = count_exited
+            count_units2 = count_units
+            value_still_to_be_raised2 = value_still_to_be_raised
+
+            value_exited2 = value_exited
+            current_investor_capital_deployed2 = current_investor_capital_deployed
+            transferred_units2 = transferred_units
+            sold_units2 = sold_units
+            remaining_units2 = remaining_units
+            transferred_units_sold_value2 = transferred_units_sold_value
+            sold_units_value2 = sold_units_value
+            remaining_units_value2 = remaining_units_value
+            total_sale_value2 = total_sale_value
+            total_units_sales_value2 = total_units_sales_value
+
+            total_units_commission2 = total_units_commission
+            transferred_units_commission2 = transferred_units_commission
+            sold_units_commission2 = sold_units_commission
+            remaining_units_commission2 = remaining_units_commission
+
+            total_units_transfer_fees2 = total_units_transfer_fees
+            transferred_units_transfer_fees2 = transferred_units_transfer_fees
+            sold_units_transfer_fees2 = sold_units_transfer_fees
+            remaining_units_transfer_fees2 = remaining_units_transfer_fees
+
+            total_units_bond_registration2 = total_units_bond_registration
+            transferred_units_bond_registration2 = transferred_units_bond_registration
+            sold_units_bond_registration2 = sold_units_bond_registration
+            remaining_units_bond_registration2 = remaining_units_bond_registration
+
+            total_units_trust_release_fee2 = total_units_trust_release_fee
+            transferred_units_trust_release_fee2 = transferred_units_trust_release_fee
+            sold_units_trust_release_fee2 = sold_units_trust_release_fee
+            remaining_units_trust_release_fee2 = remaining_units_trust_release_fee
+
+            total_units_unforseen2 = total_units_unforseen
+            transferred_units_unforseen2 = transferred_units_unforseen
+            sold_units_unforseen2 = sold_units_unforseen
+            remaining_units_unforseen2 = remaining_units_unforseen
+
+            interest_paid_to_date2 = interest_paid_to_date
+            total_estimated_interest2 = total_estimated_interest
+
+        if index == 3:
+            month_3_received = month_received
+            month_3released = month_released
+            capital_not_raised3 = capital_not_raised
+            month_3mom = month_mom
+            count_received3 = count_received
+            count_exited3 = count_exited
+            count_units3 = count_units
+            value_still_to_be_raised3 = value_still_to_be_raised
+
+            value_exited3 = value_exited
+            current_investor_capital_deployed3 = current_investor_capital_deployed
+            transferred_units3 = transferred_units
+            sold_units3 = sold_units
+            remaining_units3 = remaining_units
+            transferred_units_sold_value3 = transferred_units_sold_value
+            sold_units_value3 = sold_units_value
+            remaining_units_value3 = remaining_units_value
+            total_sale_value3 = total_sale_value
+            total_units_sales_value3 = total_units_sales_value
+
+            total_units_commission3 = total_units_commission
+            transferred_units_commission3 = transferred_units_commission
+            sold_units_commission3 = sold_units_commission
+            remaining_units_commission3 = remaining_units_commission
+
+            total_units_transfer_fees3 = total_units_transfer_fees
+            transferred_units_transfer_fees3 = transferred_units_transfer_fees
+            sold_units_transfer_fees3 = sold_units_transfer_fees
+            remaining_units_transfer_fees3 = remaining_units_transfer_fees
+
+            total_units_bond_registration3 = total_units_bond_registration
+            transferred_units_bond_registration3 = transferred_units_bond_registration
+            sold_units_bond_registration3 = sold_units_bond_registration
+            remaining_units_bond_registration3 = remaining_units_bond_registration
+
+            total_units_trust_release_fee3 = total_units_trust_release_fee
+            transferred_units_trust_release_fee3 = transferred_units_trust_release_fee
+            sold_units_trust_release_fee3 = sold_units_trust_release_fee
+            remaining_units_trust_release_fee3 = remaining_units_trust_release_fee
+
+            total_units_unforseen3 = total_units_unforseen
+            transferred_units_unforseen3 = transferred_units_unforseen
+            sold_units_unforseen3 = sold_units_unforseen
+            remaining_units_unforseen3 = remaining_units_unforseen
+
+            interest_paid_to_date3 = interest_paid_to_date
+            total_estimated_interest3 = total_estimated_interest
+
+        if index == 4:
+            month_4_received = month_received
+            month_4released = month_released
+            capital_not_raised4 = capital_not_raised
+            month_4mom = month_mom
+            count_received4 = count_received
+            count_exited4 = count_exited
+            count_units4 = count_units
+            value_still_to_be_raised4 = value_still_to_be_raised
+
+            value_exited4 = value_exited
+            current_investor_capital_deployed4 = current_investor_capital_deployed
+            transferred_units4 = transferred_units
+            sold_units4 = sold_units
+            remaining_units4 = remaining_units
+            transferred_units_sold_value4 = transferred_units_sold_value
+            sold_units_value4 = sold_units_value
+            remaining_units_value4 = remaining_units_value
+            total_sale_value4 = total_sale_value
+            total_units_sales_value4 = total_units_sales_value
+
+            total_units_commission4 = total_units_commission
+            transferred_units_commission4 = transferred_units_commission
+            sold_units_commission4 = sold_units_commission
+            remaining_units_commission4 = remaining_units_commission
+
+            total_units_transfer_fees4 = total_units_transfer_fees
+            transferred_units_transfer_fees4 = transferred_units_transfer_fees
+            sold_units_transfer_fees4 = sold_units_transfer_fees
+            remaining_units_transfer_fees4 = remaining_units_transfer_fees
+
+            total_units_bond_registration4 = total_units_bond_registration
+            transferred_units_bond_registration4 = transferred_units_bond_registration
+            sold_units_bond_registration4 = sold_units_bond_registration
+            remaining_units_bond_registration4 = remaining_units_bond_registration
+
+            total_units_trust_release_fee4 = total_units_trust_release_fee
+            transferred_units_trust_release_fee4 = transferred_units_trust_release_fee
+            sold_units_trust_release_fee4 = sold_units_trust_release_fee
+            remaining_units_trust_release_fee4 = remaining_units_trust_release_fee
+
+            total_units_unforseen4 = total_units_unforseen
+            transferred_units_unforseen4 = transferred_units_unforseen
+            sold_units_unforseen4 = sold_units_unforseen
+            remaining_units_unforseen4 = remaining_units_unforseen
+
+            interest_paid_to_date4 = interest_paid_to_date
+            total_estimated_interest4 = total_estimated_interest
+
+    # filter investors where trust array is not empty
+    investors = list(filter(lambda x: len(x['trust']) > 0, investors))
+
+    row1 = ["", "", "", "", "C.3_d", "", "", "", "", "C.3_d", "", "", "", "", "C.3_d", "", "", "", "", "C.3_d"]
+    row2 = ["NSST HERON PROJECT REPORT", "", "", "", "", "NSST HERON PROJECT REPORT", "", "", "", "",
+            "NSST HERON PROJECT REPORT", "", "", "", "", "NSST HERON PROJECT REPORT", "", "", "", ""]
+    row3 = ["Report Date", dates[3], "", "", "", "Report Date", dates[2], "", "", "", "Report Date", dates[1], "",
+            "", "", "Report Date", dates[0], "", "", ""]
+    row4 = ["Development", "Heron Fields and Heron View", "", "", "", "Development", "Heron Fields and Heron View",
+            "", "", "", "Development", "Heron Fields and Heron View", "", "", "", "Development",
+            "Heron Fields and Heron View", "", "", ""]
+    row5 = ["CAPITAL", "", "", "", "", "CAPITAL", "", "", "", "", "CAPITAL", "", "", "", "", "CAPITAL", "", "", "",
+            ""]
+    row6 = ["Total Investment capital to be raised (Estimated)", opportunity_amount_required, "", "", "",
+            "Total Investment capital to be raised (Estimated)", opportunity_amount_required, "", "", "",
+            "Total Investment capital to be raised (Estimated)", opportunity_amount_required, "", "", "",
+            "Total Investment capital to be raised (Estimated)", opportunity_amount_required, "", "", ""]
+    row7 = ["Total Investment capital received", month_4_received, "", "", "", "Total Investment capital received",
+            month_3_received, "", "", "", "Total Investment capital received", month_2_received, "", "", "",
+            "Total Investment capital received", month_1_received, "", "", ""]
+    row8 = ["Total Funds Drawn Down into Development", month_4released, "", "", "",
+            "Total Funds Drawn Down into Development", month_3released, "", "", "",
+            "Total Funds Drawn Down into Development", month_2released, "", "", "",
+            "Total Funds Drawn Down into Development", month_1released, "", "", ""]
+    row9 = ["Momentum Investment Account", month_4mom, "", "", "", "Momentum Investment Account", month_3mom, "",
+            "", "", "Momentum Investment Account", month_2mom, "", "", "", "Momentum Investment Account",
+            month_1mom, "", "", ""]
+    row10 = ["Capital not Raised", capital_not_raised4, "", "", "", "Capital not Raised", capital_not_raised3, "",
+             "", "", "Capital not Raised", capital_not_raised2, "", "", "", "Capital not Raised",
+             capital_not_raised1, "", "", ""]
+    row11 = ["Available to be raised (Estimated)", value_still_to_be_raised4, "", "", "",
+             "Available to be raised (Estimated)", value_still_to_be_raised3, "", "", "",
+             "Available to be raised (Estimated)", value_still_to_be_raised2, "", "", "",
+             "Available to be raised (Estimated)", value_still_to_be_raised1, "", "", ""]
+    row12 = ["Capital repaid", value_exited4, "", "", "", "Capital repaid", value_exited3, "", "", "",
+             "Capital repaid", value_exited2, "", "", "", "Capital repaid", value_exited1, "", "", ""]
+    row13 = ["Current Investor Capital deployed", current_investor_capital_deployed4, "", "", "",
+             "Current Investor Capital deployed", current_investor_capital_deployed3, "", "", "",
+             "Current Investor Capital deployed", current_investor_capital_deployed2, "", "", "",
+             "Current Investor Capital deployed", current_investor_capital_deployed1, "", "", ""]
+    row14 = ["INVESTMENTS", "", "", "", "", "INVESTMENTS", "", "", "", "", "INVESTMENTS", "", "", "", "",
+             "INVESTMENTS", "", "", "", ""]
+    row15 = ["No. of Capital Investments received", count_received4, "", "", "",
+             "No. of Capital Investments received", count_received3, "", "", "",
+             "No. of Capital Investments received", count_received2, "", "", "",
+             "No. of Capital Investments received", count_received1, "", "", ""]
+    row16 = ["No. Investments exited to date", count_exited4, "", "", "", "No. Investments exited to date",
+             count_exited3, "", "", "", "No. Investments exited to date", count_exited2, "", "", "",
+             "No. Investments exited to date", count_exited1, "", "", ""]
+    row17 = ["No. Investments still in Development", count_received4 - count_exited4, "", "", "",
+             "No. Investments still in Development", count_received3 - count_exited3, "", "", "",
+             "No. Investments still in Development", count_received2 - count_exited2, "", "", "",
+             "No. Investments still in Development", count_received1 - count_exited1, "", "", ""]
+    row18 = ["SALES INCOME", "", "", "", "", "SALES INCOME", "", "", "", "", "SALES INCOME", "", "", "", "",
+             "SALES INCOME", "", "", "", ""]
+    row19 = ["", "Total", "Transferred", "Sold", "Remaining", "", "Total", "Transferred", "Sold", "Remaining", "",
+             "Total", "Transferred", "Sold", "Remaining", "", "Total", "Transferred", "Sold", "Remaining"]
+    row20 = ["Units", count_units4, transferred_units4, sold_units4, remaining_units4, "Units", count_units3,
+             transferred_units3, sold_units3, remaining_units3, "Units", count_units2, transferred_units2,
+             sold_units2, remaining_units2, "Units", count_units1, transferred_units1, sold_units1,
+             remaining_units1]
+    row21 = ["Sales Income", total_units_sales_value4, transferred_units_sold_value4, sold_units_value4,
+             remaining_units_value4, "Sales Income", total_units_sales_value3, transferred_units_sold_value3,
+             sold_units_value3, remaining_units_value3, "Sales Income", total_units_sales_value2,
+             transferred_units_sold_value2, sold_units_value2, remaining_units_value2, "Sales Income",
+             total_units_sales_value1, transferred_units_sold_value1, sold_units_value1, remaining_units_value1]
+    row22 = ["Commission", total_units_commission4, transferred_units_commission4, sold_units_commission4,
+             remaining_units_commission4, "Commission", total_units_commission3, transferred_units_commission3,
+             sold_units_commission3, remaining_units_commission3, "Commission", total_units_commission2,
+             transferred_units_commission2, sold_units_commission2, remaining_units_commission2, "Commission",
+             total_units_commission1, transferred_units_commission1, sold_units_commission1,
+             remaining_units_commission1]
+    row23 = ["Transfer Fees", total_units_transfer_fees4, transferred_units_transfer_fees4,
+             sold_units_transfer_fees4, remaining_units_transfer_fees4, "Transfer Fees", total_units_transfer_fees3,
+             transferred_units_transfer_fees3, sold_units_transfer_fees3, remaining_units_transfer_fees3,
+             "Transfer Fees", total_units_transfer_fees2, transferred_units_transfer_fees2,
+             sold_units_transfer_fees2, remaining_units_transfer_fees2, "Transfer Fees", total_units_transfer_fees1,
+             transferred_units_transfer_fees1, sold_units_transfer_fees1, remaining_units_transfer_fees1]
+    row24 = ["Bond Registration", total_units_bond_registration4, transferred_units_bond_registration4,
+             sold_units_bond_registration4, remaining_units_bond_registration4, "Bond Registration",
+             total_units_bond_registration3, transferred_units_bond_registration3, sold_units_bond_registration3,
+             remaining_units_bond_registration3, "Bond Registration", total_units_bond_registration2,
+             transferred_units_bond_registration2, sold_units_bond_registration2,
+             remaining_units_bond_registration2, "Bond Registration", total_units_bond_registration1,
+             transferred_units_bond_registration1, sold_units_bond_registration1,
+             remaining_units_bond_registration1]
+    row25 = ["Security Release Fee", total_units_trust_release_fee4, transferred_units_trust_release_fee4,
+             sold_units_trust_release_fee4, remaining_units_trust_release_fee4, "Security Release Fee",
+             total_units_trust_release_fee3, transferred_units_trust_release_fee3, sold_units_trust_release_fee3,
+             remaining_units_trust_release_fee3, "Security Release Fee", total_units_trust_release_fee2,
+             transferred_units_trust_release_fee2, sold_units_trust_release_fee2,
+             remaining_units_trust_release_fee2, "Security Release Fee", total_units_trust_release_fee1,
+             transferred_units_trust_release_fee1, sold_units_trust_release_fee1,
+             remaining_units_trust_release_fee1]
+    row26 = ["Unforseen (0.05%)", total_units_unforseen4, transferred_units_unforseen4, sold_units_unforseen4,
+             remaining_units_unforseen4, "Unforseen", total_units_unforseen3, transferred_units_unforseen3,
+             sold_units_unforseen3, remaining_units_unforseen3, "Unforseen", total_units_unforseen2,
+             transferred_units_unforseen2, sold_units_unforseen2, remaining_units_unforseen2, "Unforseen",
+             total_units_unforseen1, transferred_units_unforseen1, sold_units_unforseen1,
+             remaining_units_unforseen1]
+    row27 = ["Transfer Income", 0, 0, 0, 0, "Transfer Income", 0, 0, 0, 0, "Transfer Income", 0, 0, 0, 0,
+             "Transfer Income", 0, 0, 0, 0]
+    row28 = ["INTEREST", "", "", "", "", "INTEREST", "", "", "", "", "INTEREST", "", "", "", "", "INTEREST", "", "",
+             "", ""]
+    row29 = ["Total Estimated Interest", f"={total_estimated_interest4}+C48", "", "", "",
+             "Total Estimated Interest",
+             total_estimated_interest3, "", "", "", "Total Estimated Interest", total_estimated_interest2, "", "",
+             "", "Total Estimated Interest", total_estimated_interest1, "", "", ""]
+    row30 = ["Interest Paid to Date", interest_paid_to_date4, "", "", "", "Interest Paid to Date",
+             interest_paid_to_date3, "", "", "", "Interest Paid to Date", interest_paid_to_date2, "", "", "",
+             "Interest Paid to Date", interest_paid_to_date1, "", "", ""]
+    row31 = ["FUNDING AVAILABLE", "", "", "", "", "FUNDING AVAILABLE", "", "", "", "", "FUNDING AVAILABLE", "", "",
+             "", "", "FUNDING AVAILABLE", "", "", "", ""]
+    row32 = ["Total Draw funds available", 0, "", "", "", "Total Draw funds available", 0, "", "", "",
+             "Total Draw funds available", 0, "", "", "", "Total Draw funds available", 0, "", "", ""]
+    row33 = ["Projected Heron Projects Income", 0, "", "", "", "Projected Heron Projects Income", 0, "", "", "",
+             "Projected Heron Projects Income", 0, "", "", "", "Projected Heron Projects Income", 0, "", "", ""]
+    row34 = ["Total Funds Available", 0, "", "", "", "Total Funds Available", 0, "", "", "",
+             "Total Funds Available", 0, "", "", "", "Total Funds Available", 0, "", "", ""]
+    row35 = ["Total Cost to Complete", 0, "", "", "", "Total Cost to Complete", 0, "", "", "",
+             "Total Cost to Complete", 0, "", "", "", "Total Cost to Complete", 0, "", "", ""]
+    row36 = ["Total funds (required)/Surplus", 0, "", "", "", "Total funds (required)/Surplus", 0, "", "", "",
+             "Total funds (required)/Surplus", 0, "", "", "", "Total funds (required)/Surplus", 0, "", "", ""]
+    row37 = ["PROJECTED PROFIT", "", "", "", "", "PROJECTED PROFIT", "", "", "", "", "PROJECTED PROFIT", "", "", "",
+             "", "PROJECTED PROFIT", "", "", "", ""]
+    row38 = ["Projected Nett Revenue", total_units_sales_value4, "", "", "", "Projected Nett Revenue",
+             total_units_sales_value3, "", "", "", "Projected Nett Revenue", total_units_sales_value2, "", "", "",
+             "Projected Nett Revenue", total_units_sales_value1, "", "", ""]
+    row39 = ["Other Income (interest received)", 0, "", "", "", "Other Income (interest received)", 0, "", "", "",
+             "Other Income (interest received)", 0, "", "", "", "Other Income (interest received)", 0, "", "", ""]
+    row40 = ["Total Estimated Development Cost", 0, "", "", "", "Total Estimated Development Cost", 0, "", "", "",
+             "Total Estimated Development Cost", 0, "", "", "", "Total Estimated Development Cost", 0, "", "", ""]
+    row41 = ["Interest Expense", 0, "", "", "", "Interest Expense", 0, "", "", "", "Interest Expense", 0, "", "",
+             "", "Interest Expense", 0, "", "", ""]
+    row42 = ["Profit", 0, "", "", "", "Profit", 0, "", "", "", "Profit", 0, "", "", "", "Profit", 0, "", "", ""]
+    row43 = ["Sales Increase", 0, 0, 0]
+    row44 = ["CPC Construction", 0, 0, 0]
+    row45 = ["Rent Salaries and wages", 0, 0, 0]
+    row46 = ["CPSD", 0, 0, 0]
+    row47 = ["Opp Invest", 0, 0, 0]
+    row48 = ["investor interest", 0, 0, 0]
+    row49 = ["Commissions", 0, 0, 0]
+    row50 = ["Unforseen", 0, 0, 0]
+    row51 = ["Cash to flow to Heron from Quinate early exits", 0, 0, 0]
+
+    # row44 = ["", 0, "CPC Construction", 0, "", "", 0, "CPC Construction", 0, "", "", 0, "CPC Construction", 0, "",
+    #          "", 0, "CPC Construction", 0, ""]
+    # row45 = ["", 0, " Rent Salaries and wages", 0, "", "", 0, " Rent Salaries and wages", 0, "", "", 0,
+    #          " Rent Salaries and wages", 0, "", "", 0, " Rent Salaries and wages", 0, "", ""]
+    # row46 = ["", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", "", 0, "CPSD", 0, "", ""]
+    # row47 = ["", 0, "Opp Invest", 0, "", "", 0, "Opp Invest", 0, "", "", 0, "Opp Invest", 0, "", "", 0,
+    #          "Opp Invest", 0, "", ""]
+    # row48 = ["", 0, "investor interest", 0, "", "", 0, "investor interest", 0, "", "", 0, "investor interest", 0,
+    #          "", "", 0, "investor interest", 0, ""]
+    # row49 = ["", 0, "Commissions", 0, "", "", 0, "Commissions", 0, "", "", 0, "Commissions", 0, "", "", 0,
+    #          "Commissions", 0, ""]
+    # row50 = ["", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0, "", "", 0, "Unforseen", 0,
+    #          "", ""]
+    # row51 = ["", 0, "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
+    #          "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
+    #          "Cash to flow to Heron from Quinate early exits", "", 0, "", 0,
+    #          "Cash to flow to Heron from Quinate early exits", "", 0]
+    row52 = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+    row53 = ["Sales Income", total_units_sales_value4, transferred_units_sold_value4, sold_units_value4,
+             remaining_units_value4, "Sales Income", total_units_sales_value3, transferred_units_sold_value3,
+             sold_units_value3, remaining_units_value3, "Sales Income", total_units_sales_value2,
+             transferred_units_sold_value2, sold_units_value2, remaining_units_value2, "Sales Income",
+             total_units_sales_value1, transferred_units_sold_value1, sold_units_value1, remaining_units_value1]
+
+    # append all rows to nsst_print_report
+    nsss_print_report = [row1, row2, row3, row4, row5, row6, row7, row8, row9, row10, row11,
+                         row12, row13, row14, row15, row16, row17, row18, row19, row20,
+                         row21, row22, row23, row24, row25, row26, row27, row28, row29,
+                         row30, row31, row32, row33, row34, row35, row36, row37, row38, row39, row40, row41, row42,
+                         row43, row44, row45, row46, row47, row48, row49, row50, row51, row52, row53]
+
+    # print(len(investors))
+    report_date = request['to_date']
+
+    # CREATE SPREADSHEET
+
+    # print("profit_and_loss", profit_and_loss)
+    result = cashflow_hf_hv(profit_and_loss, nsss_print_report, report_date)
+    print("result", result)
+
+    end_time = time.time()
+    return {"Success": True, "time_taken": end_time - start_time, "file": "cashflow_p&l_files/cashflow_hf_hv.xlsx"}
+
+    # except Exception as e:
+    #     print(e)
+    #     return {"ERROR": "Please Try again"}
 
 
 @xero.get("/get_profit_and_loss_data")
@@ -3021,39 +3040,698 @@ async def get_profit_and_loss_report(profit_and_loss_name):
 # TEMP FUNCTION TO UPDATE PROFIT AND LOSS
 def update_profit_and_loss_from_cf_file():
     input_p_and_l = [
+        {"Account": "Sales - Heron Fields", "Category": "Trading Income", "Development": "Heron Fields""Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 1217304.34782609},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HF Units", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 60865.2173913044},
+        {"Account": "Sales - Heron Fields", "Category": "Trading Income", "Development": "Heron Fields""Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 1260782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HF Units", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 63039.1304347826},
+        {"Account": "Sales - Heron Fields", "Category": "Trading Income", "Development": "Heron Fields""Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HF Units", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron Fields", "Category": "Trading Income", "Development": "Heron Fields""Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HF Units", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron Fields", "Category": "Trading Income", "Development": "Heron Fields""Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HF Units", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron Fields", "Category": "Trading Income", "Development": "Heron Fields""Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 1252086.95652174},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HF Units", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 62604.347826087},
+        {"Account": "Sales - Heron Fields", "Category": "Trading Income", "Development": "Heron Fields""Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 1260782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HF Units", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 63039.1304347826},
+        {"Account": "Sales - Heron Fields", "Category": "Trading Income", "Development": "Heron Fields""Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 1260782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HF Units", "Category": "COS", "Development": "Heron Fields",
+         "Applicable_dev": "Heron Fields", "Month": "Apr-24", "Actual": 0, "Forecast": 63039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "May-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "May-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "May-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "May-24", "Actual": 0, "Forecast": 1243391.30434783},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "May-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "May-24", "Actual": 0, "Forecast": 62169.5652173913},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Mar-24", "Actual": 0, "Forecast": 1295565.2173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Mar-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Mar-24", "Actual": 0, "Forecast": 64778.2608695652},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Mar-24", "Actual": 0, "Forecast": 1312956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Mar-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Mar-24", "Actual": 0, "Forecast": 65647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "May-24", "Actual": 0, "Forecast": 1312956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "May-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "May-24", "Actual": 0, "Forecast": 65647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1278173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 63908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1312956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 65647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1321652.17391304},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 66082.6086956522},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Feb-24", "Actual": 0, "Forecast": 1478173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Feb-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Feb-24", "Actual": 0, "Forecast": 73908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1321652.17391304},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 66082.6086956522},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1321652.17391304},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 66082.6086956522},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Feb-24", "Actual": 0, "Forecast": 1391217.39130435},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Feb-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Feb-24", "Actual": 0, "Forecast": 69560.8695652174},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1339043.47826087},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 66952.1739130435},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1339043.47826087},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 66952.1739130435},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1391217.39130435},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 69560.8695652174},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1470433.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73521.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1452173.04347826},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 72608.6521739131},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1452173.04347826},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 72608.6521739131},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1470433.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73521.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1485216.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 74260.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1470433.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73521.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1470433.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73521.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1485216.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 74260.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1530347.82608696},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 76517.3913043478},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1512956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 75647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1512956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 75647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1434695.65217391},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 71734.7826086957},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1434695.65217391},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 71734.7826086957},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1434695.65217391},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 71734.7826086957},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1460782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 73039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1460782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 73039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1460782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 73039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 1478173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Sep-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 73908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 1478173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Sep-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 73908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 1478173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Sep-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 73908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 1512956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Sep-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 75647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 1512956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Sep-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 75647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 1512956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Sep-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 75647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 1512956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Sep-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 75647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 1512956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Sep-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 75647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 1512956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Sep-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 75647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Oct-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Oct-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 1478173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Oct-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 73908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Oct-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Oct-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Oct-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 1330347.82608696},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Nov-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 66517.3913043478},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 1330347.82608696},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Nov-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 66517.3913043478},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 1504260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Nov-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 75213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 1330347.82608696},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Nov-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 66517.3913043478},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 1330347.82608696},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Nov-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 66517.3913043478},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 1330347.82608696},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Nov-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 66517.3913043478},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Dec-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Dec-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 1521652.17391304},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Dec-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 76082.6086956522},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Dec-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Dec-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Dec-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1460782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1434695.65217391},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 71734.7826086957},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1478173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1460782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1486869.56521739},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 74343.4782608696},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1460782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 73039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1504260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 75213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1478173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 73908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1469478.26086957},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 73473.9130434783},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Mar-24", "Actual": 0, "Forecast": 1478173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Mar-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Mar-24", "Actual": 0, "Forecast": 73908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1295565.2173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 64778.2608695652},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1295565.2173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 64778.2608695652},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1304260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 65213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1460782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 73039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1443391.30434783},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 72169.5652173913},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1443391.30434783},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 72169.5652173913},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1443391.30434783},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 72169.5652173913},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 1512956.52173913},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jun-24", "Actual": 0, "Forecast": 1789},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 75647.8260869565},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1469478.26086957},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73473.9130434783},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1460782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1460782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1460782.60869565},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73039.1304347826},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1521652.17391304},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 76082.6086956522},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1478173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 73908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1469478.26086957},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 73473.9130434783},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1469478.26086957},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 73473.9130434783},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1469478.26086957},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 73473.9130434783},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1530347.82608696},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Aug-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 76517.3913043478},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1478173.91304348},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 73908.6956521739},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1504260.86956522},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 75213.0434782609},
+        {"Account": "Sales - Heron View Sales", "Category": "Trading Income", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 1521652.17391304},
+        {"Account": "COS - Legal Fees", "Category": "COS", "Development": "Heron View", "Applicable_dev": "Heron View",
+         "Month": "Jul-24", "Actual": 0, "Forecast": 39515.45},
+        {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 76082.6086956522},
 
-        {"Account": "Sales - Heron View Sales", "Month": "Nov-24", "Forecast": 17659826.0869565},
-        {"Account": "Sales - Heron View Sales", "Month": "Feb-24", "Forecast": 7008260.86956522},
-        {"Account": "Sales - Heron View Sales", "Month": "Mar-24", "Forecast": 4086695.65217391},
-        {"Account": "Sales - Heron View Sales", "Month": "May-24", "Forecast": 24859304.3478261},
-        {"Account": "Sales - Heron View Sales", "Month": "Jun-24", "Forecast": 19450956.5217391},
-        {"Account": "Sales - Heron View Sales", "Month": "Jul-24", "Forecast": 54997297.3913044},
-        {"Account": "Sales - Heron View Sales", "Month": "Aug-24", "Forecast": 0},
-        # N/A
-        # N/A
-        # N/A
-
-        {"Account": "COS - Heron View - Construction", "Month": "Jan-24", "Forecast": 2696525.1269841},
-        {"Account": "COS - Heron View - Construction", "Month": "Feb-24", "Forecast": 5707656.42066916},
-        {"Account": "COS - Heron View - Construction", "Month": "Mar-24", "Forecast": 10095497.4878337},
-        {"Account": "COS - Heron View - Construction", "Month": "Apr-24", "Forecast": 6644697.30778797},
-        {"Account": "COS - Heron View - Construction", "Month": "May-24", "Forecast": 9067916.29306447},
-        {"Account": "COS - Heron View - Construction", "Month": "Jun-24", "Forecast": 7381385.27235665},
-        {"Account": "COS - Heron View - Construction", "Month": "Jul-24", "Forecast": 3648699.27027617},
-        {"Account": "COS - Heron View - Construction", "Month": "Aug-24", "Forecast": 1000594.94489614},
-        {"Account": "COS - Heron View - Construction", "Month": "Sep-24", "Forecast": 512305.573497741},
-        {"Account": "COS - Heron View - Construction", "Month": "Oct-24", "Forecast": 754779.014486066},
-        {"Account": "COS - Heron View - Construction", "Month": "Nov-24", "Forecast": 0},
-        {"Account": "COS - Heron View - Construction", "Month": "Dec-24", "Forecast": 0},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Feb-24", "Actual": 0,"Forecast": 5707656.42066916},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Mar-24", "Actual": 0,"Forecast": 10095497.4878337},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Apr-24","Actual": 0, "Forecast": 6644697.30778797},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "May-24","Actual": 0, "Forecast": 9067916.29306447},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24","Actual": 0, "Forecast": 7381385.27235665},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24","Actual": 0, "Forecast": 3648699.27027617},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0,"Forecast": 1000594.94489614},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24","Actual": 0, "Forecast": 512305.573497741},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24","Actual": 0, "Forecast": 754779.014486066},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24","Actual": 0, "Forecast": 0},
+        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24","Actual": 0, "Forecast": 0},
     ]
     try:
+        current = list(db.profit_and_loss.find())
+        # try:
+        #     db.profit_and_loss.update_many({}, {"$set": {"Actual": 0, "Forecast": 0}})
+        #     print("Awesome")
+        # except Exception as e:
+        #     print(e)
+        # for item in current:
+        #     del item['_id']
+        #     # Change item['Actual'] to 0 and item['Forecast'] to 0 in current and update the database accordingly
+        #     item['Actual'] = 0
+        #     item['Forecast'] = 0
+        #     try:
+        #         db.profit_and_loss.update_one({"Account": item['Account'], "Month": item['Month']}, {"$set": item})
+        #         print("Data updated successfully")
+        #     except Exception as e:
+        #         print(e)
+
+
+
+
+        updated_p_and_l = []
         for item in input_p_and_l:
+            insert = {
+                "Account": item['Account'],
+                "Category": item['Category'],
+                "Development": item['Development'],
+                "Applicable_dev": item['Applicable_dev'],
+                "Month": item['Month'],
+            }
+            updated_p_and_l.append(insert)
+        print(len(updated_p_and_l))
+        print(len(input_p_and_l))
+
+        # remove duplicates from updated_p_and_l
+        updated_p_and_l = [dict(t) for t in {tuple(d.items()) for d in updated_p_and_l}]
+        print(len(updated_p_and_l))
+
+        for item in updated_p_and_l:
+            # filter input_p_and_l where Account, Category, Development, Applicable_dev and Month are equal to item['Account'], item['Category'], item['Development'], item['Applicable_dev'] and item['Month'] respectively
+            filtered_input_p_and_l = list(filter(lambda x: x['Account'] == item['Account'] and x['Category'] == item['Category'] and x['Development'] == item['Development'] and x['Applicable_dev'] == item['Applicable_dev'] and x['Month'] == item['Month'], input_p_and_l))
+            # sum the Forecast of the filtered_input_p_and_l and make item['Forecast'] equal to the sum
+            item['Forecast'] = sum([x['Forecast'] for x in filtered_input_p_and_l])
             # round item['Forecast'] to 2 decimal places
             item['Forecast'] = round(item['Forecast'], 2)
-            db.profit_and_loss.update_one({"Account": item['Account'], "Month": item['Month']}, {"$set": item})
-        print("Data updated successfully")
+            item['Actual'] = sum([x['Actual'] for x in filtered_input_p_and_l])
+            # round item['Actual'] to 2 decimal places
+            item['Actual'] = round(item['Actual'], 2)
+            # print("Item", item)
+
+
+
+
+
+        for item in updated_p_and_l:
+            # round item['Forecast'] to 2 decimal places
+            item['Forecast'] = round(item['Forecast'], 2)
+            filtered_current = list(filter(lambda x: x['Account'] == item['Account'] and x['Month'] == item['Month'], current))
+            if len(filtered_current) == 0:
+                # insert item into the database
+                try:
+                    db.profit_and_loss.insert_one(item)
+                    print("Data inserted successfully")
+                except Exception as e:
+                    print(e)
+            else:
+                try:
+                    db.profit_and_loss.update_one({"Account": item['Account'], "Month": item['Month']}, {"$set": item})
+                    print("Data updated successfully")
+                except Exception as e:
+                    print(e)
+        print("Data updated successfully AA")
     except Exception as e:
         print(e)
-        return {"ERROR": "Please Try again"}
+        # return {"ERROR": "Please Try again"}
 
 # update_profit_and_loss_from_cf_file()

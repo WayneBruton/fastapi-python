@@ -1,0 +1,8030 @@
+[
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 11726,
+   "Forecast": 11726
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 6775,
+   "Forecast": 6775
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": -35916.78,
+   "Forecast": -35916.78
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 2765043.48,
+   "Forecast": 2765043.48
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 466056.51,
+   "Forecast": 466056.51
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 24427668.44,
+   "Forecast": 24427668.44
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 143541.28,
+   "Forecast": 143541.28
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 15988,
+   "Forecast": 15988
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 63374.28,
+   "Forecast": 63374.28
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 28465.91,
+   "Forecast": 28465.91
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 116845.7,
+   "Forecast": 116845.7
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 11556,
+   "Forecast": 11556
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 7082.26,
+   "Forecast": 7082.26
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 920.53,
+   "Forecast": 920.53
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 103742,
+   "Forecast": 103742
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 16000,
+   "Forecast": 16000
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 9346.68,
+   "Forecast": 9346.68
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 51945.21,
+   "Forecast": 51945.21
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 454945.07,
+   "Forecast": 454945.07
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 27652.39,
+   "Forecast": 27652.39
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 178.08,
+   "Forecast": 178.08
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 512.87,
+   "Forecast": 512.87
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": -291144.11,
+   "Forecast": -291144.11
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 328.38,
+   "Forecast": 328.38
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 1163.48,
+   "Forecast": 1163.48
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 1119628.56,
+   "Forecast": 1119628.56
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 142419.51,
+   "Forecast": 142419.51
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 486.96,
+   "Forecast": 486.96
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 1706068.25,
+   "Forecast": 1706068.25
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 66505.36,
+   "Forecast": 66505.36
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 2895.63,
+   "Forecast": 2895.63
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 1433.91,
+   "Forecast": 1433.91
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 131623,
+   "Forecast": 131623
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 801.71,
+   "Forecast": 801.71
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Feb-23",
+   "Actual": 8960.83,
+   "Forecast": 8960.83
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Feb-23",
+   "Actual": 177.33,
+   "Forecast": 177.33
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 13500,
+   "Forecast": 13500
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 8263.91,
+   "Forecast": 8263.91
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 35916.78,
+   "Forecast": 35916.78
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 10938347.82,
+   "Forecast": 10938347.82
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 23741.94,
+   "Forecast": 23741.94
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 974495.64,
+   "Forecast": 974495.64
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 190695.35,
+   "Forecast": 190695.35
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 14453.64,
+   "Forecast": 14453.64
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 71924.81,
+   "Forecast": 71924.81
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 11556,
+   "Forecast": 11556
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 406.48,
+   "Forecast": 406.48
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 5123.04,
+   "Forecast": 5123.04
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 7126.8,
+   "Forecast": 7126.8
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 25749.27,
+   "Forecast": 25749.27
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 82812.43,
+   "Forecast": 82812.43
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 4379.83,
+   "Forecast": 4379.83
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 79243.86,
+   "Forecast": 79243.86
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 333904.11,
+   "Forecast": 333904.11
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 138082.19,
+   "Forecast": 138082.19
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 1167405.88,
+   "Forecast": 1167405.88
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 114401.55,
+   "Forecast": 114401.55
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 18431.5,
+   "Forecast": 18431.5
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 13213.35,
+   "Forecast": 13213.35
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 2493.14,
+   "Forecast": 2493.14
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 48.99,
+   "Forecast": 48.99
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 1536.81,
+   "Forecast": 1536.81
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 6778.01,
+   "Forecast": 6778.01
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 328.38,
+   "Forecast": 328.38
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 831.81,
+   "Forecast": 831.81
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 290144.51,
+   "Forecast": 290144.51
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 103191.35,
+   "Forecast": 103191.35
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 695304.12,
+   "Forecast": 695304.12
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 40096.92,
+   "Forecast": 40096.92
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 1404.78,
+   "Forecast": 1404.78
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 9.46,
+   "Forecast": 9.46
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 71.76,
+   "Forecast": 71.76
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 2215.09,
+   "Forecast": 2215.09
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 135076.46,
+   "Forecast": 135076.46
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 593.99,
+   "Forecast": 593.99
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-23",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-23",
+   "Actual": 177.33,
+   "Forecast": 177.33
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 5750,
+   "Forecast": 5750
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 8891565.23,
+   "Forecast": 8891565.23
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 22499.99,
+   "Forecast": 22499.99
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 257634.78,
+   "Forecast": 257634.78
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 157031.19,
+   "Forecast": 157031.19
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 175176.84,
+   "Forecast": 175176.84
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 49646.57,
+   "Forecast": 49646.57
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 11556,
+   "Forecast": 11556
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 550,
+   "Forecast": 550
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 242.38,
+   "Forecast": 242.38
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 102812.43,
+   "Forecast": 102812.43
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 4467.96,
+   "Forecast": 4467.96
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 53315.08,
+   "Forecast": 53315.08
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 324986.28,
+   "Forecast": 324986.28
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 1199211.5,
+   "Forecast": 1199211.5
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 146097.55,
+   "Forecast": 146097.55
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 2920.55,
+   "Forecast": 2920.55
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 1091.1,
+   "Forecast": 1091.1
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 249.32,
+   "Forecast": 249.32
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 2354.45,
+   "Forecast": 2354.45
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 665.19,
+   "Forecast": 665.19
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 607.83,
+   "Forecast": 607.83
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 2454778.69,
+   "Forecast": 2454778.69
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 313402.61,
+   "Forecast": 313402.61
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 1439041.06,
+   "Forecast": 1439041.06
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 10636.8,
+   "Forecast": 10636.8
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 20519.53,
+   "Forecast": 20519.53
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": -14064.1,
+   "Forecast": -14064.1
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 145076.46,
+   "Forecast": 145076.46
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 736.17,
+   "Forecast": 736.17
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Dec-22",
+   "Actual": 3390,
+   "Forecast": 3390
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Dec-22",
+   "Actual": 177.33,
+   "Forecast": 177.33
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 7000,
+   "Forecast": 7000
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 13825130.44,
+   "Forecast": 13825130.44
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 66591.4,
+   "Forecast": 66591.4
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 123904.35,
+   "Forecast": 123904.35
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 375272.82,
+   "Forecast": 375272.82
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 27473.64,
+   "Forecast": 27473.64
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 58002.69,
+   "Forecast": 58002.69
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 11556,
+   "Forecast": 11556
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 6705,
+   "Forecast": 6705
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 290.78,
+   "Forecast": 290.78
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 3070.69,
+   "Forecast": 3070.69
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 3563.4,
+   "Forecast": 3563.4
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 8627.12,
+   "Forecast": 8627.12
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 81000,
+   "Forecast": 81000
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 4092.56,
+   "Forecast": 4092.56
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 10317.81,
+   "Forecast": 10317.81
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 376726.01,
+   "Forecast": 376726.01
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 2035109.56,
+   "Forecast": 2035109.56
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 218305.31,
+   "Forecast": 218305.31
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 29312.34,
+   "Forecast": 29312.34
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 560.97,
+   "Forecast": 560.97
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 3173.36,
+   "Forecast": 3173.36
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 3335.21,
+   "Forecast": 3335.21
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 328.38,
+   "Forecast": 328.38
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 262.11,
+   "Forecast": 262.11
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 607.83,
+   "Forecast": 607.83
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 2296557.57,
+   "Forecast": 2296557.57
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 274149.5,
+   "Forecast": 274149.5
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 11169.12,
+   "Forecast": 11169.12
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 1000578.69,
+   "Forecast": 1000578.69
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 74859.36,
+   "Forecast": 74859.36
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 2990,
+   "Forecast": 2990
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 18474.81,
+   "Forecast": 18474.81
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 124600,
+   "Forecast": 124600
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 273.21,
+   "Forecast": 273.21
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 2252.09,
+   "Forecast": 2252.09
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Nov-22",
+   "Actual": 10511.3,
+   "Forecast": 10511.3
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Nov-22",
+   "Actual": 177.33,
+   "Forecast": 177.33
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 37150.94,
+   "Forecast": 37150.94
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 31863.87,
+   "Forecast": 31863.87
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 150,
+   "Forecast": 150
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 11556,
+   "Forecast": 11556
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 375,
+   "Forecast": 375
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 261.49,
+   "Forecast": 261.49
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 3022.39,
+   "Forecast": 3022.39
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 4972.63,
+   "Forecast": 4972.63
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 90550,
+   "Forecast": 90550
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 181.66,
+   "Forecast": 181.66
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 400000,
+   "Forecast": 400000
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 1185.34,
+   "Forecast": 1185.34
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 3406.21,
+   "Forecast": 3406.21
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 18372.16,
+   "Forecast": 18372.16
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 328.38,
+   "Forecast": 328.38
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 526.32,
+   "Forecast": 526.32
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 607.83,
+   "Forecast": 607.83
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 3132835.75,
+   "Forecast": 3132835.75
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 281083.21,
+   "Forecast": 281083.21
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 1211819.46,
+   "Forecast": 1211819.46
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 18460.65,
+   "Forecast": 18460.65
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 5.26,
+   "Forecast": 5.26
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 2630.23,
+   "Forecast": 2630.23
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 131550,
+   "Forecast": 131550
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 273.21,
+   "Forecast": 273.21
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 922.43,
+   "Forecast": 922.43
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Oct-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Oct-22",
+   "Actual": 177.33,
+   "Forecast": 177.33
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 678.59,
+   "Forecast": 678.59
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 2500,
+   "Forecast": 2500
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 3404.62,
+   "Forecast": 3404.62
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 9738.91,
+   "Forecast": 9738.91
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 30938.77,
+   "Forecast": 30938.77
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 11556,
+   "Forecast": 11556
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 4746,
+   "Forecast": 4746
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 726.9,
+   "Forecast": 726.9
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 3237.68,
+   "Forecast": 3237.68
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 4998.5,
+   "Forecast": 4998.5
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 90550,
+   "Forecast": 90550
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 8000,
+   "Forecast": 8000
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 4142.3,
+   "Forecast": 4142.3
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 89.72,
+   "Forecast": 89.72
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 11978.61,
+   "Forecast": 11978.61
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 3227.61,
+   "Forecast": 3227.61
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 4347.83,
+   "Forecast": 4347.83
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 328.38,
+   "Forecast": 328.38
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 607.83,
+   "Forecast": 607.83
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 5226462.46,
+   "Forecast": 5226462.46
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 408108.91,
+   "Forecast": 408108.91
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 512835.64,
+   "Forecast": 512835.64
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 72905.28,
+   "Forecast": 72905.28
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 2627.89,
+   "Forecast": 2627.89
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 131550,
+   "Forecast": 131550
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 273.21,
+   "Forecast": 273.21
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 899.57,
+   "Forecast": 899.57
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Sep-22",
+   "Actual": 6950,
+   "Forecast": 6950
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Sep-22",
+   "Actual": 164.35,
+   "Forecast": 164.35
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 4200,
+   "Forecast": 4200
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 20693,
+   "Forecast": 20693
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 49013.7,
+   "Forecast": 49013.7
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 11556,
+   "Forecast": 11556
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 31550,
+   "Forecast": 31550
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 832.43,
+   "Forecast": 832.43
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 4119.96,
+   "Forecast": 4119.96
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 4775.06,
+   "Forecast": 4775.06
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 83750,
+   "Forecast": 83750
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 92.64,
+   "Forecast": 92.64
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 30848.71,
+   "Forecast": 30848.71
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 3442.8,
+   "Forecast": 3442.8
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 328.38,
+   "Forecast": 328.38
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 607.83,
+   "Forecast": 607.83
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 4430835.97,
+   "Forecast": 4430835.97
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 195931.27,
+   "Forecast": 195931.27
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 13772.72,
+   "Forecast": 13772.72
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 2.39,
+   "Forecast": 2.39
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 2660.91,
+   "Forecast": 2660.91
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 128150,
+   "Forecast": 128150
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 5850,
+   "Forecast": 5850
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": 1009.43,
+   "Forecast": 1009.43
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Aug-22",
+   "Actual": -0.01,
+   "Forecast": -0.01
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Aug-22",
+   "Actual": 164.35,
+   "Forecast": 164.35
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 50001.11,
+   "Forecast": 50001.11
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 11556,
+   "Forecast": 11556
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 1218.08,
+   "Forecast": 1218.08
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 3534.69,
+   "Forecast": 3534.69
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 4380.79,
+   "Forecast": 4380.79
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 86425,
+   "Forecast": 86425
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 11.22,
+   "Forecast": 11.22
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 52251.97,
+   "Forecast": 52251.97
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 3114.7,
+   "Forecast": 3114.7
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 328.38,
+   "Forecast": 328.38
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 607.83,
+   "Forecast": 607.83
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 3666477.2,
+   "Forecast": 3666477.2
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 355948.88,
+   "Forecast": 355948.88
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 11000,
+   "Forecast": 11000
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 5914.78,
+   "Forecast": 5914.78
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 2.28,
+   "Forecast": 2.28
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 2943.31,
+   "Forecast": 2943.31
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 132650,
+   "Forecast": 132650
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 1174.09,
+   "Forecast": 1174.09
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jul-22",
+   "Actual": 871.72,
+   "Forecast": 871.72
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jul-22",
+   "Actual": 164.35,
+   "Forecast": 164.35
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 86956.52,
+   "Forecast": 86956.52
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 59954.34,
+   "Forecast": 59954.34
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 11556,
+   "Forecast": 11556
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 633.27,
+   "Forecast": 633.27
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 2619.62,
+   "Forecast": 2619.62
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 4339.57,
+   "Forecast": 4339.57
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 86425,
+   "Forecast": 86425
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 158.56,
+   "Forecast": 158.56
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 73214.48,
+   "Forecast": 73214.48
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 3067.87,
+   "Forecast": 3067.87
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 1723.38,
+   "Forecast": 1723.38
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 607.83,
+   "Forecast": 607.83
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 2326102.06,
+   "Forecast": 2326102.06
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 246746.39,
+   "Forecast": 246746.39
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 4782.61,
+   "Forecast": 4782.61
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 2.15,
+   "Forecast": 2.15
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 3186.59,
+   "Forecast": 3186.59
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 132650,
+   "Forecast": 132650
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 927.52,
+   "Forecast": 927.52
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jun-22",
+   "Actual": 2250,
+   "Forecast": 2250
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jun-22",
+   "Actual": 164.35,
+   "Forecast": 164.35
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 19914.54,
+   "Forecast": 19914.54
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 11556,
+   "Forecast": 11556
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 7620,
+   "Forecast": 7620
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 698.54,
+   "Forecast": 698.54
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 4886.73,
+   "Forecast": 4886.73
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 9207.4,
+   "Forecast": 9207.4
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 86424.99,
+   "Forecast": 86424.99
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 24000,
+   "Forecast": 24000
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 49434.6,
+   "Forecast": 49434.6
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 6340.26,
+   "Forecast": 6340.26
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 302.65,
+   "Forecast": 302.65
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 3587901.07,
+   "Forecast": 3587901.07
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 265346.33,
+   "Forecast": 265346.33
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 269.65,
+   "Forecast": 269.65
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 4.12,
+   "Forecast": 4.12
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 3257.75,
+   "Forecast": 3257.75
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 132650,
+   "Forecast": 132650
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 1164.19,
+   "Forecast": 1164.19
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "May-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "May-22",
+   "Actual": 328.7,
+   "Forecast": 328.7
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 1200,
+   "Forecast": 1200
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 33568.16,
+   "Forecast": 33568.16
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 23112,
+   "Forecast": 23112
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 55237.86,
+   "Forecast": 55237.86
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 714.16,
+   "Forecast": 714.16
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 78771.65,
+   "Forecast": 78771.65
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 19858.78,
+   "Forecast": 19858.78
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 302.65,
+   "Forecast": 302.65
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 1085.22,
+   "Forecast": 1085.22
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 2138785,
+   "Forecast": 2138785
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 239884.17,
+   "Forecast": 239884.17
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 2415,
+   "Forecast": 2415
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 4782.61,
+   "Forecast": 4782.61
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 2938.93,
+   "Forecast": 2938.93
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 119917.35,
+   "Forecast": 119917.35
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 768.08,
+   "Forecast": 768.08
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Apr-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Media24",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bond Origination",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission Heron Fields investors",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Construction",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 7698.07,
+   "Forecast": 7698.07
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 550,
+   "Forecast": 550
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 653.7,
+   "Forecast": 653.7
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 2215.9,
+   "Forecast": 2215.9
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 10580.4,
+   "Forecast": 10580.4
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 67644.04,
+   "Forecast": 67644.04
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 4000,
+   "Forecast": 4000
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 54.64,
+   "Forecast": 54.64
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 1156.41,
+   "Forecast": 1156.41
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 3170.13,
+   "Forecast": 3170.13
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 285.26,
+   "Forecast": 285.26
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 545.59,
+   "Forecast": 545.59
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 967790.23,
+   "Forecast": 967790.23
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 6286.3,
+   "Forecast": 6286.3
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 92590.28,
+   "Forecast": 92590.28
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 268.05,
+   "Forecast": 268.05
+ },
+ {
+   "Account": "COS - Heron Fields - Security",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Projects insurance",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 2.02,
+   "Forecast": 2.02
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 687.5,
+   "Forecast": 687.5
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 2575.09,
+   "Forecast": 2575.09
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 94504.52,
+   "Forecast": 94504.52
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 1801.52,
+   "Forecast": 1801.52
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 2729.89,
+   "Forecast": 2729.89
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Mar-22",
+   "Actual": 450,
+   "Forecast": 450
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Mar-22",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron View Occupational Rent",
+   "Category": "Trading Income",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 4800,
+   "Forecast": 4800
+ },
+ {
+   "Account": "Sales - Heron View Sales",
+   "Category": "Trading Income",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 6969130.45,
+   "Forecast": 6969130.45
+ },
+ {
+   "Account": "COS - Commission HV Units",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 349108.7,
+   "Forecast": 349108.7
+ },
+ {
+   "Account": "COS - Electricity",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - HV COCT Rates clearance",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 155834.92,
+   "Forecast": 155834.92
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HV",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Rental Income",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Pure Brand Activation",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Real Marketing",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Thinkink",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 10500,
+   "Forecast": 10500
+ },
+ {
+   "Account": "Interest Paid - Investors @ 10%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 10.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 11%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 78686.33,
+   "Forecast": 78686.33
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 52778.08,
+   "Forecast": 52778.08
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 1185476.01,
+   "Forecast": 1185476.01
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 10319.93,
+   "Forecast": 10319.93
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 29501.74,
+   "Forecast": 29501.74
+ },
+ {
+   "Account": "Interest Paid - Investors @ 8.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 621.26,
+   "Forecast": 621.26
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Levies",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 1773.44,
+   "Forecast": 1773.44
+ },
+ {
+   "Account": "Levies - Developer",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Levies - Special Levies",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Management fees - OMH",
+   "Category": "Ignore per Deric",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 7583.63,
+   "Forecast": 7583.63
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Sales - Heron Fields occupational rent",
+   "Category": "Trading Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Commission HF Units",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Electricity",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View Showhouse",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Inverters",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees",
+   "Category": "COS",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Legal Fees Opening of Sec Title Scheme",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Levies",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Rates clearance",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Showhouse - HF",
+   "Category": "COS",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Received - Deposits",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 1291.18,
+   "Forecast": 1291.18
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 631.81,
+   "Forecast": 631.81
+ },
+ {
+   "Account": "Rental Income",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 142177.41,
+   "Forecast": 142177.41
+ },
+ {
+   "Account": "Accounting - CIPC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Accounting Fees",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Property24",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising - Real Marketing",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 399.76,
+   "Forecast": 399.76
+ },
+ {
+   "Account": "CoCT - Electricity",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 68.37,
+   "Forecast": 68.37
+ },
+ {
+   "Account": "CoCT - Refuse",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "CoCT - Water",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": -147.72,
+   "Forecast": -147.72
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 120475.57,
+   "Forecast": 120475.57
+ },
+ {
+   "Account": "Consulting fees - Trustee",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 4200,
+   "Forecast": 4200
+ },
+ {
+   "Account": "Developers Levies",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Entertainment Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "General Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Insurance",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 15043.78,
+   "Forecast": 15043.78
+ },
+ {
+   "Account": "Interest Paid",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 14%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 15%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 16%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 18%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 6.75%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 7.5%",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 8.25%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Interest Paid - Investors @ 9%",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Levies - Amari",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 3292.17,
+   "Forecast": 3292.17
+ },
+ {
+   "Account": "Momentum Admin Fee",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Motor Vehicle Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Rates - Heron",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security - ADT",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscription - NHBRC",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Subscriptions - Xero",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 600,
+   "Forecast": 600
+ },
+ {
+   "Account": "COS - Electricity Cost Heron Field",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron - Internet",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 1849.57,
+   "Forecast": 1849.57
+ },
+ {
+   "Account": "COS - Heron Fields - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 900,
+   "Forecast": 900
+ },
+ {
+   "Account": "COS - Heron Fields - Garden Services",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - Health & Safety",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron Fields - P & G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 3791.59,
+   "Forecast": 3791.59
+ },
+ {
+   "Account": "COS - Heron Fields - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "COS - Heron View - Construction",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 2926705.27,
+   "Forecast": 2926705.27
+ },
+ {
+   "Account": "COS - Heron View - P&G",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 518.37,
+   "Forecast": 518.37
+ },
+ {
+   "Account": "COS - Heron View - Printing & Stationary",
+   "Category": "COS",
+   "Development": "CPC",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 3036.13,
+   "Forecast": 3036.13
+ },
+ {
+   "Account": "Interest Received - Momentum",
+   "Category": "Other Income",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Advertising _AND_ Promotions",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Bank Charges",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 2245.76,
+   "Forecast": 2245.76
+ },
+ {
+   "Account": "Consulting Fees - Admin and Finance",
+   "Category": "Ignore per Deric",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 128868.17,
+   "Forecast": 128868.17
+ },
+ {
+   "Account": "Motor Vehicle Expenses",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Printing _AND_ Stationery",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 6732.42,
+   "Forecast": 6732.42
+ },
+ {
+   "Account": "Repairs _AND_ Maintenance",
+   "Category": "Operating Expenses",
+   "Development": "Heron View",
+   "Applicable_dev": "Heron View",
+   "Month": "Jan-24",
+   "Actual": 0,
+   "Forecast": 0
+ },
+ {
+   "Account": "Security",
+   "Category": "Operating Expenses",
+   "Development": "Heron Fields",
+   "Applicable_dev": "Heron Fields",
+   "Month": "Jan-24",
+   "Actual": 191.17,
+   "Forecast": 191.17
+ }
+]
