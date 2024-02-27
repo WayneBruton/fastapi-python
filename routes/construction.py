@@ -73,14 +73,19 @@ async def get_available_valuation_data():
 async def create_construction_valuation(request: Request):
     try:
         data = await request.json()
+        # print("data",data)
         # print(data[0])
         # get valuations from db where development = data['development'] and block = data['block']
         valuations_to_date = list(valuations.find({"development": data['development'], "block": data['block']}))
+
 
         # print("valuations_to_date::",valuations_to_date)
         if len(valuations_to_date) > 0:
 
             for index, valuation in enumerate(valuations_to_date):
+                # if valuation['measure'] != '%':
+                #     print("valuation", valuation)
+                #     print()
                 valuation['_id'] = str(valuation['_id'])
                 filtered_tasks = [task for task in valuation['tasks'] if task['approved']]
                 valuation['qty'] = int(valuation['qty'])
@@ -90,7 +95,10 @@ async def create_construction_valuation(request: Request):
 
                 if len(filtered_tasks) > 0:
                     valuation['percent_complete'] = filtered_tasks[-1]['currentProgress']
-                    valuation['amount_complete'] = valuation['amount'] * (valuation['percent_complete'] / 100)
+                    if valuation['measure'] == '%':
+                        valuation['amount_complete'] = valuation['amount'] * (valuation['percent_complete'] / 100)
+                    else:
+                        valuation['amount_complete'] = valuation['rate'] * (valuation['percent_complete'])
                 else:
                     valuation['percent_complete'] = 0
                     valuation['amount_complete'] = 0
@@ -101,7 +109,15 @@ async def create_construction_valuation(request: Request):
             subcontractors.sort()
 
             for index, subcontractor in enumerate(subcontractors):
+                # if subcontractor
+                # print("subcontractor", subcontractor)
+                # print()
                 for index2, valuation in enumerate(valuations_to_date):
+                    # if valuation['subcontractor'] == "ZZWayne4" and valuation['measure'] != "%":
+                    #     print("valuation", valuation)
+                    #     print()
+                    # print("valuation", valuation)
+                    # print()
                     if valuation['subcontractor'] == subcontractor and valuation['taskCategory'] == "ATCV":
                         filtered_valuations_to_date = [valuation for valuation in valuations_to_date if
                                                        valuation['subcontractor'] == subcontractor]
@@ -113,7 +129,7 @@ async def create_construction_valuation(request: Request):
                             valuation['terms'] = "30 Days"
                             # print("Goodbye", valuation['terms'])
                         valuation['works'] = filtered_valuations_to_date[0]['works']
-                        print("valuation", valuation)
+                        # print("valuation", valuation)
                         # if index % 2 == 0:
                         #     valuation['terms'] = "30 Days"
                         # else:
@@ -215,12 +231,14 @@ async def get_construction_valuations_to_approve(request: Request):
         valuation['_id'] = str(valuation['_id'])
 
         for task in valuation['tasks']:
+
             insert = {}
             insert['development'] = valuation['development']
             insert['block'] = valuation['block']
             insert['subcontractor'] = valuation['subcontractor']
             insert['qty'] = valuation['qty']
             insert['rate'] = valuation['rate']
+            insert['measure'] = valuation.get('measure', "%")
             insert['amount'] = valuation['amount']
             insert['taskCategory'] = valuation.get('taskCategory', "Normal")
             insert['initialProgress'] = task['initialProgress']
@@ -291,44 +309,98 @@ async def get_construction_valuations_to_approve(request: Request):
 
             if len(task_filtered) > 0:
                 if valuation.get('terms', "30 Days") == "30 Days":
+                    # print(valuation['measure'])
+
                     if valuation['vatable'] == "Yes":
 
-                        total_valuation_30_days += ((float(valuation['amount']) * (task_filtered[0]["currentProgress"] -
-                                                                                   task_filtered[0][
-                                                                                       "initialProgress"]) / 100) - (
-                                                            float(retention) / 100 * (float(valuation['amount']) * (
-                                                            (task_filtered[0]["currentProgress"] -
-                                                             task_filtered[0]["initialProgress"]) / 100)))) * 1.15
+                        if valuation['measure'] == '%':
 
-
-                    else:
-                        total_valuation_30_days += (float(valuation['amount']) * (task_filtered[0]["currentProgress"] -
-                                                                                  task_filtered[0][
-                                                                                      "initialProgress"]) / 100) - (
-                                                           float(retention) / 100 * (float(valuation['amount']) * (
-                                                           (task_filtered[0]["currentProgress"] -
-                                                            task_filtered[0]["initialProgress"]) / 100)))
-                else:
-                    if valuation['vatable'] == "Yes":
-                        total_valuation_end_of_month += ((float(valuation['amount']) * (
-                                task_filtered[0]["currentProgress"] -
-                                task_filtered[0][
-                                    "initialProgress"]) / 100) - (
-                                                                 float(retention) / 100 * (
-                                                                 float(valuation['amount']) * (
-                                                                 (task_filtered[0]["currentProgress"] -
-                                                                  task_filtered[0][
-                                                                      "initialProgress"]) / 100)))) * 1.15
-
-
-                    else:
-                        total_valuation_end_of_month += (float(valuation['amount']) * (
-                                task_filtered[0]["currentProgress"] -
-                                task_filtered[0][
-                                    "initialProgress"]) / 100) - (
+                            total_valuation_30_days += ((float(valuation['amount']) * (
+                                        task_filtered[0]["currentProgress"] -
+                                        task_filtered[0][
+                                            "initialProgress"]) / 100) - (
                                                                 float(retention) / 100 * (float(valuation['amount']) * (
                                                                 (task_filtered[0]["currentProgress"] -
-                                                                 task_filtered[0]["initialProgress"]) / 100)))
+                                                                 task_filtered[0]["initialProgress"]) / 100)))) * 1.15
+                            # print("total_valuation_30_days %", total_valuation_30_days)
+
+                        else:
+                            total_valuation_30_days += ((float(valuation['rate']) * (
+                                    task_filtered[0]["currentProgress"] -
+                                    task_filtered[0][
+                                        "initialProgress"])) - (
+                                                                float(retention) / 100 * (float(valuation['rate']) * (
+                                                            (task_filtered[0]["currentProgress"] -
+                                                             task_filtered[0]["initialProgress"]))))) * 1.15
+                            # print("total_valuation_30_days Unit", ((float(valuation['rate']) * (
+                            #         task_filtered[0]["currentProgress"] -
+                            #         task_filtered[0][
+                            #             "initialProgress"])) - (
+                            #                                     float(retention) / 100 * (float(valuation['rate']) * (
+                            #                                 (task_filtered[0]["currentProgress"] -
+                            #                                  task_filtered[0]["initialProgress"]))))) * 1.15)
+
+
+                    else:
+                        if valuation['measure'] == '%':
+                            total_valuation_30_days += (float(valuation['amount']) * (
+                                        task_filtered[0]["currentProgress"] -
+                                        task_filtered[0][
+                                            "initialProgress"]) / 100) - (
+                                                               float(retention) / 100 * (float(valuation['amount']) * (
+                                                               (task_filtered[0]["currentProgress"] -
+                                                                task_filtered[0]["initialProgress"]) / 100)))
+                        else:
+                            total_valuation_30_days += (float(valuation['rate']) * (
+                                    task_filtered[0]["currentProgress"] -
+                                    task_filtered[0][
+                                        "initialProgress"])) - (
+                                                               float(retention) / 100 * (float(valuation['rate']) * (
+                                                           (task_filtered[0]["currentProgress"] -
+                                                            task_filtered[0]["initialProgress"]))))
+
+                else:
+                    if valuation['vatable'] == "Yes":
+                        if valuation['measure'] == '%':
+                            total_valuation_end_of_month += ((float(valuation['amount']) * (
+                                    task_filtered[0]["currentProgress"] -
+                                    task_filtered[0][
+                                        "initialProgress"]) / 100) - (
+                                                                     float(retention) / 100 * (
+                                                                     float(valuation['amount']) * (
+                                                                     (task_filtered[0]["currentProgress"] -
+                                                                      task_filtered[0][
+                                                                          "initialProgress"]) / 100)))) * 1.15
+                        else:
+                            total_valuation_end_of_month += ((float(valuation['rate']) * (
+                                    task_filtered[0]["currentProgress"] -
+                                    task_filtered[0][
+                                        "initialProgress"])) - (
+                                                                     float(retention) / 100 * (
+                                                                     float(valuation['rate']) * (
+                                                                     (task_filtered[0]["currentProgress"] -
+                                                                      task_filtered[0][
+                                                                          "initialProgress"]))))) * 1.15
+
+
+                    else:
+                        if valuation['measure'] == '%':
+                            total_valuation_end_of_month += (float(valuation['amount']) * (
+                                    task_filtered[0]["currentProgress"] -
+                                    task_filtered[0][
+                                        "initialProgress"]) / 100) - (
+                                                                    float(retention) / 100 * (float(valuation['amount']) * (
+                                                                    (task_filtered[0]["currentProgress"] -
+                                                                     task_filtered[0]["initialProgress"]) / 100)))
+                        else:
+                            total_valuation_end_of_month += (float(valuation['rate']) * (
+                                    task_filtered[0]["currentProgress"] -
+                                    task_filtered[0][
+                                        "initialProgress"])) - (
+                                                                    float(retention) / 100 * (
+                                                                        float(valuation['rate']) * (
+                                                                    (task_filtered[0]["currentProgress"] -
+                                                                     task_filtered[0]["initialProgress"]))))
 
         total_approvals = total_valuation_30_days + total_valuation_end_of_month
         # make all three values currency with two decimal places and symbol R
@@ -359,10 +431,19 @@ async def get_construction_valuations_to_approve(request: Request):
             insert['link'] = filtered_jobs[0]['link']
             value = 0.0
             for job in filtered_jobs:
+                # if job['measure'] != "%":
+                    # print("job", job)
+                    # print()
                 if job['retention'] is None:
                     job['retention'] = 0
-                value += ((float(job['amount']) * (job['currentProgress'] - job['initialProgress']) / 100) * (
-                        1 - job.get('retention', 0.0) / 100)) * job['vatable']
+                if job['measure'] == "%":
+                    value += ((float(job['amount']) * (job['currentProgress'] - job['initialProgress']) / 100) * (
+                            1 - job.get('retention', 0.0) / 100)) * job['vatable']
+                else:
+                    value += ((float(job['rate']) * (job['currentProgress'] - job['initialProgress'])) * (
+                            1 - job.get('retention', 0.0) / 100)) * job['vatable']
+                # print("value", value)
+                # print()
 
                 # if job['vatable'] == "Yes":
                 #     value = value * 1.15
@@ -406,6 +487,7 @@ async def create_payment_advice(request: Request):
         start_time = time.time()
         # get valuations from db where subcontractor = data['subcontractor']
         valuations_to_approve = list(valuations.find({"subcontractor": data['subcontractor']}))
+        # print("valuations_to_approve", valuations_to_approve[0])
         final_valuations_jobs = []
 
         for valuation in valuations_to_approve:
@@ -414,6 +496,15 @@ async def create_payment_advice(request: Request):
             filtered_tasks = [task for task in valuation['tasks'] if
                               task['paymentAdviceNumber'] == data['paymentAdviceNumber']]
             if len(filtered_tasks) > 0:
+                measure = valuation.get('measure', "%")
+                if measure == "%":
+                    calculable_amount = valuation['amount']
+                    initialProgress = filtered_tasks[0]['initialProgress'] / 100
+                    currentProgress = filtered_tasks[0]['currentProgress'] / 100
+                else:
+                    calculable_amount = valuation['rate']
+                    initialProgress = filtered_tasks[0]['initialProgress']
+                    currentProgress = filtered_tasks[0]['currentProgress']
                 insert = {}
                 insert['development'] = valuation['development']
                 insert['block'] = valuation['block']
@@ -421,16 +512,24 @@ async def create_payment_advice(request: Request):
                 insert['qty'] = valuation['qty']
                 insert['rate'] = valuation['rate']
                 insert['amount'] = valuation['amount']
+                insert['calculable_amount'] = calculable_amount
                 insert['works'] = valuation.get('works', "")
                 insert['taskCategory'] = valuation.get('taskCategory', "Normal")
-                insert['initialProgress'] = filtered_tasks[0]['initialProgress']
-                insert['currentProgress'] = filtered_tasks[0]['currentProgress']
+                insert['initialProgress'] = initialProgress
+                insert['currentProgress'] = currentProgress
+                insert['measure'] = valuation.get('measure', "%")
                 insert['is_vatable'] = valuation['vatable']
                 insert['retention'] = valuation.get('retention', 0)
                 insert['approved'] = filtered_tasks[0]['approved']
                 insert['status'] = filtered_tasks[0].get('status', "Pending")
                 insert['paymentAdviceNumber'] = filtered_tasks[0]['paymentAdviceNumber']
                 final_valuations_jobs.append(insert)
+
+        # print("final_valuations_jobs", final_valuations_jobs[0])
+        # print()
+        # filter out records with a measure of "%"
+        final_valuations_jobs_test = [valuation for valuation in final_valuations_jobs if valuation['measure'] != "%"]
+        # print("final_valuations_jobs_test", final_valuations_jobs_test[0])
 
         retention = float(final_valuations_jobs[0].get('retention', 0)) / 100
 
@@ -440,27 +539,44 @@ async def create_payment_advice(request: Request):
             [valuation['amount'] for valuation in final_valuations_jobs if valuation['taskCategory'] != "ATCV"])
         # total_valuation_current is the sum of the amounts multiplied by currentProgress / 100 in the
         # final_valuations_jobs using list comprehension excluding taskCategory == "ATCV"
+        # print("Measure: ",valuation['measure'])
+
+        # if valuation['measure'] == "%":
         total_valuation_current = sum(
-            [(valuation['amount'] * (valuation['currentProgress'] / 100)) for valuation in final_valuations_jobs if
+            [(valuation['calculable_amount'] * valuation['currentProgress']) for valuation in final_valuations_jobs if
              valuation['taskCategory'] != "ATCV"])
         # total_valuation_previous is the sum of the amounts multiplied by initialProgress / 100 in the
         # final_valuations_jobs using list comprehension excluding taskCategory == "ATCV"
         total_valuation_previous = sum(
-            [(valuation['amount'] * (valuation['initialProgress'] / 100)) for valuation in final_valuations_jobs if
+            [(valuation['calculable_amount'] * (valuation['initialProgress'])) for valuation in final_valuations_jobs if
              valuation['taskCategory'] != "ATCV"]) - (
-                                           sum([(valuation['amount'] * (valuation['initialProgress'] / 100)) for
+                                           sum([(valuation['calculable_amount'] * (valuation['initialProgress'])) for
                                                 valuation in final_valuations_jobs if
                                                 valuation['taskCategory'] != "ATCV"]) * retention)
+        # else:
+        #     total_valuation_current = sum(
+        #         [(valuation['rate'] * (valuation['currentProgress'] / 100)) for valuation in final_valuations_jobs if
+        #          valuation['taskCategory'] != "ATCV"])
+        #     print("total_valuation_current", total_valuation_current)
+        #     # total_valuation_previous is the sum of the amounts multiplied by initialProgress / 100 in the
+        #     # final_valuations_jobs using list comprehension excluding taskCategory == "ATCV"
+        #     total_valuation_previous = sum(
+        #         [(valuation['rate'] * (valuation['initialProgress'] / 100)) for valuation in final_valuations_jobs if
+        #          valuation['taskCategory'] != "ATCV"]) - (
+        #                                        sum([(valuation['amount'] * (valuation['initialProgress'] / 100)) for
+        #                                             valuation in final_valuations_jobs if
+        #                                             valuation['taskCategory'] != "ATCV"]) * retention)
 
         # total_atcv_to_date is the sum of the amounts multiplied by currentProgress / 100 in the
         # final_valuations_jobs using list comprehension where taskCategory == "ATCV"
         total_atcv_to_date = sum(
-            [(valuation['amount'] * (valuation['currentProgress'] / 100)) for valuation in final_valuations_jobs if
+            [(valuation['calculable_amount'] * (valuation['currentProgress'])) for valuation in final_valuations_jobs if
              valuation['taskCategory'] == "ATCV"])
         # total_atcv_previous is the sum of the amounts multiplied by initialProgress / 100 in the
         # final_valuations_jobs using list comprehension where taskCategory == "ATCV"
         total_atcv_previous = sum(
-            [(valuation['amount'] * (valuation['initialProgress'] / 100)) for valuation in final_valuations_jobs if
+            [(valuation['calculable_amount'] * (valuation['initialProgress'] / 100)) for valuation in
+             final_valuations_jobs if
              valuation['taskCategory'] == "ATCV"])
 
         total_work_done = total_valuation_current + total_atcv_to_date

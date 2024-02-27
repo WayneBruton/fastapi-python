@@ -14,6 +14,8 @@ from openpyxl.utils import get_column_letter, column_index_from_string
 
 def create_valuations_file(data, subcontractors):
 
+    # print("data",data[0])
+
 
     filename = f"excel_files/Master {data[0]['block']}.xlsx"
     # print("filename",filename)
@@ -42,6 +44,8 @@ def create_valuations_file(data, subcontractors):
         for index, valuation in enumerate(data):
             # if index == 0:
             #     color_terms = valuation['terms']
+            # print("valuation", valuation)
+            # print()
             if valuation['subcontractor'] == subcontractor and valuation.get('taskCategory', 'Normal') != 'ATCV':
                 insert = [valuation['development'], valuation['block'], valuation['unit'], valuation['floorType'],
                           valuation['description'], valuation['unitMeasure'], valuation['qty'], valuation['rate'],
@@ -52,7 +56,12 @@ def create_valuations_file(data, subcontractors):
                     insert.append(item['approved'])
                     current_progress = float(item['currentProgress'] - item['initialProgress'])
                     insert.append(current_progress)
-                    current_valuation = float(valuation['amount']) * (current_progress / 100)
+
+                    if valuation['measure'] == "%":
+                        current_valuation = float(valuation['amount']) * (current_progress / 100)
+                    else:
+                        current_valuation = float(valuation['rate']) * (current_progress)
+
                     insert.append(current_valuation)
                     if valuation['retention'] is None:
                         insert.append(0)
@@ -81,8 +90,12 @@ def create_valuations_file(data, subcontractors):
                     insert.append(item['paymentAdviceNumber'])
                     insert.append(item['approved'])
                     current_progress = float(item['currentProgress'] - item['initialProgress'])
+                    # print("measure", valuation['measure'])
                     insert.append(current_progress)
+                    # if valuation['measure'] == "%":
                     current_valuation = float(valuation['amount']) * (current_progress / 100)
+                    # else:
+                    #     current_valuation = float(valuation['rate']) * (current_progress)
                     insert.append(current_valuation)
                     insert.append(valuation['retention'])
                     # insert.append("")
@@ -531,20 +544,36 @@ def create_valuations_file(data, subcontractors):
             amount_previously_certified = 0
             upcoming_payment = 0
             for contract in subbie_contracts:
+
                 if contract['retention'] is None:
                     contract['retention'] = 0
                 unapproved_tasks = [item for item in contract['tasks'] if item['approved'] == False]
                 if len(unapproved_tasks) > 0:
+                    if contract['measure'] != "%":
+                        print("Contract", unapproved_tasks)
+                    # print("Unapproved Tasks", unapproved_tasks[0])
                     if contract['vatable'] == 'Yes':
+                        if contract['measure'] == "%":
                         # print("Retention", contract['retention'])
-                        upcoming_payment += ((float(contract['amount']) * ((unapproved_tasks[0]['currentProgress'] -
-                                                                            unapproved_tasks[0][
-                                                                                'initialProgress']) / 100))) * (
+                            upcoming_payment += ((float(contract['amount']) * ((unapproved_tasks[0]['currentProgress'] -
+                                                                                unapproved_tasks[0][
+                                                                                    'initialProgress']) / 100))) * (
+                                                            (100 - contract['retention']) / 100) * 1.15
+                        else:
+                            upcoming_payment += ((float(contract['rate']) * ((unapproved_tasks[0]['currentProgress'] -
+                                                                                unapproved_tasks[0][
+                                                                                    'initialProgress'])))) * (
                                                         (100 - contract['retention']) / 100) * 1.15
                     else:
-                        upcoming_payment += (float(contract['amount']) * ((unapproved_tasks[0]['currentProgress'] -
-                                                                           unapproved_tasks[0][
-                                                                               'initialProgress']) / 100)) * (
+                        if contract['measure'] == "%":
+                            upcoming_payment += (float(contract['amount']) * ((unapproved_tasks[0]['currentProgress'] -
+                                                                               unapproved_tasks[0][
+                                                                                   'initialProgress']) / 100)) * (
+                                                            (100 - contract['retention']) / 100)
+                        else:
+                            upcoming_payment += (float(contract['rate']) * ((unapproved_tasks[0]['currentProgress'] -
+                                                                               unapproved_tasks[0][
+                                                                                   'initialProgress']))) * (
                                                         (100 - contract['retention']) / 100)
 
                 if contract['vatable'] == 'Yes':

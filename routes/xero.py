@@ -1,4 +1,5 @@
 import copy
+import csv
 import math
 import os
 from datetime import datetime, timedelta
@@ -2119,7 +2120,7 @@ async def process_profit_and_loss(data: Request):
                 sales_processed_filtered = list(
                     filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
                            sales_processed))
-                if len(sales_processed_filtered) > 0:
+                if len(sales_processed_filtered) > 0 and sales_processed_filtered[0]['opportunity_sales_date'] != None:
                     sale_date = sales_processed_filtered[0]['opportunity_sales_date'].replace('-', '/')
                 else:
                     sale_date = "2099/12/31"
@@ -2176,8 +2177,10 @@ async def process_profit_and_loss(data: Request):
                    sales_processed))
         if len(sales_processed_filtered) > 0:
             # print("sales_processed_filtered", sales_processed_filtered[0])
-
-            sale_date = sales_processed_filtered[0]['opportunity_sales_date'].replace('-', '/')
+            if sales_processed_filtered[0]['opportunity_sales_date'] != None:
+                sale_date = sales_processed_filtered[0]['opportunity_sales_date'].replace('-', '/')
+            else:
+                sale_date = "2024/02/26"
             sale['sale_date'] = datetime.strptime(sale_date, "%Y/%m/%d")
             sale['sold'] = True
 
@@ -3735,3 +3738,85 @@ def update_profit_and_loss_from_cf_file():
         # return {"ERROR": "Please Try again"}
 
 # update_profit_and_loss_from_cf_file()
+
+
+def get_investors_for_interest_for_cashflow():
+    # print("Hello")
+    try:
+        investors = list(db.investors.find())
+
+        investments_to_keep = []
+        final_opportunities = []
+        # final_rates = []
+        # rates = list(db.rates.find())
+        # print(rates)
+        # print()
+
+        print(investors[10]["investments"][0])
+        print()
+        print(investors[10]["trust"][0])
+
+        investors = list(filter(lambda x: len(x['investments']) > 0, investors))
+        for investment in investors:
+            for item in investment['investments']:
+
+                insert = {
+                    "investor_acc_number": investment['investor_acc_number'],
+                    "Category": item['Category'],
+                    "opportunity_code": item['opportunity_code'],
+                    "investment_amount": float(item['investment_amount']),
+                    "deposit_date": item['deposit_date'],
+                    "release_date": item['release_date'],
+                    "end_date": item['end_date'],
+                    "investment_interest_rate": float(item['investment_interest_rate']),
+
+                }
+                investments_to_keep.append(insert)
+
+        investments_to_keep = list(filter(lambda x: x['Category'] != "Southwark", investments_to_keep))
+        investments_to_keep = list(filter(lambda x: x['Category'] != "Goodwood", investments_to_keep))
+        investments_to_keep = sorted(investments_to_keep, key=lambda x: x['opportunity_code'])
+
+
+        opportunities = list(db.opportunities.find())
+        for opp in opportunities:
+            insert = {
+                "Category": opp['Category'],
+                "opportunity_code": opp['opportunity_code'],
+                "opportunity_end_date": opp['opportunity_end_date'],
+                "opportunity_final_transfer_date": opp['opportunity_final_transfer_date'],
+                "opportunity_sold": opp['opportunity_sold'],
+            }
+            final_opportunities.append(insert)
+
+
+
+
+        final_opportunities = list(filter(lambda x: x['Category'] != "Southwark", final_opportunities))
+        final_opportunities = list(filter(lambda x: x['Category'] != "Goodwood", final_opportunities))
+        final_opportunities = sorted(final_opportunities, key=lambda x: x['opportunity_code'])
+
+        # export investment to keep to a csv file
+        # with open('investments_to_keep.csv', 'w', newline='') as file:
+        #     writer = csv.writer(file)
+        #     writer.writerow(["investor_acc_number", "Category", "opportunity_code", "investment_amount", "release_date", "end_date", "investment_interest_rate"])
+        #     for item in investments_to_keep:
+        #         writer.writerow([item['investor_acc_number'], item['Category'], item['opportunity_code'], item['investment_amount'], item['release_date'], item['end_date'], item['investment_interest_rate']])
+        # # export final opportunities to a csv file
+        # with open('final_opportunities.csv', 'w', newline='') as file:
+        #     writer = csv.writer(file)
+        #     writer.writerow(["Category", "opportunity_code", "opportunity_end_date", "opportunity_final_transfer_date", "opportunity_sold"])
+        #     for item in final_opportunities:
+        #         writer.writerow([item['Category'], item['opportunity_code'], item['opportunity_end_date'], item['opportunity_final_transfer_date'], item['opportunity_sold']])
+
+
+    except Exception as e:
+        print(e)
+        return {"ERROR": "Please Try again"}
+    print()
+    print("Data retrieved successfully")
+
+
+
+
+get_investors_for_interest_for_cashflow()

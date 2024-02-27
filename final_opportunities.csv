@@ -1,0 +1,287 @@
+Category,opportunity_code,opportunity_end_date,opportunity_final_transfer_date,opportunity_sold
+Endulini,EA101,2022-10-24,2022-10-24,True
+Endulini,EA102,2022-10-17,2022-10-17,True
+Endulini,EA103,2022-11-04,2022-11-04,True
+Endulini,EA104,2023-02-03,2023-02-03,True
+Endulini,EA105,2022-09-27,2022-09-27,True
+Endulini,EA106,2022-09-26,2022-09-26,True
+Endulini,EA107,2024-06-20,,False
+Endulini,EA108,2022-09-26,2022-09-26,True
+Endulini,EA109,2022-10-11,2022-10-11,True
+Endulini,EA201,2024-07-17,,False
+Endulini,EA202,2023-12-12,2023/12/12,True
+Endulini,EA203,2022-10-04,2022-10-04,True
+Endulini,EA204,2023-12-14,2023/12/14,True
+Endulini,EA205,2024-06-28,,False
+Endulini,EA206,2024-06-28,,False
+Endulini,EA207,2024-06-13,,False
+Endulini,EA208,2022-11-15,2022-11-15,True
+Endulini,EA209,2023-11-29,2023/11/29,True
+Endulini,EA301,2022-10-21,2022-10-21,True
+Endulini,EA302,2024-06-28,,False
+Endulini,EA303,2023-06-02,2023-06-02,True
+Endulini,EA304,2023-12-04,2023/12/04,True
+Endulini,EA305,2024-06-13,,False
+Endulini,EA306,2023-12-15,2023/12/19,True
+Endulini,EA307,2023-06-12,2023-06-12,True
+Endulini,EB101,2023-12-15,2023/12/21,True
+Endulini,EB102,2024-06-28,,False
+Endulini,EB103,2022-09-28,2022-09-28,True
+Endulini,EB201,2024-06-28,,False
+Endulini,EB202,2024-06-28,,False
+Endulini,EB203,2023-12-05,2023/12/05,True
+Endulini,EC101,2022-10-03,2022-10-03,True
+Endulini,EC102,2022-10-07,2022-10-07,True
+Endulini,EC201,2022-10-14,2022-10-14,True
+Endulini,EC202,2023-11-02,2023/11/02,True
+Endulini,EC301,2023-11-29,2023/11/29,True
+Endulini,EC302,2023-11-10,2023/11/10,True
+Endulini,ED101,2022-04-06,2022-04-06,True
+Endulini,ED102,2022-05-06,2022-05-06,True
+Endulini,ED103,2022-08-08,2022-08-08,True
+Endulini,ED201,2022-04-06,2022-04-06,True
+Endulini,ED202,2022-05-20,2022-05-20,True
+Endulini,ED203,2024-04-12,,False
+Endulini,ED301,2022-05-30,2022-05-30,True
+Endulini,ED302,2022-06-20,2022-06-20,True
+Endulini,ED303,2022-05-23,2022-05-23,True
+Endulini,EE101,2022-04-06,2022-04-06,True
+Endulini,EE102,2022-04-06,2022-04-06,True
+Endulini,EE103,2022-05-06,2022-05-06,True
+Endulini,EE201,2022-05-06,2022-05-06,True
+Endulini,EE202,2022-05-09,2022-05-09,True
+Endulini,EE203,2022-05-20,2022-05-20,True
+Endulini,EE301,2022-05-04,2022-05-04,True
+Endulini,EE302,2022-05-19,2022-05-19,True
+Endulini,EE303,2022-05-09,2022-05-09,True
+Endulini,EF101,2022-04-06,2022-04-06,True
+Endulini,EF102,2022-04-06,2022-04-06,True
+Endulini,EF103,2022-05-30,2022-05-30,True
+Endulini,EF201,2022-05-09,2022-05-09,True
+Endulini,EF202,2022-05-05,2022-05-05,True
+Endulini,EF203,2022-04-06,2022-04-06,True
+Heron Fields,HFA101,2022-11-22,2022/11/22,True
+Heron Fields,HFA102,2022-11-22,2022-11-22,True
+Heron Fields,HFA103,2022-11-22,2022-11-22,True
+Heron Fields,HFA104,2022-11-22,2022-11-22,True
+Heron Fields,HFA105,2022-11-22,2022-11-22,True
+Heron Fields,HFA106,2022-11-22,2022-11-22,True
+Heron Fields,HFA201,2022-11-22,2022-11-22,True
+Heron Fields,HFA202,2023-01-17,2023-01-17,True
+Heron Fields,HFA203,2022-12-02,2022-12-02,True
+Heron Fields,HFA204,2022-11-22,2022-11-22,True
+Heron Fields,HFA205,2023-01-17,2023-01-17,True
+Heron Fields,HFA206,2022-11-22,2022-11-22,True
+Heron Fields,HFA301,2022-12-06,2022-12-06,True
+Heron Fields,HFA302,2022-11-22,2022-11-22,True
+Heron Fields,HFA303,2022-12-01,2022-12-01,True
+Heron Fields,HFA304,2023-05-10,2023/05/10,True
+Heron Fields,HFA305,2023-01-16,2023-01-16,True
+Heron Fields,HFA306,2022-12-06,2022-12-06,True
+Heron Fields,HFB101,2022-12-14,2022-12-14,True
+Heron Fields,HFB102,2022-12-01,2022-12-01,True
+Heron Fields,HFB103,2022-11-22,2022-11-22,True
+Heron Fields,HFB104,2022-12-13,2022-12-13,True
+Heron Fields,HFB105,2023-03-07,2023-03-07,True
+Heron Fields,HFB106,2023-01-30,2023-01-30,True
+Heron Fields,HFB107,2023-04-11,2023-04-11,True
+Heron Fields,HFB108,2023-02-27,2023-02-27,True
+Heron Fields,HFB109,2023-03-14,2023-03-14,True
+Heron Fields,HFB110,2023-04-03,2023-04-03,True
+Heron Fields,HFB111,2023-04-11,2023-04-11,True
+Heron Fields,HFB201,2023-01-10,2023-01-10,True
+Heron Fields,HFB202,2023-03-22,2023-03-22,True
+Heron Fields,HFB203,2023-01-10,2023-01-10,True
+Heron Fields,HFB204,2023-03-22,2023-03-22,True
+Heron Fields,HFB205,2023-02-17,2023-02-17,True
+Heron Fields,HFB206,2024-06-12,,False
+Heron Fields,HFB207,2024-06-12,,False
+Heron Fields,HFB208,2023-03-17,2023-03-17,True
+Heron Fields,HFB209,2024-06-12,,True
+Heron Fields,HFB210,2024-06-12,,False
+Heron Fields,HFB211,2024-07-15,,False
+Heron Fields,HFB212,2024-07-15,,False
+Heron Fields,HFB213,2024-07-15,,False
+Heron Fields,HFB214,2023-07-21,2023-07-21,True
+Heron Fields,HFB215,2024-07-15,,False
+Heron Fields,HFB301,2023-01-30,2023-01-30,True
+Heron Fields,HFB302,2023-01-26,2023-01-26,True
+Heron Fields,HFB303,2023-01-16,2023-01-16,True
+Heron Fields,HFB304,2023-04-11,2023-04-11,True
+Heron Fields,HFB305,2023-03-22,2023-03-22,True
+Heron Fields,HFB306,2023-05-15,2023-05-15,True
+Heron Fields,HFB307,2023-05-08,2023-05-08,True
+Heron Fields,HFB308,2023-04-11,2023-04-11,True
+Heron Fields,HFB309,2023-06-09,2023-06-09,True
+Heron Fields,HFB310,2023-03-29,2023-03-29,True
+Heron Fields,HFB311,2023-04-19,2023-04-19,True
+Heron Fields,HFB312,2023-04-11,2023-04-11,True
+Heron Fields,HFB313,2023-05-05,2023-05-05,True
+Heron Fields,HFB314,2023-04-11,2023-04-11,True
+Heron Fields,HFB315,2023-10-05,2023/10/05,True
+Heron View,HVC101,2023-08-16,2023/08/16,True
+Heron View,HVC102,2023-08-16,2023-08-16,True
+Heron View,HVC103,2023-09-05,2023-09-05,True
+Heron View,HVC104,2023-08-29,2023-08-29,True
+Heron View,HVC105,2023-09-06,2023-09-06,True
+Heron View,HVC106,2023-09-01,2023-09-01,True
+Heron View,HVC201,2023-09-08,2023/09/08,True
+Heron View,HVC202,2024-06-12,,False
+Heron View,HVC203,2023-08-16,2023-08-16,True
+Heron View,HVC204,2024-06-12,,False
+Heron View,HVC205,2024-04-12,,True
+Heron View,HVC206,2024-04-12,,True
+Heron View,HVC301,2023-08-16,2023-08-16,True
+Heron View,HVC302,2024-07-05,,False
+Heron View,HVC303,2023-09-08,2023-09-08,True
+Heron View,HVC304,2024-07-25,,False
+Heron View,HVC305,2024-08-08,,False
+Heron View,HVC306,2024-05-29,,False
+Heron View,HVD101,2024-01-17,2024/01/17,True
+Heron View,HVD102,2024-02-19,,True
+Heron View,HVD103,2024-02-01,2024/02/01,True
+Heron View,HVD104,2024-02-14,2024/02/14,True
+Heron View,HVD201,2024-02-05,2024/02/05,True
+Heron View,HVD202,2024-05-30,,False
+Heron View,HVD203,2024-04-02,,True
+Heron View,HVD204,2024-02-08,2024/02/08,True
+Heron View,HVD301,2024-02-19,,True
+Heron View,HVD302,2024-07-05,,False
+Heron View,HVD303,2024-06-13,,False
+Heron View,HVD304,2024-07-03,,False
+Heron View,HVE101,2024-09-18,,False
+Heron View,HVE102,2024-09-18,,False
+Heron View,HVE103,2024-09-18,,False
+Heron View,HVE104,2024-09-18,,False
+Heron View,HVE201,2024-09-18,,False
+Heron View,HVE202,2024-09-18,,False
+Heron View,HVE203,2024-09-18,,False
+Heron View,HVE204,2024-09-18,,False
+Heron View,HVE301,2024-09-18,,False
+Heron View,HVE302,2024-09-18,,False
+Heron View,HVE303,2024-09-18,,False
+Heron View,HVE304,2024-09-18,,False
+Heron View,HVF101,2024-07-29,,False
+Heron View,HVF102,2024-07-29,,False
+Heron View,HVF103,2024-07-29,,False
+Heron View,HVF104,2024-07-29,,False
+Heron View,HVF201,2024-07-29,,False
+Heron View,HVF202,2024-07-29,,False
+Heron View,HVF203,2024-07-29,,False
+Heron View,HVF204,2024-07-29,,False
+Heron View,HVG101,2024-08-02,,False
+Heron View,HVG102,2024-08-02,,False
+Heron View,HVG103,2024-08-02,,False
+Heron View,HVG104,2024-08-02,,False
+Heron View,HVG201,2024-08-02,,False
+Heron View,HVG202,2024-08-02,,False
+Heron View,HVG203,2024-08-02,,False
+Heron View,HVG204,2024-08-02,,False
+Heron View,HVG301,2024-08-02,,False
+Heron View,HVG302,2024-08-02,,False
+Heron View,HVG303,2024-08-02,,False
+Heron View,HVG304,2024-08-02,,False
+Heron View,HVH101,2024-07-03,,True
+Heron View,HVH102,2024-07-03,,True
+Heron View,HVH103,2024-07-03,,True
+Heron View,HVH104,2024-07-03,,True
+Heron View,HVH201,2024-07-03,,True
+Heron View,HVH202,2024-07-03,,True
+Heron View,HVH203,2024-07-03,,True
+Heron View,HVH204,2024-07-03,,True
+Heron View,HVI101,2024-07-04,,False
+Heron View,HVI102,2024-07-04,,False
+Heron View,HVI103,2024-07-04,,False
+Heron View,HVI104,2024-07-04,,False
+Heron View,HVI201,2024-07-04,,False
+Heron View,HVI202,2024-07-04,,False
+Heron View,HVI203,2024-07-04,,False
+Heron View,HVI204,2024-07-04,,False
+Heron View,HVJ101,2024-12-05,,True
+Heron View,HVJ102,2024-12-05,,False
+Heron View,HVJ103,2024-12-05,,False
+Heron View,HVJ201,2024-12-05,,False
+Heron View,HVJ202,2024-12-05,,False
+Heron View,HVJ203,2024-12-05,,False
+Heron View,HVJ301,2024-12-05,,False
+Heron View,HVJ302,2024-12-05,,False
+Heron View,HVJ303,2024-12-05,,False
+Heron View,HVJ401,2024-12-05,,False
+Heron View,HVJ402,2024-12-05,,False
+Heron View,HVJ403,2024-12-05,,False
+Heron View,HVK101,2024-07-23,,False
+Heron View,HVK102,2024-07-23,,False
+Heron View,HVK103,2024-07-23,,False
+Heron View,HVK104,2024-07-23,,False
+Heron View,HVK105,2024-07-23,,False
+Heron View,HVK106,2024-07-23,,False
+Heron View,HVK201,2024-07-23,,False
+Heron View,HVK202,2024-07-23,,False
+Heron View,HVK203,2024-07-23,,False
+Heron View,HVK204,2024-07-23,,False
+Heron View,HVK205,2024-07-23,,False
+Heron View,HVK206,2024-07-23,,False
+Heron View,HVK301,2024-07-23,,False
+Heron View,HVK302,2024-07-23,,False
+Heron View,HVK303,2024-07-23,,False
+Heron View,HVK304,2024-07-23,,False
+Heron View,HVK305,2024-07-23,,False
+Heron View,HVK306,2024-07-23,,False
+Heron View,HVK401,2024-07-23,,False
+Heron View,HVK402,2024-07-23,,False
+Heron View,HVK403,2024-07-23,,False
+Heron View,HVK404,2024-07-23,,False
+Heron View,HVK405,2024-07-23,,False
+Heron View,HVK406,2024-07-23,,False
+Heron View,HVL101,2024-07-12,,False
+Heron View,HVL102,2024-07-12,,False
+Heron View,HVL103,2024-07-12,,False
+Heron View,HVL104,2024-07-12,,False
+Heron View,HVL201,2024-07-12,,False
+Heron View,HVL202,2024-07-12,,False
+Heron View,HVL203,2024-07-12,,False
+Heron View,HVL204,2024-07-12,,False
+Heron View,HVM101,2024-05-24,,False
+Heron View,HVM102,2024-05-24,,False
+Heron View,HVM103,2024-05-24,,False
+Heron View,HVM104,2024-05-24,,False
+Heron View,HVM201,2024-05-24,,False
+Heron View,HVM202,2024-05-24,,False
+Heron View,HVM203,2024-05-24,,False
+Heron View,HVM204,2024-05-24,,False
+Heron View,HVN101,2024-01-19,2024/01/19,True
+Heron View,HVN102,2024-10-31,,False
+Heron View,HVN103,2024-01-17,2024/01/17,True
+Heron View,HVN104,2024-04-17,,True
+Heron View,HVN201,2024-01-17,2024/01/17,True
+Heron View,HVN202,2024-02-05,2024/02/05,True
+Heron View,HVN203,2024-02-14,2024/02/14,True
+Heron View,HVN204,2024-01-23,2024/01/23,True
+Heron View,HVN301,2024-06-06,,True
+Heron View,HVN302,2024-06-28,,False
+Heron View,HVN303,2024-07-11,,False
+Heron View,HVN304,2024-07-04,,False
+Heron View,HVO101,2024-10-31,,True
+Heron View,HVO102,2024-10-31,,False
+Heron View,HVO103,2024-10-31,,False
+Heron View,HVO104,2024-10-31,,False
+Heron View,HVO105,2024-10-31,,True
+Heron View,HVO201,2024-10-31,,False
+Heron View,HVO202,2024-10-31,,False
+Heron View,HVO203,2024-10-31,,False
+Heron View,HVO204,2024-10-31,,False
+Heron View,HVO205,2024-10-31,,False
+Heron View,HVO301,2024-10-31,,False
+Heron View,HVO302,2024-10-31,,False
+Heron View,HVO303,2024-10-31,,False
+Heron View,HVO304,2024-10-31,,False
+Heron View,HVO305,2024-10-31,,False
+Heron View,HVP101,2023-09-08,2023-09-08,True
+Heron View,HVP102,2023-09-08,2023-09-08,True
+Heron View,HVP103,2023-09-08,2023-09-08,True
+Heron View,HVP201,2024-05-29,,False
+Heron View,HVP202,2023-10-02,2023/09/22,True
+Heron View,HVP203,2024-06-27,,False
+Heron View,HVP301,2023-11-17,2023/11/17,True
+Heron View,HVP302,2023-12-11,2023/12/11,True
+Heron View,HVP303,2024-06-27,,False
