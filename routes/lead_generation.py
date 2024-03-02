@@ -1383,7 +1383,7 @@ def check_emails_p24():
                     elif "Campaign Name" in line:
                         development = line.split("[")[-1].strip()
                         development = development.split("]")[0].strip()
-                        # print("development", development)
+                        message += line + "\n"
                     else:
                         message += line + "\n"
 
@@ -1395,7 +1395,7 @@ def check_emails_p24():
                     "email": email_address_in_mail,
                     "message": message,
                     "development": development,
-                    "origin": "Syte",
+                    "origin": "Meta(FB-IG)",
                     "type": "sales",
                     "submission_date": formatted_date,
                     "contact_time": "ASAP"
