@@ -3819,4 +3819,12 @@ def get_investors_for_interest_for_cashflow():
 
 
 
-get_investors_for_interest_for_cashflow()
+# get_investors_for_interest_for_cashflow()
+
+# def testing():
+#     # get all even numbers under 11
+#     even_numbers = list(filter(lambda x: x % 2 == 0, range(11)))
+#
+#     print(even_numbers)
+#
+# testing()

@@ -1337,6 +1337,73 @@ def check_emails_p24():
                 #
                 final_data.append(data)
 
+
+        # I AM HERE
+
+        # if sender == "leads@syte.co.za" and subject == "Inquiry from https://opportunityprop.co.za/":
+        if sender == "leads@syte.co.za":
+
+            enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
+                = "", "", "", "", "", "", ""
+
+            original_date_string = msg["Date"]
+
+            # Convert to datetime object
+            original_date = datetime.strptime(original_date_string, "%a, %d %b %Y %H:%M:%S %z")
+
+            # Format the date as "yyyy-mm-dd h:mm:ss"
+            formatted_date = original_date.strftime("%Y-%m-%d %H:%M:%S")
+
+            content_type = msg.get_content_type()
+
+            # print("content_type", content_type)
+
+            body = msg.get_payload(decode=True).decode()
+
+
+            if content_type == "text/plain":
+
+                # print("body", body)
+                message = ""
+                for line in body.split("\n"):
+
+                    # print("line", line)
+                    if "name:" in line:
+                        enquiry_by = line.split("name:")[-1].strip()
+                        # print("enquiry_by", enquiry_by)
+                    elif "Name:" in line:
+                        enquiry_by = line.split("Name:")[-1].strip()
+                        # print("enquiry_by", enquiry_by)
+                    elif "Phone Number:" in line:
+                        contact_number = line.split("Phone Number:")[-1].strip()
+                        # print("contact_number", contact_number)
+                    elif "Email:" in line:
+                        email_address_in_mail = line.split("Email:")[-1].strip()
+                        # print("email_address_in_mail", email_address_in_mail)
+                    elif "Campaign Name" in line:
+                        development = line.split("[")[-1].strip()
+                        development = development.split("]")[0].strip()
+                        # print("development", development)
+                    else:
+                        message += line + "\n"
+
+                data = {
+                    "email_id": email_id,
+                    "name": enquiry_by,
+                    "surname": "",
+                    "contact": contact_number,
+                    "email": email_address_in_mail,
+                    "message": message,
+                    "development": development,
+                    "origin": "Syte",
+                    "type": "sales",
+                    "submission_date": formatted_date,
+                    "contact_time": "ASAP"
+                }
+                #
+                # print("data", data)
+                # #
+                final_data.append(data)
     # Logout from the email account
     mail.logout()
 

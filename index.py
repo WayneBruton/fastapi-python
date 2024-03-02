@@ -12,6 +12,7 @@ from routes.rentals import rentals
 from routes.construction import construction
 from routes.xero import xero
 from routes.lead_generation import leads
+from routes.cashflow_routes import cashflow
 
 if not os.path.isdir("sales_documents"):
     os.makedirs("sales_documents")
@@ -57,4 +58,5 @@ app.include_router(rentals)
 app.include_router(construction)
 app.include_router(xero)
 app.include_router(leads)
+app.include_router(cashflow)
 
