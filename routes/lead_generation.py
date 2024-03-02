@@ -1383,7 +1383,7 @@ def check_emails_p24():
                     elif "Campaign Name" in line:
                         development = line.split("[")[-1].strip()
                         development = development.split("]")[0].strip()
-                        message += line + "\n"
+                        # message += line + "\n"
                     else:
                         message += line + "\n"
 
