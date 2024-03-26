@@ -996,7 +996,7 @@ async def get_bank_payments(data: Request):
                     # try:
                     if type(payment) == dict:
                         insert = {
-                            "PaymentID": payment.get('PaymentID',"None"),
+                            "PaymentID": payment.get('PaymentID', "None"),
                             "Date": payment['Date'],
                             "BankAmount": payment['BankAmount'],
                             "Company": tenant['tenantName'],
@@ -1116,7 +1116,6 @@ async def get_bank_payments(data: Request):
     # return {"Success": True, "length": len(bank_transactions), "BankTransactions": bank_transactions}
 
 
-
 @xero.post("/process_profit_and_loss")
 async def process_profit_and_loss(data: Request):
     global count_received, count_received4, count_received3, count_received2, count_received1, count_exited4, \
@@ -1171,8 +1170,7 @@ async def process_profit_and_loss(data: Request):
     #     # make all the values in item['Amount'] list equal 0
     #     item['Amount'] = [0.00] * 12
 
-
-# Was 12
+    # Was 12
     for i in range(0, 12):
         for data in cpc_data_fields.base_data:
             data["Amount"].append(0.00)
@@ -1191,7 +1189,7 @@ async def process_profit_and_loss(data: Request):
     # print("month", month)
 
     # try:
-        # remove cashflow_p&l_files/cashflow_hf_hv.xlsx if it exists
+    # remove cashflow_p&l_files/cashflow_hf_hv.xlsx if it exists
     if os.path.exists("cashflow_p&l_files/cashflow_hf_hv.xlsx"):
         os.remove("cashflow_p&l_files/cashflow_hf_hv.xlsx")
 
@@ -3638,28 +3636,28 @@ def update_profit_and_loss_from_cf_file():
         {"Account": "COS - Commission HV Units", "Category": "COS", "Development": "Heron View",
          "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 76082.6086956522},
 
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "Feb-24", "Actual": 0,"Forecast": 5707656.42066916},
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "Mar-24", "Actual": 0,"Forecast": 10095497.4878337},
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "Apr-24","Actual": 0, "Forecast": 6644697.30778797},
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "May-24","Actual": 0, "Forecast": 9067916.29306447},
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "Jun-24","Actual": 0, "Forecast": 7381385.27235665},
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "Jul-24","Actual": 0, "Forecast": 3648699.27027617},
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0,"Forecast": 1000594.94489614},
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "Sep-24","Actual": 0, "Forecast": 512305.573497741},
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "Oct-24","Actual": 0, "Forecast": 754779.014486066},
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "Nov-24","Actual": 0, "Forecast": 0},
-        {"Account": "COS - Heron View - Construction","Category": "COS", "Development": "Heron View",
-         "Applicable_dev": "Heron View", "Month": "Dec-24","Actual": 0, "Forecast": 0},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Feb-24", "Actual": 0, "Forecast": 5707656.42066916},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Mar-24", "Actual": 0, "Forecast": 10095497.4878337},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Apr-24", "Actual": 0, "Forecast": 6644697.30778797},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "May-24", "Actual": 0, "Forecast": 9067916.29306447},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jun-24", "Actual": 0, "Forecast": 7381385.27235665},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Jul-24", "Actual": 0, "Forecast": 3648699.27027617},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Aug-24", "Actual": 0, "Forecast": 1000594.94489614},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Sep-24", "Actual": 0, "Forecast": 512305.573497741},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Oct-24", "Actual": 0, "Forecast": 754779.014486066},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Nov-24", "Actual": 0, "Forecast": 0},
+        {"Account": "COS - Heron View - Construction", "Category": "COS", "Development": "Heron View",
+         "Applicable_dev": "Heron View", "Month": "Dec-24", "Actual": 0, "Forecast": 0},
     ]
     try:
         current = list(db.profit_and_loss.find())
@@ -3678,9 +3676,6 @@ def update_profit_and_loss_from_cf_file():
         #         print("Data updated successfully")
         #     except Exception as e:
         #         print(e)
-
-
-
 
         updated_p_and_l = []
         for item in input_p_and_l:
@@ -3701,7 +3696,10 @@ def update_profit_and_loss_from_cf_file():
 
         for item in updated_p_and_l:
             # filter input_p_and_l where Account, Category, Development, Applicable_dev and Month are equal to item['Account'], item['Category'], item['Development'], item['Applicable_dev'] and item['Month'] respectively
-            filtered_input_p_and_l = list(filter(lambda x: x['Account'] == item['Account'] and x['Category'] == item['Category'] and x['Development'] == item['Development'] and x['Applicable_dev'] == item['Applicable_dev'] and x['Month'] == item['Month'], input_p_and_l))
+            filtered_input_p_and_l = list(filter(
+                lambda x: x['Account'] == item['Account'] and x['Category'] == item['Category'] and x['Development'] ==
+                          item['Development'] and x['Applicable_dev'] == item['Applicable_dev'] and x['Month'] == item[
+                              'Month'], input_p_and_l))
             # sum the Forecast of the filtered_input_p_and_l and make item['Forecast'] equal to the sum
             item['Forecast'] = sum([x['Forecast'] for x in filtered_input_p_and_l])
             # round item['Forecast'] to 2 decimal places
@@ -3711,14 +3709,11 @@ def update_profit_and_loss_from_cf_file():
             item['Actual'] = round(item['Actual'], 2)
             # print("Item", item)
 
-
-
-
-
         for item in updated_p_and_l:
             # round item['Forecast'] to 2 decimal places
             item['Forecast'] = round(item['Forecast'], 2)
-            filtered_current = list(filter(lambda x: x['Account'] == item['Account'] and x['Month'] == item['Month'], current))
+            filtered_current = list(
+                filter(lambda x: x['Account'] == item['Account'] and x['Month'] == item['Month'], current))
             if len(filtered_current) == 0:
                 # insert item into the database
                 try:
@@ -3736,6 +3731,7 @@ def update_profit_and_loss_from_cf_file():
     except Exception as e:
         print(e)
         # return {"ERROR": "Please Try again"}
+
 
 # update_profit_and_loss_from_cf_file()
 
@@ -3759,7 +3755,6 @@ def get_investors_for_interest_for_cashflow():
         investors = list(filter(lambda x: len(x['investments']) > 0, investors))
         for investment in investors:
             for item in investment['investments']:
-
                 insert = {
                     "investor_acc_number": investment['investor_acc_number'],
                     "Category": item['Category'],
@@ -3777,7 +3772,6 @@ def get_investors_for_interest_for_cashflow():
         investments_to_keep = list(filter(lambda x: x['Category'] != "Goodwood", investments_to_keep))
         investments_to_keep = sorted(investments_to_keep, key=lambda x: x['opportunity_code'])
 
-
         opportunities = list(db.opportunities.find())
         for opp in opportunities:
             insert = {
@@ -3788,9 +3782,6 @@ def get_investors_for_interest_for_cashflow():
                 "opportunity_sold": opp['opportunity_sold'],
             }
             final_opportunities.append(insert)
-
-
-
 
         final_opportunities = list(filter(lambda x: x['Category'] != "Southwark", final_opportunities))
         final_opportunities = list(filter(lambda x: x['Category'] != "Goodwood", final_opportunities))
@@ -3817,14 +3808,369 @@ def get_investors_for_interest_for_cashflow():
     print("Data retrieved successfully")
 
 
+@xero.post("/get_trial_balances")
+async def get_trial_balances(request: Request):
+    request = await request.json()
+    credentials_string = f"{clientId}:{xerosecret}".encode("utf-8")
+
+    # Encode the combined string in base64
+    encoded_credentials = b64encode(credentials_string).decode("utf-8")
+
+    # get data from xeroCredentials and save to variable credentials
+    credentials = xeroCredentials.find_one({})
+
+    id = str(credentials["_id"])
+    del credentials["_id"]
+
+    access_token = credentials["access_token"]
+    refresh_token = credentials["refresh_token"]
+
+    if isinstance(credentials["refresh_expires"], str):
+        credentials["refresh_expires"] = datetime.strptime(credentials["refresh_expires"], "%Y-%m-%d %H:%M:%S")
+    if credentials["refresh_expires"] > datetime.now():
+
+        url_refresh = "https://identity.xero.com/connect/token"
+
+        # Define the headers
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": f"Basic {encoded_credentials}",  # Replace token with your base64-encoded credentials
+        }
+
+        # Define the form data
+        data = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+        }
+
+        # print(data)
+
+        # Send the POST request
+        response = requests.post(url_refresh, headers=headers, data=data)
+
+        # Check the response
+        if response.status_code == 200:
+            # Request was successful, you can access response data like JSON content
+            response_data = response.json()
+            access_token = response_data.get("access_token")
+            expires_in = response_data.get("expires_in")
+            refresh_token = response_data.get("refresh_token")
+            refresh_expires = datetime.now() + timedelta(days=60)
+            insert = {
+                "access_token": access_token,
+                "expires_in": expires_in,
+                "refresh_token": refresh_token,
+                "refresh_expires": refresh_expires,
+            }
+            # update the document in the database
+            xeroCredentials.update_one({"_id": ObjectId(id)}, {"$set": insert})
+
+            print("SUCCESS")
+
+        else:
+            # Request failed, handle the error
+            print(f"ErrorXX: {response.status_code} - {response.text} - {response.json()}")
+
+    else:
+        print("refresh_expires is in the past")
+
+    tenants1 = list(xeroTenants.find({}))
+    # print("tenants1",tenants1)
+
+    tenant_id = "30b5d5a0-cf38-4bdb-baa1-9dda35b278a2"
+    tenant_id_HF = "9c4ba92b-93b0-4358-9ff8-141aa0718242"
+
+    tenant_id_HV = "4af624e3-6de5-4cc7-9123-36d63d2acbb4"
+
+    # tenants = [
+    #     # tenant_id,
+    #     tenant_id_HF,
+    #     # tenant_id_HV
+    # ]
+
+    tenants = [tenant['tenantId'] for tenant in tenants1]
+
+    data = []
+
+    for index1, tenant in enumerate(tenants):
+
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"https://api.xero.com/api.xro/2.0/Reports/TrialBalance?date={request['date']}",
+                    headers={
+                        "Content-Type": "application/xml",
+                        "Authorization": f"Bearer {access_token}",
+                        "xero-tenant-id": tenant,
+                    },
+                )
+        except httpx.HTTPError as exc:
+            print(f"HTTP Error: {exc}")
+            return {"Success": False, "Error": "HTTP Error"}
+
+        # Check the HTTP status code
+        if response.status_code != 200:
+            return {"Success": False, "Error": "Non-200 Status Code"}
+
+        python_dict = xmltodict.parse(response.text)
+
+        report_title = python_dict['Response']['Reports']['Report']['ReportTitles']['ReportTitle'][1]
+
+        report_date = request['date']
+
+        python_dict = python_dict['Response']['Reports']['Report']['Rows']['Row']
+
+        header = []
+
+        for index, item in enumerate(python_dict):
+            if index == 0:
+                for x in item['Cells']['Cell']:
+                    header.append(x['Value'])
+
+            else:
+                for y in item:
+                    if "Title" in y:
+                        title = item['Title']
+                        # print(title)
+                        for index1, val in enumerate(item['Rows']['Row']):
+
+                            if "Cells" in val:
+                                values = []
+
+                                try:
+
+                                    for index2, items2 in enumerate(val['Cells']['Cell']):
+                                        try:
+                                            values.append(float(items2.get('Value', 0)))
+                                        except ValueError:
+                                            values.append(items2.get('Value', 0))
+                                    insert = {
+                                        "ReportTitle": report_title,
+                                        "ReportDate": report_date,
+                                        "Category": title,
+                                        "Values": values,
+                                        "Header": header
+                                    }
+                                    data.append(insert)
+
+                                except TypeError:
+                                    test = item['Rows']['Row']['Cells']['Cell']
+
+                                    for index3, item3 in enumerate(test):
+                                        try:
+                                            values.append(float(item3.get('Value', 0)))
+                                        except ValueError:
+                                            values.append(item3.get('Value', 0))
+                                        insert = {
+                                            "ReportTitle": report_title,
+                                            "ReportDate": report_date,
+                                            "Category": title,
+                                            "Values": values,
+                                            "Header": header
+                                        }
+                                        data.append(insert)
+
+                                    continue
+
+                                except KeyError:
+                                    print("KeyError", val, index1)
+                                    continue
+
+        final_data = []
+        for item in data:
+            insert = {
+                "ReportTitle": item['ReportTitle'],
+                "ReportDate": item['ReportDate'],
+                "Category": item['Category'],
+            }
+            for index, val in enumerate(item['Header']):
+                if index == 0:
+                    account_details = item['Values'][index].split("(")
+                    account_name = account_details[0].strip()
+                    # print(account_details)
+                    if len(account_details) > 1:
+                        account_code = account_details[1].split(")")[0]
+                        insert["AccountCode"] = account_code
+                        insert["AccountName"] = account_name
+                        # print(account_details)
+
+                    # account_code = account_details[1].split(")")[0]
+                    # insert["AccountCode"] = account_code
+                    # insert["AccountName"] = account_name
+                    # print(account_details)
+                else:
+                    insert[val] = item['Values'][index]
+
+            final_data.append(insert)
+
+    for item in final_data:
+        item['Current'] = item['Debit'] - item['Credit']
+        item['YTD'] = item['YTD Debit'] - item['YTD Credit']
+        item['ReportDate'] = item['ReportDate'].replace("/", "-")
+        del item['Debit']
+        del item['Credit']
+        del item['YTD Debit']
+        del item['YTD Credit']
+
+    print("final_data", len(final_data))
+
+    cashflow_xero_tb = list(db.cashflow_xero_tb.find({"ReportDate": report_date}))
+    for item in cashflow_xero_tb:
+        item["_id"] = str(item["_id"])
+
+    # filter cashflow_xero_tb where "ReportDate" is equal to report_date
+    # cashflow_xero_tb = list(filter(lambda x: x['ReportDate'] == report_date, cashflow_xero_tb))
+
+    print("cashflow_xero_tb:", len(cashflow_xero_tb))
+
+    # remove all duplicate data from final_data
+    final_data = [dict(t) for t in {tuple(d.items()) for d in final_data}]
+
+    print("final_data", len(final_data))
+    # print("final_data",final_data[0])
+
+    report_title_list = []
+    for item in final_data:
+        report_title_list.append(item['ReportTitle'])
+
+    # remove all duplicate data from report_title_list
+    # report_title_list = list(set(report_title_list))
+    #
+    # print(report_title_list)
+    # print(len(report_title_list))
+
+    if len(cashflow_xero_tb) == 0:
+        try:
+            db.cashflow_xero_tb.insert_many(final_data)
+        except Exception as e:
+            print("XXXXXXX", e)
+            return {"ERROR": "Please Try again"}
+    else:
+        for item in final_data:
+            try:
+                filtered_cashflow_xero_tb = list(filter(
+                    lambda z: z['AccountCode'] == item['AccountCode'] and z['ReportDate'] == item['ReportDate'] and z[
+                        'AccountName'] == item['AccountName'] and z['ReportTitle'] == item['ReportTitle'],
+                    cashflow_xero_tb))
+                if len(filtered_cashflow_xero_tb) == 0:
+                    try:
+                        db.cashflow_xero_tb.insert_one(item)
+                        print("Successful Insert")
+                    except Exception as e:
+                        print("Error", e)
+                        continue
+
+                elif len(filtered_cashflow_xero_tb) == 1:
+                    item_to_update = filtered_cashflow_xero_tb[0]
+
+                    if int(item_to_update['Current'] - item['Current'] + item_to_update['YTD'] - item['YTD']) != 0:
+                        # update the Current and YTD in the database where the _id is equal to item_to_update['_id']
+                        # and Current equals item['Current'] and YTD equals item['YTD']. Only update those two fields
+
+                        print("Update Needed")
+                        print("item_to_update CURRENT",
+                              item_to_update['Current'] - item['Current'] + item_to_update['YTD'] - item['YTD'], item,
+                              item_to_update)
+                        print()
+
+                        try:
+                            _id = item_to_update['_id']
+                            del item_to_update['_id']
+                            db.cashflow_xero_tb.update_one({"_id": ObjectId(_id)}, {"$set": item})
+                            print("Update Successful")
+                        except Exception as e:
+                            print("Error", e, "item_to_update", item_to_update, "item", item, "_id", _id)
+                            continue
+
+                else:
+                    print("More than one item found", item_to_update, item)
+
+            except Exception as e:
+                print("Error", e, "item_to_update", item_to_update, "item", item, "_id", _id)
+                return {"ERROR": "Please Try again"}
+
+    # create list called bank_accounts and filter only where "AccountCode" begins with 84
+
+    # bank_accounts = list(filter(lambda x: x['AccountCode'].startswith("84"), final_data))
+    # # filter bank accounts and exclude all where the "AccountCode" begins with 8480
+    # bank_accounts = list(filter(lambda x: not x['AccountCode'].startswith("8480"), bank_accounts))
+    # print("Length Banks", len(bank_accounts))
+    #
+    # for acc in bank_accounts:
+    #     if '_id' in acc:
+    #         del acc['_id']
+    #     # print(acc)
+
+    bank_accounts = list(db.cashflow_xero_tb.find({"AccountCode": {"$regex": "^84"}}, {"_id": 0}))
+    bank_accounts = list(filter(lambda x: not x['AccountCode'].startswith("8480"), bank_accounts))
+    print("Length Banks", len(bank_accounts))
+
+    bank_periods = []
+    for item in bank_accounts:
+        bank_periods.append(item['ReportDate'].replace("/", "-"))
+
+    bank_periods = list(set(bank_periods))
+
+    # print(bank_periods)
+
+    bank_periods = sorted(bank_periods, key=lambda x: datetime.strptime(x, "%Y-%m-%d"))
+
+    bank_summary = []
+
+    for period in bank_periods:
+        bank_accounts_filtered = list(filter(lambda x: x['ReportDate'].replace("/", "-") == period, bank_accounts))
+
+        bank_balances = sum([x['YTD'] for x in bank_accounts_filtered if x['AccountName'] != "Momentum Investors Account RU502229930"])
+        momentum_balances = sum([x['YTD'] for x in bank_accounts_filtered if x['AccountName'] == "Momentum Investors Account RU502229930"])
+        print(bank_balances, momentum_balances, period)
+        bank_balances = f"R {bank_balances:,.2f}"
+        momentum_balances = f"R {momentum_balances:,.2f}"
+        insert = {
+            "Period": period,
+            "BankBalances": bank_balances,
+            "MomentumBalances": momentum_balances
+        }
+        bank_summary.append(insert)
 
 
-# get_investors_for_interest_for_cashflow()
 
-# def testing():
-#     # get all even numbers under 11
-#     even_numbers = list(filter(lambda x: x % 2 == 0, range(11)))
+
+
+    # print(bank_periods)
+
+    sum_current = sum([x['Current'] for x in bank_accounts])
+
+    sum_YTD = sum([x['YTD'] for x in bank_accounts])
+
+    # format the above as currency with a symbol of R
+    sum_current = f"R {sum_current:,.2f}"
+    sum_YTD = f"R {sum_YTD:,.2f}"
+    # sum_YTD_debits = f"R {sum_YTD_debits:,.2f}"
+    # sum_YTD_credits = f"R {sum_YTD_credits:,.2f}"
+
+    print(sum_current, sum_YTD)
+
+    # get all records from cashflow_xero_tb where the AccountCode begins with 84
+
+    # latest_data = list(db.cashflow_xero_tb.find({}))
+    # for item in latest_data:
+    #     item["_id"] = str(item["_id"])
+
+    return {"summary": bank_summary, "final_data": bank_accounts}
+
+# def get_investor_id_numbers():
+#     # get all investors from the database and project investor_acc_number, investor_id_number, investor_name and investor_surname, investment_name, investor_email, investor_mobile and investor_landline
+#     investors = list(db.investors.find({}, {"investor_acc_number": 1, "investor_id_number": 1, "investor_name": 1, "investor_surname": 1, "investment_name": 1, "investor_email": 1, "investor_mobile": 1, "investor_landline": 1,"investor_organisation":1, "_id": 0}))
+#     print(investors[0])
 #
-#     print(even_numbers)
+#     # export the investors to an excel file and ensure investor_id_number is a string
 #
-# testing()
+#     with open('investors.csv', 'w', newline='') as file:
+#         writer = csv.writer(file)
+#         writer.writerow(["investor_acc_number", "investor_id_number", "investor_name", "investor_surname", "investment_name", "investor_email", "investor_mobile", "investor_landline", "investor_organisation"])
+#         for item in investors:
+#             writer.writerow([item['investor_acc_number'],"'" + item['investor_id_number'], item['investor_name'], item['investor_surname'], item.get('investment_name',""), item['investor_email'], item['investor_mobile'], item['investor_landline'], item.get('investor_organisation',"")])
+#
+#     return {"Success": True}
+#
+# get_investor_id_numbers()

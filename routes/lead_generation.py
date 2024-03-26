@@ -360,12 +360,20 @@ async def opportunity_contact_form(background_tasks: BackgroundTasks, data: Requ
 #     return {"message": "success"}
 #
 
-@leads.get('/get_sales_leads')
-async def get_sales_leads():
+@leads.post('/get_sales_leads')
+async def get_sales_leads(request: Request):
+    request = await request.json()
+
+    print("request", request)
+    if request["user"] != None:
+        leads = list(db.leads_sales.find({"sales_person_id": request["sales_person_id"]}))
+    else:
+        leads = list(db.leads_sales.find())
     # opportunities =list(db.opportunities.find())
     # get all opportunities and project only 'opportunity_code' and 'Category'
     opportunities = list(db.opportunities.find({}, {"opportunity_code": 1, "Category": 1, "_id": 0}))
-    leads = list(db.leads_sales.find())
+
+    # leads = list(db.leads_sales.find())
     default_values = {
         'action_taken': "",
         'action_taken_date_time': "",
