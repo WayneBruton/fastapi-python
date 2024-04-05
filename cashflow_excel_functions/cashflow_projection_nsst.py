@@ -1,4 +1,5 @@
 import copy
+import json
 import os
 from calendar import calendar
 
@@ -7,9 +8,8 @@ from openpyxl import Workbook, formatting
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
 import re
-from openpyxl.formula import Tokenizer
-from openpyxl.formatting.rule import ColorScaleRule
-from openpyxl.formatting.rule import CellIsRule
+# from openpyxl.worksheet.formula import ArrayFormula
+
 from datetime import datetime
 
 
@@ -90,7 +90,8 @@ def create_sheet(wb, title, data, column_widths, number_format_ranges):
     return ws
 
 
-def cashflow_projections(invest, construction, sales, operational_costs, xero,opportunities, report_date):
+def cashflow_projections(invest, construction, sales, operational_costs, xero, opportunities, investor_exit, momentum,
+                         report_date):
     # cashflow_p&l_files/cashflow_projection.xlsx exists, then delete it
     if os.path.exists("cashflow_p&l_files/cashflow_projection.xlsx"):
         os.remove("cashflow_p&l_files/cashflow_projection.xlsx")
@@ -111,10 +112,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
         # Add a column called "Interest to Date" to the investors sheet
 
-
-
         last_row = ws.max_row
-        columns = ['M', 'Q', 'R', 'S','T']
+        columns = ['M', 'Q', 'R', 'S', 'T']
         # in row 2 add a subtotal for each column
         for col in columns:
             ws[f"{col}2"] = f"=SUBTOTAL(9,{col}5:{col}{last_row})"
@@ -141,9 +140,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws1['E3'] = f"=SUBTOTAL(9,E5:E{ws1.max_row})"
         ws1['E3'].number_format = '#,##0.00'
         ws1['H3'] = f"=SUBTOTAL(9,H5:H{ws1.max_row})"
-
-
-
 
         ws2 = wb.create_sheet('Construction')
         # make tab color red
@@ -391,18 +387,18 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws6.sheet_properties.tabColor = "FF204E"
 
         ws6['A1'] = "Cashflow Projection"
-        ws6["A1"].font = Font(bold=True, color="31304D", size=14)
-
-
+        ws6["A1"].font = Font(bold=True, color="0C0C0C", size=28)
+        # Merge A1 to B1
+        ws6.merge_cells('A1:B1')
 
         ws6['A2'] = 'Date'
-        ws6["A2"].font = Font(bold=True, color="31304D", size=14)
+        ws6["A2"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6['B2'] = report_date.strftime('%d-%b-%Y')
-        ws6["B2"].font = Font(bold=True, color="31304D", size=14)
+        ws6["B2"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6['A3'] = 'NSST Cashflow Projection'
-        ws6["A3"].font = Font(bold=True, color="FFFFFF", size=24)
+        ws6["A3"].font = Font(bold=True, color="0C0C0C", size=26)
         # fill with olive green
-        ws6['A3'].fill = PatternFill(start_color="7F9F80", end_color="FFFFFF", fill_type="solid")
+        ws6['A3'].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
         ws6['A3'].border = Border(left=Side(style='medium'),
                                   right=Side(style='medium'),
                                   top=Side(style='medium'),
@@ -432,14 +428,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws6.append(row)
 
         ws6['A6'] = 'SALES'
-        ws6['A6'].font = Font(bold=True, color="31304D", size=14)
+        ws6['A6'].font = Font(bold=True, color="0C0C0C", size=22)
         ws6['A5'] = 'PROJECTION'
         ws6['B5'] = ''
         ws6['C5'] = ''
         ws6['D5'] = 'TOTAL'
 
-        ws6['A5'].font = Font(bold=True, color="31304D", size=14)
-        ws6['D5'].font = Font(bold=True, color="31304D", size=14)
+        ws6['A5'].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6['D5'].font = Font(bold=True, color="0C0C0C", size=22)
 
         toggles_start = ws6.max_row + 1
         row = []
@@ -462,7 +458,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         # print("report_date.year", report_date.year)
         # print("report_date.month", report_date.month)
 
-
         # month_headings = ['F', 'H', 'J', 'L', 'N', 'P', 'R', 'T', 'V', 'X', 'Z', 'AB']
         month_headings = ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
                           'X', 'Y', 'Z', 'AA', 'AB', 'AC']
@@ -475,14 +470,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws6['A3'].alignment = Alignment(horizontal='center', vertical='center')
 
         ws6[f"{month_headings[len(month_headings) - 1]}1"] = 'C.3.e'
-        ws6[f"{month_headings[len(month_headings) - 1]}1"].font = Font(bold=True, size=22)
+        ws6[f"{month_headings[len(month_headings) - 1]}1"].font = Font(bold=True, size=28)
         # center the above
         ws6[f"{month_headings[len(month_headings) - 1]}1"].alignment = Alignment(horizontal='center', vertical='center')
         # put a border around the above cell
         ws6[f"{month_headings[len(month_headings) - 1]}1"].border = Border(left=Side(style='medium'),
-                                   right=Side(style='medium'),
-                                   top=Side(style='medium'),
-                                   bottom=Side(style='medium'))
+                                                                           right=Side(style='medium'),
+                                                                           top=Side(style='medium'),
+                                                                           bottom=Side(style='medium'))
 
         # print("month_headings", len(month_headings))
 
@@ -492,10 +487,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws6.append(['VAT ON SALES', "", 1])
 
         vat_row = ws6.max_row
-        ws6[f"A{vat_row}"].font = Font(bold=True, color="31304D", size=14)
-        ws6[f"C{vat_row}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"A{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{vat_row}"].number_format = '#,##0'
-        ws6[f"D{vat_row}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"D{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{vat_row}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
         ws6[f"D{vat_row}"].border = ws6[f"A{vat_row}"].border + Border(left=Side(style='medium'),
                                                                        right=Side(style='medium'),
@@ -510,9 +505,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         print("profit_on_sale", profit_on_sale)
         ws6.append([])
         ws6.append(["Costs To Complete"])
-        ws6.append(["Construction"])
-        ws6['A31'].font = Font(bold=True, color="31304D", size=14)
-        ws6['A32'].font = Font(bold=True, color="31304D", size=14)
+        ws6.append(["UNITS"])
+        ws6['A31'].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6['A32'].font = Font(bold=True, color="FFFFFF", size=22)
         block_costs_start = ws6.max_row + 1
         # create list called construction_info from sale_info filtered to only include Development = "Heron View"
         # print(sale_info)
@@ -528,38 +523,41 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
             # print(filtered_construction)
             if len(filtered_construction) > 0:
                 value = filtered_construction[0]['Complete Build']
-                ws6.append(["", f"{block}", value])
+                ws6.append([f"{block}", value])
             else:
-                ws6.append(["", f"{block}", 1])
+                ws6.append([f"{block}", 1])
         block_costs_end = ws6.max_row
         print("block_costs_start", block_costs_start)
         print("block_costs_end", block_costs_end)
 
         ws6.append([])
+        ws6.append([])
+        ws6.append([])
+
         ws6.append(["VAT ON CONSTRUCTION", "", 1])
         vat_construction = ws6.max_row
-        ws6[f"A{vat_construction}"].font = Font(bold=True, color="31304D", size=14)
-        ws6[f"C{vat_construction}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"A{vat_construction}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{vat_construction}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         ws6.append([])
         ws6.append(["OPERATING EXPENSES", "", 1])
         operating_expenses = ws6.max_row
-        ws6[f"A{operating_expenses}"].font = Font(bold=True, color="31304D", size=14)
-        ws6[f"C{operating_expenses}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"A{operating_expenses}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{operating_expenses}"].font = Font(bold=True, color="0C0C0C", size=22)
         # format the above cell as a percentage
         ws6[f"C{operating_expenses}"].number_format = '0%'
         ws6.append([])
         ws6.append(["MONTHLY"])
         monthly = ws6.max_row
-        ws6[f"A{monthly}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"A{monthly}"].font = Font(bold=True, color="0C0C0C", size=22)
         # ws6[f"C{monthly}"].font = Font(bold=True, color="31304D", size=14)
 
         ws6.append([])
         ws6.append(["RUNNING BALANCE"])
         running = ws6.max_row
-        ws6[f"A{running}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"A{running}"].font = Font(bold=True, color="0C0C0C", size=22)
 
-        ws6[f"D{profit_on_sale}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"D{profit_on_sale}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{profit_on_sale}"].number_format = '#,##0'
 
         ws6[f"D{profit_on_sale}"].border = Border(left=Side(style='medium'),
@@ -569,7 +567,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
         ws6[f"D{vat_construction}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
         ws6[f"D{vat_construction}"].number_format = '#,##0'
-        ws6[f"D{vat_construction}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"D{vat_construction}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{vat_construction}"].border = ws6[f"A{vat_construction}"].border + Border(left=Side(style='medium'),
                                                                                          right=Side(style='medium'),
                                                                                          top=Side(style='medium'),
@@ -577,7 +575,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
         ws6[f"D{operating_expenses}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
         ws6[f"D{operating_expenses}"].number_format = '#,##0'
-        ws6[f"D{operating_expenses}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"D{operating_expenses}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{operating_expenses}"].border = ws6[f"A{operating_expenses}"].border + Border(left=Side(style='medium'),
                                                                                              right=Side(style='medium'),
                                                                                              top=Side(style='medium'),
@@ -586,7 +584,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
         # ws6[f"D{monthly}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
         ws6[f"D{monthly}"].number_format = '#,##0'
-        ws6[f"D{monthly}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"D{monthly}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{monthly}"].border = ws6[f"A{monthly}"].border + Border(left=Side(style='medium'),
                                                                        right=Side(style='medium'),
                                                                        top=Side(style='medium'),
@@ -612,7 +610,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                                                                       fill_type="solid")))
 
         ws6[f"D{running}"].number_format = '#,##0'
-        ws6[f"D{running}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"D{running}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{running}"].border = ws6[f"A{running}"].border + Border(left=Side(style='medium'),
                                                                        right=Side(style='medium'),
                                                                        top=Side(style='medium'),
@@ -658,19 +656,30 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                                                                       end_color="FFF67E",
                                                                       fill_type="solid")))
 
-        ws6[f"A{profit_on_sale}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"A{profit_on_sale}"].font = Font(bold=True, color="31304D", size=22)
         # ws6[f"D{profit_on_sale}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
 
         ws6[f"D{toggles_start - 1}"] = f"=SUM(D{toggles_start}:D{toggles_end})"
         ws6[f"D{toggles_start - 1}"].number_format = '#,##0'
-        ws6[f"D{toggles_start - 1}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"D{toggles_start - 1}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"E{toggles_start - 1}"] = f"=SUM(E{toggles_start}:E{toggles_end})"
+        # center the text in E
+        ws6[f"E{toggles_start - 1}"].alignment = Alignment(horizontal='center', vertical='center')
         ws6[f"E{toggles_start - 1}"].number_format = '#,##0'
-        ws6[f"E{toggles_start - 1}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"E{toggles_start - 1}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{toggles_start - 1}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+        ws6[f"D{toggles_start - 1}"].border = Border(left=Side(style='medium'),
+                                                     right=Side(style='medium'),
+                                                     top=Side(style='medium'),
+                                                     bottom=Side(style='medium'))
+
+        ws6[f"E{toggles_start - 1}"].border = Border(left=Side(style='medium'),
+                                                     right=Side(style='medium'),
+                                                     top=Side(style='medium'),
+                                                     bottom=Side(style='medium'))
 
         ws6[f"D{block_costs_start - 1}"] = f"=SUM(D{block_costs_start}:D{block_costs_end})"
-        ws6[f"D{block_costs_start - 1}"].font = Font(bold=True, color="31304D", size=14)
+        ws6[f"D{block_costs_start - 1}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{block_costs_start - 1}"].number_format = '#,##0'
         ws6[f"D{block_costs_start - 1}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
         # Apply borders to the cell
@@ -678,6 +687,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                                                          right=Side(style='medium'),
                                                          top=Side(style='medium'),
                                                          bottom=Side(style='medium'))
+
+        # ws6[f"E{block_costs_start - 1}"].border = Border(left=Side(style='medium'),
+        #                                                  right=Side(style='medium'),
+        #                                                  top=Side(style='medium'),
+        #                                                  bottom=Side(style='medium'))
 
         # ws6[f"D{block_costs_start - 1}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
 
@@ -692,11 +706,13 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
             ws6[f"D{i}"] = f"{formula_start}"
             ws6[f"D{i}"].number_format = '#,##0'
-            ws6[f"D{i}"].font = Font(bold=True, color="A9A9A9", size=14)
+            ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
             ws6[f"E{i}"] = f"{count_formula_start}"
             ws6[f"E{i}"].number_format = '#,##0'
-            ws6[f"E{i}"].font = Font(bold=True, color="A9A9A9", size=14)
+            ws6[f"E{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            # center the text in E
+            ws6[f"E{i}"].alignment = Alignment(horizontal='center', vertical='center')
 
         for i in range(vat_row, vat_row + 1):
             formula_start_vat = "="
@@ -725,7 +741,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
                     ws6[f"D{i}"] = f"{formula_start_block}"
                     ws6[f"D{i}"].number_format = '#,##0'
-                    ws6[f"D{i}"].font = Font(bold=True, color="A9A9A9", size=14)
+                    ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         for i in range(vat_construction, vat_construction + 1):
             formula_start_block = "="
@@ -736,7 +752,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
                     ws6[f"D{i}"] = f"{formula_start_block}"
                     ws6[f"D{i}"].number_format = '#,##0'
-                    ws6[f"D{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         for i in range(operating_expenses, operating_expenses + 1):
             formula_start_block = "="
@@ -747,7 +763,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
                     ws6[f"D{i}"] = f"{formula_start_block}"
                     ws6[f"D{i}"].number_format = '#,##0'
-                    ws6[f"D{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         for i in range(monthly, monthly + 1):
             formula_start_block = "="
@@ -758,20 +774,21 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
                     ws6[f"D{i}"] = f"{formula_start_block}"
                     ws6[f"D{i}"].number_format = '#,##0'
-                    ws6[f"D{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         for i in range(running, running + 1):
             # "=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, "84*")"
             ws6[f"D{i}"] = f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")+8823977"
             ws6[f"D{i}"].number_format = '#,##0'
-            ws6[f"D{i}"].font = Font(bold=True, color="31304D", size=14)
+            ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         for index, col in enumerate(month_headings):
 
             ws6[f"{col}{toggles_start - 1}"] = f"=SUM({col}{toggles_start}:{col}{toggles_end})"
             ws6[f"{col}{toggles_start - 1}"].number_format = '#,##0'
             ws6[f"D{toggles_start - 1}"].fill = PatternFill(start_color="D4E7C5", end_color="D4E7C5", fill_type="solid")
-            ws6[f"{col}{toggles_start - 1}"].font = Font(bold=True, color="31304D", size=14)
+            ws6[f"{col}{toggles_start - 1}"].font = Font(bold=True, color="0C0C0C", size=22)
+
             # apply borders to the cell
             ws6[f"{col}{toggles_start - 1}"].border = ws6[f"A{toggles_start - 1}"].border + Border(
                 left=Side(style='medium'),
@@ -779,16 +796,26 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                 top=Side(style='medium'),
                 bottom=Side(style='medium'))
 
+            ws6[f"{col}{toggles_start - 1}"].alignment = Alignment(horizontal='center', vertical='center')
+
             if index % 2 == 0:
                 ws6[f"{col}{toggles_start - 1}"].fill = PatternFill(start_color="D4E7C5", end_color="D4E7C5",
                                                                     fill_type="solid")
+                # align the text to the right
+                ws6[f"{col}{toggles_start - 1}"].alignment = Alignment(horizontal='right', vertical='center')
 
                 ws6[f"{col}{block_costs_start - 1}"] = f"=SUM({col}{block_costs_start}:{col}{block_costs_end})"
                 ws6[f"{col}{block_costs_start - 1}"].number_format = '#,##0'
                 ws6[f"{col}{block_costs_start - 1}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
                                                                         fill_type="solid")
 
-                ws6[f"{col}{block_costs_start - 1}"].font = Font(bold=True, color="31304D", size=14)
+                ws6[f"D{block_costs_start - 1}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
+                                                                    fill_type="solid")
+
+                ws6[f"{col}{block_costs_start - 1}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+                # center the text
+                ws6[f"{col}{block_costs_start - 1}"].alignment = Alignment(horizontal='center', vertical='center')
 
                 # apply borders to the cell
                 ws6[f"{col}{block_costs_start - 1}"].border = ws6[f"A{block_costs_start - 1}"].border + Border(
@@ -801,7 +828,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
                 ws6[f"{col}{vat_row}"] = f"=-SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE, Sales!$U:$U," \
                                          f"\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,Sales!$F:$F,1)*$C{vat_row}"
-                ws6[f"{col}{vat_row}"].font = Font(bold=True, color="31304D", size=14)
+                ws6[f"{col}{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 ws6[f"{col}{vat_row}"].border = ws6[f"A{vat_row}"].border + Border(left=Side(style='medium'),
                                                                                    right=Side(style='medium'),
@@ -820,7 +847,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                     right=Side(style='medium'),
                     top=Side(style='medium'),
                     bottom=Side(style='medium'))
-                ws6[f"{col}{profit_on_sale}"].font = Font(bold=True, color="31304D", size=14)
+                ws6[f"{col}{profit_on_sale}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 ws6[f"{col}{profit_on_sale}"].number_format = '#,##0'
 
@@ -847,7 +874,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
                 ws6[f"{col}{toggles_start - 2}"] = f"=EOMONTH(EDATE($B$2, 0), 1)"
                 ws6[f"{col}{toggles_start - 2}"].number_format = 'dd-mmm-yy'
-                ws6[f"{col}{toggles_start - 2}"].font = Font(bold=True, color="31304D", size=14)
+                ws6[f"{col}{toggles_start - 2}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 for i in range(toggles_start, toggles_end + 1):
                     ws6[
@@ -856,21 +883,21 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                                         f"'Cashflow Projection'!$A{i},Sales!$B:$B,'Cashflow Projection'!$B{i},"
                                         f"Sales!$H:$H,\">\"&'Cashflow Projection'!B$2)*$C{i}")
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="A9A9A9", size=13)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 for i in range(block_costs_start, block_costs_end + 1):
                     ws6[
                         f"{col}{i}"] = (f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,"
-                                        f"'Updated Construction'!$G:$G,'Cashflow Projection'!$B{i},"
+                                        f"'Updated Construction'!$G:$G,'Cashflow Projection'!$A{i},"
                                         f"'Updated Construction'!$E:$E,\"<=\"&'Cashflow Projection'!"
                                         f"{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&'Cashflow "
                                         f"Projection'!$B$2)+(SUMIFS('Updated Construction'!$F:$F,"
                                         f"'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,"
-                                        f"'Cashflow Projection'!$B{i},'Updated Construction'!$E:$E,\"<=\"&'Cashflow "
+                                        f"'Cashflow Projection'!$A{i},'Updated Construction'!$E:$E,\"<=\"&'Cashflow "
                                         f"Projection'!{month_headings[index]}$5,'Updated Construction'!$E:$E,"
-                                        f"\">\"&'Cashflow Projection'!$B$2)*$C{i}))*1.15")
+                                        f"\">\"&'Cashflow Projection'!$B$2)*$B{i}))*1.15")
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="A9A9A9", size=13)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 for i in range(vat_construction, vat_construction + 1):
                     ws6[
@@ -879,7 +906,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                                         f"'Updated Construction'!$H:$H,\"<=\"&'Cashflow Projection'!"
                                         f"{month_headings[index]}$5)*0.15*$C{i}")
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     ws6[f"{col}{i}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
                                                         fill_type="solid")
@@ -894,7 +921,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                     ws6[
                         f"{col}{i}"] = f"=-'Operational Costs'!$N$2*$C{i}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                     ws6[f"{col}{i}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE",
                                                         fill_type="solid")
 
@@ -908,7 +935,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                     ws6[
                         f"{col}{i}"] = f"={col}{vat_row}+{col}{profit_on_sale}+{col}{block_costs_start - 1}+{col}{vat_construction}+{col}{operating_expenses}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                     ws6[f"{col}{i}"].border = ws6[f"A{vat_construction}"].border + Border(
                         left=Side(style='medium'),
                         right=Side(style='medium'),
@@ -939,7 +966,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                     ws6[
                         f"{col}{i}"] = f"=D{running}+{col}{monthly}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     # apply borders around the cell
                     ws6[f"{col}{i}"].border = ws6[f"A{running}"].border + Border(
@@ -974,14 +1001,17 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                                         f"Sales!$B:$B,'Cashflow Projection'!$B{i},Sales!$F:$F,'Cashflow "
                                         f"Projection'!$C{i},Sales!$E:$E,FALSE)*$C{i}")
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="A9A9A9", size=13)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+                    # Center the text in the cell
+                    ws6[f"{col}{i}"].alignment = Alignment(horizontal='center', vertical='center')
 
             elif index > 1 and index % 2 == 0:
                 ws6[f"{col}{vat_row}"] = (f"=-SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE, Sales!$U:$U,\"<=\"&'Cashflow "
                                           f"Projection'!{month_headings[index]}$5,Sales!$U:$U,\""
                                           f">\"&'Cashflow Projection'!{month_headings[index - 2]}$5,Sales!$F:$F,"
                                           f"1)*$C{vat_row}")
-                ws6[f"{col}{vat_row}"].font = Font(bold=True, color="31304D", size=14)
+                ws6[f"{col}{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
                 ws6[f"{col}{vat_row}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
                 ws6[f"{col}{vat_row}"].number_format = '#,##0'
                 ws6[
@@ -989,7 +1019,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                                                  f"\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,"
                                                  f"Sales!$H:$H,\">\"&'Cashflow Projection'!"
                                                  f"{month_headings[index - 2]}$5)")
-                ws6[f"{col}{profit_on_sale}"].font = Font(bold=True, color="31304D", size=14)
+                ws6[f"{col}{profit_on_sale}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 ws6[f"{col}{profit_on_sale}"].number_format = '#,##0'
                 ws6[f"{col}{profit_on_sale}"].border = ws6[f"A{profit_on_sale}"].border + Border(
@@ -1022,14 +1052,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                 ws6[
                     f"{col}{toggles_start - 2}"] = (f"=EOMONTH(EDATE(${month_headings[index - 2]}${toggles_start - 2}, "
                                                     f"0), 1)")
-                ws6[f"{col}{toggles_start - 2}"].font = Font(bold=True, color="31304D", size=14)
+                ws6[f"{col}{toggles_start - 2}"].font = Font(bold=True, color="0C0C0C", size=22)
                 ws6[f"{col}{toggles_start - 2}"].number_format = 'dd-mmm-yy'
 
                 for i in range(toggles_start, toggles_end + 1):
                     ws6[
                         f"{col}{i}"] = f"=SUMIFS(Sales!$S:$S,Sales!$H:$H,\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,Sales!$E:$E,FALSE,Sales!$F:$F,'Cashflow Projection'!$C{i},Sales!$A:$A,'Cashflow Projection'!$A{i},Sales!$B:$B,'Cashflow Projection'!$B{i},Sales!$H:$H,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5)*$C{i}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="A9A9A9", size=13)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                     ws6[f"{col}{vat_row}"].border = ws6[f"A{vat_row}"].border + Border(left=Side(style='medium'),
                                                                                        right=Side(style='medium'),
                                                                                        top=Side(style='medium'),
@@ -1037,17 +1067,17 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
                 for i in range(block_costs_start, block_costs_end + 1):
                     ws6[
-                        f"{col}{i}"] = f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,'Updated Construction'!$G:$G,'Cashflow Projection'!$B{i},'Updated Construction'!$E:$E," \
-                                       f"\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5)+(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,'Cashflow Projection'!$B{i},'Updated Construction'!$E:$E," \
-                                       f"\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5)*$C{i}))*1.15"
+                        f"{col}{i}"] = f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,'Updated Construction'!$G:$G,'Cashflow Projection'!$A{i},'Updated Construction'!$E:$E," \
+                                       f"\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5)+(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,'Cashflow Projection'!$A{i},'Updated Construction'!$E:$E," \
+                                       f"\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5)*$B{i}))*1.15"
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="A9A9A9", size=13)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 for i in range(vat_construction, vat_construction + 1):
                     ws6[
                         f"{col}{i}"] = f"=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$C:$C,1,'Updated Construction'!$H:$H,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5,'Updated Construction'!$H:$H,\"<=\"&'Cashflow Projection'!{month_headings[index]}$5)*0.15*$C{i}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     ws6[f"{col}{i}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
                                                         fill_type="solid")
@@ -1063,7 +1093,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                     ws6[
                         f"{col}{i}"] = f"=-'Operational Costs'!$N$2*$C{i}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                     ws6[f"{col}{i}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE",
                                                         fill_type="solid")
 
@@ -1078,7 +1108,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                     ws6[
                         f"{col}{i}"] = f"={col}{vat_row}+{col}{profit_on_sale}+{col}{block_costs_start - 1}+{col}{vat_construction}+{col}{operating_expenses}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     ws6[f"{col}{i}"].border = ws6[f"A{vat_construction}"].border + Border(
                         left=Side(style='medium'),
@@ -1110,7 +1140,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                     ws6[
                         f"{col}{i}"] = f"={month_headings[index - 2]}{running}+{col}{monthly}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="31304D", size=14)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     # apply borders around the cell
                     ws6[f"{col}{i}"].border = ws6[f"A{running}"].border + Border(
@@ -1148,24 +1178,103 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                         f"Projection'!$B{i},Sales!$F:$F,'Cashflow Projection'!$C{i},Sales!$E:$E,"
                         f"FALSE)*$C{i}")
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="A9A9A9", size=13)
-
-
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                    # Center the text in the cell
+                    ws6[f"{col}{i}"].alignment = Alignment(horizontal='center', vertical='center')
 
         for i in range(7, 25):
             ws6[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
             ws6[f"C{i}"].alignment = Alignment(horizontal='center', vertical='center')
+            # make font bold and 22 in columns A,B & C
+            ws6[f"A{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"B{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"C{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         for i in range(block_costs_start, block_costs_end + 1):
-
+            ws6[f"A{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'), right=Side(style='medium'),
+                                                               top=Side(style='medium'), bottom=Side(style='medium'))
             ws6[f"B{i}"].border = ws6[f"B{i}"].border + Border(left=Side(style='medium'), right=Side(style='medium'),
                                                                top=Side(style='medium'), bottom=Side(style='medium'))
             ws6[f"C{i}"].border = ws6[f"C{i}"].border + Border(left=Side(style='medium'), right=Side(style='medium'),
                                                                top=Side(style='medium'), bottom=Side(style='medium'))
+            # make font bold and 22
+            ws6[f"A{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"B{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"C{i}"].font = Font(bold=True, color="FFFFFF", size=22)
 
-            ws6[f"B{i}"].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
-            ws6[f"C{i}"].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+            if ws6[f"A{i}"].value not in ["Clubhouse", "D", "H", "N"]:
+                ws6[f"A{i}"].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+                ws6[f"B{i}"].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+                if ws6[f"A{i}"].value == "E":
+                    ws6[f"C{i}"].value = f"=12*B{i}"
+                elif ws6[f"A{i}"].value == "F":
+                    ws6[f"C{i}"].value = f"=8*B{i}"
+                elif ws6[f"A{i}"].value == "G":
+                    ws6[f"C{i}"].value = f"=12*B{i}"
+                elif ws6[f"A{i}"].value == "I":
+                    ws6[f"C{i}"].value = f"=8*B{i}"
+                elif ws6[f"A{i}"].value == "J":
+                    ws6[f"C{i}"].value = f"=12*B{i}"
+                elif ws6[f"A{i}"].value == "K":
+                    ws6[f"C{i}"].value = f"=24*B{i}"
+                elif ws6[f"A{i}"].value == "L":
+                    ws6[f"C{i}"].value = f"=8*B{i}"
+                elif ws6[f"A{i}"].value == "M":
+                    ws6[f"C{i}"].value = f"=8*B{i}"
+                elif ws6[f"A{i}"].value == "O":
+                    ws6[f"C{i}"].value = f"=15*B{i}"
 
+            # center the text in A, B & C
+            ws6[f"A{i}"].alignment = Alignment(horizontal='center', vertical='center')
+            ws6[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
+            ws6[f"C{i}"].alignment = Alignment(horizontal='center', vertical='center')
+            # fill C with red
+            ws6[f"C{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+            if i == block_costs_start:
+                ws6[f"A{i - 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+                ws6[f"B{i - 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+                ws6[f"C{i - 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+                ws6[f"C{i - 1}"].font = Font(bold=True, color="FFFFFF", size=22)
+                ws[f"C{i - 1}"].border = ws6[f"A{i - 1}"].border + Border(left=Side(style='medium'),
+                                                                          right=Side(style='medium'),
+                                                                          top=Side(style='medium'),
+                                                                          bottom=Side(style='medium'))
+                # Center the text in A, B & C
+                ws6[f"A{i - 1}"].alignment = Alignment(horizontal='center', vertical='center')
+                ws6[f"B{i - 1}"].alignment = Alignment(horizontal='center', vertical='center')
+                ws6[f"C{i - 1}"].alignment = Alignment(horizontal='center', vertical='center')
+                # "=SUM(C33:C45)"
+                ws6[f"C{i - 1}"] = f"=SUM(C{block_costs_start}:C{block_costs_end})"
+
+        ws6[f"A{block_costs_end + 1}"] = "REMAINING"
+        ws6[f"A{block_costs_end + 1}"].font = Font(bold=True, color="FFFFFF", size=22)
+
+        # Merge A and B
+        ws6.merge_cells(f"A{block_costs_end + 1}:B{block_costs_end + 1}")
+        ws6[f"A{block_costs_end + 1}"].alignment = Alignment(horizontal='center', vertical='center')
+        ws6[f"A{block_costs_end + 1}"].border = ws6[f"A{block_costs_end + 1}"].border + Border(
+            left=Side(style='medium'),
+            right=Side(style='medium'),
+            top=Side(style='medium'),
+            bottom=Side(style='medium'))
+
+        # ws6[f"A{block_costs_end + 1}"].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+
+        ws6[f"C{block_costs_end + 1}"] = f"=107-C{block_costs_start - 1}"
+        ws6[f"C{block_costs_end + 1}"].font = Font(bold=True, color="FFFFFF", size=22)
+        ws6[f"C{block_costs_end + 1}"].alignment = Alignment(horizontal='center', vertical='center')
+        ws6[f"C{block_costs_end + 1}"].border = ws6[f"A{block_costs_end + 1}"].border + Border(
+            left=Side(style='medium'),
+            right=Side(style='medium'),
+            top=Side(style='medium'),
+            bottom=Side(style='medium'))
+        # ws6[f"C{block_costs_end + 1}"].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+        # fill A, B & C with Red
+        ws6[f"A{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+        ws6[f"B{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+        ws6[f"C{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+        ws6.append([])
+        # print("WS 6 Max Row: ",ws6.max_row)
 
         for row in ws2b.iter_rows(min_row=5, max_row=ws2b.max_row, min_col=3, max_col=3):
             for cell in row:
@@ -1173,21 +1282,39 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
         for row in ws6.iter_rows(min_row=toggles_start, max_row=toggles_end, min_col=3, max_col=3):
             for cell in row:
-                cell.value = f"=IF(A{cell.row}<>\"Heron View\",1,IF(ISERROR(VLOOKUP($B{cell.row},$B$33:$C$45,2,FALSE)),1,SUMIFS($C$33:$C$45,$B$33:$B$45,B{cell.row})))"
+                cell.value = f"=IF(A{cell.row}<>\"Heron View\",1,IF(ISERROR(VLOOKUP($B{cell.row},$A$33:$B$45,2,FALSE)),1,SUMIFS($B$33:$B$45,$A$33:$A$45,B{cell.row})))"
 
         for row in ws3.iter_rows(min_row=5, max_row=ws3.max_row, min_col=6, max_col=6):
             for cell in row:
                 cell.value = f"=SUMIFS('Cashflow Projection'!$C${toggles_start}:$C${toggles_end},'Cashflow Projection'!$B${toggles_start}:$B${toggles_end},Sales!$B{cell.row},'Cashflow Projection'!$A${toggles_start}:$A${toggles_end},Sales!$A{cell.row})"
 
+        for i in range(4, ws6.max_row + 3):
+            for x in range(1, ws6.max_column + 1):
+                if i < ws6.max_row + 2 and x == 1:
+                    ws6[f"{get_column_letter(x)}{i}"].border = Border(left=Side(style='medium'))
+                elif i < ws6.max_row + 2 and x == ws6.max_column:
+                    ws6[f"{get_column_letter(x)}{i}"].border = Border(right=Side(style='medium'))
+
+        for i in range(ws6.max_row + 1, ws6.max_row + 2):
+            for x in range(1, ws6.max_column + 1):
+                if x == 1:
+                    ws6[f"{get_column_letter(x)}{i}"].border = Border(left=Side(style='medium'),
+                                                                      bottom=Side(style='medium'))
+                elif x == ws6.max_column:
+                    ws6[f"{get_column_letter(x)}{i}"].border = Border(right=Side(style='medium'),
+                                                                      bottom=Side(style='medium'))
+                else:
+                    ws6[f"{get_column_letter(x)}{i}"].border = Border(bottom=Side(style='medium'))
+
         for i in range(1, ws6.max_column + 1):
             if i == 1:
-                ws6.column_dimensions[get_column_letter(i)].width = 20
+                ws6.column_dimensions[get_column_letter(i)].width = 32.5
             elif i == 2:
-                ws6.column_dimensions[get_column_letter(i)].width = 12
+                ws6.column_dimensions[get_column_letter(i)].width = 16.5
             elif i == 3:
-                ws6.column_dimensions[get_column_letter(i)].width = 12
+                ws6.column_dimensions[get_column_letter(i)].width = 10
             elif i > 3 and i % 2 == 0:
-                ws6.column_dimensions[get_column_letter(i)].width = 14
+                ws6.column_dimensions[get_column_letter(i)].width = 20
             elif i > 3 and i % 2 != 0:
                 ws6.column_dimensions[get_column_letter(i)].width = 7
 
@@ -1198,32 +1325,32 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         # make tab color red
         ws7.sheet_properties.tabColor = "FF204E"
 
-        ws7['C1'] = "C.3.f"
-        ws7["C1"].font = Font(bold=True, color="31304D", size=22)
+        ws7['B1'] = "C.3.f"
+        ws7["B1"].font = Font(bold=True, color="31304D", size=22)
         # center the text
-        ws7['C1'].alignment = Alignment(horizontal='center', vertical='center')
+        ws7['B1'].alignment = Alignment(horizontal='center', vertical='center')
         # put a border around the cell
-        ws7['C1'].border = Border(left=Side(style='medium'), right=Side(style='medium'), top=Side(style='medium'),
+        ws7['B1'].border = Border(left=Side(style='medium'), right=Side(style='medium'), top=Side(style='medium'),
                                   bottom=Side(style='medium'))
 
         ws7['A2'] = "CASHFLOW DASHBOARD"
-        ws7["A2"].font = Font(bold=True, color="31304D", size=14)
+        ws7['A2'].font = Font(bold=True, color="31304D", size=22)
+        ws7['A2'].border = Border(left=Side(style='medium'), right=Side(style='medium'), top=Side(style='medium'),
+                                  bottom=Side(style='medium'))
 
         # merge the cells in the first row
-        ws7.merge_cells('A2:C2')
+        ws7.merge_cells('A2:B2')
+        # put a medium border around the merged cell
+
         # center the text
         ws7['A2'].alignment = Alignment(horizontal='center', vertical='center')
-        ws7['A2'].border = Border(left=Side(style='medium'), top=Side(style='medium'),
-                                    bottom=Side(style='medium'))
-        ws7['B2'].border = Border( top=Side(style='medium'),
-                                  bottom=Side(style='medium'))
+
         ws7['C2'].border = Border(right=Side(style='medium'), top=Side(style='medium'),
                                   bottom=Side(style='medium'))
         # fill with light grey
         ws7['A2'].fill = PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
         ws7['B2'].fill = PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
         ws7['C2'].fill = PatternFill(start_color="D9D9D9", end_color="D9D9D9", fill_type="solid")
-
 
         for i in range(1, ws7.max_column + 1):
             if i == 1:
@@ -1242,11 +1369,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         for i in range(start, start + 1):
             # center the text in the cells
             ws7[f"A{i}"].alignment = Alignment(horizontal='center', vertical='center')
-            ws7[f"A{i}"].font = Font(bold=True, size=13)
+            ws7[f"A{i}"].font = Font(bold=True, size=18)
             ws7[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
-            ws7[f"B{i}"].font = Font(bold=True, size=13)
+            ws7[f"B{i}"].font = Font(bold=True, size=18)
             ws7[f"C{i}"].alignment = Alignment(horizontal='center', vertical='center')
-            ws7[f"C{i}"].font = Font(bold=True, size=13)
+            ws7[f"C{i}"].font = Font(bold=True, size=18)
+            # Underline the text in B and C
+            ws7[f"B{i}"].font = Font(underline="single", bold=True, size=18)
+            ws7[f"C{i}"].font = Font(underline="single", bold=True, size=18)
 
         ws7.append([])
         ws7.append(["Actual Transfer Income to hit FNB - Endulini Sold",
@@ -1263,7 +1393,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws7.append(["Projected Transfer Income  - Endulini  Not yet Sold (Profit)",
                     '=SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Endulini",Sales!$D:$D,FALSE,Sales!$E:$E,FALSE)'])
         transfer_endulini_profit = ws7.max_row
-        ws7.append(["Projected Transfer Income  - Heron Not yet Sold (Profit)", "=SUMIFS(Sales!$S:$S,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE,Sales!$E:$E,FALSE,Sales!$F:$F,1)"])
+        ws7.append(["Projected Transfer Income  - Heron Not yet Sold (Profit)",
+                    "=SUMIFS(Sales!$S:$S,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE,Sales!$E:$E,FALSE,Sales!$F:$F,1)"])
         transfer_heron_profit = ws7.max_row
         ws7.append(["Projected Not Allocated asd yet",
                     f"='Cashflow Projection'!D{profit_on_sale}-Dashboard!B{transfer_endulini}-Dashboard!B{transfer_heron}-Dashboard!B{transfer_endulini_profit}-Dashboard!B{transfer_heron_profit}"])
@@ -1272,6 +1403,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws7.append(["Total Income", f"=sum(B{transfer_endulini}:B{not_allocated})",
                     f"=sum(C{transfer_endulini}:C{not_allocated})"])
         total_income = ws7.max_row
+        # Put a border around the cells B & C in total_income
+
         ws7.append([])
         ws7.append(["Momentum funds avaialble to draw",
                     "=SUMIFS(Xero!$G:$G,Xero!$E:$E,\"Momentum Investors Account RU502229930\",Xero!$B:$B,'Cashflow Projection'!$B$2)",
@@ -1281,8 +1414,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
                     f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-B{momentum_funds}",
                     f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-B{momentum_funds}"])
         fnb_bank = ws7.max_row
-        ws7.append(["Deposit made", 5598623.87, 5598623.87])
-        ws7.append(["Deposit made",  3143782 , 0])
+        ws7.append(["New Investors", 5598623.87, 5598623.87])
+        ws7.append(["Deposit made", 3143782, 0])
         deposit_made = ws7.max_row
         ws7.append(["Momentum interest to be earned", 0, 0])
         momentum_interest = ws7.max_row
@@ -1303,15 +1436,16 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws7.append(["Company Running Costs", f"='Cashflow Projection'!D{operating_expenses}",
                     f"='Cashflow Projection'!D{operating_expenses}"])
         company_running_costs = ws7.max_row
-        ws7.append(["VAT Payable", f"='Cashflow Projection'!D27+'Cashflow Projection'!D47",
-                     f"='Cashflow Projection'!D27+'Cashflow Projection'!D47"])
+        ws7.append(["VAT Payable", f"='Cashflow Projection'!D27+'Cashflow Projection'!D49",
+                    f"='Cashflow Projection'!D27+'Cashflow Projection'!D49"])
         vat_payable = ws7.max_row
 
         ws7.append([])
-        ws7.append(["Project Costs", f"=B{cpc}+B{company_running_costs}+B{vat_payable}", f"=C{cpc}+C{company_running_costs}+C{vat_payable}"])
+        ws7.append(["Project Costs", f"=B{cpc}+B{company_running_costs}+B{vat_payable}",
+                    f"=C{cpc}+C{company_running_costs}+C{vat_payable}"])
         project_costs = ws7.max_row
         ws7.append([])
-        ws7.append(["NETTO EFFECT", f"=B{total_funds_draw}+B{project_costs}", f"=C{total_funds_draw}+C{project_costs}"])
+        ws7.append(["NETT EFFECT", f"=B{total_funds_draw}+B{project_costs}", f"=C{total_funds_draw}+C{project_costs}"])
         nett_effect = ws7.max_row
 
         style = '#,##0.00'
@@ -1319,44 +1453,67 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         for i in range(transfer_endulini, ws7.max_row + 1):
             for index, row in enumerate(rows_chosen):
                 if index == 0:
-                    ws7[f"{row}{i}"].font = Font(bold=False, size=14)
+                    ws7[f"{row}{i}"].font = Font(bold=False, size=18)
                 elif index == 1 or index == 2:
-                    ws7[f"{row}{i}"].font = Font(bold=False, size=14)
+                    ws7[f"{row}{i}"].font = Font(bold=False, size=18)
                     ws7[f"{row}{i}"].number_format = style
 
-        ws7[f"A{total_income}"].font = Font(bold=True, size=14)
-        ws7[f"B{total_income}"].font = Font(bold=True, size=14)
+        ws7[f"A{total_income}"].font = Font(bold=True, size=18)
+        ws7[f"B{total_income}"].font = Font(bold=True, size=18)
         ws7[f"B{total_income}"].border = Border(top=Side(style='medium'), bottom=Side(style='double'))
-        ws7[f"C{total_income}"].font = Font(bold=True, size=14)
+        ws7[f"C{total_income}"].font = Font(bold=True, size=18)
         ws7[f"C{total_income}"].border = Border(top=Side(style='medium'), bottom=Side(style='double'))
 
-        ws7[f"A{total_funds}"].font = Font(bold=True, size=14)
-        ws7[f"B{total_funds}"].font = Font(bold=True, size=14)
+        ws7[f"A{total_funds}"].font = Font(bold=True, size=18)
+        ws7[f"B{total_funds}"].font = Font(bold=True, size=18)
         ws7[f"B{total_funds}"].border = Border(top=Side(style='medium'), bottom=Side(style='double'))
-        ws7[f"C{total_funds}"].font = Font(bold=True, size=14)
+        ws7[f"C{total_funds}"].font = Font(bold=True, size=18)
         ws7[f"C{total_funds}"].border = Border(top=Side(style='medium'), bottom=Side(style='double'))
 
-        ws7[f"A{total_funds_draw}"].font = Font(bold=True, size=14)
-        ws7[f"B{total_funds_draw}"].font = Font(bold=True, size=14)
+        ws7[f"A{total_funds_draw}"].font = Font(bold=True, size=18)
+        ws7[f"B{total_funds_draw}"].font = Font(bold=True, size=18)
         ws7[f"B{total_funds_draw}"].border = Border(top=Side(style='medium'), bottom=Side(style='double'))
-        ws7[f"C{total_funds_draw}"].font = Font(bold=True, size=14)
+        ws7[f"C{total_funds_draw}"].font = Font(bold=True, size=18)
         ws7[f"C{total_funds_draw}"].border = Border(top=Side(style='medium'), bottom=Side(style='double'))
 
-        ws7[f"A{project_costs}"].font = Font(bold=True, size=14)
-        ws7[f"B{project_costs}"].font = Font(bold=True, size=14)
+        ws7[f"A{project_costs}"].font = Font(bold=True, size=18)
+        ws7[f"B{project_costs}"].font = Font(bold=True, size=18)
         ws7[f"B{project_costs}"].border = Border(top=Side(style='medium'), bottom=Side(style='double'))
-        ws7[f"C{project_costs}"].font = Font(bold=True, size=14)
+        ws7[f"C{project_costs}"].font = Font(bold=True, size=18)
         ws7[f"C{project_costs}"].border = Border(top=Side(style='medium'), bottom=Side(style='double'))
 
-        ws7[f"A{nett_effect}"].font = Font(bold=True, size=14)
-        ws7[f"B{nett_effect}"].font = Font(bold=True, size=14)
+        ws7[f"A{nett_effect}"].font = Font(bold=True, size=18)
+        ws7[f"B{nett_effect}"].font = Font(bold=True, size=18)
         ws7[f"B{nett_effect}"].border = Border(top=Side(style='medium'), bottom=Side(style='double'))
-        ws7[f"C{nett_effect}"].font = Font(bold=True, size=14)
+        ws7[f"C{nett_effect}"].font = Font(bold=True, size=18)
         ws7[f"C{nett_effect}"].border = Border(top=Side(style='medium'), bottom=Side(style='double'))
 
+        # hide column C
+        ws7.column_dimensions['C'].hidden = True
+
+        # make column A 77.5 wide
+        ws7.column_dimensions['A'].width = 77.5
+        ws7.column_dimensions['B'].width = 26
+
+        # hide rows 17 & 18
+        ws7.row_dimensions[17].hidden = True
+        ws7.row_dimensions[18].hidden = True
+        ws7.row_dimensions[5].hidden = True
+        ws7.row_dimensions[9].hidden = True
+
+        for i in range(2, ws7.max_row + 3):
+            ws7[f'A{i}'].border = Border(left=Side(style='medium'))
+            if i in [11, 20, 22, 28, 30]:
+                ws7[f"B{i}"].border = Border(right=Side(style='medium'), top=Side(style='medium'),
+                                             bottom=Side(style='double'))
+            else:
+                ws7[f'B{i}'].border = Border(right=Side(style='medium'))
+
+        for i in range(ws7.max_row + 1, ws7.max_row + 2):
+            ws7[f"A{i}"].border = Border(left=Side(style='medium'), bottom=Side(style='medium'))
+            ws7[f"B{i}"].border = Border(right=Side(style='medium'), bottom=Side(style='medium'))
+
         ws['T4'] = "Interest to Date"
-
-
 
         "=IF(J5<>"",M5*N5/365/100*('Cashflow Projection'!$B$2-Investors!J5),0)"
         inv_last = ws.max_row
@@ -1367,8 +1524,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws6[f"D{running}"] = f"==Dashboard!B20"
 
         ws8 = wb.create_sheet('Heron')
-        # make tab color red
-        ws8.sheet_properties.tabColor = "FF204E"
+        # make tab color blue
+        ws8.sheet_properties.tabColor = "0070C0"
+
         ws8['A1'] = "HERON P&L - Based on Cash Projection and Dashboard"
         ws8["A1"].font = Font(bold=True, color="31304D", size=14)
         ws8.append([])
@@ -1674,32 +1832,71 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws9.append(["Development", "Heron Fields and Heron View"])
         ws9.append(["CAPITAL"])
         ws9.append(["Total Investment capital to be raised (Estimated)", 236217976.39])
-        ws9.append(["Total Investment capital received", "=SUMIFS(Investors!$M:$M,Investors!$P:$P,FALSE,Investors!$I:$I,\"<=\"&'NSST Print'!B3)"])
-        ws9.append(["Total Funds Drawn Down into Development", "=SUMIFS(Investors!$M:$M,Investors!$J:$J,\"<=\"&'NSST Print'!B3)"])
+        ws9.append(["Total Investment capital received",
+                    "=SUMIFS(Investors!$M:$M,Investors!$P:$P,FALSE,Investors!$I:$I,\"<=\"&'NSST Print'!B3)"])
+        ws9.append(["Total Funds Drawn Down into Development",
+                    "=SUMIFS(Investors!$M:$M,Investors!$J:$J,\"<=\"&'NSST Print'!B3)"])
         ws9.append(["Momentum Investment Account", "=Dashboard!B13"])
         ws9.append(["Capital not Raised", "=B6-B7-B11"])
-        ws9.append(["Available to be raised (Estimated)", "=SUMIFS(Opportunities!$E:$E,Opportunities!$D:$D,FALSE,Opportunities!$C:$C,FALSE)-SUMIFS(Opportunities!$H:$H,Opportunities!$D:$D,FALSE,Opportunities!$C:$C,FALSE)"])
-        ws9.append(["Capital repaid", "=SUMIFS(Investors!$M:$M,Investors!$G:$G,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)-(SUMIFS(Investors!$M:$M,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\")))"])
-        ws9.append(["Current Investor Capital deployed", "=SUMIFS(Investors!$M:$M,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\"))"])
+        ws9.append(["Available to be raised (Estimated)",
+                    "=SUMIFS(Opportunities!$E:$E,Opportunities!$D:$D,FALSE,Opportunities!$C:$C,FALSE)-SUMIFS(Opportunities!$H:$H,Opportunities!$D:$D,FALSE,Opportunities!$C:$C,FALSE)"])
+        ws9.append(["Capital repaid",
+                    "=SUMIFS(Investors!$M:$M,Investors!$G:$G,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)-(SUMIFS(Investors!$M:$M,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\")))"])
+        ws9.append(["Current Investor Capital deployed",
+                    "=SUMIFS(Investors!$M:$M,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\"))"])
         ws9.append(["INVESTMENTS"])
-        ws9.append(["No. of Capital Investments received", "=COUNTIFS(Investors!$G:$G,FALSE)+COUNTIFS(Investors!$G:$G,TRUE)"])
-        ws9.append(["No. Investments exited to date", "=COUNTIFS(Investors!$G:$G,TRUE)+COUNTIFS(Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$P:$P,FALSE)"])
+        ws9.append(
+            ["No. of Capital Investments received", "=COUNTIFS(Investors!$G:$G,FALSE)+COUNTIFS(Investors!$G:$G,TRUE)"])
+        ws9.append(["No. Investments exited to date",
+                    "=COUNTIFS(Investors!$G:$G,TRUE)+COUNTIFS(Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$P:$P,FALSE)"])
         ws9.append(["No. Investments still in Development", "=B15-B16"])
         ws9.append(["SALES INCOME"])
         ws9.append(["", "Total", "Transferred", "Sold", "Remaining"])
-        ws9.append(["Units", "=COUNTIFS(Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")+COUNTIFS(Sales!$E:$E,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=COUNTIFS(Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")"])
-        ws9.append(["Sales Income", "=SUMIFS(Sales!$K:$K,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$K:$K,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)+C46", "=SUMIFS(Sales!$K:$K,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")+C46"])
-        ws9.append(["Commission", "=(SUMIFS(Sales!$O:$O,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$O:$O,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE))/1.15-C52", "=SUMIFS(Sales!$O:$O,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15", "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15", "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15-C52"])
-        ws9.append(["Transfer Fees", "=SUMIFS(Sales!$L:$L,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$L:$L,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)", "=SUMIFS(Sales!$L:$L,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=SUMIFS(Sales!$L:$L,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=SUMIFS(Sales!$L:$L,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")"])
-        ws9.append(["Bond Registration", "=SUMIFS(Sales!$P:$P,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$P:$P,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)", "=SUMIFS(Sales!$P:$P,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=SUMIFS(Sales!$P:$P,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=SUMIFS(Sales!$P:$P,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")"])
-        ws9.append(["Security Release Fee", "=SUMIFS(Sales!$M:$M,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$M:$M,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)", "=SUMIFS(Sales!$M:$M,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")"])
-        ws9.append(["Unforseen (0.05%)", "=SUMIFS(Sales!$N:$N,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$N:$N,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)-C53", "=SUMIFS(Sales!$N:$N,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")", "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")-C53"])
-        ws9.append(["Transfer Income", "=B21-SUM(B22:B26)", "=C21-SUM(C22:C26)", "=D21-SUM(D22:D26)", "=E21-SUM(E22:E26)"])
+        ws9.append(["Units",
+                    "=COUNTIFS(Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")+COUNTIFS(Sales!$E:$E,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=COUNTIFS(Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")"])
+        ws9.append(["Sales Income",
+                    "=SUMIFS(Sales!$K:$K,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$K:$K,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)+C46",
+                    "=SUMIFS(Sales!$K:$K,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")+C46"])
+        ws9.append(["Commission",
+                    "=(SUMIFS(Sales!$O:$O,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$O:$O,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE))/1.15-C52",
+                    "=SUMIFS(Sales!$O:$O,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15",
+                    "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15",
+                    "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15-C52"])
+        ws9.append(["Transfer Fees",
+                    "=SUMIFS(Sales!$L:$L,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$L:$L,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)",
+                    "=SUMIFS(Sales!$L:$L,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=SUMIFS(Sales!$L:$L,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=SUMIFS(Sales!$L:$L,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")"])
+        ws9.append(["Bond Registration",
+                    "=SUMIFS(Sales!$P:$P,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$P:$P,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)",
+                    "=SUMIFS(Sales!$P:$P,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=SUMIFS(Sales!$P:$P,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=SUMIFS(Sales!$P:$P,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")"])
+        ws9.append(["Security Release Fee",
+                    "=SUMIFS(Sales!$M:$M,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$M:$M,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)",
+                    "=SUMIFS(Sales!$M:$M,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")"])
+        ws9.append(["Unforseen (0.05%)",
+                    "=SUMIFS(Sales!$N:$N,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$N:$N,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)-C53",
+                    "=SUMIFS(Sales!$N:$N,Sales!$E:$E,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"<>\"&\"Endulini\")",
+                    "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")-C53"])
+        ws9.append(
+            ["Transfer Income", "=B21-SUM(B22:B26)", "=C21-SUM(C22:C26)", "=D21-SUM(D22:D26)", "=E21-SUM(E22:E26)"])
         ws9.append(["INTEREST"])
-        ws9.append(["Total Estimated Interest", "=SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE)+SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE)"])
-        ws9.append(["Interest Paid to Date", "=SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE)+SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE)"])
+        ws9.append(["Total Estimated Interest",
+                    "=SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE)+SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE)"])
+        ws9.append(["Interest Paid to Date",
+                    "=SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE)+SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE)"])
         ws9.append(["Remaining Interest to Exit", "=B29-B30"])
-        ws9.append(["Interest Due to date", "=SUMIFS(Investors!$T:$T,Investors!$G:$G,FALSE,Investors!$O:$O,FALSE)+SUMIFS(Investors!$Q:$Q,Investors!$G:$G,FALSE,Investors!$O:$O,FALSE)"])
+        ws9.append(["Interest Due to date",
+                    "=SUMIFS(Investors!$T:$T,Investors!$G:$G,FALSE,Investors!$O:$O,FALSE)+SUMIFS(Investors!$Q:$Q,Investors!$G:$G,FALSE,Investors!$O:$O,FALSE)"])
         ws9.append(["Interest Due to be Earned to Exit", "=B31-B32"])
         ws9.append(["FUNDING AVAILABLE"])
         ws9.append(["Total Draw funds available", "=Dashboard!B20"])
@@ -1709,18 +1906,37 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws9.append(["Total funds (required)/Surplus", "=B37-B38"])
         ws9.append(["PROJECTED PROFIT"])
         ws9.append(["Projected Nett Revenue", "=+B21+SUM(B56:B63)"])
-        ws9.append(["Other Income (interest received)", "=-SUMIFS(Xero!$F:$F,Xero!$E:$E,\"Interest Received - Momentum\")"])
+        ws9.append(
+            ["Other Income (interest received)", "=-SUMIFS(Xero!$F:$F,Xero!$E:$E,\"Interest Received - Momentum\")"])
         ws9.append(["Total Estimated Development and Sales Costs", "=+B78-C47-C48-C49-C50+SUM(D22:E26)"])
         ws9.append(["Interest Expense", "=B29-B30-C51"])
         ws9.append(["Profit", "=B41+B42-B43-B44"])
-        ws9.append(["Sales Increase", 0, "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B46", "", "=C46/$E$20"])
-        ws9.append(["CPC Construction", 0, "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)*B47",  "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)-C47", "=C47/$E$20"])
-        ws9.append(["Rent Salaries and wages", 0, "=400000*B48", "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A48,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C48", "=C48/$E$20"])
-        ws9.append(["CPSD", 0, "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A49,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)*B49", "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A49,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C49", "=C49/$E$20"])
-        ws9.append(["OppInvest", 0, "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)*B50", "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C50", "=C50/$E$20"])
+        ws9.append(["Sales Increase", 0,
+                    "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B46", "",
+                    "=C46/$E$20"])
+        ws9.append(
+            ["CPC Construction", 0, "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)*B47",
+             "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)-C47", "=C47/$E$20"])
+        ws9.append(["Rent Salaries and wages", 0, "=400000*B48",
+                    "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A48,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C48",
+                    "=C48/$E$20"])
+        ws9.append(["CPSD", 0,
+                    "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A49,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)*B49",
+                    "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A49,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C49",
+                    "=C49/$E$20"])
+        ws9.append(["OppInvest", 0,
+                    "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)*B50",
+                    "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C50",
+                    "=C50/$E$20"])
         ws9.append(["investor interest", 0, "=(B29-B30)*B51", "=(B29-B30)-C51", "=C51/$E$20"])
-        ws9.append(["Commissions", 0, "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15*B52", "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15-C52", "=C52/$E$20"])
-        ws9.append(["Unforseen", 0, "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B53", "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")-C53", "=C53/$E$20"])
+        ws9.append(["Commissions", 0,
+                    "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15*B52",
+                    "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15-C52",
+                    "=C52/$E$20"])
+        ws9.append(["Unforseen", 0,
+                    "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B53",
+                    "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")-C53",
+                    "=C53/$E$20"])
         ws9.append([])
         ws9.append([])
         ws9.append(["Rental Income", "=-SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A56)"])
@@ -1738,7 +1954,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws9.append(["COS - Heron Fields - Construction", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A68)"])
         ws9.append(["COS - Heron Fields - P & G", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A69)"])
         ws9.append(["COS - Heron Fields - Printing & Stationary", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A70)"])
-        ws9.append(["COS - Heron View - Construction", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A71)+SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)"])
+        ws9.append(["COS - Heron View - Construction",
+                    "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A71)+SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)"])
         ws9.append(["COS - Heron View - P&G", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A72)"])
         ws9.append(["COS - Heron View - Printing & Stationary", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A73)"])
         ws9.append(["CPSD", "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A74)"])
@@ -1747,18 +1964,17 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         ws9.append(["Rent Salaries and Wages", "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A77)"])
         ws9.append(["Total Costs", "=SUM(B66:B77)"])
 
-
         # make the first column 55 and the others 20
         for i in range(1, ws9.max_column + 1):
             if i == 1:
-                ws9.column_dimensions[get_column_letter(i)].width = 50
+                ws9.column_dimensions[get_column_letter(i)].width = 60
             else:
-                ws9.column_dimensions[get_column_letter(i)].width = 20
+                ws9.column_dimensions[get_column_letter(i)].width = 25
 
         # format all cells as font size 14
         for i in range(1, ws9.max_column + 1):
             for j in range(1, ws9.max_row + 1):
-                ws9[f"{get_column_letter(i)}{j}"].font = Font(size=14)
+                ws9[f"{get_column_letter(i)}{j}"].font = Font(size=18)
                 # After row format all cells as currency except the first column and except rows 15, 16 and 17
                 if j < 15 and j > 5 and i > 1:
                     ws9[f"{get_column_letter(i)}{j}"].number_format = 'R#,##0.00'
@@ -1777,9 +1993,12 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
         for i in rows_for_full_merge:
             ws9.merge_cells(f"A{i}:E{i}")
             # make the cell bold and color it light olive and make the text white
-            ws9[f"A{i}"].font = Font(bold=True, size=20, color="FFFFFF")
+            ws9[f"A{i}"].font = Font(bold=True, size=18, color="FFFFFF")
             ws9[f"A{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
             ws9[f"A{i}"].alignment = Alignment(horizontal='center', vertical='center')
+
+        ws9['A2'].font = Font(bold=True, size=26, color="FFFFFF")
+        ws9['E1'].font = Font(bold=True, size=22)
 
         rows_for_part_merger = [3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39,
                                 41, 42, 43, 44, 45]
@@ -1787,12 +2006,12 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
             ws9.merge_cells(f"B{i}:E{i}")
             ws9[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
 
-        for i in range(46,54):
+        for i in range(46, 54):
             if i == 48:
                 # format the cell in row 48 as an integer
                 ws9[f"B{i}"].number_format = '0'
             else:
-                #format as a percentage
+                # format as a percentage
                 ws9[f"B{i}"].number_format = '0%'
 
         # ws9['F43'].value = "<< SALES COSTS DO NOT APPEAR TO INCLUDED PREVIOUSLY"
@@ -1807,11 +2026,431 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
             ws9[f"{get_column_letter(i)}19"].alignment = Alignment(horizontal='center', vertical='center')
             ws9[f"{get_column_letter(i)}20"].alignment = Alignment(horizontal='center', vertical='center')
 
+        # I AM HERE
+        ws10 = wb.create_sheet('Investor Exit List')
+        # make tab color red
+        ws10.sheet_properties.tabColor = "FF204E"
 
-       # get a list of sheets in the workbook
+        # new_report_date = report_date
+        # # format new_report_date as a "yyyy-mm-dd"
+        # new_report_date = datetime.strptime(new_report_date, "%d %B %Y").strftime("%Y-%m-%d")
+        # print("NEW REPORT DATE", new_report_date)
+
+        ws10['A1'] = f"Investor Exit List - {report_date}"
+        ws10['A1'].font = Font(bold=True, color="FFFFFF", size=22)
+        ws10['A1'].alignment = Alignment(horizontal='center', vertical='center')
+        ws10['A1'].border = Border(top=Side(style='medium'), bottom=Side(style='medium'), left=Side(style='medium'),
+                                   right=Side(style='medium'))
+        # fill in blue
+        ws10['A1'].fill = PatternFill(start_color="008DDA", end_color="008DDA", fill_type="solid")
+        exit_headers = []
+        for item in investor_exit[0]:
+            exit_headers.append(item.replace("_", " ").title())
+        ws10.append(exit_headers)
+        # merge the first row
+        ws10.merge_cells(f"A1:{get_column_letter(len(investor_exit[0]))}1")
+        ws10.append([])
+        # make all cells in row 2 bold with a light grey background and borders all around
+        for i in range(1, len(investor_exit[0]) + 1):
+            ws10[f"{get_column_letter(i)}2"].font = Font(bold=True, size=13)
+            ws10[f"{get_column_letter(i)}2"].fill = PatternFill(start_color="D3D3D3", end_color="D3D3D3",
+                                                                fill_type="solid")
+            ws10[f"{get_column_letter(i)}2"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'),
+                                                             left=Side(style='thin'), right=Side(style='thin'))
+            # wrap the text
+
+            # double the row height
+            ws10.row_dimensions[2].height = 55
+
+            # ws10[f"{get_column_letter(i)}2"].alignment = Alignment(horizontal='center', vertical='center')
+            ws10[f"{get_column_letter(i)}2"].alignment = Alignment(wrap_text=True)
+        # make all cells in row 3 bold with a red background and font color white and borders all around
+        for i in range(1, len(investor_exit[0]) + 1):
+            ws10[f"{get_column_letter(i)}3"].font = Font(bold=True, size=12, color="FFFFFF")
+            ws10[f"{get_column_letter(i)}3"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                                                fill_type="solid")
+            ws10[f"{get_column_letter(i)}3"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'),
+                                                             left=Side(style='thin'), right=Side(style='thin'))
+
+        ws10.row_dimensions[3].height = 30
+        # center the text
+
+        # make all columns 20 wide except the 5th column, make it 50 wide
+        for i in range(1, len(investor_exit[0]) + 1):
+            if i == 5:
+                ws10.column_dimensions[get_column_letter(i)].width = 33
+            else:
+                ws10.column_dimensions[get_column_letter(i)].width = 15
+        for index, item in enumerate(investor_exit):
+
+            row = []
+            for key in item:
+                row.append(item[key])
+            ws10.append(row)
+            if index == 0:
+                exit_first_row_number = ws10.max_row
+        exit_last_row_number = ws10.max_row
+        print("EXIT FIRST ROW", exit_first_row_number)
+        print("EXIT LAST ROW", exit_last_row_number)
+
+        column_formulae = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                           'S', 'T', 'U', 'V', 'W', 'X']
+        for i in column_formulae:
+            for row in range(exit_first_row_number, exit_last_row_number + 1):
+                ws10[f"{i}{row}"].font = Font(bold=False, size=12)
+                if i == 'F':
+                    ws10[
+                        f"{i}{row}"].value = (f"=SUMIFS(Investors!$M:$M,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,"
+                                              f"Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST "
+                                              f"Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},"
+                                              f"Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,"
+                                              f"'Investor Exit List'!$B{row})-(SUMIFS(Investors!$M:$M,"
+                                              f"Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\">\"&'NSST "
+                                              f"Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},"
+                                              f"Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,"
+                                              f"'Investor Exit List'!$B{row})+SUMIFS(Investors!$M:$M,Investors!$I:$I,"
+                                              f"\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\"\",Investors!$A:$A,"
+                                              f"'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C"
+                                              f"{row},Investors!$L:$L,'Investor Exit List'!$B{row}))")
+                    ws10[f"{i}{row}"].number_format = 'R#,##0.00'
+                elif i == 'G' or i == 'J' or i == 'M':
+                    ws10[f"{i}{row}"].number_format = 'yyyy-mm-dd'
+
+                elif i == 'K':
+                    ws10[f"{i}{row}"].value = f"=IF(I{row}=TRUE,J{row},\"\")"
+                    ws10[f"{i}{row}"].number_format = 'yyyy-mm-dd'
+                elif i == 'L':
+                    ws10[f"{i}{row}"].value = f"=G{row}+730"
+                    ws10[f"{i}{row}"].number_format = 'yyyy-mm-dd'
+                elif i == 'N':
+                    ws10[
+                        f"{i}{row}"].value = f"=IFERROR(IF(G{row}<>\"\",IF(I{row}=TRUE,0,IF(U{row}=TRUE,0,L{row}-M{row})),0),0)"
+                    ws10[f"{i}{row}"].number_format = '0'
+                elif i == 'O':
+                    ws10[f"{i}{row}"].value = f"=IF(N{row}>0,IF(N{row}<=180,N{row},0),0)"
+                    ws10[f"{i}{row}"].number_format = '0'
+                elif i == 'P':
+                    ws10[f"{i}{row}"].value = f"=IF(AND(N{row}<90,N{row}>0),Q{row},0)"
+                    ws10[f"{i}{row}"].number_format = 'R#,##0.00'
+                elif i == 'Q':
+                    # "=SUMIFS(Investors!$M:$M,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,">"&'NSST Print'!$B$3,Investors!$I:$I,"<="&    'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A4,   Investors!$E:$E,'Investor Exit List'!$C4,    Investors!$L:$L,'Investor Exit List'!$B4)    -(SUMIFS(Investors!$M:$M,Investors!$I:$I,"<="&     'NSST Print'!$B$3,Investors!$J:$J,">"&   'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A4,    Investors!$E:$E,'Investor Exit List'!$C4,    Investors!$L:$L,'Investor Exit List'!$B4)+    SUMIFS(Investors!$M:$M,Investors!$I:$I,"<="&'    NSST Print'!$B$3,Investors!$J:$J,"",Investors!$A:$A,  'Investor Exit List'!$A4,    Investors!$E:$E,'Investor Exit List'!$C4,    Investors!$L:$L,'Investor Exit List'!$B4))    +SUMIFS(Investors!$S:$S,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,">"&'  NSST Print'!$B$3,Investors!$I:$I,"<="&'  NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A4,    Investors!$E:$E,'Investor Exit List'!$C4,    Investors!$L:$L,'Investor Exit List'!$B4)-    (SUMIFS(Investors!$S:$S,Investors!$I:$I,"<="&'  NSST Print'!$B$3,Investors!$J:$J,">"&'  NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A4,    Investors!$E:$E,'Investor Exit List'!$C4,    Investors!$L:$L,'Investor Exit List'!$B4)    +SUMIFS(Investors!$S:$S,Investors!$I:$I,"<="&'  NSST Print'!$B$3,Investors!$J:$J,"",  Investors!$A:$A,'Investor Exit List'!$A4,    Investors!$E:$E,'Investor Exit List'!$C4,    Investors!$L:$L,'Investor Exit List'!$B4))"
+                    ws10[
+                        f"{i}{row}"].value = f"=SUMIFS(Investors!$M:$M,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row})-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\">\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row})+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\"\",Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row}))+SUMIFS(Investors!$S:$S,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row})-(SUMIFS(Investors!$S:$S,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\">\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row})+SUMIFS(Investors!$S:$S,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\"\",Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row}))"
+                    ws10[f"{i}{row}"].number_format = 'R#,##0.00'
+                elif i == 'R':
+                    ws10[f"{i}{row}"].value = f"=IF(AND(H{row}=TRUE,I{row}=FALSE),Q{row},0)"
+                    ws10[f"{i}{row}"].number_format = 'R#,##0.00'
+                elif i == 'S':
+                    ws10[
+                        f"{i}{row}"].value = f"=SUMIFS(Investors!$M:$M,Investors!$O:$O,TRUE,Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row})+SUMIFS(Investors!$S:$S,Investors!$O:$O,TRUE,Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row})"
+                    ws10[f"{i}{row}"].number_format = 'R#,##0.00'
+                elif i == 'T':
+                    ws10[f"{i}{row}"].value = f"=IF(U{row}=TRUE,$J{row},\"\")"
+                    ws10[f"{i}{row}"].number_format = 'yyyy-mm-dd'
+                elif i == 'V':
+                    ws10[f"{i}{row}"].value = f"=IF(AND(H{row}=TRUE,OR(K{row}=\"\",K{row}>M{row})),S{row},0)"
+                    ws10[f"{i}{row}"].number_format = 'R#,##0.00'
+
+                # put a thin border on all sides of each row
+                ws10[f"{i}{row}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'),
+                                                  left=Side(style='thin'),
+                                                  right=Side(style='thin'))
+
+        dev1 = ["ZZUN01", 0, "HFB215", "B", "Dev Unit", 0, "", False, False, "", "", "", "", "", "", "", "", "", "", "",
+                False,
+                "", 1330640.05, False]
+        ws10.append(dev1)
+        # dev2 = ["ZZUN01", 0, "HFB315", "B", "Dev Unit", 0, "", False, False, "", "", "", "", "", "", "", "", "", "", "",
+        #         False,
+        #         "", 1311740.05, False]
+        # ws10.append(dev2)
+        final_row = ws10.max_row
+        print("FINAL ROW", final_row)
+        for i in range(final_row - 1, final_row + 1):
+            for x in range(1, ws10.max_column + 1):
+
+                # put a border around each cell
+                ws10[f"{get_column_letter(x)}{i}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'),
+                                                                   left=Side(style='thin'), right=Side(style='thin'))
+                # in columns, F & W format as currency
+                if i == 6 or i == 23:
+                    ws10[f"{get_column_letter(x)}{i}"].number_format = 'R#,##0.00'
+
+        total_columns = ['A', 'C', 'F', 'P', 'Q', 'R', 'S', 'V', 'W']
+
+        for i in total_columns:
+
+            if i == 'S':
+                ws10[
+                    f"{i}{exit_first_row_number - 1}"].value = f"=SUBTOTAL(109,{i}{exit_first_row_number}:{i}{exit_last_row_number + 3})"
+                ws10[f"{i}{exit_first_row_number - 1}"].number_format = 'R#,##0.00'
+            elif i == 'C':
+                ws10[
+                    f"{i}{exit_first_row_number - 1}"].value = f"=COUNTIFS(Investors!$G:$G,FALSE)+COUNTIFS(Investors!$G:$G,TRUE)-(COUNTIFS(Investors!$G:$G,TRUE)+COUNTIFS(Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$P:$P,FALSE))"
+                ws10[f"{i}{exit_first_row_number - 1}"].number_format = '0'
+            elif i == 'A':
+                ws10[
+                    f"{i}{exit_first_row_number - 1}"].value = f"=COUNTIFS(Sales!$E:$E,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+COUNTIFS(Sales!$E:$E,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)"
+                ws10[f"{i}{exit_first_row_number - 1}"].number_format = '0'
+            else:
+                ws10[
+                    f"{i}{exit_first_row_number - 1}"].value = f"=SUM({i}{exit_first_row_number}:{i}{exit_last_row_number + 3})"
+                ws10[f"{i}{exit_first_row_number - 1}"].number_format = 'R#,##0.00'
+
+        # iterate through rows from exit_first_row_number to exit_last_row_number + 3 and if column I value is TRUE, color the entire row light red
+        for row in range(exit_first_row_number, exit_last_row_number + 3):
+            if ws10[f"H{row}"].value == True and ws10[f"I{row}"].value == False:
+                # color in a light green
+                for i in range(1, ws10.max_column + 1):
+                    ws10[f"{get_column_letter(i)}{row}"].fill = PatternFill(start_color="C6EFCE", end_color="C6EFCE",
+                                                                            fill_type="solid")
+
+            if ws10[f"I{row}"].value == True:
+                for i in range(1, ws10.max_column + 1):
+                    ws10[f"{get_column_letter(i)}{row}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE",
+                                                                            fill_type="solid")
+                # hide the row
+                ws10.row_dimensions[row].hidden = True
+
+        # freeze panes at A4
+        ws10.freeze_panes = ws10['A4']
+
+        columns_to_hide = [2, 7, 8, 9, 10, 11, 12, 13, 15, 20, 21, 24]
+        for i in columns_to_hide:
+            ws10.column_dimensions[get_column_letter(i)].hidden = True
+
+        ws11 = wb.create_sheet('Momentum')
+        # make tab color red
+        ws11.sheet_properties.tabColor = "FF204E"
+
+        ws11['E1'] = '7'
+        # make above bold with a border
+        ws11['E1'].font = Font(bold=True, size=14)
+        ws11['E1'].border = Border(top=Side(style='thin'), bottom=Side(style='thin'), left=Side(style='thin'),
+                                   right=Side(style='thin'))
+        ws11['E1'].alignment = Alignment(horizontal='center', vertical='center')
+
+        ws11['D2'] = 'C.3.b'
+        # make bold 22, with borders all around and center the text
+        ws11['D2'].font = Font(bold=True, size=22)
+        ws11['D2'].border = Border(top=Side(style='thin'), bottom=Side(style='thin'), left=Side(style='thin'),
+                                   right=Side(style='thin'))
+        ws11['D2'].alignment = Alignment(horizontal='center', vertical='center')
+
+        ws11['A3'] = f"Momentum Interest"
+        ws11['A3'].font = Font(bold=True, color="FFFFFF", size=22)
+        ws11['A3'].alignment = Alignment(horizontal='center', vertical='center')
+        ws11['A3'].border = Border(top=Side(style='medium'), bottom=Side(style='medium'), left=Side(style='medium'),
+                                   right=Side(style='medium'))
+
+        # merge row three from A to E
+        ws11.merge_cells('A3:D3')
+
+        # fill in blue
+        ws11['A3'].fill = PatternFill(start_color="008DDA", end_color="008DDA", fill_type="solid")
+        ws11.append([])
+        ws11.append([])
+        momentum_headers = []
+        for item in momentum[0]:
+            momentum_headers.append(item.replace("_", " ").title())
+        ws11.append(momentum_headers)
+        header_row_momentum = ws11.max_row
+
+        # Cells light grey with a border, center the text and make it bold.
+        for i in range(1, ws11.max_column):
+            ws11[f"{get_column_letter(i)}{header_row_momentum}"].font = Font(bold=True, size=13)
+            ws11[f"{get_column_letter(i)}{header_row_momentum}"].fill = PatternFill(start_color="D3D3D3",
+                                                                                    end_color="D3D3D3",
+                                                                                    fill_type="solid")
+            ws11[f"{get_column_letter(i)}{header_row_momentum}"].border = Border(top=Side(style='thin'),
+                                                                                 bottom=Side(style='thin'),
+                                                                                 left=Side(style='thin'),
+                                                                                 right=Side(style='thin'))
+            ws11[f"{get_column_letter(i)}{header_row_momentum}"].alignment = Alignment(horizontal='center',
+                                                                                       vertical='center')
+            # make each column 55 wide
+            ws11.column_dimensions[get_column_letter(i)].width = 39
+
+        for index, item in enumerate(momentum):
+            row = []
+            for key in item:
+                row.append(item[key])
+            ws11.append(row)
+            if index == 0:
+                momentum_first_row_number = ws11.max_row
+        momentum_last_row_number = ws11.max_row
+
+        for i in range(1, ws11.max_column):
+            for row in range(momentum_first_row_number, momentum_last_row_number + 1):
+                ws11[f"{get_column_letter(i)}{row}"].font = Font(bold=False, size=14)
+                # put a border around each cell
+                ws11[f"{get_column_letter(i)}{row}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'),
+                                                                     left=Side(style='thin'), right=Side(style='thin'))
+                if i == 1:
+                    ws11[f"{get_column_letter(i)}{row}"].number_format = 'yyyy-mm-dd'
+                    # ws11[f"{get_column_letter(i)}{row}"].number_format = 'R#,##0.00'
+                else:
+                    ws11[f"{get_column_letter(i)}{row}"].number_format = 'R#,##0.00'
+                # elif i == 8:
+                #     ws11[f"{get_column_letter(i)}{row}"].value = f"=IF(E{row}=TRUE,F{row},\"\
+
+        ws11.append(["TOTAL", f"=SUM(B{momentum_first_row_number}:B{momentum_last_row_number})",
+                     f"=SUM(C{momentum_first_row_number}:C{momentum_last_row_number})",
+                     f"=SUM(D{momentum_first_row_number}:D{momentum_last_row_number})"])
+        momentum_totals_row = ws11.max_row
+        for i in range(1, ws11.max_column):
+            ws11[f"{get_column_letter(i)}{momentum_totals_row}"].font = Font(bold=True, size=14)
+            ws11[f"{get_column_letter(i)}{momentum_totals_row}"].number_format = 'R#,##0.00'
+            if i == 1:
+                ws11[f"{get_column_letter(i)}{momentum_totals_row}"].border = Border(top=Side(style='medium'),
+                                                                                     bottom=Side(style='medium'),
+                                                                                     left=Side(style='medium'))
+                # Center the test
+                ws11[f"{get_column_letter(i)}{momentum_totals_row}"].alignment = Alignment(horizontal='center',
+                                                                                           vertical='center')
+            elif i == ws11.max_column:
+                ws11[f"{get_column_letter(i)}{momentum_totals_row}"].border = Border(top=Side(style='medium'),
+                                                                                     bottom=Side(style='medium'),
+                                                                                     right=Side(style='medium'))
+            else:
+                ws11[f"{get_column_letter(i)}{momentum_totals_row}"].border = Border(top=Side(style='medium'),
+                                                                                     bottom=Side(style='medium'))
+
+        ws11.append([])
+        ws11.append(["MOMENTUM INVESTOR CAPITAL",
+                     f"=(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\"))",
+                     "",
+                     "per App"])
+        recon_start = ws11.max_row
+        ws11.append(["MOMENTUM INTEREST EARNED SINCE INCEPTION", f"=+B{momentum_totals_row}", "", "from Momentum"])
+        ws11.append(["MOMENTUM ADVICE FEES ", f"=+D{momentum_totals_row}", "", "from Momentum"])
+        ws11.append(
+            ["NET INTEREST", f"=+B{momentum_totals_row}-D{momentum_totals_row}", "",
+             "Interest less Ongoing Advice Fees"])
+        ws11.append(["ADVICE FEES", f"=+C{momentum_totals_row}", "", ""])
+        ws11.append(
+            ["TOTAL INTEREST IN ACCOUNT", f"=+B{momentum_totals_row}-D{momentum_totals_row}-C{momentum_totals_row}",
+             "", ""])
+        ws11.append(["MOMENTUM INTEREST DRAWN TO DATE", 1861191.23, "", "Interest Draw on 3 October 2023"])
+        ws11.append(
+            ["TOTAL MOMENTUM DRAWS", f"=SUMIFS(Investors!$M:$M,Investors!$J:$J,\"<=\"&'NSST Print'!B3)+137832.56", "",
+             ""])
+        ws11.append(["GLC NOT ON DRAW", 4183000.82, "", ""])
+        anomolies_start = ws11.max_row
+        ws11.append(["C Oberholzer incorrect amount", -455, "", ""])
+        ws11.append(["Draw 10 (Rudlynn Trust)", -150000, "", ""])
+        anomolies_end = ws11.max_row
+        ws11.append(["MOMENTUM BALANCE", 0, "", "Momentum Statement Balance"])
+        ws11.append([])
+        ws11.append(["", "RECONCILIATION", "", ""])
+        ws11.append([])
+        ws11.append(["Momentum Statement", f"=+B{ws11.max_row - 2}", "", "per Statement"])
+        ws11.append(["Momentum Xero", f"=Dashboard!B13", "", "Per App"])
+        ws11.append(["Difference", f"=+B{ws11.max_row - 1}-B{ws11.max_row}", "", ""])
+        ws11.append([])
+        ws11.append(["Momentum Xero", f"=Dashboard!B13", "", "per Xero"])
+        ws11.append(["Momentum - App",
+                     f"=(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\"))",
+                     "", "per App"])
+        ws11.append(["Difference", f"=+B{ws11.max_row - 1}-B{ws11.max_row}", "", "Reconciled Below"])
+        ws11.append([])
+        ws11.append(
+            ["TOTAL INTEREST IN ACCOUNT", f"=+B{momentum_totals_row}-D{momentum_totals_row}-C{momentum_totals_row}", "",
+             ""])
+        ws11.append(["MOMENTUM INTEREST DRAWN TO DATE", 1861191.23, "", "Interest Draw on 3 October 2023"])
+        ws11.append(["", f"=+B{ws11.max_row - 1}-B{ws11.max_row}", "", ""])
+        ws11.append(["", 137832.56, "", "Interest STBB"])
+        subtotal = ws11.max_row
+        ws11.append(["", f"=B{subtotal - 1}-B{subtotal}-B{subtotal + 2}", "", "to be reconciled"])
+        ws11.append(["", f"=B{ws11.max_row - 6}", "", ""])
+        recon_end = ws11.max_row
+
+        for i in range(recon_start, recon_end + 1):
+            # Merge B and C of each row
+            ws11.merge_cells(f"B{i}:C{i}")
+            # center the text
+            ws11[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
+
+        # put a medium border around the area from recon_start to recon_end and columns A to D
+        for i in range(recon_start, recon_end + 3):
+            for x in range(1, 5):
+                if x == 1 and i == recon_start:
+                    ws11[f"{get_column_letter(x)}{i}"].border = Border(top=Side(style='medium'),
+                                                                       left=Side(style='medium'))
+
+                elif x == 4 and i == recon_start:
+                    ws11[f"{get_column_letter(x)}{i}"].border = Border(top=Side(style='medium'),
+                                                                       right=Side(style='medium'))
+                elif x > 1 and x < 5 and i == recon_start:
+                    ws11[f"{get_column_letter(x)}{i}"].border = Border(top=Side(style='medium'))
+
+                elif x == 1 and i > recon_start and i < recon_end + 2:
+                    ws11[f"{get_column_letter(x)}{i}"].border = Border(left=Side(style='medium'))
+
+                elif x == 4 and i > recon_start and i < recon_end + 2:
+                    ws11[f"{get_column_letter(x)}{i}"].border = Border(right=Side(style='medium'))
+
+                elif x == 1 and i == recon_end + 2:
+                    ws11[f"{get_column_letter(x)}{i}"].border = Border(left=Side(style='medium'),
+                                                                       bottom=Side(style='medium'))
+                elif x == 4 and i == recon_end + 2:
+                    ws11[f"{get_column_letter(x)}{i}"].border = Border(right=Side(style='medium'),
+                                                                       bottom=Side(style='medium'))
+                elif x > 1 and x < 5 and i == recon_end + 2:
+                    ws11[f"{get_column_letter(x)}{i}"].border = Border(bottom=Side(style='medium'))
+
+                # ws11[f"{get_column_letter(x)}{i}"].border = Border(top=Side(style='medium'),
+                #                                                    bottom=Side(style='medium'),
+                #                                                    left=Side(style='medium'),
+                #                                                    right=Side(style='medium'))
+                # Make font bold and 14
+                if x == 2:
+                    # format as currency
+                    ws11[f"{get_column_letter(x)}{i}"].number_format = 'R#,##0.00'
+                    ws11[f"{get_column_letter(x)}{i}"].font = Font(bold=True, size=14)
+
+        for i in range(anomolies_start, anomolies_end + 1):
+            # fill column B with a light grey
+            ws11[f"B{i}"].fill = PatternFill(start_color="D3D3D3", end_color="D3D3D3", fill_type="solid")
+            # fill column B at anomolies + 1 in a light yellow
+
+        ws11[f"B{anomolies_end + 1}"].fill = PatternFill(start_color="FFFDD7", end_color="FFFDD7", fill_type="solid")
+
+        ws12 = wb.create_sheet('Checklist')
+
+        # Make the tab color purple
+        ws12.sheet_properties.tabColor = "551A8B"
+
+        ws12['A1'] = 'Checklist'
+        ws12['A1'].font = Font(bold=True, size=22)
+        ws12['A1'].alignment = Alignment(horizontal='center', vertical='center')
+
+        ws12.append([])
+        ws12.append([])
+        ws12.append([])
+
+        ws12.append(["Check", "Explanation", " Option 1", "Option 2", "Difference", "Reason for Difference"])
+        ws12_last_row = ws12.max_row
+        ws12.append(["Funds Drawn Down", "Momentum vs NSST", "=Momentum!B47-Momentum!B66", "='NSST Print'!B8", "=C6-D6",""])
+        ws12.append(["Momentum Investment Account", "Momentum Xero vs NSST Balance", "=Momentum!B56", "='NSST Print'!B9", "=C7-D7", ""])
+        ws12.append(["Momentum Balance", "Momentum vs Xero", "=Momentum!B51", "=Momentum!B56", "=C8-D8", ""])
+        ws12.append(["Capital Still in Investments", "NSST vs Investor Exit List", "='NSST Print'!B13", "='Investor Exit List'!F3", "=C9-D9", ""])
+        ws12.append(["Funds Available", "Dashboard vs Projection",  "='Cashflow Projection'!D55", "=Dashboard!B20", "=C10-D10", ""])
+        ws12.append(["Units Unsold and Remaining", "NSST vs Investor Exit Report",  "='NSST Print'!D20+'NSST Print'!E20", "='Investor Exit List'!A3", "=C11-D11", ""])
+        ws12.append(["Investments Still in Development","NSST vs Investor Exit Report",  "='NSST Print'!B17",  "='NSST Print'!B17", "=C12-D12", ""])
+        ws12.append(["Total Income", "NSST vs Investor Exit Report", "=Dashboard!B11", "='Cashflow Projection'!D6", "=C13-D13", ""])
+        ws12.append(["Toatal Cash", "NSST vs Investor Exit Report", "=Dashboard!B20", "='Cashflow Projection'!D55", "=C14-D14", ""])
+        ws12.append(["Total Costs to Complete", "Dashboard vs Projection", "=Dashboard!B24", "='Cashflow Projection'!D32", "=C15-D15", ""])
+        ws12.append(["Total Running Costs", "Dashboard vs Projection", "=Dashboard!B24", "='Cashflow Projection'!D32", "=C16-D16", ""])
+        ws12.append(["Total VAT Payable / Receivable", "Dashboard vs Projection", "=Dashboard!B26", "='Cashflow Projection'!D27+'Cashflow Projection'!D49", "=C17-D17", ""])
+        ws12.append(["Total Net Effect", "Dashboard vs Projection", "=Dashboard!B30", "='Cashflow Projection'!X55", "=C18-D18", ""])
+
+
+        # get a list of sheets in the workbook
         sheet_names = wb.sheetnames
         # print(sheet_names)
-        sheet_names_to_hide = ['Updated Construction','Operational Costs', 'Xero', 'Other Costs','Investors', 'Sales','Construction', 'Opportunities']
+        sheet_names_to_hide = ['Updated Construction', 'Operational Costs', 'Xero', 'Other Costs', 'Investors', 'Sales',
+                               'Construction', 'Opportunities', 'Heron']
         # loop through the sheets and hide the ones in the list
 
         for sheet in sheet_names_to_hide:
@@ -1820,14 +2459,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero,op
 
         # move sheet 'NSST Print' to the beginning of the workbook
 
-
-
         # sheets_to_move = ['Investors', 'Construction', 'Sales']
         # # move the sheets to the nd of the workbook
         # for sheet in sheets_to_move:
         #     ws = wb[sheet]
         #     sheet_names.move_sheet(ws, -1)
-
 
         # remove the default sheet
         wb.remove(wb['Sheet'])

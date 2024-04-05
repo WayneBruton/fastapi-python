@@ -1,0 +1,182 @@
+[
+ {
+   "MONTH": "2021-08-31",
+   "INTEREST": 0.69,
+   "ADVICE FEES (Exc Vat)": 2.88,
+   "ONGOING ADVICE FEES (Inc Vat)": 0
+ },
+ {
+   "MONTH": "2021-09-30",
+   "INTEREST": 6153.47,
+   "ADVICE FEES (Exc Vat)": 20700,
+   "ONGOING ADVICE FEES (Inc Vat)": 142.83
+ },
+ {
+   "MONTH": "2021-10-31",
+   "INTEREST": 27493.93,
+   "ADVICE FEES (Exc Vat)": 39100,
+   "ONGOING ADVICE FEES (Inc Vat)": 1963.75
+ },
+ {
+   "MONTH": "2021-11-30",
+   "INTEREST": 39490.47,
+   "ADVICE FEES (Exc Vat)": 6612.5,
+   "ONGOING ADVICE FEES (Inc Vat)": 4603.54
+ },
+ {
+   "MONTH": "2021-12-31",
+   "INTEREST": 34809.07,
+   "ADVICE FEES (Exc Vat)": 0,
+   "ONGOING ADVICE FEES (Inc Vat)": 4987.02
+ },
+ {
+   "MONTH": "2022-01-31",
+   "INTEREST": 25737.44,
+   "ADVICE FEES (Exc Vat)": 0,
+   "ONGOING ADVICE FEES (Inc Vat)": 3416.75
+ },
+ {
+   "MONTH": "2022-02-28",
+   "INTEREST": 17923.77,
+   "ADVICE FEES (Exc Vat)": 2012.5,
+   "ONGOING ADVICE FEES (Inc Vat)": 2547.7
+ },
+ {
+   "MONTH": "2022-03-31",
+   "INTEREST": 7694.95,
+   "ADVICE FEES (Exc Vat)": 0,
+   "ONGOING ADVICE FEES (Inc Vat)": 1329.87
+ },
+ {
+   "MONTH": "2022-04-30",
+   "INTEREST": 33565.07,
+   "ADVICE FEES (Exc Vat)": 22274.94,
+   "ONGOING ADVICE FEES (Inc Vat)": 561.9
+ },
+ {
+   "MONTH": "2022-05-31",
+   "INTEREST": 19911.29,
+   "ADVICE FEES (Exc Vat)": 56298.31,
+   "ONGOING ADVICE FEES (Inc Vat)": 551.12
+ },
+ {
+   "MONTH": "2022-06-30",
+   "INTEREST": 57111.6,
+   "ADVICE FEES (Exc Vat)": 80343.79,
+   "ONGOING ADVICE FEES (Inc Vat)": 3852.47
+ },
+ {
+   "MONTH": "2022-07-31",
+   "INTEREST": 49997.61,
+   "ADVICE FEES (Exc Vat)": 55413.57,
+   "ONGOING ADVICE FEES (Inc Vat)": 4675.82
+ },
+ {
+   "MONTH": "2022-08-31",
+   "INTEREST": 49010.03,
+   "ADVICE FEES (Exc Vat)": 30982.39,
+   "ONGOING ADVICE FEES (Inc Vat)": 4493.24
+ },
+ {
+   "MONTH": "2022-09-30",
+   "INTEREST": 30938.76,
+   "ADVICE FEES (Exc Vat)": 10350,
+   "ONGOING ADVICE FEES (Inc Vat)": 3425.4
+ },
+ {
+   "MONTH": "2022-10-31",
+   "INTEREST": 31855.81,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 1362.36
+ },
+ {
+   "MONTH": "2022-11-30",
+   "INTEREST": 57998.29,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 3649
+ },
+ {
+   "MONTH": "2022-12-31",
+   "INTEREST": 49641.63,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 2707.2
+ },
+ {
+   "MONTH": "2023-01-31",
+   "INTEREST": 71919.64,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 1766.93
+ },
+ {
+   "MONTH": "2023-02-28",
+   "INTEREST": 116840.82,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 6530.48
+ },
+ {
+   "MONTH": "2023-03-31",
+   "INTEREST": 224301.31,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 5945.09
+ },
+ {
+   "MONTH": "2023-04-30",
+   "INTEREST": 106203.74,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 9664.42
+ },
+ {
+   "MONTH": "2023-05-31",
+   "INTEREST": 222519.64,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 6054.16
+ },
+ {
+   "MONTH": "2023-06-30",
+   "INTEREST": 393896.21,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 12101.97
+ },
+ {
+   "MONTH": "2023-07-31",
+   "INTEREST": 259590.93,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 17468.09
+ },
+ {
+   "MONTH": "2023-08-31",
+   "INTEREST": 241364.67,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 14897.28
+ },
+ {
+   "MONTH": "2023-09-30",
+   "INTEREST": 291385.94,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 17422.06
+ },
+ {
+   "MONTH": "2023-10-31",
+   "INTEREST": 342067.18,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 21887.62
+ },
+ {
+   "MONTH": "2023-11-30",
+   "INTEREST": 289283.88,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 20676.71
+ },
+ {
+   "MONTH": "2023-12-31",
+   "INTEREST": 158795.4,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 13562.87
+ },
+ {
+   "MONTH": "2024-01-31",
+   "INTEREST": 125751.22,
+   "ADVICE FEES (Exc Vat)": null,
+   "ONGOING ADVICE FEES (Inc Vat)": 8270.97
+ }
+]

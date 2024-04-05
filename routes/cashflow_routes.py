@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from datetime import datetime, timedelta
@@ -769,7 +770,7 @@ def get_rates():
         return {"success": False, "error": str(e)}
 
 
-def get_opportunities(data):
+def get_opportunities_1(data):
     try:
         opportunities = list(db.opportunities.find({"Category": {"$in": data}},
                                                    {"opportunity_code": 1, "Category": 1, "opportunity_end_date": 1,
@@ -1016,16 +1017,96 @@ async def get_sales_cashflow_initial(data: Request):
     request = await data.json()
     # print(request)
     data = request['data']
+    # print("data", data)
+    # print()
+    # print("request",request)
+
     try:
         start = time.time()
-        opportunities = get_opportunities(data)
+
+        get_date = list(db.cashflow_xero_tb.find({}, {"_id": 0, "ReportDate": 1}))
+        dates = []
+        for d in get_date:
+            dates.append(d['ReportDate'])
+
+        # print("get_date", dates)
+        # remove duplicates from dates
+        dates = list(sorted(set(dates)))
+        # print("get_date", dates)
+        date = dates[-1]
+        # print("data", date)
+
+
+        sales = get_sales_data(date)
+        # sort sales by transferred and opportunity_code
+        sales = sorted(sales, key=lambda x: (x['transferred'], x['opportunity_code']))
+
+
+
+        # filter out where transferred is true
+        # sales = list(filter(lambda x: x['transferred'] == False, sales))
+
+        # print("sales", sales)
+
+
+        opportunities = get_opportunities_1(data)
+        # for index, opportunity in enumerate(opportunities):
+        #     print(opportunity['opportunity_code'], opportunity['opportunity_sale_price'], "index", index)
+        #     print()
 
         sales_data = list(db.cashflow_sales.find({}))
+
+        construction = get_construction_costs()
+        for item in construction:
+            item['Blocks'] = item['Blocks'].replace("Block ", "")
+            # remove leading and trailing whitespace from item['block']
+            item['Blocks'] = item['Blocks'].strip()
+
+            # del item['Blocks']
+
+        # print("construction", construction[0])
+        # print()
+
+        for sale in sales:
+            filtered_sales_data = list(filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], sales_data))
+            filtered_construction_data = list(filter(lambda x: x['Blocks'] == sale['block'] and x['Whitebox-Able'] == True and sale['Category'] == 'Heron View', construction))
+            # print("filtered_construction_data", len(filtered_construction_data))
+            if len(filtered_construction_data) > 0:
+                if filtered_construction_data[0]['Complete Build'] == 1:
+                    sale['complete_build'] = True
+                else:
+                    sale['complete_build'] = False
+            else:
+                sale['complete_build'] = True
+
+            # print("filtered_sales_data", len(filtered_sales_data))
+            sale['_id'] = str(filtered_sales_data[0]['_id'])
+            sale['profit_loss'] = float(sale['profit_loss'])
+            sale['sale_price'] = float(sale['sale_price'])
+            sale['profit_loss_nice'] = "R{:,.2f}".format(sale['profit_loss'])
+            sale['sale_price_nice'] = "R{:,.2f}".format(sale['sale_price'])
+            del sale['vat_date']
+            # convert sale['original_planned_transfer_date'] to a string in the format yyyy-mm-dd
+            sale['original_planned_transfer_date'] = sale['original_planned_transfer_date'].strftime('%Y-%m-%d')
+            # convert sale['forecast_transfer_date'] to a string in the format yyyy-mm-dd
+            sale['forecast_transfer_date'] = sale['forecast_transfer_date'].strftime('%Y-%m-%d')
+
+        end = time.time()
+
+
+
+
+
+        return {"success": True, "data": sales, "time": end - start}
+
+
+
 
         # print("sales_data", sales_data[0])
         # print()
 
-        construction = get_construction_costs()
+
+        # print("construction", construction[0])
         for item in construction:
             item['block'] = item['Blocks'].replace("Block ", "")
             # remove leading and trailing whitespace from item['block']
@@ -1038,6 +1119,7 @@ async def get_sales_cashflow_initial(data: Request):
             final_investors = get_investors(data)
             # print("final_investors", final_investors)
             investors_with_interest = calculate_cashflow_investors(final_investors, opportunities, sales_data)
+            # print("investors_with_interest", investors_with_interest[0])
 
             items_to_update = []
             for item in sales_data:
@@ -1108,9 +1190,11 @@ async def get_sales_cashflow_initial(data: Request):
                                                    item['opportunity_bond_registration'])
                         items_to_update.append(item)
 
+            # print("items_to_update", items_to_update)
             if len(items_to_update) > 0:
 
                 items_to_update = list({v['_id']: v for v in items_to_update}.values())
+                # print("items_to_update", items_to_update)
                 try:
                     for index, item in enumerate(items_to_update):
                         id1 = item['_id']
@@ -1118,6 +1202,7 @@ async def get_sales_cashflow_initial(data: Request):
                         del item['_id']
                         db.cashflow_sales.update_one({"_id": ObjectId(id1)}, {"$set": item})
                         item['_id'] = id1
+                        # print("Updated sales data", index, item['opportunity_code'])
                 except Exception as e:
                     print("Error updating sales data", e, index, item['opportunity_code'])
                     # print()
@@ -1132,9 +1217,16 @@ async def get_sales_cashflow_initial(data: Request):
             # sort sales_data by transferred then by opportunity_code
             sales_data = sorted(sales_data, key=lambda x: (x['transferred'], x['opportunity_code']))
 
+
             # for index, data in enumerate(sales_data):
             #     if index == 0:
             #         print("sales_data", data['_id'])
+
+            print("sales", sales[0])
+            print("len(sales)", len(sales))
+            print()
+            print("Sales Data", sales_data[0])
+            print("len(sales_data)", len(sales_data))
 
             return {"success": True, "data": sales_data, "time": end - start}
 
@@ -1146,7 +1238,7 @@ async def get_sales_cashflow_initial(data: Request):
 
             sales = get_sales_for_cashflow(data)
 
-            opportunities_sold = list(filter(lambda x: x['opportunity_sold'] == True, opportunities))
+            opportunities_sold = list(filter(lambda x: x.get('opportunity_sold',False) == True, opportunities))
 
             sales = list(
                 filter(lambda x: x['opportunity_code'] in [item['opportunity_code'] for item in opportunities_sold],
@@ -1285,12 +1377,16 @@ async def get_sales_cashflow_initial(data: Request):
         # print("investors", investors[11])
         # print("sales", sales[0])
         end = time.time()
-        print("Time taken", end - start)
+        print("sales",sales[0])
+        print()
+        print("Sales Data", sales_data[0])
+        
+        print("Time taken ZZ", end - start)
         return {"success": True, "data": sales_data, "time": end - start}
     except Exception as e:
         print("Error getting sales cashflow initial", e)
         return {"success": False, "error": str(e)}
-    # return {"success": True, "data": data}
+
 
 
 @cashflow.post("/update_sales_data")
@@ -1650,7 +1746,11 @@ def get_construction_costs():
     #     return {"success": False, "error": str(e)}
 
 
-def get_sales_data():
+def get_sales_data(report_date):
+    # print("report_date", report_date)
+    report_date = report_date.replace("-", "/")
+    report_date = datetime.strptime(report_date, "%Y/%m/%d")
+    # print("report_date", report_date)
     try:
         construction_data = list(db.cashflow_construction.find({}, {"_id": 0}))
         for item in construction_data:
@@ -1662,11 +1762,50 @@ def get_sales_data():
 
         construction_data = list(filter(lambda x: x['Whitebox-Able'] == True, construction_data))
 
+        # Get actual sales data from sales_processed where development is "Heron Fields" or "Heron View"
+        sales_data_actual = list(
+            db.sales_processed.find({}, {"_id": 0,"development":1, "opportunity_code": 1, "opportunity_sales_date": 1,
+                                         "opportunity_actual_reg_date": 1}))
+
+        # filter out where development is not Heron Fields or Heron View
+        sales_data_actual = list(
+            filter(lambda x: x["development"] == "Heron Fields" or x["development"] == "Heron View" or x["development"] == "Endulini",
+                   sales_data_actual))
+
+        for sale in sales_data_actual:
+            # convert opportunity_sales_date to datetime
+            # if sale['opportunity_sales_date'] == None:
+            # print(sale['opportunity_code'], sale['opportunity_sales_date'], sale['opportunity_actual_reg_date'])
+            if 'opportunity_sales_date' in sale:
+                sale['opportunity_sales_date'] = sale['opportunity_sales_date'].replace("-", "/")
+                sale['opportunity_sales_date'] = datetime.strptime(sale['opportunity_sales_date'], '%Y/%m/%d')
+            else:
+                sale['opportunity_sales_date'] = sale['opportunity_sale_date'].replace("-", "/")
+                sale['opportunity_sales_date'] = datetime.strptime(sale['opportunity_sales_date'], '%Y/%m/%d')
+
+            # convert opportunity_actual_reg_date to datetime
+            try:
+                if sale['opportunity_actual_reg_date'] != "" and sale['opportunity_actual_reg_date'] != None:
+                    sale['opportunity_actual_reg_date'] = sale['opportunity_actual_reg_date'].replace("-", "/")
+                    sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'], '%Y/%m/%d')
+                else:
+                    sale['opportunity_actual_reg_date'] = "None"
+            except Exception as e:
+                print("Error converting opportunity_actual_reg_date to datetime", e, sale['opportunity_code'])
+                continue
+
+
+
+        # print("sales_data", sales_data_actual[0])
+
         # print("construction_data", construction_data[0])
         sales_data = list(db.cashflow_sales.find({}, {"_id": 0}))
         # print()
         # print("sales_data", sales_data[0])
         for sale in sales_data:
+
+
+
             construction_data_filtered = list(filter(lambda x: x['block'] == sale['block'], construction_data))
             # print(sale['block'],construction_data_filtered )
             if len(construction_data_filtered) > 0:
@@ -1705,6 +1844,23 @@ def get_sales_data():
             sale['vat_date'] = sale['vat_date'].replace("/", "-")
             sale['vat_date'] = datetime.strptime(sale['vat_date'], '%Y-%m-%d')
 
+
+
+            filtered_sales_data_actual = list(
+                filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], sales_data_actual))
+            if len(filtered_sales_data_actual) > 0:
+                if filtered_sales_data_actual[0]['opportunity_sales_date'] > report_date:
+                    sale['sold'] = False
+            # print(sale)
+            # print()
+                if filtered_sales_data_actual[0]['opportunity_actual_reg_date'] != "None":
+                    if filtered_sales_data_actual[0]['opportunity_actual_reg_date'] != None:
+                        if filtered_sales_data_actual[0]['opportunity_actual_reg_date'] > report_date:
+                            sale['transferred'] = False
+
+
+
+
             # del sale['profit_loss_nice']
             # del sale['sale_price_nice']
 
@@ -1739,6 +1895,12 @@ def get_operational_costs():
 def get_xero_tbs():
     try:
         xero_tbs = list(db.cashflow_xero_tb.find({}, {"_id": 0}))
+        # filter xero_tbs returning only hen AccountCode exists
+        xero_tbs = list(filter(lambda x: 'AccountCode' in x, xero_tbs))
+        # for item in xero_tbs:
+        #     if not 'AccountCode' in item:
+        #         del item
+        #         # print(item)
 
         # sort by ReportDate, AccountCode, AccountName, ReportTitle
         xero_tbs = sorted(xero_tbs,
@@ -1798,19 +1960,13 @@ def get_opportunities():
             filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", opportunities))
         # sort by Category then by opportunity_code
         opportunities = sorted(opportunities, key=lambda x: (x['Category'], x['opportunity_code']))
-        # print("opportunities", opportunities[0])
-        # print()
-        # get investors from db
+
         investors = list(db.investors.find({}, {"_id": 0}))
         for investor in investors:
             # filter investor["Trust"] where Category = "Heron Fields" or Category = "Heron View"
             investor["trust"] = list(
                 filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", investor["trust"]))
-            # filter investor["Investments"] where Category = "Heron Fields" or Category = "Heron View"
-            # investor["investments"] = list(
-            #     filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View",
-            #            investor["investments"]))
-            # filter investor["pledges"] where Category = "Heron Fields" or Category = "Heron View"
+
             investor["pledges"] = list(
                 filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", investor["pledges"]))
 
@@ -1830,17 +1986,6 @@ def get_opportunities():
                     # "pledged": False
                 }
                 final_investors.append(insert)
-            # if len(investor['pledges']) > 0:
-            #     for amount in investor['pledges']:
-            #         insert = {
-            #             "investment_amount": float(amount['investment_amount']),
-            #             "opportunity_code": amount['opportunity_code'],
-            #             "Category": amount['Category'],
-            #             "investor_acc_number": investor['investor_acc_number'],
-            #             "investment_number": amount.get("investment_number", 0),
-            #             "pledged": True
-            #         }
-            #         final_investors.append(insert)
 
         final_investors = [investor for investor in final_investors if
                            not (investor['investor_acc_number'] == "ZCAM01" and investor[
@@ -1853,10 +1998,6 @@ def get_opportunities():
         final_investors = [investor for investor in final_investors if
                            not (investor['investor_acc_number'] == "ZPJB01" and investor[
                                'opportunity_code'] == "HFA205" and investor['investment_number'] == 1)]
-
-        # print("final_investors", final_investors[0])
-        # print()
-        # print("length", len(final_investors))
 
         final_opportunities = []
 
@@ -1891,21 +2032,10 @@ def get_opportunities():
             insert['investment_amount'] = investment_amount
             final_opportunities.append(insert)
 
-        # print("final_opportunities", final_opportunities[0])
-        # print()
-        # print("final_opportunities", final_opportunities[1])
-        # print()
-        # print("final_opportunities", final_opportunities[2])
-        # print()
-        # print("final_opportunities", final_opportunities[4])
-
         return final_opportunities
     except Exception as e:
         print("Error getting opportunities", e)
         return {"success": False, "error": str(e)}
-
-
-
 
 
 @cashflow.post("/generate_investors_new_cashflow_nsst_report")
@@ -1918,11 +2048,59 @@ async def generate_investors_new_cashflow_nsst_report(data: Request):
         start = time.time()
         invest = investors_new_cashflow_nsst_report()
         construction = get_construction_costs()
-        sales = get_sales_data()
+        sales = get_sales_data(date)
         operational_costs = get_operational_costs()
         xero = get_xero_tbs()
         opportunities = get_opportunities()
-        result = cashflow_projections(invest, construction, sales, operational_costs, xero,opportunities, date)
+        # DO FOR INVESTOR EXIT REPORT THEN CREATE A FUNCTION
+        # print("invest", invest[0])
+        investor_exit = []
+        current_report_date = date.replace("-", "/")
+        current_report_date = datetime.strptime(current_report_date, '%Y/%m/%d')
+        for investor in invest:
+            insert = {
+                "total_units": investor['investor_acc_number'],
+                "investment_number": investor['investment_number'],
+                "unit_number": investor['opportunity_code'],
+                "block": investor['Block'],
+                "Investor": f"{investor['investor_surname']} {investor['investor_name']}",
+                "capital_amount": 0,
+                "fund_release_date": investor['release_date'],
+                "unit_sold_status": investor['sold'],
+                "unit_transferred_status": investor['tansferred'],
+                "estimated_transfer_date": investor['end_date'],
+                "actual_transfer_date": "",
+                "Exit Deadline (730 Days)": "",
+                "current_report_date": current_report_date,
+                "days_to_contract_exit": 0,
+                "days_to_estimated_exit": 0,
+                "Investor Contract expiry exit": 0,
+                "Capital & Interest to be Exited": 0,
+                "Investor Exit Value On Sales": 0,
+                "Exited by Developer": 0,
+                "Date of Exit": "",
+                "Early Release": investor['early_release'],
+                "Investor pay Back On transfer": 0,
+                "Developer & Unbonded": 0,
+                "still_pledged": investor['still_pledged'],
+            }
+            investor_exit.append(insert)
+
+        for investor in investor_exit:
+            if investor['unit_transferred_status'] and investor['estimated_transfer_date'] > current_report_date:
+                investor['unit_transferred_status'] = False
+
+        momentum = list(db.cashflow_momentum.find({},{ "_id": 0 }))
+        for item in momentum:
+            item['MONTH'] = item['MONTH'].replace("-", "/")
+            item['MONTH'] = datetime.strptime(item['MONTH'], '%Y/%m/%d')
+            # item['_id'] = str(item['_id'])
+
+        # print()
+        # print("investor_exit", investor_exit[0])
+        # print()
+        result = cashflow_projections(invest, construction, sales, operational_costs, xero, opportunities,
+                                      investor_exit,momentum, date)
         # result = "Awesome"
         end = time.time()
         print("Time taken", end - start)
@@ -1931,6 +2109,205 @@ async def generate_investors_new_cashflow_nsst_report(data: Request):
         print("Error generating investors new cashflow nsst report", e)
         return {"success": False, "error": str(e)}
 
+
+# def import_momentum():
+#     try:
+#         # get momentum.json
+#         data = [
+#  {
+#    "MONTH": "2021-08-31",
+#    "INTEREST": 0.69,
+#    "ADVICE FEES (Exc Vat)": 2.88,
+#    "ONGOING ADVICE FEES (Inc Vat)": 0
+#  },
+#  {
+#    "MONTH": "2021-09-30",
+#    "INTEREST": 6153.47,
+#    "ADVICE FEES (Exc Vat)": 20700,
+#    "ONGOING ADVICE FEES (Inc Vat)": 142.83
+#  },
+#  {
+#    "MONTH": "2021-10-31",
+#    "INTEREST": 27493.93,
+#    "ADVICE FEES (Exc Vat)": 39100,
+#    "ONGOING ADVICE FEES (Inc Vat)": 1963.75
+#  },
+#  {
+#    "MONTH": "2021-11-30",
+#    "INTEREST": 39490.47,
+#    "ADVICE FEES (Exc Vat)": 6612.5,
+#    "ONGOING ADVICE FEES (Inc Vat)": 4603.54
+#  },
+#  {
+#    "MONTH": "2021-12-31",
+#    "INTEREST": 34809.07,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 4987.02
+#  },
+#  {
+#    "MONTH": "2022-01-31",
+#    "INTEREST": 25737.44,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 3416.75
+#  },
+#  {
+#    "MONTH": "2022-02-28",
+#    "INTEREST": 17923.77,
+#    "ADVICE FEES (Exc Vat)": 2012.5,
+#    "ONGOING ADVICE FEES (Inc Vat)": 2547.7
+#  },
+#  {
+#    "MONTH": "2022-03-31",
+#    "INTEREST": 7694.95,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 1329.87
+#  },
+#  {
+#    "MONTH": "2022-04-30",
+#    "INTEREST": 33565.07,
+#    "ADVICE FEES (Exc Vat)": 22274.94,
+#    "ONGOING ADVICE FEES (Inc Vat)": 561.9
+#  },
+#  {
+#    "MONTH": "2022-05-31",
+#    "INTEREST": 19911.29,
+#    "ADVICE FEES (Exc Vat)": 56298.31,
+#    "ONGOING ADVICE FEES (Inc Vat)": 551.12
+#  },
+#  {
+#    "MONTH": "2022-06-30",
+#    "INTEREST": 57111.6,
+#    "ADVICE FEES (Exc Vat)": 80343.79,
+#    "ONGOING ADVICE FEES (Inc Vat)": 3852.47
+#  },
+#  {
+#    "MONTH": "2022-07-31",
+#    "INTEREST": 49997.61,
+#    "ADVICE FEES (Exc Vat)": 55413.57,
+#    "ONGOING ADVICE FEES (Inc Vat)": 4675.82
+#  },
+#  {
+#    "MONTH": "2022-08-31",
+#    "INTEREST": 49010.03,
+#    "ADVICE FEES (Exc Vat)": 30982.39,
+#    "ONGOING ADVICE FEES (Inc Vat)": 4493.24
+#  },
+#  {
+#    "MONTH": "2022-09-30",
+#    "INTEREST": 30938.76,
+#    "ADVICE FEES (Exc Vat)": 10350,
+#    "ONGOING ADVICE FEES (Inc Vat)": 3425.4
+#  },
+#  {
+#    "MONTH": "2022-10-31",
+#    "INTEREST": 31855.81,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 1362.36
+#  },
+#  {
+#    "MONTH": "2022-11-30",
+#    "INTEREST": 57998.29,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 3649
+#  },
+#  {
+#    "MONTH": "2022-12-31",
+#    "INTEREST": 49641.63,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 2707.2
+#  },
+#  {
+#    "MONTH": "2023-01-31",
+#    "INTEREST": 71919.64,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 1766.93
+#  },
+#  {
+#    "MONTH": "2023-02-28",
+#    "INTEREST": 116840.82,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 6530.48
+#  },
+#  {
+#    "MONTH": "2023-03-31",
+#    "INTEREST": 224301.31,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 5945.09
+#  },
+#  {
+#    "MONTH": "2023-04-30",
+#    "INTEREST": 106203.74,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 9664.42
+#  },
+#  {
+#    "MONTH": "2023-05-31",
+#    "INTEREST": 222519.64,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 6054.16
+#  },
+#  {
+#    "MONTH": "2023-06-30",
+#    "INTEREST": 393896.21,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 12101.97
+#  },
+#  {
+#    "MONTH": "2023-07-31",
+#    "INTEREST": 259590.93,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 17468.09
+#  },
+#  {
+#    "MONTH": "2023-08-31",
+#    "INTEREST": 241364.67,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 14897.28
+#  },
+#  {
+#    "MONTH": "2023-09-30",
+#    "INTEREST": 291385.94,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 17422.06
+#  },
+#  {
+#    "MONTH": "2023-10-31",
+#    "INTEREST": 342067.18,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 21887.62
+#  },
+#  {
+#    "MONTH": "2023-11-30",
+#    "INTEREST": 289283.88,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 20676.71
+#  },
+#  {
+#    "MONTH": "2023-12-31",
+#    "INTEREST": 158795.4,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 13562.87
+#  },
+#  {
+#    "MONTH": "2024-01-31",
+#    "INTEREST": 125751.22,
+#    "ADVICE FEES (Exc Vat)": 0,
+#    "ONGOING ADVICE FEES (Inc Vat)": 8270.97
+#  }
+# ]
+#         # with open('momentum.json') as f:
+#         #     data = json.load(f)
+#         # print(data)
+#         try:
+#             result = db.cashflow_momentum.insert_many(data)
+#             print("RESULT", result)
+#         except Exception as e:
+#             print("Error", e)
+#
+#     except:
+#         print("Error")
+
+# import_momentum()
 
 def adjust_sales():
     # get cashflow_sales from db
@@ -1952,6 +2329,56 @@ def adjust_sales():
     # print(filtered_sales[0])
 
     # print(cashflow_sales[0])
+
+
+@cashflow.get("/get_cashflow_momentum")
+async def get_cashflow_momentum():
+    try:
+        momentum = list(db.cashflow_momentum.find({}))
+        for item in momentum:
+            item['_id'] = str(item['_id'])
+            # format all fields except _id and "Month" as currency with an R symbol
+            item["INTEREST_R"] = f"R{item['INTEREST']:,.2f}"
+            item["ADVICE FEES (Exc Vat)_R"] = f"R{item['ADVICE FEES (Exc Vat)']:,.2f}"
+            item["ONGOING ADVICE FEES (Inc Vat)_R"] = f"R{item['ONGOING ADVICE FEES (Inc Vat)']:,.2f}"
+                    # item[key] = f"R{value:,.2f}"
+
+        return {"success": True, "data": momentum}
+    except Exception as e:
+        print("Error getting cashflow momentum", e)
+        return {"success": False, "error": str(e)}
+
+
+@cashflow.post("/add_cashflow_momentum")
+async def add_cashflow_momentum(data: Request):
+    request = await data.json()
+    print(request)
+    data = request['data']
+    data['INTEREST'] = float(data['INTEREST'])
+    data['ADVICE FEES (Exc Vat)'] = float(data['ADVICE FEES (Exc Vat)'])
+    data['ONGOING ADVICE FEES (Inc Vat)'] = float(data['ONGOING ADVICE FEES (Inc Vat)'])
+    # return {"success": True, "data": request}
+    try:
+        result = db.cashflow_momentum.insert_one(data)
+        return {"success": True, "data": str(result.inserted_id)}
+    except Exception as e:
+        print("Error adding cashflow momentum", e)
+        return {"success": False, "error": str(e)}
+
+
+@cashflow.post("/delete_cashflow_momentum")
+async def delete_cashflow_momentum(data: Request):
+    request = await data.json()
+    print(request)
+    _id = request['data']
+    print(_id)
+    # return {"success": True, "data": _id}
+    try:
+        result = db.cashflow_momentum.delete_one({"_id": ObjectId(_id)})
+        return {"success": True, "data": str(result.deleted_count)}
+    except Exception as e:
+        print("Error deleting cashflow momentum", e)
+        return {"success": False, "error": str(e)}
 
 
 @cashflow.get("/get_last_date")

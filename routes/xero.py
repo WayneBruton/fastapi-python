@@ -4049,7 +4049,7 @@ async def get_trial_balances(request: Request):
         for item in final_data:
             try:
                 filtered_cashflow_xero_tb = list(filter(
-                    lambda z: z['AccountCode'] == item['AccountCode'] and z['ReportDate'] == item['ReportDate'] and z[
+                    lambda z: z.get('AccountCode',"") == item.get('AccountCode',"000") and z['ReportDate'] == item['ReportDate'] and z[
                         'AccountName'] == item['AccountName'] and z['ReportTitle'] == item['ReportTitle'],
                     cashflow_xero_tb))
                 if len(filtered_cashflow_xero_tb) == 0:
@@ -4062,6 +4062,7 @@ async def get_trial_balances(request: Request):
 
                 elif len(filtered_cashflow_xero_tb) == 1:
                     item_to_update = filtered_cashflow_xero_tb[0]
+                    # print("OKAY")
 
                     if int(item_to_update['Current'] - item['Current'] + item_to_update['YTD'] - item['YTD']) != 0:
                         # update the Current and YTD in the database where the _id is equal to item_to_update['_id']
@@ -4076,18 +4077,21 @@ async def get_trial_balances(request: Request):
                         try:
                             _id = item_to_update['_id']
                             del item_to_update['_id']
-                            db.cashflow_xero_tb.update_one({"_id": ObjectId(_id)}, {"$set": item})
+
+                            result = db.cashflow_xero_tb.update_one({"_id": ObjectId(_id)}, {"$set": item})
+
                             print("Update Successful")
                         except Exception as e:
-                            print("Error", e, "item_to_update", item_to_update, "item", item, "_id", _id)
+                            print("Error", e, "item_to_update", item_to_update, "item", item, "_id", _id, "Result",result)
                             continue
 
                 else:
                     print("More than one item found", item_to_update, item)
 
             except Exception as e:
-                print("Error", e, "item_to_update", item_to_update, "item", item, "_id", _id)
-                return {"ERROR": "Please Try again"}
+                print("Error 2", e, "item_to_update", item_to_update, "item", item)
+                # return {"ERROR": "Please Try again"}
+                continue
 
     # create list called bank_accounts and filter only where "AccountCode" begins with 84
 
