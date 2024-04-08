@@ -1015,11 +1015,8 @@ def calculate_cashflow_investors(final_investors, opportunities, sales_data):
 @cashflow.post("/get_sales_cashflow_initial")
 async def get_sales_cashflow_initial(data: Request):
     request = await data.json()
-    # print(request)
+
     data = request['data']
-    # print("data", data)
-    # print()
-    # print("request",request)
 
     try:
         start = time.time()
@@ -1029,32 +1026,67 @@ async def get_sales_cashflow_initial(data: Request):
         for d in get_date:
             dates.append(d['ReportDate'])
 
-        # print("get_date", dates)
-        # remove duplicates from dates
         dates = list(sorted(set(dates)))
-        # print("get_date", dates)
-        date = dates[-1]
-        # print("data", date)
 
+        date = dates[-1]
 
         sales = get_sales_data(date)
         # sort sales by transferred and opportunity_code
         sales = sorted(sales, key=lambda x: (x['transferred'], x['opportunity_code']))
 
-
-
-        # filter out where transferred is true
-        # sales = list(filter(lambda x: x['transferred'] == False, sales))
-
-        # print("sales", sales)
-
-
-        opportunities = get_opportunities_1(data)
-        # for index, opportunity in enumerate(opportunities):
-        #     print(opportunity['opportunity_code'], opportunity['opportunity_sale_price'], "index", index)
-        #     print()
+        opportunities = list(db.opportunities.find({}, {"_id": 0}))
 
         sales_data = list(db.cashflow_sales.find({}))
+
+        # filter sales_data where transferred is False
+        sales_to_update = []
+        sales_data_filtered = list(filter(lambda x: x['transferred'] == False, sales_data))
+        print(len(sales_data_filtered))
+        for sale in sales_data_filtered:
+            sale['_id'] = str(sale['_id'])
+            opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], opportunities))
+            if len(opportunities_filtered) > 0:
+                if opportunities_filtered[0]['opportunity_final_transfer_date'] != "" and sale['transferred'] == False:
+                    # print("sale", sale)
+                    # print()
+                    # print("opportunities_filtered", opportunities_filtered[0])
+                    # print()
+                    sale['forecast_transfer_date'] = opportunities_filtered[0]['opportunity_final_transfer_date']
+                    sale['sold'] = True
+                    sale['transferred'] = True
+                    sales_to_update.append(sale)
+                elif opportunities_filtered[0]['opportunity_sold'] == True and sale['sold'] == False:
+                    sale['sold'] = True
+                    sales_to_update.append(sale)
+                    # print("sale sold", sale)
+                    # print()
+                    # print("opportunities_filtered sold", opportunities_filtered[0])
+                    # print()
+
+        # print("sales_to_update", len(sales_to_update))
+        # print()
+        # print("sales_to_update", sales_to_update)
+
+        # sort sales to update by opportunity_code
+        sales_to_update = sorted(sales_to_update, key=lambda x: x['opportunity_code'])
+
+        if len(sales_to_update) > 0:
+            for sale in sales_to_update:
+                try:
+                    id = sale['_id']
+                    del sale['_id']
+                    db.cashflow_sales.update_one({"_id": ObjectId(id)}, {"$set": sale})
+                except Exception as e:
+                    print("Error updating sales", e)
+
+
+
+            # print("sale", sale['opportunity_code'])
+            sales_data = list(db.cashflow_sales.find({}))
+
+        # print("sales_data_filtered", sales_data_filtered[0])
+
+
 
         construction = get_construction_costs()
         for item in construction:
@@ -1062,14 +1094,11 @@ async def get_sales_cashflow_initial(data: Request):
             # remove leading and trailing whitespace from item['block']
             item['Blocks'] = item['Blocks'].strip()
 
-            # del item['Blocks']
-
-        # print("construction", construction[0])
-        # print()
-
         for sale in sales:
             filtered_sales_data = list(filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], sales_data))
-            filtered_construction_data = list(filter(lambda x: x['Blocks'] == sale['block'] and x['Whitebox-Able'] == True and sale['Category'] == 'Heron View', construction))
+            filtered_construction_data = list(filter(
+                lambda x: x['Blocks'] == sale['block'] and x['Whitebox-Able'] == True and sale[
+                    'Category'] == 'Heron View', construction))
             # print("filtered_construction_data", len(filtered_construction_data))
             if len(filtered_construction_data) > 0:
                 if filtered_construction_data[0]['Complete Build'] == 1:
@@ -1093,300 +1122,11 @@ async def get_sales_cashflow_initial(data: Request):
 
         end = time.time()
 
-
-
-
-
         return {"success": True, "data": sales, "time": end - start}
 
-
-
-
-        # print("sales_data", sales_data[0])
-        # print()
-
-
-        # print("construction", construction[0])
-        for item in construction:
-            item['block'] = item['Blocks'].replace("Block ", "")
-            # remove leading and trailing whitespace from item['block']
-            item['block'] = item['block'].strip()
-
-            del item['Blocks']
-
-        if len(sales_data) == len(opportunities):
-
-            final_investors = get_investors(data)
-            # print("final_investors", final_investors)
-            investors_with_interest = calculate_cashflow_investors(final_investors, opportunities, sales_data)
-            # print("investors_with_interest", investors_with_interest[0])
-
-            items_to_update = []
-            for item in sales_data:
-
-                if item['refinanced'] == False and item['VAT'] == 0:
-                    final_investors_filtered = list(
-                        filter(lambda x: x['opportunity_code'] == item['opportunity_code'], investors_with_interest))
-                    # print("final_investors_filtered", final_investors_filtered)
-                    if len(final_investors_filtered) > 0:
-                        # print("final_investors_filtered", final_investors_filtered)
-                        # print()
-                        # print("item", item)
-                        item['due_to_investors'] = final_investors_filtered[0]['total_due_to_investors']
-
-                    else:
-                        item['due_to_investors'] = 0
-
-                    item['VAT'] = float(item['sale_price']) / 1.15 * 0.15
-                    item['nett'] = float(item['sale_price']) / 1.15
-
-                    item['transfer_income'] = float(item['sale_price']) - float(
-                        item['opportunity_transfer_fees']) - float(item[
-                                                                       'opportunity_trust_release_fee']) - float(
-                        item['opportunity_unforseen']) - float(item[
-                                                                   'opportunity_bond_registration']) - float(
-                        item['opportunity_commission'])
-                    item['profit_loss'] = item['transfer_income'] - item['due_to_investors']
-                    items_to_update.append(item)
-
-                item['_id'] = str(item['_id'])
-                filtered_construction = list(
-                    filter(lambda x: x['block'] == item['block'], construction))
-
-                # print("filtered_construction", filtered_construction)
-
-                if len(filtered_construction) > 0:
-
-                    if item['complete_build']:
-                        item['complete_build'] = True
-                        items_to_update.append(item)  # I AM HERE Now I need to update the sales data
-                else:
-
-                    if not item['complete_build']:
-                        item['complete_build'] = False
-
-                        items_to_update.append(item)
-
-                # DO SALES PRICE, PROFIT AND INVESTOR INTEREST CALCULATIONS ONLY IF DIFFERENT I AM HERE
-                filtered_investors = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'],
-                                                 investors_with_interest))
-                if len(filtered_investors) > 0:
-                    if item['due_to_investors'] == 0 or float(item['due_to_investors']) != float(filtered_investors[0][
-                                                                                                     'total_due_to_investors']):
-                        item['due_to_investors'] = filtered_investors[0]['total_due_to_investors']
-                        item['profit_loss'] = item['transfer_income'] - item['due_to_investors']
-                        items_to_update.append(item)
-                filtered_opportunities = list(
-                    filter(lambda x: x['opportunity_code'] == item['opportunity_code'], opportunities))
-                if len(filtered_opportunities) > 0:
-                    if float(item['sale_price']) != float(filtered_opportunities[0]['opportunity_sale_price']):
-                        item['sale_price'] = filtered_opportunities[0]['opportunity_sale_price']
-                        item['VAT'] = float(item['sale_price']) / 1.15 * 0.15
-                        item['nett'] = float(item['sale_price']) / 1.15
-                        item['transfer_income'] = (float(item['sale_price']) - item['opportunity_transfer_fees'] -
-                                                   item['opportunity_trust_release_fee'] - item[
-                                                       'opportunity_unforseen'] - item[
-                                                       'opportunity_commission'] * float(item['sale_price']) -
-                                                   item['opportunity_bond_registration'])
-                        items_to_update.append(item)
-
-            # print("items_to_update", items_to_update)
-            if len(items_to_update) > 0:
-
-                items_to_update = list({v['_id']: v for v in items_to_update}.values())
-                # print("items_to_update", items_to_update)
-                try:
-                    for index, item in enumerate(items_to_update):
-                        id1 = item['_id']
-
-                        del item['_id']
-                        db.cashflow_sales.update_one({"_id": ObjectId(id1)}, {"$set": item})
-                        item['_id'] = id1
-                        # print("Updated sales data", index, item['opportunity_code'])
-                except Exception as e:
-                    print("Error updating sales data", e, index, item['opportunity_code'])
-                    # print()
-                    return {"success": False, "error": str(e)}
-
-            end = time.time()
-            for item in sales_data:
-                # convert item['sale_price'] to currency format with R symbol
-                item['sale_price_nice'] = "R" + "{:,.2f}".format(float(item['sale_price']))
-                item['profit_loss_nice'] = "R" + "{:,.2f}".format(float(item['profit_loss']))
-
-            # sort sales_data by transferred then by opportunity_code
-            sales_data = sorted(sales_data, key=lambda x: (x['transferred'], x['opportunity_code']))
-
-
-            # for index, data in enumerate(sales_data):
-            #     if index == 0:
-            #         print("sales_data", data['_id'])
-
-            print("sales", sales[0])
-            print("len(sales)", len(sales))
-            print()
-            print("Sales Data", sales_data[0])
-            print("len(sales_data)", len(sales_data))
-
-            return {"success": True, "data": sales_data, "time": end - start}
-
-        else:
-
-            sales_parameters = get_sales_parameters()
-
-            # rates = get_rates()
-
-            sales = get_sales_for_cashflow(data)
-
-            opportunities_sold = list(filter(lambda x: x.get('opportunity_sold',False) == True, opportunities))
-
-            sales = list(
-                filter(lambda x: x['opportunity_code'] in [item['opportunity_code'] for item in opportunities_sold],
-                       sales))
-
-            construction = get_construction_costs()
-
-            final_investors = get_investors(data)
-
-            # Calculate INITIAL DATA
-            final_sales = []
-            for unit in opportunities:
-                filtered_construction = list(
-                    filter(lambda x: x['Blocks'] == "Block " + unit['opportunity_code'][-4], construction))
-                if len(filtered_construction) > 0:
-                    print("filtered_construction", filtered_construction[0])
-                    complete_build = filtered_construction[0]['Complete Build']
-                    # If whiteboxed is true, then make it false and vica a versa
-                    complete_build = not complete_build
-                else:
-                    complete_build = False
-
-                if unit['opportunity_final_transfer_date'] == "":
-                    original_planned_transfer_date = unit['opportunity_end_date']
-                    forecast_transfer_date = ""
-                else:
-                    original_planned_transfer_date = unit['opportunity_final_transfer_date']
-                    forecast_transfer_date = unit['opportunity_final_transfer_date']
-                filtered_sales = list(filter(lambda x: x['opportunity_code'] == unit['opportunity_code'], sales))
-                if len(filtered_sales) > 0:
-                    # print("Filtered Sales: ",filtered_sales)
-                    opportunity_transfer_fees = float(filtered_sales[0].get('opportunity_transfer_fees', 0))
-                    opportunity_trust_release_fee = float(filtered_sales[0].get('opportunity_trust_release_fee', 0))
-                    opportunity_unforseen = float(filtered_sales[0].get('opportunity_unforseen', 0)) * float(
-                        unit['opportunity_sale_price'])
-                    opportunity_commission = float(filtered_sales[0].get('opportunity_commission', 0)) / 1.15 * float(
-                        unit['opportunity_sale_price'])
-                    opportunity_bond_registration = float(filtered_sales[0].get('opportunity_bond_registration', 0))
-                    if opportunity_transfer_fees == 0:
-                        # if unit['opportunity_code'] == "HVC306":
-                        #     print("Filtered Sales: ", filtered_sales)
-                        #     print()
-
-                        filtered_sales_parameters = list(
-                            filter(
-                                lambda x: x['Development'] == unit['Category'] and x['Description'] == "transfer_fees",
-                                sales_parameters))
-
-                        opportunity_transfer_fees = float(filtered_sales_parameters[0]['rate'])
-                        filtered_sales_parameters = list(
-                            filter(
-                                lambda x: x['Development'] == unit['Category'] and x[
-                                    'Description'] == "trust_release_fee",
-                                sales_parameters))
-                        opportunity_trust_release_fee = float(filtered_sales_parameters[0]['rate'])
-                        filtered_sales_parameters = list(
-                            filter(
-                                lambda x: x['Development'] == unit['Category'] and x['Description'] == "unforseen",
-                                sales_parameters))
-
-                        opportunity_unforseen = float(filtered_sales_parameters[0]['rate']) * float(
-                            unit['opportunity_sale_price'])
-                        filtered_sales_parameters = list(
-                            filter(
-                                lambda x: x['Development'] == unit['Category'] and x['Description'] == "commission",
-                                sales_parameters))
-                        # if unit['opportunity_code'] == "HVC306":
-                        #     print("filtered_sales_parameters", filtered_sales_parameters)
-                        opportunity_commission = float(filtered_sales_parameters[0]['rate']) / 1.15 * float(
-                            unit['opportunity_sale_price'])
-                        filtered_sales_parameters = list(
-                            filter(
-                                lambda x: x['Development'] == unit['Category'] and x[
-                                    'Description'] == "bond_registration",
-                                sales_parameters))
-                        opportunity_bond_registration = float(filtered_sales_parameters[0]['rate'])
-
-                opportunity_unforseen = float(
-                    unit['opportunity_sale_price']) * .005
-
-                opportunity_commission = float(
-                    unit['opportunity_sale_price']) * .05
-
-                insert = {
-                    "Category": unit['Category'],
-                    "block": unit['opportunity_code'][-4],
-                    "opportunity_code": unit['opportunity_code'],
-                    "sold": unit['opportunity_sold'],
-                    "transferred": unit['transferred'],
-                    "complete_build": complete_build,
-                    "original_planned_transfer_date": original_planned_transfer_date,
-                    "forecast_transfer_date": forecast_transfer_date,
-                    "sale_price": float(unit['opportunity_sale_price']),
-                    "VAT": float(unit['opportunity_sale_price']) / 1.15 * 0.15,
-                    "nett": float(unit['opportunity_sale_price']) / 1.15,
-                    "opportunity_transfer_fees": opportunity_transfer_fees,
-                    "opportunity_trust_release_fee": opportunity_trust_release_fee,
-                    "opportunity_unforseen": opportunity_unforseen,
-                    "opportunity_commission": opportunity_commission,
-                    "opportunity_bond_registration": opportunity_bond_registration,
-                    "transfer_income": float(unit[
-                                                 'opportunity_sale_price']) - opportunity_transfer_fees - opportunity_trust_release_fee - opportunity_unforseen - opportunity_commission - opportunity_bond_registration,
-                    "due_to_investors": 0,
-                    "profit_loss": 0,
-                    "refinanced": False,
-                }
-                final_sales.append(insert)
-
-            # print("final_sales", len(final_sales))
-
-            if len(sales_data) == 0:
-                try:
-                    db.cashflow_sales.insert_many(final_sales)
-                except Exception as e:
-                    print("Error inserting sales data", e)
-                    return {"success": False, "error": str(e)}
-            else:
-                if len(sales_data) < len(final_sales):
-                    for sale in final_sales:
-                        if sale not in sales_data:
-                            try:
-                                db.cashflow_sales.insert_one(sale)
-                            except Exception as e:
-                                print("Error inserting sales data", e)
-                                return {"success": False, "error": str(e)}
-
-            # print("insert", insert)
-            # print()
-
-        # print("final_investors", final_investors[10])
-        # print("final_investors", len(final_investors))
-        # print("opportunities", opportunities[0])
-        # print("sales_data", sales_data)
-        # print("sales_parameters", sales_parameters)
-        # print("rates", rates)
-        # print("investors", investors[11])
-        # print("sales", sales[0])
-        end = time.time()
-        print("sales",sales[0])
-        print()
-        print("Sales Data", sales_data[0])
-        
-        print("Time taken ZZ", end - start)
-        return {"success": True, "data": sales_data, "time": end - start}
     except Exception as e:
         print("Error getting sales cashflow initial", e)
         return {"success": False, "error": str(e)}
-
 
 
 @cashflow.post("/update_sales_data")
@@ -1764,12 +1504,13 @@ def get_sales_data(report_date):
 
         # Get actual sales data from sales_processed where development is "Heron Fields" or "Heron View"
         sales_data_actual = list(
-            db.sales_processed.find({}, {"_id": 0,"development":1, "opportunity_code": 1, "opportunity_sales_date": 1,
+            db.sales_processed.find({}, {"_id": 0, "development": 1, "opportunity_code": 1, "opportunity_sales_date": 1,
                                          "opportunity_actual_reg_date": 1}))
 
         # filter out where development is not Heron Fields or Heron View
         sales_data_actual = list(
-            filter(lambda x: x["development"] == "Heron Fields" or x["development"] == "Heron View" or x["development"] == "Endulini",
+            filter(lambda x: x["development"] == "Heron Fields" or x["development"] == "Heron View" or x[
+                "development"] == "Endulini",
                    sales_data_actual))
 
         for sale in sales_data_actual:
@@ -1787,14 +1528,13 @@ def get_sales_data(report_date):
             try:
                 if sale['opportunity_actual_reg_date'] != "" and sale['opportunity_actual_reg_date'] != None:
                     sale['opportunity_actual_reg_date'] = sale['opportunity_actual_reg_date'].replace("-", "/")
-                    sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'], '%Y/%m/%d')
+                    sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'],
+                                                                            '%Y/%m/%d')
                 else:
                     sale['opportunity_actual_reg_date'] = "None"
             except Exception as e:
                 print("Error converting opportunity_actual_reg_date to datetime", e, sale['opportunity_code'])
                 continue
-
-
 
         # print("sales_data", sales_data_actual[0])
 
@@ -1803,8 +1543,6 @@ def get_sales_data(report_date):
         # print()
         # print("sales_data", sales_data[0])
         for sale in sales_data:
-
-
 
             construction_data_filtered = list(filter(lambda x: x['block'] == sale['block'], construction_data))
             # print(sale['block'],construction_data_filtered )
@@ -1844,22 +1582,17 @@ def get_sales_data(report_date):
             sale['vat_date'] = sale['vat_date'].replace("/", "-")
             sale['vat_date'] = datetime.strptime(sale['vat_date'], '%Y-%m-%d')
 
-
-
             filtered_sales_data_actual = list(
                 filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], sales_data_actual))
             if len(filtered_sales_data_actual) > 0:
                 if filtered_sales_data_actual[0]['opportunity_sales_date'] > report_date:
                     sale['sold'] = False
-            # print(sale)
-            # print()
+                # print(sale)
+                # print()
                 if filtered_sales_data_actual[0]['opportunity_actual_reg_date'] != "None":
                     if filtered_sales_data_actual[0]['opportunity_actual_reg_date'] != None:
                         if filtered_sales_data_actual[0]['opportunity_actual_reg_date'] > report_date:
                             sale['transferred'] = False
-
-
-
 
             # del sale['profit_loss_nice']
             # del sale['sale_price_nice']
@@ -2090,7 +1823,7 @@ async def generate_investors_new_cashflow_nsst_report(data: Request):
             if investor['unit_transferred_status'] and investor['estimated_transfer_date'] > current_report_date:
                 investor['unit_transferred_status'] = False
 
-        momentum = list(db.cashflow_momentum.find({},{ "_id": 0 }))
+        momentum = list(db.cashflow_momentum.find({}, {"_id": 0}))
         for item in momentum:
             item['MONTH'] = item['MONTH'].replace("-", "/")
             item['MONTH'] = datetime.strptime(item['MONTH'], '%Y/%m/%d')
@@ -2100,7 +1833,7 @@ async def generate_investors_new_cashflow_nsst_report(data: Request):
         # print("investor_exit", investor_exit[0])
         # print()
         result = cashflow_projections(invest, construction, sales, operational_costs, xero, opportunities,
-                                      investor_exit,momentum, date)
+                                      investor_exit, momentum, date)
         # result = "Awesome"
         end = time.time()
         print("Time taken", end - start)
@@ -2341,7 +2074,7 @@ async def get_cashflow_momentum():
             item["INTEREST_R"] = f"R{item['INTEREST']:,.2f}"
             item["ADVICE FEES (Exc Vat)_R"] = f"R{item['ADVICE FEES (Exc Vat)']:,.2f}"
             item["ONGOING ADVICE FEES (Inc Vat)_R"] = f"R{item['ONGOING ADVICE FEES (Inc Vat)']:,.2f}"
-                    # item[key] = f"R{value:,.2f}"
+            # item[key] = f"R{value:,.2f}"
 
         return {"success": True, "data": momentum}
     except Exception as e:
