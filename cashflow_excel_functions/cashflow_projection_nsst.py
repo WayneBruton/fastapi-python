@@ -180,6 +180,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         subtotal_columns = [get_column_letter(col) for col in range(9, ws2.max_column + 1)]
         # print(subtotal_columns)
 
+
         # format column in range from 9 to ws2.max_column as currency
         for col in range(9, ws2.max_column + 1):
             ws2[f"{get_column_letter(col)}5"].number_format = '#,##0.00'
@@ -201,6 +202,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             adjusted_width = (max_length + 2)
             ws2.column_dimensions[column].width = adjusted_width
 
+
         # loop through all cells and if the cell in column A is True, then make the row green
         for row in ws2.iter_rows(min_row=5, max_row=ws2.max_row, min_col=1, max_col=1):
             for cell in row:
@@ -215,6 +217,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         converted_dicts = []
         # make a deep copy of the construction list
         # new_construction_list = copy.deepcopy(construction)
+
 
         for index, item in enumerate(construction):
             # if index == 0:
@@ -260,29 +263,44 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
         # print("Gat this far-3", ind)
 
+
         for i, d in enumerate(converted_dicts):
+
             d['Date'] = d['Date'].replace("-", "/")
+
             # result = calculate_vat_due(d['Date'])
             # d['Vat_due'] = result
 
+
+
             # print(d)
             for index, month in enumerate(months, 1):
+
+                print(month, index)
                 d['Date'] = d['Date'].replace(month, f"{index:02d}")
+
                 # result = calculate_vat_due(d['Date'])
                 # d['Vat_due'] = result
+
+
+
 
             try:
                 # Convert the date to a datetime object
                 # if d['Date'] is not a datetime object
 
                 if not isinstance(d['Date'], datetime):
+
+
                     d['Date'] = datetime.strptime(d['Date'], '%Y/%m/%d')
+
 
             except Exception as e:
                 # print("XXX",e)
                 # Convert the date to a datetime object
                 if not isinstance(d['Date'], datetime):
                     d['Date'] = datetime.strptime(d['Date'], '%d/%m/%y')
+
 
         for item in converted_dicts:
             # print(item['Date'])

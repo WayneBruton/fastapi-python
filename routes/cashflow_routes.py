@@ -1041,10 +1041,11 @@ async def get_sales_cashflow_initial(data: Request):
         # filter sales_data where transferred is False
         sales_to_update = []
         sales_data_filtered = list(filter(lambda x: x['transferred'] == False, sales_data))
-        print(len(sales_data_filtered))
+        # print(len(sales_data_filtered))
         for sale in sales_data_filtered:
             sale['_id'] = str(sale['_id'])
-            opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], opportunities))
+            opportunities_filtered = list(
+                filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], opportunities))
             if len(opportunities_filtered) > 0:
                 if opportunities_filtered[0]['opportunity_final_transfer_date'] != "" and sale['transferred'] == False:
                     # print("sale", sale)
@@ -1079,14 +1080,10 @@ async def get_sales_cashflow_initial(data: Request):
                 except Exception as e:
                     print("Error updating sales", e)
 
-
-
             # print("sale", sale['opportunity_code'])
             sales_data = list(db.cashflow_sales.find({}))
 
         # print("sales_data_filtered", sales_data_filtered[0])
-
-
 
         construction = get_construction_costs()
         for item in construction:
@@ -1834,6 +1831,7 @@ async def generate_investors_new_cashflow_nsst_report(data: Request):
         # print()
         result = cashflow_projections(invest, construction, sales, operational_costs, xero, opportunities,
                                       investor_exit, momentum, date)
+
         # result = "Awesome"
         end = time.time()
         print("Time taken", end - start)
