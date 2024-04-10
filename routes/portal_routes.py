@@ -1032,15 +1032,88 @@ def get_indices():
         print("Error getting indices", e)
         return []
 
-# get_stock_list()
+
+@portal_info.post("/getUsersForPlannedEarlyExit")
+async def get_planned_rollovers():
+    try:
+        final_investors = []
+        investors = list(db.investors.find({}, {"investor_name": 1, "investor_surname": 1, "investor_acc_number": 1,
+                                                "investments": 1, "investment_name": 1}))
+        # print(len(investors))
+        # print(investors[0])
+        for investor in investors:
+            investor['_id'] = str(investor['_id'])
+            # filter investments to only include where the end_date = ""
+            investments = list(filter(lambda x: x.get('end_date', "") == "", investor['investments']))
+            if len(investments) > 0:
+                for investment in investments:
+                    insert = {
+                        "investor_name": investor['investor_name'].title(),
+                        "investor_surname": investor['investor_surname'].title(),
+                        "investor_acc_number": investor['investor_acc_number'],
+                        "investment_name": investment.get('investment_name',
+                                                          investor['investor_surname'] + " " + investor[
+                                                              'investor_name']).title(),
+                        "opportunity_code": investment['opportunity_code'],
+                        "investment_number": investment['investment_number'],
+                    }
+                    final_investors.append(insert)
+        # print("final_investors", len(final_investors))
+
+        planned_rollovers = list(db.investorPlannedRollovers.find({}))
+        for rollover in planned_rollovers:
+            rollover['_id'] = str(rollover['_id'])
+
+        if len(planned_rollovers) > 0:
+            for rollover in planned_rollovers:
+                filtered_investors = list(
+                    filter(lambda x: x['opportunity_code'] == rollover['opportunity_code'] and x[
+                        'investment_number'] == rollover['investment_number'] and x['investor_acc_number'] == rollover[
+                                 'investor_acc_number'], final_investors))
+                if len(filtered_investors) == 0:
+                    try:
+                        id = rollover['_id']
+                        db.investorPlannedRollovers.delete_one({"_id": ObjectId(id)})
+                    except Exception as e:
+                        print("Error deleting rollover", e)
 
 
-# get_stock_data()
-# get_cpi()
+        # sort final_investors by opportunity_code then investor_acc_number
+        final_investors = sorted(final_investors, key=lambda x: (x['opportunity_code'], x['investor_acc_number']))
+        for investor in final_investors:
+            filtered_rollovers = list(
+                filter(lambda x: x['opportunity_code'] == investor['opportunity_code'] and x[
+                    'investment_number'] == investor['investment_number'] and x['investor_acc_number'] == investor[
+                                     'investor_acc_number'], planned_rollovers))
+            if len(filtered_rollovers) > 0:
+                investor["flagged_for_rollover"] = True
+            else:
+                investor["flagged_for_rollover"] = False
 
-# indexes = get_indices()
-# print(indexes)
-# currencies = get_currency_data()
-# print(currencies)
-# commodities = get_commodity_data()
-# print(commodities)
+        # print("investor_rollovers", investor_rollovers)
+
+        return {"planned_rollovers": planned_rollovers, "investor_rollovers": final_investors}
+
+    except Exception as e:
+        return {"ERROR": "Please Try again", "Error": e}
+
+@portal_info.post("/updateFlaggedForRollover")
+async def update_flagged_for_rollover(request: Request):
+    try:
+        data = await request.json()
+        print("data", data)
+        if data['flagged_for_rollover']:
+            insert = {
+                "investor_acc_number": data['investor_acc_number'],
+                "opportunity_code": data['opportunity_code'],
+                "investment_number": data['investment_number'],
+            }
+            db.investorPlannedRollovers.insert_one(insert)
+        else:
+            db.investorPlannedRollovers.delete_one({"opportunity_code": data['opportunity_code'],
+                                                     "investment_number": data['investment_number'],
+                                                     "investor_acc_number": data['investor_acc_number']})
+        
+        return {"status": "success"}
+    except Exception as e:
+        return {"ERROR": "Please Try again", "Error": e}

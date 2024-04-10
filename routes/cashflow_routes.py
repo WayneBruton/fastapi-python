@@ -2185,3 +2185,639 @@ async def get_cash_projection(file_name):
 #         return {"success": False, "error": str(e)}
 
 # adjust_sales()
+
+
+# def updaye_sales():
+#     sales_updated = [
+#         {
+#             "opportunity_code": "HFB206",
+#             "forecast_transfer_date": "2024/06/28"
+#         },
+#         {
+#             "opportunity_code": "HFB207",
+#             "forecast_transfer_date": "2024/08/16"
+#         },
+#         {
+#             "opportunity_code": "HFB209",
+#             "forecast_transfer_date": "2024/04/10"
+#         },
+#         {
+#             "opportunity_code": "HFB210",
+#             "forecast_transfer_date": "2024/08/16"
+#         },
+#         {
+#             "opportunity_code": "HFB211",
+#             "forecast_transfer_date": "2024/08/29"
+#         },
+#         {
+#             "opportunity_code": "HFB212",
+#             "forecast_transfer_date": "2024/08/29"
+#         },
+#         {
+#             "opportunity_code": "HFB213",
+#             "forecast_transfer_date": "2024/09/05"
+#         },
+#         {
+#             "opportunity_code": "HFB215",
+#             "forecast_transfer_date": "2024-09-19"
+#         },
+#         {
+#             "opportunity_code": "HVC202",
+#             "forecast_transfer_date": "2024-08-01"
+#         },
+#         {
+#             "opportunity_code": "HVC204",
+#             "forecast_transfer_date": "2024-08-26"
+#         },
+#         {
+#             "opportunity_code": "HVC205",
+#             "forecast_transfer_date": "2024/04/12"
+#         },
+#         {
+#             "opportunity_code": "HVC206",
+#             "forecast_transfer_date": "2024/04/12"
+#         },
+#         {
+#             "opportunity_code": "HVC302",
+#             "forecast_transfer_date": "2024-07-02"
+#         },
+#         {
+#             "opportunity_code": "HVC304",
+#             "forecast_transfer_date": "2024-08-29"
+#         },
+#         {
+#             "opportunity_code": "HVC305",
+#             "forecast_transfer_date": "2024-08-29"
+#         },
+#         {
+#             "opportunity_code": "HVC306",
+#             "forecast_transfer_date": "2024-04-24"
+#         },
+#         {
+#             "opportunity_code": "HVD202",
+#             "forecast_transfer_date": "2024/06/28"
+#         },
+#         {
+#             "opportunity_code": "HVD302",
+#             "forecast_transfer_date": "2024-06-25"
+#         },
+#         {
+#             "opportunity_code": "HVD303",
+#             "forecast_transfer_date": "2024-06-26"
+#         },
+#         {
+#             "opportunity_code": "HVD304",
+#             "forecast_transfer_date": "2024-07-11"
+#         },
+#         {
+#             "opportunity_code": "HVE101",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE102",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE103",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE104",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE201",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE202",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE203",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE204",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE301",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE302",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE303",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVE304",
+#             "forecast_transfer_date": "2025-01-28"
+#         },
+#         {
+#             "opportunity_code": "HVF101",
+#             "forecast_transfer_date": "2025-03-06"
+#         },
+#         {
+#             "opportunity_code": "HVF102",
+#             "forecast_transfer_date": "2025-03-06"
+#         },
+#         {
+#             "opportunity_code": "HVF103",
+#             "forecast_transfer_date": "2025-03-06"
+#         },
+#         {
+#             "opportunity_code": "HVF104",
+#             "forecast_transfer_date": "2025-03-06"
+#         },
+#         {
+#             "opportunity_code": "HVF201",
+#             "forecast_transfer_date": "2025-03-06"
+#         },
+#         {
+#             "opportunity_code": "HVF202",
+#             "forecast_transfer_date": "2025-03-06"
+#         },
+#         {
+#             "opportunity_code": "HVF203",
+#             "forecast_transfer_date": "2025-03-06"
+#         },
+#         {
+#             "opportunity_code": "HVF204",
+#             "forecast_transfer_date": "2025-03-06"
+#         },
+#         {
+#             "opportunity_code": "HVG101",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG102",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG103",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG104",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG201",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG202",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG203",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG204",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG301",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG302",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG303",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVG304",
+#             "forecast_transfer_date": "2024-08-28"
+#         },
+#         {
+#             "opportunity_code": "HVH101",
+#             "forecast_transfer_date": "2024-07-17"
+#         },
+#         {
+#             "opportunity_code": "HVH102",
+#             "forecast_transfer_date": "2024-07-17"
+#         },
+#         {
+#             "opportunity_code": "HVH103",
+#             "forecast_transfer_date": "2024-07-17"
+#         },
+#         {
+#             "opportunity_code": "HVH104",
+#             "forecast_transfer_date": "2024-07-17"
+#         },
+#         {
+#             "opportunity_code": "HVH201",
+#             "forecast_transfer_date": "2024-07-17"
+#         },
+#         {
+#             "opportunity_code": "HVH202",
+#             "forecast_transfer_date": "2024-07-17"
+#         },
+#         {
+#             "opportunity_code": "HVH203",
+#             "forecast_transfer_date": "2024-07-17"
+#         },
+#         {
+#             "opportunity_code": "HVH204",
+#             "forecast_transfer_date": "2024-07-17"
+#         },
+#         {
+#             "opportunity_code": "HVI101",
+#             "forecast_transfer_date": "2024/08/12"
+#         },
+#         {
+#             "opportunity_code": "HVI102",
+#             "forecast_transfer_date": "2024-08-12"
+#         },
+#         {
+#             "opportunity_code": "HVI103",
+#             "forecast_transfer_date": "2024/08/12"
+#         },
+#         {
+#             "opportunity_code": "HVI104",
+#             "forecast_transfer_date": "2024-08-12"
+#         },
+#         {
+#             "opportunity_code": "HVI201",
+#             "forecast_transfer_date": "2024-08-12"
+#         },
+#         {
+#             "opportunity_code": "HVI202",
+#             "forecast_transfer_date": "2024-08-12"
+#         },
+#         {
+#             "opportunity_code": "HVI203",
+#             "forecast_transfer_date": "2024-08-12"
+#         },
+#         {
+#             "opportunity_code": "HVI204",
+#             "forecast_transfer_date": "2024-08-12"
+#         },
+#         {
+#             "opportunity_code": "HVJ101",
+#             "forecast_transfer_date": "2024/09/17"
+#         },
+#         {
+#             "opportunity_code": "HVJ102",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVJ103",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVJ201",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVJ202",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVJ203",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVJ301",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVJ302",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVJ303",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVJ401",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVJ402",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVJ403",
+#             "forecast_transfer_date": "2024-09-17"
+#         },
+#         {
+#             "opportunity_code": "HVK101",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK102",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK103",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK104",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK105",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK106",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK201",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK202",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK203",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK204",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK205",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK206",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK301",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK302",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK303",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK304",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK305",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK306",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK401",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK402",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK403",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK404",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK405",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVK406",
+#             "forecast_transfer_date": "2024-08-06"
+#         },
+#         {
+#             "opportunity_code": "HVL101",
+#             "forecast_transfer_date": "2024-08-20"
+#         },
+#         {
+#             "opportunity_code": "HVL102",
+#             "forecast_transfer_date": "2024-08-20"
+#         },
+#         {
+#             "opportunity_code": "HVL103",
+#             "forecast_transfer_date": "2024-08-20"
+#         },
+#         {
+#             "opportunity_code": "HVL104",
+#             "forecast_transfer_date": "2024-08-20"
+#         },
+#         {
+#             "opportunity_code": "HVL201",
+#             "forecast_transfer_date": "2024-08-20"
+#         },
+#         {
+#             "opportunity_code": "HVL202",
+#             "forecast_transfer_date": "2024-08-20"
+#         },
+#         {
+#             "opportunity_code": "HVL203",
+#             "forecast_transfer_date": "2024-08-20"
+#         },
+#         {
+#             "opportunity_code": "HVL204",
+#             "forecast_transfer_date": "2024-08-20"
+#         },
+#         {
+#             "opportunity_code": "HVM101",
+#             "forecast_transfer_date": "2024-06-07"
+#         },
+#         {
+#             "opportunity_code": "HVM102",
+#             "forecast_transfer_date": "2024-06-07"
+#         },
+#         {
+#             "opportunity_code": "HVM103",
+#             "forecast_transfer_date": "2024-06-07"
+#         },
+#         {
+#             "opportunity_code": "HVM104",
+#             "forecast_transfer_date": "2024-06-07"
+#         },
+#         {
+#             "opportunity_code": "HVM201",
+#             "forecast_transfer_date": "2024-06-07"
+#         },
+#         {
+#             "opportunity_code": "HVM202",
+#             "forecast_transfer_date": "2024-06-07"
+#         },
+#         {
+#             "opportunity_code": "HVM203",
+#             "forecast_transfer_date": "2024-06-07"
+#         },
+#         {
+#             "opportunity_code": "HVM204",
+#             "forecast_transfer_date": "2024-06-07"
+#         },
+#         {
+#             "opportunity_code": "HVN102",
+#             "forecast_transfer_date": "2024/05/16"
+#         },
+#         {
+#             "opportunity_code": "HVN301",
+#             "forecast_transfer_date": "2024/06/06"
+#         },
+#         {
+#             "opportunity_code": "HVN302",
+#             "forecast_transfer_date": "2024-06-21"
+#         },
+#         {
+#             "opportunity_code": "HVN303",
+#             "forecast_transfer_date": "2024-07-25"
+#         },
+#         {
+#             "opportunity_code": "HVN304",
+#             "forecast_transfer_date": "2024-07-25"
+#         },
+#         {
+#             "opportunity_code": "HVO101",
+#             "forecast_transfer_date": "2024/08/14"
+#         },
+#         {
+#             "opportunity_code": "HVO102",
+#             "forecast_transfer_date": "2024/08/14"
+#         },
+#         {
+#             "opportunity_code": "HVO103",
+#             "forecast_transfer_date": "2024-08-14"
+#         },
+#         {
+#             "opportunity_code": "HVO104",
+#             "forecast_transfer_date": "2024/08/14"
+#         },
+#         {
+#             "opportunity_code": "HVO105",
+#             "forecast_transfer_date": "2024/08/14"
+#         },
+#         {
+#             "opportunity_code": "HVO201",
+#             "forecast_transfer_date": "2024/08/14"
+#         },
+#         {
+#             "opportunity_code": "HVO202",
+#             "forecast_transfer_date": "2024-08-14"
+#         },
+#         {
+#             "opportunity_code": "HVO203",
+#             "forecast_transfer_date": "2024-08-14"
+#         },
+#         {
+#             "opportunity_code": "HVO204",
+#             "forecast_transfer_date": "2024-08-14"
+#         },
+#         {
+#             "opportunity_code": "HVO205",
+#             "forecast_transfer_date": "2024-08-14"
+#         },
+#         {
+#             "opportunity_code": "HVO301",
+#             "forecast_transfer_date": "2024-08-14"
+#         },
+#         {
+#             "opportunity_code": "HVO302",
+#             "forecast_transfer_date": "2024-08-14"
+#         },
+#         {
+#             "opportunity_code": "HVO303",
+#             "forecast_transfer_date": "2024-08-14"
+#         },
+#         {
+#             "opportunity_code": "HVO304",
+#             "forecast_transfer_date": "2024-08-14"
+#         },
+#         {
+#             "opportunity_code": "HVO305",
+#             "forecast_transfer_date": "2024-08-14"
+#         },
+#         {
+#             "opportunity_code": "HVP201",
+#             "forecast_transfer_date": "2024-07-02"
+#         },
+#         {
+#             "opportunity_code": "HVP203",
+#             "forecast_transfer_date": "2024-07-18"
+#         },
+#         {
+#             "opportunity_code": "HVP303",
+#             "forecast_transfer_date": "2024-08-16"
+#         },
+#         {
+#             "opportunity_code": "",
+#             "forecast_transfer_date": ""
+#         },
+#         {
+#             "opportunity_code": "Unit No.",
+#             "forecast_transfer_date": "Date"
+#         },
+#         {
+#             "opportunity_code": "EA107",
+#             "forecast_transfer_date": "2024-07-02"
+#         },
+#         {
+#             "opportunity_code": "EA201",
+#             "forecast_transfer_date": "2025/05/19"
+#         },
+#         {
+#             "opportunity_code": "EA205",
+#             "forecast_transfer_date": "2025/03/28"
+#         },
+#         {
+#             "opportunity_code": "EA206",
+#             "forecast_transfer_date": "2025/03/28"
+#         },
+#         {
+#             "opportunity_code": "EA207",
+#             "forecast_transfer_date": "2025/03/28"
+#         },
+#         {
+#             "opportunity_code": "EA302",
+#             "forecast_transfer_date": "2025/03/28"
+#         },
+#         {
+#             "opportunity_code": "EA305",
+#             "forecast_transfer_date": "2024-05-31"
+#         },
+#         {
+#             "opportunity_code": "EB102",
+#             "forecast_transfer_date": "2025/03/28"
+#         },
+#         {
+#             "opportunity_code": "EB201",
+#             "forecast_transfer_date": "2025/03/28"
+#         },
+#         {
+#             "opportunity_code": "EB202",
+#             "forecast_transfer_date": "2024/07/02"
+#         }
+#     ]
+#     for sale in sales_updated:
+#         for sale in sales_updated:
+#             sale['forecast_transfer_date'] = sale['forecast_transfer_date'].replace("/", "-")
+#             try:
+#                 db.cashflow_sales.update_one({"opportunity_code": sale['opportunity_code']}, {"$set": {"forecast_transfer_date": sale['forecast_transfer_date']}})
+#                 print("Success")
+#             except Exception as e:
+#                 print(e)
+#     print("DONE")
+#
+# # updaye_sales()
