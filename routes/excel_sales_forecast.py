@@ -773,6 +773,9 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                 not (investor['investor_acc_number'] == "ZLEW03" and investor[
                                     'opportunity_code'] == "EA205" and investor['investment_number'] == 1)]
 
+        final_investors_list = [investor for investor in final_investors_list if
+                                not (investor['investor_acc_number'] == "ZGEC01")]
+
         # get unallocated_investments from mongo db where the request['Category'] is in the Category in the DB
 
         for unallocated_investment in unallocated_investments_list:

@@ -13,7 +13,6 @@ from loan_agreement_files.goodwood_loan_agreement_files.goodwood_loan_agreement 
 from configuration.db import db
 
 
-
 # from verify_token import verify_jwt_token
 
 
@@ -106,7 +105,6 @@ async def email_investor_re_release(data: Request):
 # GET LOAN AGREEMENT INFO FROM MONGO & CREATE PHYSICAL PDF DOCUMENT ACCORDINGLY
 @investor.post("/investorloanagreement")
 async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber):
-
     # print("investor_acc_number",investor_acc_number)
     # print()
     # token_verification = verify_jwt_token(investor_acc_number.token_received)
@@ -140,8 +138,6 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                                   "telefax_number": 1, "trading_name": 1, "vat_number": 1, "pledges": 1,
                                   "id": {'$toString': "$_id"}, "_id": 0, }}]))
 
-
-
             if len(result_loan) == 0:
                 return {
                     "error": f"No data found for {investor_acc_number.investor_acc_number} and "
@@ -151,7 +147,7 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                 if result_loan[0]['pledges']['Category'] == 'Goodwood':
                     # print("result_loan", result_loan)
                     # print()
-                    print("result_loan",result_loan[0]['pledges']['Category'])
+                    print("result_loan", result_loan[0]['pledges']['Category'])
                     # print()
                     # print("Do some shit here!!!")
                     # print()
@@ -306,8 +302,6 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                     amt_list.append(investment_amount)
                     investment_amount = ['R {:0,.2f}'.format(x) for x in amt_list][0]
 
-
-
                     final_doc = create_final_loan_agreement(linked_unit=linked_unit, investor=investor_name,
                                                             investor2=investor_name2, nsst=nsst,
                                                             project=project, investment_amount=investment_amount,
@@ -316,7 +310,7 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                                                             registered_company_name=registered_company_name,
                                                             registration_number=registration_number)
 
-                    print("final_doc",final_doc)
+                    print("final_doc", final_doc)
                     return final_doc
 
     except Exception as e:
@@ -327,12 +321,11 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
 # GET LOAN AGREEMENT AS A ZIP FILE
 @investor.get("/get_loan_agreement")
 async def loan_agreement(loan_agreement_name):
-
     loan_agreement_name = loan_agreement_name.replace('$', '&').split('/')[1]
     print("HellOOOOOOO")
-    print("loan_agreement_name",loan_agreement_name)
+    print("loan_agreement_name", loan_agreement_name)
     extension = loan_agreement_name.split('.')[1]
-    print("extension",extension)
+    print("extension", extension)
     dir_path = "loan_agreements"
     dir_list = os.listdir(dir_path)
 
@@ -421,8 +414,6 @@ async def get_early_releases():
 async def deliver_early_releases(file_name):
     try:
         file_name = file_name + ".xlsx"
-        # file_name = file_name.replace("_", " ")
-        # file_name = file_name.replace("xx", "&")
 
         dir_path = "early_releases_excel_generation"
         dir_list = os.listdir(dir_path)
@@ -435,24 +426,3 @@ async def deliver_early_releases(file_name):
     except Exception as e:
         print(e)
         return {"ERROR": "Please Try again"}
-
-
-# def get_sales(): #get opportunities from opportunities collection where Category is Heron Fields or Category is
-# Heron View, and project only the opportunity_code, end_date, final_transfer_date and sales_price opportunities_list
-# = list(db.opportunities.aggregate( [ { '$match': { '$or': [ { 'Category': 'Heron Fields' }, { 'Category': 'Heron
-# View' }, { 'Category': 'Endulini' } ] } }, { '$project': { 'opportunity_code': 1, 'opportunity_end_date': 1,
-# 'opportunity_final_transfer_date': 1, 'opportunity_sale_price': 1, 'opportunity_sold': 1, '_id': 0 } } ] )) print(
-# "opportunities_list",opportunities_list[0], len(opportunities_list)) # save opportunities_list to a csv file import
-# csv
-#
-#     with open('opportunities.csv', 'w', newline='') as csvfile:
-#         fieldnames = ['opportunity_code', 'opportunity_end_date', 'opportunity_final_transfer_date',
-#                       'opportunity_sale_price', 'opportunity_sold']
-#         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-#         writer.writeheader()
-#         for i in opportunities_list:
-#             writer.writerow(i)
-#
-# get_sales()
-
-

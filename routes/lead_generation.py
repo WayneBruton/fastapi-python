@@ -3,12 +3,13 @@ from time import sleep
 
 from bson.objectid import ObjectId
 from fastapi import APIRouter, Request, BackgroundTasks
+from fastapi.responses import FileResponse
 from collections import Counter
 # from fastapi.encoders import jsonable_encoder
 from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
 
 import random
-
+import pandas as pd
 import smtplib
 from email.message import EmailMessage
 from email.mime.image import MIMEImage
@@ -90,7 +91,6 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
     #     # If all salespeople are in the last 3 leads, fairly allocate the third last lead
     #     sales_person_chosen = last_leads_generated[-3]["sales_person_id"]
 
-
     # for person in sales_people:
     #     # print("person", person["_id"])
     #     # print()
@@ -110,7 +110,6 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
     #         print("person 2", last_leads_generated[len(last_leads_generated) - 2]["sales_person"])
     #         break
     #         # print("person", person["name"])
-
 
     # get the sales_person who is in the last record of the last_leads_generated list
 
@@ -137,6 +136,7 @@ async def post_sales_lead_form(background_tasks: BackgroundTasks, data: Request)
 
 
 def send_sms(number, lead):
+    print("number", number)
     client = vonage.Client(key=API_KEY_VONAGE, secret=API_SECRET_VONAGE)
     sms = vonage.Sms(client)
     to_number = re.sub(r"[ \-()]", "", number)
@@ -368,6 +368,7 @@ async def get_sales_leads(request: Request):
     if request["user"] != None:
         leads = list(db.leads_sales.find({"sales_person_id": request["sales_person_id"]}))
     else:
+        create_sales_lead_excel_sheet()
         leads = list(db.leads_sales.find())
     # opportunities =list(db.opportunities.find())
     # get all opportunities and project only 'opportunity_code' and 'Category'
@@ -1345,7 +1346,6 @@ def check_emails_p24():
                 #
                 final_data.append(data)
 
-
         # I AM HERE
 
         # if sender == "leads@syte.co.za" and subject == "Inquiry from https://opportunityprop.co.za/":
@@ -1367,7 +1367,6 @@ def check_emails_p24():
             # print("content_type", content_type)
 
             body = msg.get_payload(decode=True).decode()
-
 
             if content_type == "text/plain":
 
@@ -1493,7 +1492,7 @@ def process_property_24_leads(data):
     return {"message": "success"}
 
 
-# check_emails_p24()
+
 def check_unanswered_leads():
     leads = list(db.leads_investments.find({"action_taken": "Called - No Answer"}))
     for lead in leads:
@@ -1510,7 +1509,7 @@ def check_unanswered_leads():
             send_email_to_consultant_unanswered(consultant, lead)
 
 
-# check_unanswered_leads()
+
 @leads.post('/check_emails_omh_app')
 async def check_emails_omh_app():
     try:
@@ -1522,21 +1521,6 @@ async def check_emails_omh_app():
         return {"message": "Emails not checked"}
 
 
-# SET UP CRON JOB FOR BELOW
-# check_emails_p24()
-# scheduler = BackgroundScheduler()
-# scheduler.add_job(check_emails_p24, 'interval', minutes=5)
-# scheduler.add_job(check_unanswered_leads, 'cron', hour=10, minute=30)
-# scheduler.start()
-#
-#
-# @leads.on_event("shutdown")
-# def shutdown_event():
-#     scheduler.shutdown()
-
-
-# create a function to insert data into lead_sales collection where if rental_enquiry does not exist make
-# rental_enquiry = False for each document
 def insert_lead_sales():
     # get all the documents from the lead_sales collection
     lead_sales = list(db.leads_sales.find())
@@ -1549,4 +1533,30 @@ def insert_lead_sales():
         db.leads_sales.update_one({'_id': ObjectId(id)}, {'$set': lead})
     print("lead_sales", lead_sales)
 
+
 # insert_lead_sales()
+
+
+
+def create_sales_lead_excel_sheet():
+    lead_sales = list(db.leads_sales.find({}, {"_id": 0}))
+    # order by created_at in descending order
+    lead_sales = sorted(lead_sales, key=lambda x: x['created_at'], reverse=True)
+    # print("lead_sales", lead_sales[0])
+    df = pd.DataFrame(lead_sales)
+    df.to_excel('sales_leads.xlsx', index=False)
+
+# create_sales_lead_excel_sheet()
+
+@leads.get("/get_sales_lead_spreadsheet")
+async def get_sales_lead_spreadsheet(file_name):
+    try:
+        # print("file_name", file_name)
+        file_name = file_name + ".xlsx"
+        try:
+            return FileResponse(f"{file_name}", filename=file_name)
+        except FileNotFoundError:
+            return {"ERROR": "File does not exist!!"}
+    except Exception as e:
+        print(e)
+        return {"ERROR": "Please Try again"}

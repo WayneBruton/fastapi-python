@@ -1113,7 +1113,7 @@ async def update_flagged_for_rollover(request: Request):
             db.investorPlannedRollovers.delete_one({"opportunity_code": data['opportunity_code'],
                                                      "investment_number": data['investment_number'],
                                                      "investor_acc_number": data['investor_acc_number']})
-        
+
         return {"status": "success"}
     except Exception as e:
         return {"ERROR": "Please Try again", "Error": e}
