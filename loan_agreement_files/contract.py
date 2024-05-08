@@ -40,8 +40,8 @@ point1p12 = "**'Interest Rate'** per Investment Information Schedule on page 2. 
             "day-to-day basis and be calculated on the actual number of days elapsed and on the basis of a 365 (three " \
             "hundred and sixty-five) day year, or on the basis of a 366 (three hundred and sixty-six) day year should " \
             "a leap year be applicable; "
-point1p13 = "**'Investment Account'** means the account held by Borrower with Momentum under the signatory mandate of " \
-            "NSST; "
+point1p13 = "**'Investment Account'** means the account held by Borrower with a highly reputable financial " \
+             "institution under the signatory mandate of NSST;"
 point1p14 = "**'Investment Account Interest'** means the interest earned on the Loan Amount while invested in the " \
             "Investment account; "
 point1p15 = "**'Investment Account Supplemented Interest'** means the interest earned on the Loan Amount payable by " \

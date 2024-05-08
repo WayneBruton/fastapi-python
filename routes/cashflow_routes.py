@@ -3,6 +3,7 @@ import os
 import re
 from datetime import datetime, timedelta
 
+import pandas as pd
 from fastapi import APIRouter, Request, BackgroundTasks
 from fastapi.responses import FileResponse
 from configuration.db import db
@@ -2201,3 +2202,37 @@ async def get_cash_projection(file_name):
 #         print("Error getting investors", e)
 
 # calculate_interest_daily()
+
+# def get_correct_investors():
+#     investors = list(db.investors.find({}, {"_id": 0}))
+#     # filter out of investors where investments is empty
+#     final_investors = []
+#     investors = list(filter(lambda x: len(x["investments"]) > 0, investors))
+#     # filter out of investments where Category is not "Heron View"
+#     for investor in investors:
+#             investor["investments"] = list(
+#                 filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", investor["investments"]))
+#
+#             for investment in investor['investments']:
+#                 if investment['end_date'] == "":
+#                     insert = {
+#                         "investment_amount": float(investment['investment_amount']),
+#                         "opportunity_code": investment['opportunity_code'],
+#                         "Category": investment['Category'],
+#                         "investment_number": investment.get("investment_number", 0),
+#                         "investor_acc_number": investor['investor_acc_number'],
+#                         "investment_number": investment.get("investment_number", 0),
+#                         "release_date": datetime.strptime(investment.get("release_date", "").replace("/","-"), "%Y-%m-%d"),
+#                     }
+#                     final_investors.append(insert)
+#
+#
+#     print(len(final_investors))
+#     print(final_investors[0])
+#     # save final_investors as a Excel file
+#     df = pd.DataFrame(final_investors)
+#     df.to_excel("correct_investors.xlsx", index=False)
+
+
+
+# get_correct_investors()

@@ -5,6 +5,7 @@ from openpyxl.utils import get_column_letter
 import re
 from datetime import datetime
 
+
 def calculate_vat_due(sale_date):
     vat_periods = {
         1: "03/31", 3: "05/31", 5: "07/31",
@@ -22,7 +23,8 @@ def calculate_vat_due(sale_date):
     vat_date = f"{vat_year}/{vat_periods[adjusted_month]}"
     return vat_date
 
-
+# res1 = calculate_vat_due("2022-02-01")
+# print(res1)
 
 def format_header(ws, header_data):
     header = [key.replace("_", " ").title() for key in header_data]
