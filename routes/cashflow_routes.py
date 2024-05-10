@@ -2168,7 +2168,6 @@ async def get_cash_projection(file_name):
         print(e)
         return {"ERROR": "Please Try again"}
 
-
 # import pandas as pd
 # def calculate_interest_daily():
 #     try:
@@ -2232,7 +2231,6 @@ async def get_cash_projection(file_name):
 #     # save final_investors as a Excel file
 #     df = pd.DataFrame(final_investors)
 #     df.to_excel("correct_investors.xlsx", index=False)
-
 
 
 # get_correct_investors()

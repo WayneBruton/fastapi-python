@@ -354,13 +354,14 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
         for rate in rates_list:
             rate['Efective_date'] = rate['Efective_date'].replace('/', '-')
             rate['rate'] = float(rate['rate'])
+
         # sort rates by Efective_date converted to datetime in descending order
         rates_list = sorted(rates_list, key=lambda k: datetime.strptime(k['Efective_date'], '%Y-%m-%d'), reverse=True)
 
         # Produce an interim list of investors and investor details
         interim_investors_list = []
 
-        for trust in trust_list:
+        for index,trust in enumerate(trust_list):
             # if trust['investor_acc_number'] = 'ZCON01' then print trust
 
             # If trust['project_interest_rate'] does not exist, create it and set it to 0.00
@@ -462,6 +463,8 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                           }
 
                 final_investors_list.append(insert)
+
+
             else:
                 # if item['opportunity_end_date'] exits then set it to item['opportunity_end_date'] else set it to ""
                 item['opportunity_end_date'] = item['opportunity_end_date'] if 'opportunity_end_date' in item else ""
@@ -675,6 +678,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
             # sum the investment_amounts in filtered_investors list using list comprehension
             opportunity_invested = sum(float(investor['investment_amount']) for investor in filtered_investors)
+
             if 0 < opportunity_invested < opportunity_required:
                 insert = {"investor_surname": "UnAllocated", "investor_name": "",
                           "investor_acc_number": "ZZUN01",
@@ -701,6 +705,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                           }
 
                 final_investors_list.append(insert)
+
 
         for investment in final_investors_list:
 
@@ -929,8 +934,13 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                         released_interest_total = 0
                     investor['released_interest_today'] = released_interest_today
                     investor['released_interest_total'] = released_interest_total
+            # print("GOT HERE!!!XXX", len(final_investors_list))
+            # print(final_investors_list[136])
 
-            for investor in final_investors_list:
+            for index,investor in enumerate(final_investors_list):
+                # print(index, investor['investor_acc_number'], investor['opportunity_code'], investor['investment_number'])
+                # print()
+
                 filtered_opps = [opp for opp in opportunities_list if opp['opportunity_code']
                                  == investor['opportunity_code']]
 
@@ -940,6 +950,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 investor["rental_start_date"] = filtered_opps[0].get("rental_start_date", "")
                 investor["rental_end_date"] = filtered_opps[0].get("rental_end_date", "")
                 investor["rental_income_to_date"] = float(filtered_opps[0].get("rental_income_to_date", 0))
+
                 investor["rental_income_to_contract_end"] = float(
                     filtered_opps[0].get("rental_income_to_contract_end", 0))
                 investor["rental_gross_amount"] = float(filtered_opps[0].get("rental_gross_amount", 0))
@@ -947,16 +958,34 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 if investor["rental_deposit_amount"] == "":
                     investor["rental_deposit_amount"] = 0
                 else:
-                    investor["rental_deposit_amount"] = float(investor["rental_deposit_amount"])
-                investor["rental_levy_amount"] = float(filtered_opps[0].get("rental_levy_amount", 0))
-                investor["rental_commission"] = float(filtered_opps[0].get("rental_commission", 0))
-                investor["rental_rates"] = float(filtered_opps[0].get("rental_rates", 0))
-                investor["rental_other_expenses"] = float(filtered_opps[0].get("rental_other_expenses", 0))
-                investor["rental_nett_amount"] = filtered_opps[0].get("rental_nett_amount", 0)
+                    investor["rental_deposit_amount"] = float(investor.get("rental_deposit_amount",0))
+                # print("GOT HERE!!!XXX", index)
+                # print(filtered_opps[0])
+                if filtered_opps[0].get("rental_levy_amount", 0) == "":
+                    investor["rental_levy_amount"] = 0
+                else:
+                    investor["rental_levy_amount"] = float(filtered_opps[0].get("rental_levy_amount", 0))
+                if filtered_opps[0].get("rental_commission", 0) == "":
+                    investor["rental_commission"] = 0
+                else:
+                    investor["rental_commission"] = float(filtered_opps[0].get("rental_commission", 0))
+                if filtered_opps[0].get("rental_rates", 0) == "":
+                    investor["rental_rates"] = 0
+                else:
+                    investor["rental_rates"] = float(filtered_opps[0].get("rental_rates", 0))
+                if filtered_opps[0].get("rental_other_expenses", 0) == "":
+                    investor["rental_other_expenses"] = 0
+                else:
+                    investor["rental_other_expenses"] = float(filtered_opps[0].get("rental_other_expenses", 0))
+                if filtered_opps[0].get("rental_nett_amount", 0) == "":
+                    investor["rental_nett_amount"] = 0
+                else:
+                    investor["rental_nett_amount"] = filtered_opps[0].get("rental_nett_amount", 0)
+
                 if investor["rental_nett_amount"] == "" or investor["rental_nett_amount"] is None:
                     investor["rental_nett_amount"] = 0
                 else:
-                    investor["rental_nett_amount"] = float(investor["rental_nett_amount"])
+                    investor["rental_nett_amount"] = float(investor.get("rental_nett_amount",0))
                 if investor["rental_marked_for_rent"]:
                     investor["potential_income"] = investor["rental_nett_amount"]
                     investor["rental_start_date"] = ""
@@ -973,6 +1002,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 else:
                     investor["potential_income"] = 0
 
+        # print("GOT HERE!!!YYY")
         for investor in final_investors_list:
             if investor['release_date'] == "" and investor['planned_release_date'] != "":
                 final_transfer_date = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"),

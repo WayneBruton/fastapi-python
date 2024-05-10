@@ -78,7 +78,6 @@ async def create_construction_valuation(request: Request):
         # get valuations from db where development = data['development'] and block = data['block']
         valuations_to_date = list(valuations.find({"development": data['development'], "block": data['block']}))
 
-
         # print("valuations_to_date::",valuations_to_date)
         if len(valuations_to_date) > 0:
 
@@ -316,9 +315,9 @@ async def get_construction_valuations_to_approve(request: Request):
                         if valuation['measure'] == '%':
 
                             total_valuation_30_days += ((float(valuation['amount']) * (
-                                        task_filtered[0]["currentProgress"] -
-                                        task_filtered[0][
-                                            "initialProgress"]) / 100) - (
+                                    task_filtered[0]["currentProgress"] -
+                                    task_filtered[0][
+                                        "initialProgress"]) / 100) - (
                                                                 float(retention) / 100 * (float(valuation['amount']) * (
                                                                 (task_filtered[0]["currentProgress"] -
                                                                  task_filtered[0]["initialProgress"]) / 100)))) * 1.15
@@ -344,9 +343,9 @@ async def get_construction_valuations_to_approve(request: Request):
                     else:
                         if valuation['measure'] == '%':
                             total_valuation_30_days += (float(valuation['amount']) * (
-                                        task_filtered[0]["currentProgress"] -
-                                        task_filtered[0][
-                                            "initialProgress"]) / 100) - (
+                                    task_filtered[0]["currentProgress"] -
+                                    task_filtered[0][
+                                        "initialProgress"]) / 100) - (
                                                                float(retention) / 100 * (float(valuation['amount']) * (
                                                                (task_filtered[0]["currentProgress"] -
                                                                 task_filtered[0]["initialProgress"]) / 100)))
@@ -378,9 +377,9 @@ async def get_construction_valuations_to_approve(request: Request):
                                         "initialProgress"])) - (
                                                                      float(retention) / 100 * (
                                                                      float(valuation['rate']) * (
-                                                                     (task_filtered[0]["currentProgress"] -
-                                                                      task_filtered[0][
-                                                                          "initialProgress"]))))) * 1.15
+                                                                 (task_filtered[0]["currentProgress"] -
+                                                                  task_filtered[0][
+                                                                      "initialProgress"]))))) * 1.15
 
 
                     else:
@@ -389,18 +388,19 @@ async def get_construction_valuations_to_approve(request: Request):
                                     task_filtered[0]["currentProgress"] -
                                     task_filtered[0][
                                         "initialProgress"]) / 100) - (
-                                                                    float(retention) / 100 * (float(valuation['amount']) * (
-                                                                    (task_filtered[0]["currentProgress"] -
-                                                                     task_filtered[0]["initialProgress"]) / 100)))
+                                                                    float(retention) / 100 * (
+                                                                        float(valuation['amount']) * (
+                                                                        (task_filtered[0]["currentProgress"] -
+                                                                         task_filtered[0]["initialProgress"]) / 100)))
                         else:
                             total_valuation_end_of_month += (float(valuation['rate']) * (
                                     task_filtered[0]["currentProgress"] -
                                     task_filtered[0][
                                         "initialProgress"])) - (
                                                                     float(retention) / 100 * (
-                                                                        float(valuation['rate']) * (
-                                                                    (task_filtered[0]["currentProgress"] -
-                                                                     task_filtered[0]["initialProgress"]))))
+                                                                    float(valuation['rate']) * (
+                                                                (task_filtered[0]["currentProgress"] -
+                                                                 task_filtered[0]["initialProgress"]))))
 
         total_approvals = total_valuation_30_days + total_valuation_end_of_month
         # make all three values currency with two decimal places and symbol R
@@ -432,8 +432,8 @@ async def get_construction_valuations_to_approve(request: Request):
             value = 0.0
             for job in filtered_jobs:
                 # if job['measure'] != "%":
-                    # print("job", job)
-                    # print()
+                # print("job", job)
+                # print()
                 if job['retention'] is None:
                     job['retention'] = 0
                 if job['measure'] == "%":
@@ -657,6 +657,70 @@ async def create_payment_advice(request: Request):
 
         return {"link": link, "status": "ok", "valuation": data['paymentAdviceNumber'],
                 "time": (end_time - start_time).__round__(2)}
+
+    except Exception as e:
+        print("ERROR", e)
+        return {"status": "error", "error": e}
+
+
+@construction.post("/get_retentions")
+async def get_retentions(request: Request):
+    data = await request.json()
+    print(data)
+
+    try:
+        # get valuations from db where subcontractor = data['subcontractor']
+        valuations_to_approve = list(valuations.find(
+            {"subcontractor": data['subcontractor'], "development": data['development'], "block": data['block']},
+            {"_id": 0}))
+        print("valuations_to_approve", valuations_to_approve[0])
+        final_valuations_jobs = []
+
+        retention_owed_cumulative = 0
+        paid_cumulative = 0
+        payment_advice_number_on_cumulative = ""
+
+        for index, valuation in enumerate(valuations_to_approve):
+            # filter out of the tasks where approved is False
+            valuation['tasks'] = [task for task in valuation['tasks'] if task['approved']]
+            if len(valuation['tasks']) > 0:
+                payment_advice_number = valuation['tasks'][-1:][0]['paymentAdviceNumber']
+                current_progress = valuation['tasks'][-1:][0]['currentProgress']
+                valuation_amount = valuation['amount']
+                retention = valuation.get('retention', 0) / 100
+                vatable = valuation['vatable']
+                retention_owed = round(valuation_amount * retention * current_progress / 100, 2)
+                # round valuation_amount to two decimal places
+                # retention_owed = round(retention_owed, 2)
+
+                print("payment_advice_number", payment_advice_number)
+                print("current_progress", current_progress)
+                print("valuation_amount", valuation_amount)
+                print("retention", retention)
+                print("vatable", vatable)
+                print("retention_owed", retention_owed)
+                print()
+                retention_owed_cumulative += retention_owed
+                paid_cumulative += valuation_amount * current_progress / 100
+            if index == len(valuations_to_approve) - 1:
+                payment_advice_number_on_cumulative = payment_advice_number
+
+
+            print("payment_advice_number_on_cumulative", payment_advice_number_on_cumulative)
+            print("retention_owed_cumulative", round(retention_owed_cumulative, 2))
+            print("paid_cumulative", round(paid_cumulative, 2))
+            print()
+
+        return {"status": "ok",
+                "retention_owed_cumulative": round(retention_owed_cumulative, 2),
+                "paid_cumulative": round(paid_cumulative, 2),
+                "payment_advice_number": payment_advice_number_on_cumulative,
+                "subcontractor": data['subcontractor']}
+
+
+        # return {"status": "ok", "valuations": valuations_to_approve}
+
+
 
     except Exception as e:
         print("ERROR", e)

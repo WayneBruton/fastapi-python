@@ -1387,9 +1387,10 @@ def check_emails_p24():
                     elif "Email:" in line:
                         email_address_in_mail = line.split("Email:")[-1].strip()
                         # print("email_address_in_mail", email_address_in_mail)
-                    elif "Campaign Name" in line:
+                    elif "Campaign name" in line:
                         development = line.split("[")[-1].strip()
                         development = development.split("]")[0].strip()
+                        # print("development",development)
                         # message += line + "\n"
                     else:
                         message += line + "\n"
