@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 import re
@@ -2168,6 +2169,7 @@ async def get_cash_projection(file_name):
         print(e)
         return {"ERROR": "Please Try again"}
 
+
 # import pandas as pd
 # def calculate_interest_daily():
 #     try:
@@ -2234,3 +2236,246 @@ async def get_cash_projection(file_name):
 
 
 # get_correct_investors()
+
+
+def rollover_investors(effective_date):
+    effective_date = datetime.strptime(effective_date.replace("/", "-"), "%Y-%m-%d")
+    print("effective_date", effective_date)
+    try:
+        investors = list(db.investors.find({},
+                                           {"_id": 0, "investor_acc_number": 1, "investments": 1, "investor_name": 1,
+                                            "investor_surname": 1, "trust": 1}))
+
+        db.rollovers_investors.delete_many({})
+        rollovers_investors = list(db.rollovers_investors.find({}))
+        if len(rollovers_investors) > 0:
+            for rollover in rollovers_investors:
+                rollover['_id'] = str(rollover['_id'])
+        # print("rollovers_investors", rollovers_investors)
+        rates = list(db.rates.find({}, {"_id": 0}))
+
+        for rate in rates:
+            rate['Efective_date'] = rate['Efective_date'].replace("-", "/")
+            rate['Efective_date'] = datetime.strptime(rate['Efective_date'], "%Y/%m/%d")
+            rate['rate'] = float(rate['rate']) / 100
+
+        # sort rates by Efective_date in descending order
+        rates = sorted(rates, key=lambda x: x['Efective_date'], reverse=True)
+
+        opportunities = list(db.opportunities.find({"Category": "Heron View"}, {"_id": 0, "Category": 1,
+                                                                                "opportunity_amount_required": 1,
+                                                                                "opportunity_code": 1}))
+        for opportunity in opportunities:
+            opportunity['block'] = opportunity['opportunity_code'][2]
+            opportunity['opportunity_amount_required'] = float(opportunity['opportunity_amount_required'])
+            del opportunity['opportunity_code']
+            del opportunity['Category']
+
+        # remove duplicates from opportunities
+        opportunities = [dict(t) for t in {tuple(d.items()) for d in opportunities}]
+
+        sold_status = list(db.cashflow_sales.find({}, {"_id": 0}))
+        # print("sold_status", sold_status[0])
+
+        # print("opportunities", opportunities)
+        # print("opportunities", len(opportunities))
+
+        previous_investments = []
+
+        rollovers_investors_to_edit = []
+        final_investors = []
+        # filter out of investments where Category is not "Heron View"
+        for investor in investors:
+            investor["investments"] = list(
+                filter(lambda x: x["Category"] == "Heron View", investor["investments"]))
+            previous_blocks = []
+            for investment in investor['investments']:
+                block = investment['opportunity_code'][2]
+                previous_blocks.append(block)
+
+            if len(previous_blocks) > 0:
+                # remove duplicates from previous_blocks
+                previous_blocks = list(set(previous_blocks))
+                insert = {
+                    "investor": investor['investor_acc_number'],
+                    "previous_blocks": previous_blocks,
+                }
+                previous_investments.append(insert)
+
+            # filter out of investments where end_date is not empty
+            investor["investments"] = list(
+                filter(lambda x: x["end_date"] == "", investor["investments"]))
+
+            investor["trust"] = list(
+                filter(lambda x: x["Category"] == "Heron View", investor["trust"]))
+
+        investors = list(filter(lambda x: len(x["investments"]) > 0, investors))
+
+        # print("previous_investments", previous_investments)
+        for investor in investors:
+
+            for investment in investor['investments']:
+                filtered_trust = list(filter(lambda x: x['opportunity_code'] == investment['opportunity_code']
+                                                       and x['investment_number'] == investment[
+                                                           'investment_number'],
+                                             investor['trust']))
+
+                filterered_opportunities = list(filter(lambda x: x['block'] == investment['opportunity_code'][2],
+                                                       opportunities))
+
+                filtered_sold_status = list(filter(lambda x: x['opportunity_code'] == investment['opportunity_code'], sold_status))
+                if len(filtered_sold_status) > 0:
+                    sold = filtered_sold_status[0]['sold']
+                    transferred = filtered_sold_status[0]['transferred']
+                    complete_build = filtered_sold_status[0]['complete_build']
+                    forecast_transfer_date = filtered_sold_status[0]['forecast_transfer_date']
+                    # convert forecast_transfer_date to datetime
+                    if forecast_transfer_date != "":
+                        forecast_transfer_date = forecast_transfer_date.replace("-", "/")
+                        forecast_transfer_date = datetime.strptime(forecast_transfer_date, '%Y/%m/%d')
+
+                # print("filterered_opportunities", filterered_opportunities)
+                filtered_previous_investments = list(
+                    filter(lambda x: x['investor'] == investor['investor_acc_number'], previous_investments))
+                previously_invested = ""
+                if len(filtered_previous_investments) > 0:
+                   for index,block in enumerate(filtered_previous_investments[0]['previous_blocks']):
+                          if index == len(filtered_previous_investments[0]['previous_blocks']) - 1:
+                              previously_invested += block
+                          else:
+                              previously_invested += block + ", "
+
+
+
+
+
+                insert = {
+                    "investment_amount": float(investment['investment_amount']),
+                    "max_investment_amount": filterered_opportunities[0]['opportunity_amount_required'],
+                    "opportunity_code": investment['opportunity_code'],
+                    # create field called block which is the 3rd character of opportunity_code
+                    "Block": investment['opportunity_code'][2],
+                    "previously_invested": previously_invested,
+                    "sold": sold,
+                    "transferred": transferred,
+                    "complete_build": complete_build,
+                    "forecast_transfer_date": forecast_transfer_date,
+                    "Category": investment['Category'],
+                    "investor_acc_number": investor['investor_acc_number'],
+                    "investor_name": investor['investor_name'],
+                    "investor_surname": investor['investor_surname'],
+                    "investment_number": investment.get("investment_number", 0),
+                    "investment_interest_rate": float(investment.get("investment_interest_rate", 0)) / 100,
+                    "deposit_date": datetime.strptime(filtered_trust[0].get("deposit_date", "").replace("/", "-"),
+                                                      "%Y-%m-%d"),
+                    "release_date": datetime.strptime(investment.get("release_date", "").replace("/", "-"),
+                                                      "%Y-%m-%d"),
+                    "contract_expiry_date": datetime.strptime(investment.get("release_date", "").replace("/", "-"),
+                                                              "%Y-%m-%d") + timedelta(days=731),
+                    "rollover_date": effective_date,
+                    "roll_from": "",
+                    "roll_to": "",
+                }
+                deposit_date = insert['deposit_date']
+                release_date = insert['release_date']
+                investment_amount = insert['investment_amount']
+                momentum_interest = 0
+                while deposit_date < release_date:
+                    # filter rates where Efective_date is less than or to the deposit_date
+                    filtered_rates = list(filter(lambda x: x['Efective_date'] <= deposit_date, rates))
+                    rate = filtered_rates[0]['rate']
+                    # calculate interest
+                    interest = investment_amount * rate / 365
+                    momentum_interest += interest
+                    deposit_date += timedelta(days=1)
+
+                insert['momentum_interest'] = momentum_interest
+                insert['investment_interest'] = investment_amount * insert['investment_interest_rate'] / 365 * (
+                        effective_date - release_date).days
+                insert['total_value'] = investment_amount + insert['investment_interest'] + momentum_interest
+
+
+                # print("insert", insert['investor_acc_number'])
+
+                final_investors.append(insert)
+        # print("final_investors", final_investors[0])
+        # print("final_investors", len(final_investors))
+        # filter out of final_investors where transferred is true
+        final_investors = list(filter(lambda x: x['transferred'] == False, final_investors))
+        # filter out of final_investors where sold is true and forecast_transfer_date < contract_expiry_date
+        # final_investors = list(filter(lambda x: x['sold'] == False and x['forecast_transfer_date'] > x['contract_expiry_date'], final_investors))
+        for investor in final_investors:
+            if investor['sold'] == True and investor['forecast_transfer_date'] < investor['contract_expiry_date']:
+                investor['include'] = False
+            elif investor['sold'] == True and investor['forecast_transfer_date'] > investor['contract_expiry_date']:
+                investor['include'] = True
+            else:
+                investor['include'] = True
+                # print("investor", investor)
+
+        # filter out of final_investors where include is false
+        final_investors = list(filter(lambda x: x['include'] == True, final_investors))
+        final_investors_to_insert = []
+
+        # make a deep copy of final_investors
+        final_investors_copy = copy.deepcopy(final_investors)
+        # filter out
+        # sort by contract_expiry_date
+        final_investors_copy = sorted(final_investors_copy, key=lambda x: x['contract_expiry_date'])
+        for investor in final_investors:
+            # if investor['opportunity_code'] == "HVD302":
+            #     print("investor", investor)
+            filtered_final_investors_copy = list(filter(lambda x: x['Block'] == investor['Block'],
+
+                                                        final_investors_copy))
+            investor['earliest_contract_expiry_date'] = filtered_final_investors_copy[0]['contract_expiry_date']
+
+        # sort by earliest_contract_expiry_date and then by opportunity_code
+        final_investors = sorted(final_investors,
+                                 key=lambda x: (x['earliest_contract_expiry_date'], x['opportunity_code']))
+
+        for investor in final_investors:
+            filtered_rollovers_investors = list(
+                filter(lambda x: x['investor_acc_number'] == investor['investor_acc_number']
+                                 and x['opportunity_code'] == investor['opportunity_code']
+                                 and x['investment_number'] == investor['investment_number'],
+                       rollovers_investors))
+            if len(filtered_rollovers_investors) > 0:
+                filtered_rollovers_investors[0]['investment_interest'] = investor['investment_interest']
+                rollovers_investors_to_edit.append(filtered_rollovers_investors[0])
+            else:
+                final_investors_to_insert.append(investor)
+
+        print("rollovers_investors_to_edit", len(rollovers_investors_to_edit))
+        print("final_investors_to_insert", len(final_investors_to_insert))
+
+        if len(rollovers_investors_to_edit) > 0:
+            for rollover in rollovers_investors_to_edit:
+                try:
+                    id = rollover["_id"]
+                    del rollover["_id"]
+                    db.rollovers_investors.update_one({"_id": ObjectId(id)}, {"$set": rollover})
+                    print("Success A")
+                except Exception as e:
+                    print(e)
+        if len(final_investors_to_insert) > 0:
+            # save this as an Excel file
+            df = pd.DataFrame(final_investors_to_insert)
+            df.to_excel("rollover_investors.xlsx", index=False)
+
+            try:
+                db.rollovers_investors.insert_many(final_investors_to_insert)
+                print("Success B")
+            except Exception as e:
+                print(e)
+
+        print("DONE!!")
+        return {"success": True}
+
+
+    except Exception as e:
+        print("Error getting investors", e)
+        return {"success": False, "error": str(e)}
+
+
+# rollover_investors("2024/06/01")

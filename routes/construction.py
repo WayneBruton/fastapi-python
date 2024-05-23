@@ -389,9 +389,9 @@ async def get_construction_valuations_to_approve(request: Request):
                                     task_filtered[0][
                                         "initialProgress"]) / 100) - (
                                                                     float(retention) / 100 * (
-                                                                        float(valuation['amount']) * (
-                                                                        (task_filtered[0]["currentProgress"] -
-                                                                         task_filtered[0]["initialProgress"]) / 100)))
+                                                                    float(valuation['amount']) * (
+                                                                    (task_filtered[0]["currentProgress"] -
+                                                                     task_filtered[0]["initialProgress"]) / 100)))
                         else:
                             total_valuation_end_of_month += (float(valuation['rate']) * (
                                     task_filtered[0]["currentProgress"] -
@@ -679,10 +679,17 @@ async def get_retentions(request: Request):
         retention_owed_cumulative = 0
         paid_cumulative = 0
         payment_advice_number_on_cumulative = ""
+        retention_paid_to_date = 0
+
+        final_report = []
 
         for index, valuation in enumerate(valuations_to_approve):
             # filter out of the tasks where approved is False
             valuation['tasks'] = [task for task in valuation['tasks'] if task['approved']]
+            retentions_paid_to_date = valuation.get('retentions', [])
+            retentions_paid_to_date = [retention for retention in retentions_paid_to_date if retention['approved']]
+            if len(retentions_paid_to_date) > 0:
+                retention_paid_to_date += sum([retention['amount'] for retention in retentions_paid_to_date])
             if len(valuation['tasks']) > 0:
                 payment_advice_number = valuation['tasks'][-1:][0]['paymentAdviceNumber']
                 current_progress = valuation['tasks'][-1:][0]['currentProgress']
@@ -700,11 +707,21 @@ async def get_retentions(request: Request):
                 print("vatable", vatable)
                 print("retention_owed", retention_owed)
                 print()
+                # insert = {
+                #     "payment_advice_number": payment_advice_number,
+                #     "current_progress": current_progress,
+                #     "valuation_amount": valuation_amount,
+                #     "retention": retention,
+                #     "vatable": vatable,
+                #     "retention_owed": retention_owed,
+                #     "works": valuation.get('works', "")
+                #
+                # }
+                # final_report.append(insert)
                 retention_owed_cumulative += retention_owed
                 paid_cumulative += valuation_amount * current_progress / 100
             if index == len(valuations_to_approve) - 1:
                 payment_advice_number_on_cumulative = payment_advice_number
-
 
             print("payment_advice_number_on_cumulative", payment_advice_number_on_cumulative)
             print("retention_owed_cumulative", round(retention_owed_cumulative, 2))
@@ -712,16 +729,17 @@ async def get_retentions(request: Request):
             print()
 
         return {"status": "ok",
-                "retention_owed_cumulative": round(retention_owed_cumulative, 2),
+                "retention_owed_cumulative": round(retention_owed_cumulative - retention_paid_to_date, 2),
                 "paid_cumulative": round(paid_cumulative, 2),
                 "payment_advice_number": payment_advice_number_on_cumulative,
-                "subcontractor": data['subcontractor']}
+                "subcontractor": data['subcontractor'],
+                "retentions_paid_to_date": retentions_paid_to_date,
+                "retention_paid_to_date": round(retention_paid_to_date, 2)}
 
-
-        # return {"status": "ok", "valuations": valuations_to_approve}
-
-
+        # return {"status": "ok", "valuations": final_report}
 
     except Exception as e:
         print("ERROR", e)
         return {"status": "error", "error": e}
+
+

@@ -27,10 +27,10 @@ point1p5 = "**'Business Hours'** means the hours between 08h30 and 17h00 on any 
 point1p6 = "**'Days'** means calendar days unless qualified by the word 'Business', in which instance a **'Business " \
            "Day'** will be any day other than a Saturday, Sunday or public holiday as gazetted by the government of " \
            "the Republic of South Africa from time to time; "
-point1p7 = "**'Development Amount'** means the total amount of R1 100 000.00 (One Million One Hundred Thousand Rand) " \
+point1p7 = "**'Development Amount'** means the total amount of R1 400 000.00 (One Million Four Hundred Thousand Rand) "\
            "which the Borrower requires to complete the Property; "
-point1p8 = "**'Development Land'** means the Remainder of Portion 18 of the Farm Langeberg Number 311, in the City of " \
-           "Cape Town, Division Cape Town, Province of the Western Cape, in extent 2,7983 (Two comma Seven Nine Eight " \
+point1p8 = "**'Development Land'** means the Remainder of Portion 18 of the Farm Langeberg Number 311, in the City of "\
+           "Cape Town, Division Cape Town, Province of the Western Cape, in extent 2,7983 (Two comma Seven Nine Eight "\
            "Three) hectare; "
 point1p9 = "**'Draft SDP'** means the Draft Site Development Plan which serves as Annexure 'A' hereto;"
 point1p10 = "**'FICA'** means the Financial Intelligence Centre Act 38 of 2001;"
@@ -422,7 +422,7 @@ point13_1 = "The Parties to this Agreement choose the following addresses as the
             "notices required to be served upon them: "
 
 point13_1_1 = "The Borrower at:\nHERON PROJECTS (PTY) LTD\nOFFICE 2, FIRST FLOOR, 251 DURBAN ROAD, " \
-              "BO-OAKDALE, BELLVILLE\nEmail Address: debbie@opportunity.co.za. "
+              "BO-OAKDALE, BELLVILLE\nEmail Address: invest@opportunity.co.za. "
 
 point13_1_2 = "the Lender at:\nAs per Lender Information Schedule on page 2\nEmail Address:  As per Lender " \
               "Information Schedule on page 2 "
