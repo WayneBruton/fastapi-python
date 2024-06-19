@@ -2,6 +2,9 @@ import os
 from openpyxl import Workbook, formatting, formula
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
+
+
+
 import re
 from datetime import datetime
 
@@ -22,6 +25,7 @@ def calculate_vat_due(sale_date):
     vat_year = sale_year + 1 if sale_month > 10 else sale_year
     vat_date = f"{vat_year}/{vat_periods[adjusted_month]}"
     return vat_date
+
 
 # res1 = calculate_vat_due("2022-02-01")
 # print(res1)
@@ -70,21 +74,17 @@ def create_sheet(wb, title, data, column_widths, number_format_ranges):
 def cashflow_projections(invest, construction, sales, operational_costs, xero, opportunities, investor_exit, momentum,
                          report_date):
     # cashflow_p&l_files/cashflow_projection.xlsx exists, then delete it
-    if os.path.exists("cashflow_p&l_files/cashflow_projection.xlsx"):
-        os.remove("cashflow_p&l_files/cashflow_projection.xlsx")
+    # if os.path.exists("cashflow_p&l_files/cashflow_projection.xlsx"):
+    #     os.remove("cashflow_p&l_files/cashflow_projection.xlsx")
 
     for sale in sales:
         sale['refanced_value'] = float(sale['profit_loss'])
 
-
     try:
         report_date = datetime.strptime(report_date, '%Y-%m-%d')
 
-
         wb = Workbook()
         ws = create_sheet(wb, 'Investors', invest, {'B': 40}, {})
-
-
 
         last_row = ws.max_row
         columns = ['M', 'Q', 'R', 'S', 'T']
@@ -106,11 +106,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         ws1.auto_filter.ref = f"A5:{get_column_letter(ws1.max_column)}{ws1.max_row}"
         ws1.freeze_panes = "A6"
 
-
         for cell in ['E3', 'H3']:
             ws1[cell] = f"=SUBTOTAL(9,{cell[0]}5:{cell[0]}{ws1.max_row})"
             ws1[cell].number_format = '#,##0.00'
-
 
         ws2 = wb.create_sheet('Construction')
 
@@ -133,7 +131,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             headers.append(key.replace("_", " ").title())
         ws2.append(headers)
 
-
         for item in construction:
 
             row = []
@@ -149,15 +146,12 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
         subtotal_columns = [get_column_letter(col) for col in range(9, ws2.max_column + 1)]
 
-
-
         for col in range(9, ws2.max_column + 1):
             ws2[f"{get_column_letter(col)}5"].number_format = '#,##0.00'
 
         for col in subtotal_columns:
             ws2[f"{col}2"] = f"=SUBTOTAL(9,{col}5:{col}{ws2.max_row})"
             ws2[f"{col}2"].number_format = '#,##0.00'
-
 
         for col in ws2.columns:
             max_length = 0
@@ -180,16 +174,12 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         for cells in inner_row:
                             cells.fill = PatternFill(start_color="4CCD99", end_color="4CCD99", fill_type="solid")
 
-
         original_list = []
         converted_dicts = []
 
-
         for index, item in enumerate(construction):
-
             original_dict = item
             original_list.append(original_dict)
-
 
         amount_pattern = r"R\s(\d{1,3}(?:\s\d{3})*,\d{2})"
 
@@ -215,29 +205,18 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         "Renamed_block": original_dict["Renamed_block"]
                     }
 
-
                     converted_dicts.append(actual_dict)
 
-
         months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
-
 
         for i, d in enumerate(converted_dicts):
 
             d['Date'] = d['Date'].replace("-", "/")
 
-
-
-
             for index, month in enumerate(months, 1):
-
                 d['Date'] = d['Date'].replace(month, f"{index:02d}")
 
-
-
             try:
-
 
                 if not isinstance(d['Date'], datetime):
                     d['Date'] = datetime.strptime(d['Date'], '%Y/%m/%d')
@@ -280,20 +259,17 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
         for row in ws3.iter_rows(min_row=5, max_row=ws3.max_row, min_col=18, max_col=18):
             for cell in row:
-
                 cell.value = f"=IF($F{cell.row}=1,((SUMIFS(Investors!$M:$M,Investors!$E:$E,Sales!$C{cell.row},Investors!$O:$O,FALSE)+SUMIFS(Investors!$S:$S,Investors!$E:$E,Sales!$C{cell.row},Investors!$O:$O,FALSE))*$F{cell.row})-SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$Y:$Y,1,'Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$C:$C,Sales!$C{cell.row}),(SUMIFS(Investors!$M:$M,Investors!$E:$E,Sales!$C{cell.row},Investors!$O:$O,FALSE)+SUMIFS(Investors!$S:$S,Investors!$E:$E,Sales!$C{cell.row},Investors!$O:$O,FALSE))*$F{cell.row})"
 
                 cell.number_format = '#,##0.00'
 
         for row in ws3.iter_rows(min_row=5, max_row=ws3.max_row, min_col=19, max_col=19):
             for cell in row:
-
                 cell.value = f"=IF(T{cell.row}=FALSE,Q{cell.row}-R{cell.row},+V{cell.row})"
                 cell.number_format = '#,##0.00'
 
         for row in ws3.iter_rows(min_row=5, max_row=ws3.max_row, min_col=22, max_col=22):
             for cell in row:
-
                 cell.number_format = '#,##0.00'
 
         ws4 = create_sheet(wb, 'Operational Costs', operational_costs, {'A': 44, 'B': 44, 'F': 44, 'G': 44, 'H': 44},
@@ -302,10 +278,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         last_row = ws4.max_row
         columns = ['N']
 
-
         for col in columns:
-
-
             ws4[f"{col}2"] = f"=SUBTOTAL(9,{col}5:{col}{last_row})"
             ws4[f"{col}2"].number_format = '#,##0.00'
 
@@ -403,15 +376,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 row.append(sale[key])
             ws6.append(row)
 
-
             row = []
 
         toggles_end = ws6.max_row
         print("toggles_start", toggles_start)
         print("toggles_end", toggles_end)
 
-        month_headings = ['F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
-                          'X', 'Y', 'Z', 'AA', 'AB', 'AC']
+        month_headings = ['I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+                          'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF']
 
         ws6.merge_cells(f"A3:{month_headings[len(month_headings) - 1]}3")
 
@@ -427,16 +399,83 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                            top=Side(style='medium'),
                                                                            bottom=Side(style='medium'))
 
+        for row in ws6.iter_rows(min_row=toggles_start, max_row=toggles_end, min_col=1, max_col=5):
+            for cell in row:
+                cell.font = Font(bold=True, color="0C0C0C", size=22)
+                # cell.fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+                cell.border = Border(left=Side(style='medium'),
+                                     right=Side(style='medium'),
+                                     top=Side(style='medium'),
+                                     bottom=Side(style='medium'))
+
+        for row in ws6.iter_rows(min_row=toggles_start, max_row=toggles_end, min_col=9, max_col=ws6.max_column):
+            for cell in row:
+                cell.font = Font(bold=True, color="0C0C0C", size=22)
+                # cell.fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+                cell.border = Border(left=Side(style='medium'),
+                                     right=Side(style='medium'),
+                                     top=Side(style='medium'),
+                                     bottom=Side(style='medium'))
+
         ws6.append([])
         ws6.append([])
-        ws6.append(['VAT ON SALES', "", 1])
+        ws6.append(['VAT INCOME ON SALES', "", 1])
+        vat_income = ws6.max_row
+        ws6[f"A{vat_income}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{vat_income}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{vat_income}"].number_format = '#,##0'
+        ws6[f"D{vat_income}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{vat_income}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+        ws6[f"D{vat_income}"].border = ws6[f"A{vat_income}"].border + Border(left=Side(style='medium'),
+                                                                             right=Side(style='medium'),
+                                                                             top=Side(style='medium'),
+                                                                             bottom=Side(style='medium'))
+
+        ws6.append(['CPC INVOICES STILL DUE'])
+        CPC_INVOICES_STILL_DUE = ws6.max_row
+        ws6.append(['VAT DEDUCTION FROM INVOICES'])
+        Vat_deduction_from_invoices = ws6.max_row
+
+        # ws6.append([])
+        ws6.append(['VAT PAYABLE ON SALES', "", 1])
+        vat_payable_on_sales = ws6.max_row
+        print("vat_payable_on_sales", vat_payable_on_sales)
+
+        ws6[f"A{vat_payable_on_sales}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{vat_payable_on_sales}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{vat_payable_on_sales}"].number_format = '#,##0'
+        ws6[f"D{vat_payable_on_sales}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{vat_payable_on_sales}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+        ws6[f"D{vat_payable_on_sales}"].border = ws6[f"A{vat_payable_on_sales}"].border + Border(
+            left=Side(style='medium'),
+            right=Side(style='medium'),
+            top=Side(style='medium'),
+            bottom=Side(style='medium'))
+
+        ws6.append([])
+        ws6.append(['VAT RECOVERY WHEN REFINANCED', "", 1])
+        vat_recovery_when_refinanced = ws6.max_row
+        print("vat_recovery_when_refinanced", vat_recovery_when_refinanced)
+
+        print("vat_income", vat_income)
+
+        ws6[f"A{CPC_INVOICES_STILL_DUE}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{CPC_INVOICES_STILL_DUE}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{CPC_INVOICES_STILL_DUE}"].number_format = '#,##0'
+        ws6[f"D{CPC_INVOICES_STILL_DUE}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+        ws6[f"A{Vat_deduction_from_invoices}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{Vat_deduction_from_invoices}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{Vat_deduction_from_invoices}"].number_format = '#,##0'
+        ws6[f"D{Vat_deduction_from_invoices}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         vat_row = ws6.max_row
         ws6[f"A{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"C{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{vat_row}"].number_format = '#,##0'
         ws6[f"D{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
-        ws6[f"D{vat_row}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+        # fill with light green
+        ws6[f"D{vat_row}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
         ws6[f"D{vat_row}"].border = ws6[f"A{vat_row}"].border + Border(left=Side(style='medium'),
                                                                        right=Side(style='medium'),
                                                                        top=Side(style='medium'),
@@ -448,20 +487,73 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         ws6.append(["Income (Profit on Sale)"])
         profit_on_sale = ws6.max_row
         print("profit_on_sale", profit_on_sale)
+        ws6[f"A{profit_on_sale}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{profit_on_sale}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{profit_on_sale}"].number_format = '#,##0'
+        ws6[f"D{profit_on_sale}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{profit_on_sale}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+        ws6[f"D{profit_on_sale}"].border = ws6[f"A{profit_on_sale}"].border + Border(left=Side(style='medium'),
+
+                                                                                     right=Side(style='medium'),
+                                                                                     top=Side(style='medium'),
+                                                                                     bottom=Side(style='medium'))
         ws6.append([])
         ws6.append(["FUNDS AVAILABLE"])
         funds_available_start = ws6.max_row
+        print("funds_available_start", funds_available_start)
         ws6[f"A{funds_available_start}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6.append(["Sales Income"])
         ws6.append(["Momentum"])
         ws6.append(["Bank"])
-        ws6.append(["New Investors"])
+        ws6.append(["Early Exit_Investor Roll Over funding"])
+        ws6.append(["Developer Contribution towards exit of Investors"])
+        ws6.append(["Developer Exit Payment of Investors"])
+        ws6.append(["New Investors Income"])
+        ws6.append(["Re-Financed Income from Quinate"])
+        ws6.append(["Rollover Income from Investors on Sales Transfers"])
         ws6.append(["Deposits"])
         ws6.append(["INCOME"])
         funds_available_end = ws6.max_row
 
+        ws6[f'D{funds_available_start}'].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+        ws6[f'D{funds_available_start}'].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f'D{funds_available_start}'].border = Border(left=Side(style='medium'),
+                                                         right=Side(style='medium'),
+                                                         top=Side(style='medium'),
+                                                         bottom=Side(style='medium'))
+
+        ws6[f'D{funds_available_end}'].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+        ws6[f'D{funds_available_end}'].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f'D{funds_available_end}'].border = Border(left=Side(style='medium'),
+                                                       right=Side(style='medium'),
+                                                       top=Side(style='medium'),
+                                                       bottom=Side(style='medium'))
+
+        for row in ws6.iter_rows(min_row=funds_available_start + 1, max_row=funds_available_end - 1, min_col=4,
+                                 max_col=4):
+            for cell in row:
+                cell.number_format = '#,##0'
+                cell.font = Font(bold=True, color="0C0C0C", size=22)
+                # cell.fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+                cell.border = Border(left=Side(style='medium'),
+                                     right=Side(style='medium'),
+                                     top=Side(style='medium'),
+                                     bottom=Side(style='medium'))
+
+        for row in ws6.iter_rows(min_row=funds_available_start, max_row=funds_available_end, min_col=1, max_col=1):
+            for cell in row:
+                cell.font = Font(bold=True, color="0C0C0C", size=22)
+
+        # ws6['A38'].font = Font(bold=True, color="0C0C0C", size=22)
+
         ws6.append([])
         ws6.append(["Costs To Complete"])
+        costs_to_complete_start = ws6.max_row
+        ws6[f"A{costs_to_complete_start}"].font = Font(bold=True, color="0C0C0C", size=22)
+
         ws6.append(["UNITS"])
+        units = ws6.max_row
+        ws6[f"A{units}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         block_costs_start = ws6.max_row + 1
 
@@ -483,6 +575,24 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         block_costs_end = ws6.max_row
         print("block_costs_start", block_costs_start)
         print("block_costs_end", block_costs_end)
+
+        for row in ws6.iter_rows(min_row=block_costs_start, max_row=block_costs_end, min_col=4, max_col=4):
+            for cell in row:
+                cell.number_format = '#,##0'
+                cell.font = Font(bold=True, color="0C0C0C", size=22)
+                cell.border = Border(left=Side(style='medium'),
+                                     right=Side(style='medium'),
+                                     top=Side(style='medium'),
+                                     bottom=Side(style='medium'))
+
+        for row in ws6.iter_rows(min_row=block_costs_start, max_row=block_costs_end, min_col=9, max_col=ws6.max_column):
+            for cell in row:
+                cell.number_format = '#,##0'
+                cell.font = Font(bold=True, color="0C0C0C", size=22)
+                cell.border = Border(left=Side(style='medium'),
+                                     right=Side(style='medium'),
+                                     top=Side(style='medium'),
+                                     bottom=Side(style='medium'))
 
         ws6.append([])
         ws6.append([])
@@ -507,28 +617,115 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         # ws6[f"C{monthly}"].font = Font(bold=True, color="31304D", size=14)
 
         ws6.append([])
-        ws6.append(["RUNNING BALANCE"])
+        ws6.append(["BANK BALANCE"])
+
         running = ws6.max_row
+        ws6[f"A{running}"].font = Font(bold=True, color="0C0C0C", size=22)
         print("running", running)
         ws6.append([])
-        ws6.append(["INVESTOR EXIT DATE BASED"])
+        ws6.append(["INVESTOR EXIT ROLLOVER BALANCE"])
         investor_exited = ws6.max_row
-        print("investor_exited", investor_exited)
-        ws6.append([])
-        ws6.append(["BALANCE AFTER EXITS"])
-        balance_after_exits = ws6.max_row
-        print("balance_after_exits", balance_after_exits)
-        ws6.append([])
-        ws6.append(["INVESTOR EXIT UNIT BASED"])
-        investor_exited_unit_based = ws6.max_row
-        print("investor_exited_unit_based", investor_exited_unit_based)
-        # format as bold
-        ws6[f"A{investor_exited_unit_based}"].font = Font(bold=True, color="0C0C0C", size=22)
-
-        ws6[f"A{running}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"A{investor_exited}"].font = Font(bold=True, color="0C0C0C", size=22)
-        ws6[f"A{balance_after_exits}"].font = Font(bold=True, color="0C0C0C", size=22)
-        ws6[f"A{investor_exited_unit_based}"].font = Font(bold=True, color="0C0C0C", size=22)
+        print("investor_exited", investor_exited)
+
+        ws6.append([])
+        ws6.append(['ROLLOVER'])
+        rollover = ws6.max_row
+        print("rollover", rollover)
+        ws6[f"A{rollover}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+        ws6[f'D{rollover}'].fill = PatternFill(start_color="3ABEF9", end_color="3ABEF9", fill_type="solid")
+        ws6[f'D{rollover}'].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f'D{rollover}'].border = Border(left=Side(style='medium'),
+                                            right=Side(style='medium'),
+                                            top=Side(style='medium'),
+                                            bottom=Side(style='medium'))
+
+        ws6.append([])
+        ws6.append(['PROJECT INCOME'])
+
+        project_income = ws6.max_row
+        print("project_income", project_income)
+
+        ws6.append([])
+        ws6.append(['Roll Over_Re-Finance'])
+        roll_over_refinance = ws6.max_row
+        ws6[f"A{roll_over_refinance}"].font = Font(bold=True, color="0C0C0C", size=22)
+        print("roll_over_refinance", roll_over_refinance)
+        ws6.append(['Roll Over_Re-Invest'])
+        roll_over_reinvest = ws6.max_row
+        print("roll_over_reinvest", roll_over_reinvest)
+        ws6[f"A{roll_over_reinvest}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+        block_finance = ['C', 'D', 'E', 'H', 'J', 'M', 'N', 'O', 'P']
+        ws6.append([""])
+        block_finance_start = ws6.max_row
+
+        for i in range(len(block_finance)):
+            ws6.append([])
+            ws6[f"A{block_finance_start + i}"] = f"BLOCK {block_finance[i]}"
+            ws6[f"A{block_finance_start + i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            # apply borders
+            ws6[f"A{block_finance_start + i}"].border = Border(left=Side(style='medium'),
+                                                               right=Side(style='medium'),
+                                                               top=Side(style='medium'),
+                                                               bottom=Side(style='medium'))
+            ws6[f"B{block_finance_start + i}"] = f"{block_finance[i]}"
+            ws6[f"B{block_finance_start + i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"B{block_finance_start + i}"].border = Border(left=Side(style='medium'),
+                                                               right=Side(style='medium'),
+                                                               top=Side(style='medium'),
+                                                               bottom=Side(style='medium'))
+            ws6[f"C{block_finance_start + i}"] = f"Heron View"
+            ws6[f"C{block_finance_start + i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"C{block_finance_start + i}"].border = Border(left=Side(style='medium'),
+                                                               right=Side(style='medium'),
+                                                               top=Side(style='medium'),
+                                                               bottom=Side(style='medium'))
+            ws6[f"E{block_finance_start + i}"] = f"=+E{roll_over_refinance}"
+            ws6[f"E{block_finance_start + i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"E{block_finance_start + i}"].border = Border(left=Side(style='medium'),
+                                                               right=Side(style='medium'),
+                                                               top=Side(style='medium'),
+                                                               bottom=Side(style='medium'))
+            # format D as %
+            ws6[f"E{block_finance_start + i}"].number_format = '0%'
+
+            formula_start = "="
+            # count_formula_start = "="
+            for index, col in enumerate(month_headings):
+
+                if index % 2 == 0:
+                    formula_start += f"+{col}{block_finance_start + i}"
+
+                ws6[f"D{block_finance_start + i}"] = f"{formula_start}"
+                ws6[f"D{block_finance_start + i}"].number_format = '#,##0'
+                ws6[f"D{block_finance_start + i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                ws6[f"D{block_finance_start + i}"].border = Border(left=Side(style='medium'),
+                                                                   right=Side(style='medium'),
+                                                                   top=Side(style='medium'),
+                                                                   bottom=Side(style='medium'))
+
+        block_finance_end = ws6.max_row
+
+        for row in ws6.iter_rows(min_row=block_finance_start, max_row=block_finance_end, min_col=1, max_col=1):
+            for cell in row:
+                # apply borders
+                cell.border = Border(left=Side(style='medium'),
+                                     right=Side(style='medium'),
+                                     top=Side(style='medium'),
+                                     bottom=Side(style='medium'))
+
+        print("block_finance_start", block_finance_start)
+        print("block_finance_end", block_finance_end)
+        ws6.append(["", "", "", f"=sum(D{block_finance_start}:D{block_finance_end})"])
+        ws6[f"D{block_finance_end + 2}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{block_finance_end + 2}"].border = Border(left=Side(style='medium'),
+                                                         right=Side(style='medium'),
+                                                         top=Side(style='medium'),
+                                                         bottom=Side(style='medium'))
+
+        ws6[f"A{project_income}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         ws6[f"D{profit_on_sale}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"D{profit_on_sale}"].number_format = '#,##0'
@@ -538,7 +735,297 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                   top=Side(style='medium'),
                                                   bottom=Side(style='medium'))
 
-        variables_array = [vat_construction, operating_expenses, monthly, running, investor_exited, balance_after_exits, investor_exited_unit_based]
+        ws6.append([])
+
+        ws6.append(["Other Income"])
+        ws6.append(["Purple Blok", 4279223.84, 1])
+
+        purple_blok_start = ws6.max_row
+        ws6.append(["Other Income", 5000000, 0])
+        # make B currency
+        # ws6[f"B{purple_blok_start + 1}"].number_format = '#,##0'
+        # make font bold and
+        ws6.append(["Repayment"])
+        ws6.append(["Total"])
+
+        ws6[f"A{purple_blok_start - 1}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"A{purple_blok_start}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"B{purple_blok_start}"].number_format = '#,##0'
+        ws6[f"B{purple_blok_start + 1}"].number_format = '#,##0'
+        ws6[f"B{purple_blok_start}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{purple_blok_start}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{purple_blok_start}"].number_format = '0'
+        # ws6[f"D{purple_blok_start}"].number_format = '#,##0'
+        # ws6[f"D{purple_blok_start}"].font = Font(bold=True, color="0C0C0C", size=22)
+        purple_blok_end = ws6.max_row
+
+        for row in ws6.iter_rows(min_row=purple_blok_start, max_row=purple_blok_end, min_col=1, max_col=3):
+            for cell in row:
+                cell.border = Border(left=Side(style='medium'),
+                                     right=Side(style='medium'),
+                                     top=Side(style='medium'),
+                                     bottom=Side(style='medium'))
+                cell.font = Font(bold=True, color="0C0C0C", size=22)
+
+        print("purple_blok_start", purple_blok_start)
+        print("purple_blok_end", purple_blok_end)
+
+        ws6.append([])
+        ws6.append(["FINANCE WATERFALL - EXIT PROCESS"])
+        # make font bold, 22 and RED
+        ws6[f"A{ws6.max_row}"].font = Font(bold=True, color="FF0000", size=22)
+
+        finance_waterfall_start = ws6.max_row
+        ws6.append(["Income"])
+        wf1 = ws6.max_row
+        ws6.append(["Endulini & Heron Fields_New Debenture_P/Block"])
+        wf2 = ws6.max_row
+        ws6.append(["Vat _ Late"])
+        wf3 = ws6.max_row
+        ws6.append(["New Raise"])
+        wf4 = ws6.max_row
+        ws6.append(["Developer Early Exit"])
+        wf5 = ws6.max_row
+        ws6.append(["Early Exit Investor Roll Over funding"])
+        ws6.append(["Developer Contribution"])
+        wf6 = ws6.max_row
+        ws6.append(["Cash"])
+        wf7 = ws6.max_row
+        ws6.append(["Sales Income"])
+        ws6.append(["New Investor Income"])
+        wf8 = ws6.max_row
+        ws6.append(["Momentum & Deposits & VAT & Other"])
+        wf9 = ws6.max_row
+        ws6.append([""])
+        wf10 = ws6.max_row
+        ws6.append(["CPC + Operating Expenses & VAT on Cycle"])
+        wf11 = ws6.max_row
+        ws6.append([""])
+        wf12 = ws6.max_row
+        ws6.append([""])
+        wf13 = ws6.max_row
+        finance_waterfall_end = ws6.max_row
+        print("finance_waterfall_start", finance_waterfall_start)
+        print("finance_waterfall_end", finance_waterfall_end)
+
+        for row in ws6.iter_rows(min_row=finance_waterfall_start, max_row=finance_waterfall_end, min_col=1,
+                                 max_col=ws6.max_column):
+            for cell in row:
+                if row == finance_waterfall_start:
+                    cell.font = Font(bold=True, color="FF0000", size=22)
+                else:
+                    cell.font = Font(bold=True, color="0C0C0C", size=22)
+                # fill in light green
+                cell.fill = PatternFill(start_color="B5C18E", end_color="B5C18E", fill_type="solid")
+                # cell.border = Border(left=Side(style='medium'),
+                #                      right=Side(style='medium'),
+                #                      top=Side(style='medium'),
+                #                      bottom=Side(style='medium'))
+
+        ws6[f"A{finance_waterfall_start}"].font = Font(bold=True, color="FF0000", size=22)
+
+
+
+        ws6.append([])
+        ws6.append(["DEVELOPER REFINANCE PROPERTIES"])
+        # make bold and RED
+        ws6[f"A{ws6.max_row}"].font = Font(bold=True, color="FF0000", size=22)
+        ws6.append([""])
+        refinanced_units_start = ws6.max_row
+
+        units = ["HVD302", "HVD303", "HVD304", "HVN302", "HVN303", "HVP203", "HVP303", "HVC202", "HVC204", "HVC302",
+                 "HVC304", "HVC305", "HVO205", "HVO305", "HVJ102", "HVJ203", "HVJ302", "HVJ103", "HVJ303", "HVJ403",
+                 "HVJ201", "HVJ202", "HVJ301", "HVJ401", "HVJ402", "HVM101", "HVM102", "HVM103", "HVM104", "HVM201",
+                 "HVM202", "HVM203", "HVM204"]
+        # print("LEN",len(units))
+        for index, unit in enumerate(units):
+            "=IF(F117<>0,1,0)"
+            ws6.append(["", "", "", unit, f"=IF(F{refinanced_units_start + index + 1}<>0,1,0)"])
+            # print("index",index)
+
+            # Put a border around Units and make font 22 and bold and fill in light green
+            ws6[f"D{refinanced_units_start + index + 1}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"D{refinanced_units_start + index + 1}"].fill = PatternFill(start_color="B5C18E", end_color="B5C18E",
+                                                                             fill_type="solid")
+            ws6[f"D{refinanced_units_start + index + 1}"].border = Border(left=Side(style='medium'),
+                                                                          right=Side(style='medium'),
+                                                                          top=Side(style='medium'),
+                                                                          bottom=Side(style='medium'))
+            ws6[f"E{refinanced_units_start + index + 1}"].font = Font(bold=True, color="0C0C0C", size=22)
+            # ws6[f"E{refinanced_units_start + index + 1}"].fill = PatternFill(start_color="B5C18E", end_color="B5C18E",
+            #                                                                  fill_type="solid")
+            ws6[f"E{refinanced_units_start + index + 1}"].border = Border(left=Side(style='medium'),
+                                                                          right=Side(style='medium'),
+                                                                          top=Side(style='medium'),
+                                                                          bottom=Side(style='medium'))
+            # if index == len(units) - 1:
+            #     ws6.append([""])
+        refinanced_units_end = ws6.max_row
+
+        # "=SUM(E117:E149)-E115"
+        ws6[
+            f"E{refinanced_units_start}"] = f"=SUM(E{refinanced_units_start + 1}:E{refinanced_units_end})-E{refinanced_units_start - 1}"
+        ws6[f"E{refinanced_units_start}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+        print("refinanced_units_start", refinanced_units_start)
+        print("refinanced_units_end", refinanced_units_end)
+
+        ws6.append([])
+        ws6.append(["DEBENTURE TRANSACTION", 900000, 8])
+        ws6[f"A{ws6.max_row}"].font = Font(bold=True, color="FF0000", size=22)
+        ws6[f"B{ws6.max_row}"].font = Font(bold=True, color="FF0000", size=22)
+        ws6[f"C{ws6.max_row}"].font = Font(bold=True, color="FF0000", size=22)
+        # put borders around the above rows
+        ws6[f"A{ws6.max_row}"].border = Border(left=Side(style='medium'),
+                                                  right=Side(style='medium'),
+                                                  top=Side(style='medium'),
+                                                  bottom=Side(style='medium'))
+        ws6[f"B{ws6.max_row}"].border = Border(left=Side(style='medium'),
+                                                    right=Side(style='medium'),
+                                                    top=Side(style='medium'),
+                                                    bottom=Side(style='medium'))
+        ws6[f"C{ws6.max_row}"].border = Border(left=Side(style='medium'),
+                                                    right=Side(style='medium'),
+                                                    top=Side(style='medium'),
+                                                    bottom=Side(style='medium'))
+        # fill B in yellow
+        ws6[f"B{ws6.max_row}"].fill = PatternFill(start_color="FFF67E", end_color="FFF67E", fill_type="solid")
+        # format B as currency
+        ws6[f"B{ws6.max_row}"].number_format = '#,##0'
+
+        debenture_transaction_start = ws6.max_row
+        print("debenture_transaction_start", debenture_transaction_start)
+
+        ws6.append([""])
+        ws6.append([""])
+
+        ws6.append(["ROLL OVER REFINANCE PROPERTIES"])
+        ws6[f"A{ws6.max_row}"].font = Font(bold=True, color="FF0000", size=18)
+        roll_over_refinance_properties_start = ws6.max_row
+        for i in range(85):
+            ws6.append([i])
+            ws6[f"H{ws6.max_row}"].font = Font(bold=True, color="000000", size=18)
+            if i == 2:
+                ws6[f"H{ws6.max_row}"].font = Font(bold=True, color="000000", size=18)
+                "=IFERROR(UNIQUE(FILTER($B$243:$B$593,($C$243:$C$593<=I$5)*($C$243:$C$593>G$5)*($F$243:$F$593=0))),"")"
+                ws6[f"H{ws6.max_row}"].value = f"=_xlfn.IFERROR(_xlfn.UNIQUE(_xlfn.FILTER($B$243:$B$593,($C$243:$C$593<=I5)*($C$243:$C$593>G5)*($F$243:$F$593=0))),\"\")"
+        roll_over_refinance_properties_end = ws6.max_row
+        print("roll_over_refinance_properties_start", roll_over_refinance_properties_start)
+        print("roll_over_refinance_properties_end", roll_over_refinance_properties_end)
+        ws6[f"B{roll_over_refinance_properties_start + 1}"].font = Font(bold=True, color="000000", size=22)
+        ws6[f"B{roll_over_refinance_properties_start + 1}"].value = "Developer Contribution"
+        ws6[f"C{roll_over_refinance_properties_start + 1}"].value = "25%"
+        ws6[f"C{roll_over_refinance_properties_start + 1}"].font = Font(bold=True, color="000000", size=22)
+        # fill in yellow
+        ws6[f"C{roll_over_refinance_properties_start + 1}"].fill = PatternFill(start_color="FFF67E", end_color="FFF67E",
+                                                                                fill_type="solid")
+        ws6[f"B{roll_over_refinance_properties_start + 1}"].font = Font(bold=True, color="000000", size=22)
+
+        ws6[f"B{roll_over_refinance_properties_start + 2}"].font = Font(bold=True, color="000000", size=22)
+        ws6[f"B{roll_over_refinance_properties_start + 2}"].value = "Roll Over - Investors"
+
+
+
+        ws6.append([""])
+        ws6.append([""])
+        ws6.append(["block", "unique","date", "value","unit","unit_used", "sold", ])
+        # make the above row bold and font 22
+        ws6[f"A{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"B{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"E{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"F{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"G{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+
+        ws6.append([f"=mid(E{ws6.max_row +1}, 3, 1)",
+                     "=_xlfn.UNIQUE(_xlfn.FILTER('Investor Exit List'!$AB:$AB,('Investor Exit List'!$I:$I=FALSE)*('Investor Exit List'!$H:$H=FALSE)*('Investor Exit List'!$U:$U=FALSE)*('Investor Exit List'!$F:$F<>0)))",
+                    f"=SUMIFS('Investor Exit List'!$AC:$AC,'Investor Exit List'!$AB:$AB,B{ws6.max_row + 1})",f"=SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$AB:$AB,B{ws6.max_row + 1})",f"=LEFT(B{ws6.max_row + 1},6)"])
+
+        ws6[f"A{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"B{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"C{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"E{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"F{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"G{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+
+        calculate_exit_dates_start = ws6.max_row
+        ws6[f"G{calculate_exit_dates_start}"].value = f"=_xlfn.UNIQUE(_xlfn.FILTER(E243:E593,(F243:F593=0)))"
+        print("calculate_exit_dates_start", calculate_exit_dates_start)
+        for i in range(350):
+            ws6.append([f"=mid(E{ws6.max_row + 1}, 3, 1)",
+                        "",
+                        f"=SUMIFS('Investor Exit List'!$AC:$AC,'Investor Exit List'!$AB:$AB,B{ws6.max_row + 1})",
+                        f"=SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$AB:$AB,B{ws6.max_row + 1})",
+                        f"=LEFT(B{ws6.max_row + 1},6)",f"=IF(SUMIFS($E${refinanced_units_start + 1}:$E${refinanced_units_end},$D${refinanced_units_start + 1}:$D${refinanced_units_end},E{ws6.max_row + 1})<>0,E{ws6.max_row + 1},0)"])
+            # make font bold and 22
+            ws6[f"A{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"B{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"C{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"D{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"E{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"F{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
+            # format C as date and E as currency
+            ws6[f"C{ws6.max_row}"].number_format = 'dd-mmm-yy'
+            ws6[f"E{ws6.max_row}"].number_format = '#,##0'
+        calculate_exit_dates_end = ws6.max_row
+        print("calculate_exit_dates_end", calculate_exit_dates_end)
+
+        for row in ws6.iter_rows(min_row=refinanced_units_start + 1, max_row=refinanced_units_end, min_col=3,
+                                 max_col=3):
+            for cell in row:
+                cell.border = Border(left=Side(style='medium'),
+                                     right=Side(style='medium'),
+                                     top=Side(style='medium'),
+                                     bottom=Side(style='medium'))
+                cell.font = Font(bold=True, color="0C0C0C", size=22)
+                # format as date
+                cell.number_format = 'dd-mm-yyyy'
+                # print("row", cell.row)
+                value = ""
+                "=IF(H117<>"",I$5,IF(J117<>"",K$5,IF(L117<>"",M$5,IF(N117<>"",O$5,IF(P117<>"",Q$5,IF(R117<>"",S$5,IF(T117<>"",U$5,IF(V117<>"",W$5,IF(X117<>"",Y$5,IF(Z117<>"",AA$5,IF(AB117<>"",AC$5,IF(AD117<>"",AE$5,""))))))))))))"
+                cell.value = f"=IF(H{cell.row}<>\"\",I$5,IF(J{cell.row}<>\"\",K$5,IF(L{cell.row}<>\"\",M$5,IF(N{cell.row}<>\"\",O$5,IF(P{cell.row}<>\"\",Q$5,IF(R{cell.row}<>\"\",S$5,IF(T{cell.row}<>\"\",U$5,IF(V{cell.row}<>\"\",W$5,IF(X{cell.row}<>\"\",Y$5,IF(Z{cell.row}<>\"\",AA$5,IF(AB{cell.row}<>\"\",AC$5,IF(AD{cell.row}<>\"\",AE$5,\"\"))))))))))))"
+                # cell.value = "XX"
+
+
+
+        print("SALES", ws3.max_column)
+
+        ws3["W4"].value = "New Forecast Date"
+        ws3["X4"].value = "New VAT Date"
+        ws3["Y4"].value = "VAT Recovery Date"
+        ws3["Z4"].value = "Sales Toggle"
+
+        for i in range(5, ws3.max_row + 1):
+            ws3[f"Z{i}"].value = False
+            "=IF(OR(Z24=TRUE,SUMIFS('Cashflow Projection'!$E$117:$E$149,'Cashflow Projection'!$D$117:$D$149,Sales!C24)=1),0,SUMIFS('Cashflow Projection'!$C$7:$C$23,'Cashflow Projection'!$B$7:$B$23,Sales!B24,'Cashflow Projection'!$A$7:$A$23,Sales!A24))"
+            ws3[f"F{i}"].value = f"=IF(OR(Z{i}=TRUE,SUMIFS('Cashflow Projection'!$E${refinanced_units_start +1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})=1),0,SUMIFS('Cashflow Projection'!$C${toggles_start}:$C${toggles_end},'Cashflow Projection'!$B${toggles_start}:$B${toggles_end},Sales!B{i},'Cashflow Projection'!$A${toggles_start}:$A${toggles_end},Sales!A{i}))"
+            "=IF(SUMIFS('Cashflow Projection'!$E$117:$E$149,'Cashflow Projection'!$D$117:$D$149,Sales!C24)=1,SUMIFS('Cashflow Projection'!$C$117:$C$149,'Cashflow Projection'!$D$117:$D$149,Sales!C24),+Sales!H24)"
+            ws3[f"W{i}"].value = f"=IF(SUMIFS('Cashflow Projection'!$E${refinanced_units_start +1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})=1,SUMIFS('Cashflow Projection'!$C${refinanced_units_start +1}:$C${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i}),+Sales!H{i})"
+            # format as date
+            ws3[f"W{i}"].number_format = 'dd-mm-yyyy'
+            "=IF(MOD(MONTH(W24), 2) <> 0, EOMONTH(W24, 2), EOMONTH(W24, 1))"
+            ws3[f"X{i}"].value = f"=IF(MOD(MONTH(W{i}), 2) <> 0, EOMONTH(W{i}, 2), EOMONTH(W{i}, 1))"
+            ws3[f"X{i}"].number_format = 'dd-mm-yyyy'
+            "=EOMONTH(X24,1)"
+            ws3[f"Y{i}"].value = f"=EOMONTH(X{i},1)"
+            ws3[f"Y{i}"].number_format = 'dd-mm-yyyy'
+            "=K5-SUM(L5:P5)"
+            ws3[f"Q{i}"].value = f"=K{i}-SUM(L{i}:P{i})"
+            ws3[f"Q{i}"].number_format = '#,##0'
+            "=IF(SUMIFS('Cashflow Projection'!$E$117:$E$149,'Cashflow Projection'!$D$117:$D$149,Sales!C5)<>0,TRUE,FALSE)"
+            ws3[f'T{i}'].value = f"=IF(SUMIFS('Cashflow Projection'!$E${refinanced_units_start +1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})<>0,TRUE,FALSE)"
+
+        print("DONE SALES")
+
+
+
+        sales_columns = []
+
+        variables_array = [vat_construction, operating_expenses, monthly, running, investor_exited]
 
         for variable in variables_array:
             ws6[f"D{variable}"].border = Border(left=Side(style='medium'),
@@ -550,24 +1037,23 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6[f"D{variable}"].number_format = '#,##0'
 
             ws6.conditional_formatting.add(f"D{variable}",
-                                             formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
-                                                                         fill=PatternFill(
-                                                                              start_color="FFC7CE",
-                                                                              end_color="FFC7CE",
-                                                                              fill_type="solid")))
+                                           formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                                                                      fill=PatternFill(
+                                                                          start_color="FFC7CE",
+                                                                          end_color="FFC7CE",
+                                                                          fill_type="solid")))
             ws6.conditional_formatting.add(f"D{variable}",
-                                                formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
-                                                                            fill=PatternFill(
-                                                                                start_color="BFEA7C",
-                                                                                end_color="BFEA7C",
-                                                                                fill_type="solid")))
+                                           formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                                                                      fill=PatternFill(
+                                                                          start_color="BFEA7C",
+                                                                          end_color="BFEA7C",
+                                                                          fill_type="solid")))
             ws6.conditional_formatting.add(f"D{variable}",
-                                                formatting.rule.CellIsRule(operator='equal', formula=['0'],
-                                                                            fill=PatternFill(
-                                                                                start_color="FFF67E",
-                                                                                end_color="FFF67E",
-                                                                                fill_type="solid")))
-
+                                           formatting.rule.CellIsRule(operator='equal', formula=['0'],
+                                                                      fill=PatternFill(
+                                                                          start_color="FFF67E",
+                                                                          end_color="FFF67E",
+                                                                          fill_type="solid")))
 
         ws6[f"D{toggles_start - 1}"] = f"=SUM(D{toggles_start}:D{toggles_end})"
         ws6[f"D{toggles_start - 1}"].number_format = '#,##0'
@@ -597,7 +1083,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                          top=Side(style='medium'),
                                                          bottom=Side(style='medium'))
 
-
         for i in range(toggles_start, toggles_end + 1):
             formula_start = "="
             count_formula_start = "="
@@ -618,6 +1103,15 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6[f"E{i}"].alignment = Alignment(horizontal='center', vertical='center')
 
         for i in range(vat_row, vat_row + 1):
+            formula_start_vat = "="
+            for index, col in enumerate(month_headings):
+                formula_start = "="
+                if index % 2 == 0:
+                    formula_start_vat += f"+{col}{i}"
+
+                ws6[f"D{i}"] = f"{formula_start_vat}"
+
+        for i in range(vat_income, vat_income + 1):
             formula_start_vat = "="
             for index, col in enumerate(month_headings):
                 formula_start = "="
@@ -657,7 +1151,30 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     ws6[f"D{i}"].number_format = '#,##0'
                     ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
+
+        for i in range(vat_payable_on_sales, vat_payable_on_sales + 1):
+            formula_start_block = "="
+            for index, col in enumerate(month_headings):
+
+                if index % 2 == 0:
+                    formula_start_block += f"+{col}{i}"
+
+                    ws6[f"D{i}"] = f"{formula_start_block}"
+                    ws6[f"D{i}"].number_format = '#,##0'
+                    ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+
         for i in range(operating_expenses, operating_expenses + 1):
+            formula_start_block = "="
+            for index, col in enumerate(month_headings):
+
+                if index % 2 == 0:
+                    formula_start_block += f"+{col}{i}"
+
+                    ws6[f"D{i}"] = f"{formula_start_block}"
+                    ws6[f"D{i}"].number_format = '#,##0'
+                    ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+        for i in range(funds_available_start + 1, funds_available_end + 1):
             formula_start_block = "="
             for index, col in enumerate(month_headings):
 
@@ -681,49 +1198,209 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
         for i in range(investor_exited, investor_exited + 1):
             formula_start = "="
-            count_formula_start = "="
+            # count_formula_start = "="
             for index, col in enumerate(month_headings):
 
                 if index % 2 == 0:
                     formula_start += f"+{col}{i}"
-                else:
-                    count_formula_start += f"+{col}{i}"
+                # else:
+                #     count_formula_start += f"+{col}{i}"
 
                 ws6[f"D{i}"] = f"{formula_start}"
                 ws6[f"D{i}"].number_format = '#,##0'
                 ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
-                ws6[f"E{i}"] = f"{count_formula_start}"
-                ws6[f"E{i}"].number_format = '0'
-                ws6[f"E{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                # ws6[f"E{i}"] = f"{count_formula_start}"
+                # ws6[f"E{i}"].number_format = '0'
+                # ws6[f"E{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
-        for i in range(investor_exited_unit_based, investor_exited_unit_based + 1):
-            formula_start = "="
-            count_formula_start = "="
-            for index, col in enumerate(month_headings):
+                for i in range(rollover, rollover + 1):
+                    formula_start = "="
+                    # count_formula_start = "="
+                    for index, col in enumerate(month_headings):
 
-                if index % 2 == 0:
-                    formula_start += f"+{col}{i}"
-                else:
-                    count_formula_start += f"+{col}{i}"
+                        if index % 2 == 0:
+                            formula_start += f"+{col}{i}"
 
-            ws6[f"D{i}"] = f"{formula_start}"
-            ws6[f"D{i}"].number_format = '#,##0'
-            ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"D{i}"] = f"{formula_start}"
+                        ws6[f"D{i}"].number_format = '#,##0'
+                        ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
-            ws6[f"E{i}"] = f"{count_formula_start}"
-            ws6[f"E{i}"].number_format = '0'
-            ws6[f"E{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                for i in range(roll_over_refinance, roll_over_refinance + 1):
+                    formula_start = "="
+                    # count_formula_start = "="
+                    for index, col in enumerate(month_headings):
+
+                        if index % 2 == 0:
+                            formula_start += f"+{col}{i}"
+
+                        ws6[f"D{i}"] = f"{formula_start}"
+                        ws6[f"D{i}"].number_format = '#,##0'
+                        ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"E{i}"].value = 0.6
+                        ws6[f"E{i}"].number_format = '0%'
+                        ws6[f"E{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        # fill the cell in yellow
+                        ws6[f"E{i}"].fill = PatternFill(start_color="FFF67E", end_color="FFF67E", fill_type="solid")
+                        # apply borders to the cell
+                        ws6[f"E{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                           right=Side(style='medium'),
+                                                                           top=Side(style='medium'),
+                                                                           bottom=Side(style='medium'))
+                        ws6[f"D{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                           right=Side(style='medium'),
+                                                                           top=Side(style='medium'),
+                                                                           bottom=Side(style='medium'))
+
+                for i in range(roll_over_reinvest, roll_over_reinvest + 1):
+                    formula_start = "="
+                    # count_formula_start = "="
+                    for index, col in enumerate(month_headings):
+
+                        if index % 2 == 0:
+                            formula_start += f"+{col}{i}"
+
+                        ws6[f"D{i}"] = f"{formula_start}"
+                        ws6[f"D{i}"].number_format = '#,##0'
+                        ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"D{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                           right=Side(style='medium'),
+                                                                           top=Side(style='medium'),
+                                                                           bottom=Side(style='medium'))
+                        ws6[f"E{i}"] = f"=E{roll_over_refinance}"
+                        ws6[f"E{i}"].number_format = '0%'
+                        ws6[f"E{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"E{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                           right=Side(style='medium'),
+                                                                           top=Side(style='medium'),
+                                                                           bottom=Side(style='medium'))
+
+                for i in range(purple_blok_start, purple_blok_end + 1):
+                    formula_start = "="
+                    # count_formula_start = "="
+                    for index, col in enumerate(month_headings):
+
+                        if index % 2 == 0:
+                            formula_start += f"+{col}{i}"
+
+                        ws6[f"D{i}"] = f"{formula_start}"
+                        ws6[f"D{i}"].number_format = '#,##0'
+                        ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"D{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                           right=Side(style='medium'),
+                                                                           top=Side(style='medium'),
+                                                                           bottom=Side(style='medium'))
+
+                    for i in range(finance_waterfall_start + 1, finance_waterfall_end + 1):
+                        formula_start = "="
+                        # count_formula_start = "="
+                        for index, col in enumerate(month_headings):
+
+                            if index % 2 == 0:
+                                formula_start += f"+{col}{i}"
+
+                            ws6[f"D{i}"] = f"{formula_start}"
+                            ws6[f"D{i}"].number_format = '#,##0'
+                            ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                            ws6[f"D{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                               right=Side(style='medium'),
+                                                                               top=Side(style='medium'),
+                                                                               bottom=Side(style='medium'))
+
+                    for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
+                        formula_start = "="
+                        # count_formula_start = "="
+                        for index, col in enumerate(month_headings):
+
+                            if index % 2 == 0:
+                                formula_start += f"+{col}{i}"
+
+                            ws6[f"F{i}"] = f"{formula_start}"
+                            ws6[f"F{i}"].number_format = '#,##0'
+                            ws6[f"F{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                            # fill in light green
+                            ws6[f"F{i}"].fill = PatternFill(start_color="B5C18E", end_color="B5C18E", fill_type="solid")
+                            ws6[f"F{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                               right=Side(style='medium'),
+                                                                               top=Side(style='medium'),
+                                                                               bottom=Side(style='medium'))
+
+
+
+                    for i in range(refinanced_units_start - 1, refinanced_units_start):
+                        formula_start = "="
+                        count_formula_start = "="
+                        for index, col in enumerate(month_headings):
+
+                            if index % 2 == 0:
+                                formula_start += f"+{col}{i}"
+                            else:
+                                count_formula_start += f"+{col}{i}"
+
+                            ws6[f"F{i}"] = f"{formula_start}"
+                            ws6[f"F{i}"].number_format = '#,##0'
+                            ws6[f"F{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                            # fill in light green
+                            ws6[f"F{i}"].fill = PatternFill(start_color="B5C18E", end_color="B5C18E", fill_type="solid")
+                            ws6[f"F{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                               right=Side(style='medium'),
+                                                                               top=Side(style='medium'),
+                                                                               bottom=Side(style='medium'))
+
+                            ws6[f"E{i}"] = f"{count_formula_start}"
+                            ws6[f"E{i}"].number_format = '0'
+                            ws6[f"E{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                            # fill in light green
+                            ws6[f"E{i}"].fill = PatternFill(start_color="B5C18E", end_color="B5C18E", fill_type="solid")
+                            ws6[f"E{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                               right=Side(style='medium'),
+                                                                               top=Side(style='medium'),
+                                                                               bottom=Side(style='medium'))
+
+                    for i in range(debenture_transaction_start, debenture_transaction_start + 1):
+                        formula_start = "="
+                        # count_formula_start = "="
+                        for index, col in enumerate(month_headings):
+
+                            if index % 2 == 0:
+                                formula_start += f"+{col}{i}"
+
+                            ws6[f"D{i}"] = f"{formula_start}"
+                            ws6[f"D{i}"].number_format = '#,##0'
+                            ws6[f"D{i}"].font = Font(bold=True, color="FFFFFF", size=22)
+                            # fill in light green
+                            ws6[f"D{i}"].fill = PatternFill(start_color="3572EF", end_color="3572EF", fill_type="solid")
+                            ws6[f"D{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                               right=Side(style='medium'),
+                                                                               top=Side(style='medium'),
+                                                                               bottom=Side(style='medium'))
+
+                    for i in range(roll_over_refinance_properties_start, roll_over_refinance_properties_start + 3):
+                        formula_start = "="
+                        # count_formula_start = "="
+                        for index, col in enumerate(month_headings):
+
+                            if index % 2 == 0:
+                                formula_start += f"+{col}{i}"
+
+                            ws6[f"D{i}"] = f"{formula_start}"
+                            ws6[f"D{i}"].number_format = '#,##0'
+                            ws6[f"D{i}"].font = Font(bold=True, color="FFFFFF", size=22)
+                            # fill in light green
+                            ws6[f"D{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+                            ws6[f"D{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                               right=Side(style='medium'),
+                                                                               top=Side(style='medium'),
+                                                                               bottom=Side(style='medium'))
+
+
 
         for i in range(running, running + 1):
             ws6[f"D{i}"] = f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")+8823977"
             ws6[f"D{i}"].number_format = '#,##0'
             ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
-        for i in range(balance_after_exits, balance_after_exits + 1):
-            ws6[f"D{i}"] = f"=D{running}"
-            ws6[f"D{i}"].number_format = '#,##0'
-            ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+        ws6[f"D{funds_available_start + 3}"] = "=Dashboard!B14"
 
         for index, col in enumerate(month_headings):
 
@@ -739,9 +1416,535 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 top=Side(style='medium'),
                 bottom=Side(style='medium'))
 
+
             ws6[f"{col}{toggles_start - 1}"].alignment = Alignment(horizontal='center', vertical='center')
 
+            ws6[f"{col}{roll_over_refinance - 1}"] = f"=SUM({col}{roll_over_refinance}:{col}{block_finance_end})"
+            ws6[f"{col}{roll_over_refinance - 1}"].number_format = '#,##0'
+            ws6[f"{col}{roll_over_refinance - 1}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE",
+                                                                      fill_type="solid")
+            ws6[f"{col}{roll_over_refinance - 1}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+            ws6[f"{col}{roll_over_refinance - 1}"].border = Border(
+                left=Side(style='medium'),
+                right=Side(style='medium'),
+                top=Side(style='medium'),
+                bottom=Side(style='medium'))
+
+            for i in range(finance_waterfall_start + 1, finance_waterfall_end + 1):
+                ws6[f"{col}{i}"].number_format = '#,##0'
+                ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                # apply borders around the cell
+                ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                    left=Side(style='medium'),
+                    right=Side(style='medium'),
+                    top=Side(style='medium'),
+                    bottom=Side(style='medium'))
+
+                ws6[f"H{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                    left=Side(style='medium'),
+                    right=Side(style='medium'),
+                    top=Side(style='medium'),
+                    bottom=Side(style='medium'))
+
+                # fill the cell in yellow
+                ws6[f"{col}{i}"].fill = PatternFill(start_color="FFF455", end_color="FFF455", fill_type="solid")
+                ws6[f"H{i}"].fill = PatternFill(start_color="FFF455", end_color="FFF455", fill_type="solid")
+
+
+            for i in range(finance_waterfall_start + 1, finance_waterfall_start + 2):
+                try:
+                    ws6.conditional_formatting.add(f"{month_headings[index - 1]}{i}",
+                                                   formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFC7CE",
+                                                                                  end_color="FFC7CE",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"{month_headings[index - 1]}{i}",
+                                                   formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="BFEA7C",
+                                                                                  end_color="BFEA7C",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"{month_headings[index - 1]}{i}",
+                                                   formatting.rule.CellIsRule(operator='equal', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFF67E",
+                                                                                  end_color="FFF67E",
+                                                                                  fill_type="solid")))
+
+                    ws6[f"H{i}"].number_format = '#,##0'
+                    ws6[f"H{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"H{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    ws6.conditional_formatting.add(f"H{i}",
+                                                   formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFC7CE",
+                                                                                  end_color="FFC7CE",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"H{i}",
+                                                   formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="BFEA7C",
+                                                                                  end_color="BFEA7C",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"H{i}",
+                                                   formatting.rule.CellIsRule(operator='equal', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFF67E",
+                                                                                  end_color="FFF67E",
+                                                                                  fill_type="solid")))
+                except:
+                    pass
+
+            for i in range(finance_waterfall_start + 5, finance_waterfall_end + 1):
+                try:
+                    ws6.conditional_formatting.add(f"{month_headings[index - 1]}{i}",
+                                                   formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFC7CE",
+                                                                                  end_color="FFC7CE",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"{month_headings[index - 1]}{i}",
+                                                   formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="BFEA7C",
+                                                                                  end_color="BFEA7C",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"{month_headings[index - 1]}{i}",
+                                                   formatting.rule.CellIsRule(operator='equal', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFF67E",
+                                                                                  end_color="FFF67E",
+                                                                                  fill_type="solid")))
+
+                    ws6[f"H{i}"].number_format = '#,##0'
+                    ws6[f"H{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"H{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    ws6.conditional_formatting.add(f"H{i}",
+                                                   formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFC7CE",
+                                                                                  end_color="FFC7CE",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"H{i}",
+                                                   formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="BFEA7C",
+                                                                                  end_color="BFEA7C",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"H{i}",
+                                                   formatting.rule.CellIsRule(operator='equal', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFF67E",
+                                                                                  end_color="FFF67E",
+                                                                                  fill_type="solid")))
+                except:
+                    pass
+
+            for i in range(finance_waterfall_start + 9, finance_waterfall_end + 1):
+                try:
+                    ws6.conditional_formatting.add(f"{month_headings[index - 1]}{i}",
+                                                   formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFC7CE",
+                                                                                  end_color="FFC7CE",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"{month_headings[index - 1]}{i}",
+                                                   formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="BFEA7C",
+                                                                                  end_color="BFEA7C",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"{month_headings[index - 1]}{i}",
+                                                   formatting.rule.CellIsRule(operator='equal', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFF67E",
+                                                                                  end_color="FFF67E",
+                                                                                  fill_type="solid")))
+
+                    ws6[f"H{i}"].number_format = '#,##0'
+                    ws6[f"H{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"H{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+
+
+                    ws6.conditional_formatting.add(f"H{i}",
+                                                   formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFC7CE",
+                                                                                  end_color="FFC7CE",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"H{i}",
+                                                   formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="BFEA7C",
+                                                                                  end_color="BFEA7C",
+                                                                                  fill_type="solid")))
+
+                    ws6.conditional_formatting.add(f"H{i}",
+                                                   formatting.rule.CellIsRule(operator='equal', formula=['0'],
+                                                                              fill=PatternFill(
+                                                                                  start_color="FFF67E",
+                                                                                  end_color="FFF67E",
+                                                                                  fill_type="solid")))
+                except:
+                    pass
+
+
+                # for i in range(finance_waterfall_start + 1, finance_waterfall_end + 1):
+                    # ws6[
+                    #     f"H{i}"] = 0
+                    # ws6[f"H{i}"].number_format = '#,##0'
+                    # ws6[f"H{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                    #
+                    # # apply borders around the cell
+                    # ws6[f"H{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                    #     left=Side(style='medium'),
+                    #     right=Side(style='medium'),
+                    #     top=Side(style='medium'),
+                    #     bottom=Side(style='medium'))
+                    #
+                    # ws6.conditional_formatting.add(f"H{i}",
+                    #                                formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                    #                                                           fill=PatternFill(
+                    #                                                               start_color="FFC7CE",
+                    #                                                               end_color="FFC7CE",
+                    #                                                               fill_type="solid")))
+                    #
+                    # ws6.conditional_formatting.add(f"H{i}",
+                    #                                formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                    #                                                           fill=PatternFill(
+                    #                                                               start_color="BFEA7C",
+                    #                                                               end_color="BFEA7C",
+                    #                                                               fill_type="solid")))
+                    #
+                    # ws6.conditional_formatting.add(f"H{i}",
+                    #                                formatting.rule.CellIsRule(operator='equal', formula=['0'],
+                    #                                                           fill=PatternFill(
+                    #                                                               start_color="FFF67E",
+                    #                                                               end_color="FFF67E",
+                    #                                                               fill_type="solid")))
+
+                ws6[f"H{finance_waterfall_start + 1}"] = f"=sum(H{finance_waterfall_start + 2}:H{finance_waterfall_start + 8})"
+                ws6[f"H{finance_waterfall_start + 1}"].number_format = '#,##0'
+                ws6[f"H{finance_waterfall_start + 1}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+                ws6[
+                    f"{col}{finance_waterfall_start + 1}"] = f"=sum({col}{finance_waterfall_start + 2}:{col}{finance_waterfall_start + 8})"
+                ws6[f"{col}{finance_waterfall_start + 1}"].number_format = '#,##0'
+                ws6[f"{col}{finance_waterfall_start + 1}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+
+
+
+
             if index % 2 == 0:
+                # for i in range(finance_waterfall_start + 2, finance_waterfall_start + 3):
+                if index == 0:
+                    ws6[f"H{finance_waterfall_start + 2}"] = f"=SUMIFS(D{toggles_start}:D{toggles_end},$A${toggles_start}:$A${toggles_end},\"<>\"&\"Heron View\")"
+                    ws6[f"H{funds_available_start + 2}"].number_format = '#,##0'
+
+                    ws6[f"{col}{finance_waterfall_start + 2}"] = f"=H{finance_waterfall_start + 2}"
+                    ws6[f"{col}{finance_waterfall_start + 2}"].number_format = '#,##0'
+
+                    ws6[f"H{finance_waterfall_start + 3}"] = f"=Dashboard!B16"
+                    ws6[f"H{finance_waterfall_start + 3}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 3}" ] = f"=H{finance_waterfall_start + 3}"
+                    ws6[f"{col}{finance_waterfall_start + 3}"].number_format = '#,##0'
+
+                    ws6[f"H{finance_waterfall_start + 4}"] = f"=Dashboard!B13"
+                    ws6[f"H{finance_waterfall_start + 4}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 4}"] = f"=H{finance_waterfall_start + 4}"
+                    ws6[f"{col}{finance_waterfall_start + 4}"].number_format = '#,##0'
+
+                    ws6[f"H{finance_waterfall_start + 5}"] = f"={col}{funds_available_start + 6}"
+                    ws6[f"H{finance_waterfall_start + 5}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start  + 5 }"] = f"=H{finance_waterfall_start + 5}"
+                    ws6[f"{col}{finance_waterfall_start + 5}"].number_format = '#,##0'
+
+                    ws6[f"H{finance_waterfall_start + 6}"] = f"={col}{funds_available_start + 4}"
+                    ws6[f"H{finance_waterfall_start + 6}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 6}"] = f"=H{finance_waterfall_start + 6}"
+                    ws6[f"{col}{finance_waterfall_start + 6}"].number_format = '#,##0'
+
+                    ws6[f"H{finance_waterfall_start + 7}"] = f"=-{col}{roll_over_refinance_properties_start + 1}"
+                    ws6[f"H{finance_waterfall_start + 7}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 7}"] = f"=H{finance_waterfall_start + 7}"
+                    ws6[f"{col}{finance_waterfall_start + 7}"].number_format = '#,##0'
+
+                    ws6[f"H{finance_waterfall_start + 8}"] = f"=Dashboard!B14"
+                    ws6[f"H{finance_waterfall_start + 8}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 8}"] = f"=H{finance_waterfall_start + 8}"
+                    ws6[f"{col}{finance_waterfall_start + 8}"].number_format = '#,##0'
+
+                    ws6[f"H{finance_waterfall_start + 9}"] = f"=SUMIFS({col}{toggles_start}:{col}{toggles_end},$A${toggles_start}:$A${toggles_end},\"Heron View\")"
+                    ws6[f"H{finance_waterfall_start + 9}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 9}"] = f"=H{finance_waterfall_start + 9}"
+                    ws6[f"{col}{finance_waterfall_start + 9}"].number_format = '#,##0'
+
+
+
+                    ws6[
+                        f"H{finance_waterfall_start + 10}"] = f"={col}{funds_available_start + 7}"
+                    ws6[f"H{finance_waterfall_start + 10}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 10}"] = f"=H{finance_waterfall_start + 10}"
+                    ws6[f"{col}{finance_waterfall_start + 10}"].number_format = '#,##0'
+
+                    ws6[f"H{finance_waterfall_start + 11}"] = f"={col}{vat_income}+{col}{purple_blok_start + 1}+{col}{block_costs_end + 4}"
+                    ws6[f"H{finance_waterfall_start + 11}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 11}"] = f"=H{finance_waterfall_start + 11}"
+                    ws6[f"{col}{finance_waterfall_start + 11}"].number_format = '#,##0'
+
+                    ws6[f"H{finance_waterfall_start + 12}"] = f"={col}{finance_waterfall_start + 12}-{col}{block_costs_start - 4}"
+                    ws6[f"H{finance_waterfall_start + 12}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 12}"] = f"=sum({col}{finance_waterfall_start + 2}:{col}{finance_waterfall_start + 11})"
+                    ws6[f"{col}{finance_waterfall_start + 12}"].number_format = '#,##0'
+
+                    ws6[f"{col}{finance_waterfall_start + 13}"] = f"={col}{running - 2}"
+                    ws6[f"{col}{finance_waterfall_start + 13}"].number_format = '#,##0'
+
+                    ws6[f"H{finance_waterfall_start + 15}"] = f"={col}{finance_waterfall_start + 15}-{col}{running}"
+                    ws6[f"H{finance_waterfall_start + 15}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 15}"] = f"={col}{finance_waterfall_start + 12}+{col}{finance_waterfall_start + 13}"
+                    ws6[f"{col}{finance_waterfall_start + 15}"].number_format = '#,##0'
+
+
+                else:
+
+                    # "=SUMIFS(K7:K23,$A$7:$A$23,"<>"&"Heron View")"
+                    "=H102-I102"
+                    if index < 3:
+
+                        ws6[
+                            f"{month_headings[index - 1]}{finance_waterfall_start + 2}"] = f"=H{finance_waterfall_start + 2}-{month_headings[index - 2]}{finance_waterfall_start + 2}"
+                        ws6[f"{month_headings[index - 1]}{funds_available_start + 2}"].number_format = '#,##0'
+                    else:
+                        ws6[
+                            f"{month_headings[index - 1]}{finance_waterfall_start + 2}"] = f"={month_headings[index - 3]}{finance_waterfall_start + 2}-{month_headings[index - 2]}{finance_waterfall_start + 2}"
+                        ws6[f"{month_headings[index - 1]}{funds_available_start + 2}"].number_format = '#,##0'
+
+
+                    ws6[f"{col}{finance_waterfall_start + 2}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 2}"
+                    ws6[f"{col}{finance_waterfall_start + 2}"].number_format = '#,##0'
+                    ####################
+                    # ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 3}"] = f"=Dashboard!B16"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 3}"] = 0
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 3}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 3}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 3}"
+                    ws6[f"{col}{finance_waterfall_start + 3}"].number_format = '#,##0'
+                    #####################################
+                    # ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 4}"] = f"=Dashboard!B13"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 4}"] = 0
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 4}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 4}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 4}"
+                    ws6[f"{col}{finance_waterfall_start + 4}"].number_format = '#,##0'
+
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 5}"] = f"={col}{funds_available_start + 6}"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 5}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 5}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 5}"
+                    ws6[f"{col}{finance_waterfall_start + 5}"].number_format = '#,##0'
+
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 6}"] = f"={col}{funds_available_start + 4}"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 6}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 6}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 6}"
+                    ws6[f"{col}{finance_waterfall_start + 6}"].number_format = '#,##0'
+
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 7}"] = f"=-{col}{roll_over_refinance_properties_start + 1}"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 7}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 7}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 7}"
+                    ws6[f"{col}{finance_waterfall_start + 7}"].number_format = '#,##0'
+                    #########################
+                    # ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 7}"] = f"=Dashboard!B14"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 8}"] = f"={month_headings[index - 2]}{finance_waterfall_start + 15}"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 8}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 8}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 8}"
+                    ws6[f"{col}{finance_waterfall_start + 8}"].number_format = '#,##0'
+
+                    ws6[
+                        f"{month_headings[index - 1]}{finance_waterfall_start + 9}"] = f"=SUMIFS({col}{toggles_start}:{col}{toggles_end},$A${toggles_start}:$A${toggles_end},\"Heron View\")"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 9}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 9}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 9}"
+                    ws6[f"{col}{finance_waterfall_start + 9}"].number_format = '#,##0'
+
+                    ws6[
+                        f"{month_headings[index - 1]}{finance_waterfall_start + 10}"] = f"={col}{funds_available_start + 7}"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 10}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 10}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 10}"
+                    ws6[f"{col}{finance_waterfall_start + 10}"].number_format = '#,##0'
+
+                    ws6[
+                        f"{month_headings[index - 1]}{finance_waterfall_start + 11}"] = f"={col}{vat_income}+{col}{purple_blok_start + 1}+{col}{block_costs_end + 4}"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 11}"].number_format = '#,##0'
+                    ws6[f"{col}{finance_waterfall_start + 11}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 11}"
+                    ws6[f"{col}{finance_waterfall_start + 11}"].number_format = '#,##0'
+
+                    # ws6[
+                    #     f"{month_headings[index - 1]}{finance_waterfall_start + 12}"] = f"={col}{finance_waterfall_start + 10}-{col}{block_costs_start - 4}"
+                    # ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 12}"].number_format = '#,##0'
+                    # ws6[
+                    #     f"{col}{finance_waterfall_start + 12}"] = f"=sum({col}{finance_waterfall_start + 2}:{col}{finance_waterfall_start + 11})"
+                    # ws6[f"{col}{finance_waterfall_start + 12}"].number_format = '#,##0'
+
+                    ws6[
+                        f"{month_headings[index - 1]}{finance_waterfall_start + 12}"] = f"={col}{finance_waterfall_start + 12}-{col}{block_costs_start - 4}"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 12}"].number_format = '#,##0'
+                    ws6[
+                        f"{col}{finance_waterfall_start + 12}"] = f"=sum({col}{finance_waterfall_start + 2}:{col}{finance_waterfall_start + 11})"
+                    ws6[f"{col}{finance_waterfall_start + 12}"].number_format = '#,##0'
+
+                    ws6[f"{col}{finance_waterfall_start + 13}"] = f"={col}{running - 2}"
+                    ws6[f"{col}{finance_waterfall_start + 13}"].number_format = '#,##0'
+
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 15}"] = f"={col}{finance_waterfall_start + 15}-{col}{running}"
+                    ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 15}"].number_format = '#,##0'
+                    ws6[
+                        f"{col}{finance_waterfall_start + 15}"] = f"={col}{finance_waterfall_start + 12}+{col}{finance_waterfall_start + 13}"
+                    ws6[f"{col}{finance_waterfall_start + 15}"].number_format = '#,##0'
+
+
+
+
+
+
+
+
+
+
+                # "=SUMIFS(I7:I23,$A$7:$A$23,"Heron View")"
+                ws6[f"{col}{funds_available_start + 1}"] = f"=SUMIFS({col}{toggles_start}:{col}{toggles_end},$A${toggles_start}:$A${toggles_end},\"Heron View\")"
+                ws6[f"{col}{funds_available_start + 1}"].number_format = '#,##0'
+
+
+
+
+                "=I72"
+                try:
+                    ws6[f"{col}{funds_available_start + 3}"] = f"={month_headings[index - 2]}{running}"
+                except:
+                    continue
+
+                "=-I156"
+                ws6[f"{col}{funds_available_start + 4}"] = f"=-{col}{roll_over_refinance_properties_start + 2}"
+                ws6[f"{col}{funds_available_start + 4}"].number_format = '#,##0'
+                "=I155"
+                ws6[f"{col}{funds_available_start + 5}"] = f"=-{col}{roll_over_refinance_properties_start + 1}"
+                ws6[f"{col}{funds_available_start + 5}"].number_format = '#,##0'
+
+
+                "=I115"
+                ws6[f"{col}{funds_available_start + 6}"] = f"={col}{refinanced_units_start - 1}"
+                ws6[f"{col}{funds_available_start + 6}"].number_format = '#,##0'
+
+                "=I102"
+                ws6[f"{col}{funds_available_start + 8}"] = f"={col}{finance_waterfall_start + 2}"
+                ws6[f"{col}{funds_available_start + 8}"].number_format = '#,##0'
+                # "=SUM(I80:I90)+I95+I97+J79"
+                "=+I79+I95+I97+J79"
+
+                ws6[f"{col}{funds_available_start + 9}"] = f"=+{col}{roll_over_refinance - 1}+{col}{purple_blok_start}+{col}{purple_blok_start + 2}+{month_headings[index + 1]}{roll_over_refinance - 1}"
+                ws6[f"{col}{funds_available_start + 9}"].number_format = '#,##0'
+                # "=I96+I103+I26"
+                "=I96+I103+I26+I66"
+
+                ws6[f"{col}{funds_available_start + 10}"] = f"={col}{purple_blok_start + 1}+{col}{finance_waterfall_start + 3}+{col}{vat_income}+{col}{block_costs_end + 4}"
+                ws6[f"{col}{funds_available_start + 10}"].number_format = '#,##0'
+                "=+I35-I39+I43-I44-I102"
+                "=I35-I39-I42-I44"
+                "=SUM(I36: I45)-I44"
+                ws6[f"{col}{funds_available_start + 11}"] = f"=sum({col}{funds_available_start + 1}:{col}{funds_available_start + 10})-{col}{funds_available_start + 9}"
+                # ws6[
+                #     f"{col}{funds_available_start + 11}"] = "XXX"
+                ws6[f"{col}{funds_available_start + 11}"].number_format = '#,##0'
+
+                "=IF(MOD(MONTH(I5),2)<>0,0,SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$E:$E,"<="&EOMONTH(EDATE(I$5, 0), -1),'Updated Construction'!$E:$E,">"&EOMONTH(EDATE(I$5, 0), -3),'Updated Construction'!$C:$C,1)/1.15*0.15)"
+                "=IF(MOD(MONTH(I5),2)=0,0,(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$E:$E,"<="&EOMONTH(EDATE(I$5, 0), -1),'Updated Construction'!$E:$E,">"&EOMONTH(EDATE(I$5, 0), -3),'Updated Construction'!$C:$C,1)/1.15*0.15)+(-I68*2)/1.15*0.15)"
+                ws6[f"{col}{vat_construction}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$E:$E,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),'Updated Construction'!$E:$E,\">\"&EOMONTH(EDATE({col}$5, 0), -3),'Updated Construction'!$C:$C,1)/1.15*0.15)+(-{col}{vat_construction + 2}*2)/1.15*0.15)"
+                ws6[f"{col}{vat_construction}"].number_format = '#,##0'
+
+                "=$E$80*-I115"
+                ws6[f"{col}{roll_over_refinance}"] = f"=$E${roll_over_refinance}*-{col}{refinanced_units_start - 1}"
+                ws6[f"{col}{roll_over_refinance}"].number_format = '#,##0'
+                # make fornt 22
+                ws6[f"{col}{roll_over_refinance}"].font = Font(bold=True, color="0C0C0C", size=22)
+                # place  border around
+                ws6[f"{col}{roll_over_refinance}"].border = Border(left=Side(style='medium'),
+                                                                   right=Side(style='medium'),
+                                                                   top=Side(style='medium'),
+                                                                   bottom=Side(style='medium'))
+                "=$E$81*I154"
+                ws6[f"{col}{roll_over_reinvest}"] = f"=$E${roll_over_reinvest}*{col}{roll_over_refinance_properties_start}"
+                ws6[f"{col}{roll_over_refinance + 1}"].number_format = '#,##0'
+                # make fornt 22
+                ws6[f"{col}{roll_over_reinvest}"].font = Font(bold=True, color="0C0C0C", size=22)
+                # place  border around
+                ws6[f"{col}{roll_over_reinvest}"].border = Border(left=Side(style='medium'),
+                                                                  right=Side(style='medium'),
+                                                                  top=Side(style='medium'),
+                                                                  bottom=Side(style='medium'))
+
+                for i in range(block_finance_start, block_finance_end + 1):
+                    if index == 0:
+                        "=SUMIFS(Sales!$R:$R,Sales!$W:$W,"<="&I5,Sales!$W:$W,">"&B2,Sales!$E:$E,FALSE,Sales!$B:$B,'Cashflow Projection'!$B82)*$E82"
+                        ws6[f"{col}{i}"] = f"=SUMIFS(Sales!$R:$R,Sales!$W:$W,\"<=\"&{col}5,Sales!$W:$W,\">\"&B2,Sales!$E:$E,FALSE,Sales!$B:$B,'Cashflow Projection'!$B{i})*$E{i}"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"{col}{i}"].border = Border(left=Side(style='medium'),
+                                                            right=Side(style='medium'),
+                                                            top=Side(style='medium'),
+                                                            bottom=Side(style='medium'))
+                    else:
+                        "=SUMIFS(Sales!$R:$R,Sales!$W:$W," <= "&I5,Sales!$W:$W," > "&B2,Sales!$E:$E,FALSE,Sales!$B:$B,'Cashflow Projection'!$B82)*$E82"
+                        ws6[
+                            f"{col}{i}"] = f"=SUMIFS(Sales!$R:$R,Sales!$W:$W,\"<=\"&{col}5,Sales!$W:$W,\">\"&{month_headings[index - 2]}5,Sales!$E:$E,FALSE,Sales!$B:$B,'Cashflow Projection'!$B{i})*$E{i}"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"{col}{i}"].border = Border(left=Side(style='medium'),
+                                                         right=Side(style='medium'),
+                                                         top=Side(style='medium'),
+                                                         bottom=Side(style='medium'))
+
+
+
+
+
+
+
+
+
+
                 ws6[f"{col}{toggles_start - 1}"].fill = PatternFill(start_color="D4E7C5", end_color="D4E7C5",
                                                                     fill_type="solid")
                 # align the text to the right
@@ -767,18 +1970,104 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     top=Side(style='medium'),
                     bottom=Side(style='medium'))
 
+                for i in range(roll_over_refinance_properties_start + 1, roll_over_refinance_properties_start + 2):
+                    "=SUM(I243:I593)"
+                    ws6[f"{col}{i}"] = f"=SUM({col}{calculate_exit_dates_start}:{col}{calculate_exit_dates_end})"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                    ws6[f"{col}{i}"].border = Border(left=Side(style='medium'),
+                                                        right=Side(style='medium'),
+                                                        top=Side(style='medium'),
+                                                        bottom=Side(style='medium'))
+
+
+                for i in range(calculate_exit_dates_start, calculate_exit_dates_end + 1):
+                    if index == 0:
+                        "=IF(AND(SUMIFS($D$243:$D$593,$F$243:$F$593,0,$E$243:$E$593,$G244,$C$243:$C$593,"<="&B$2)<1000000,SUMIFS($D$243:$D$593,$F$243:$F$593,0,$E$243:$E$593,$G244,$C$243:$C$593,"<="&I$5)>=1000000),SUMIFS($D$243:$D$593,$F$243:$F$593,0,$E$243:$E$593,$G244)*$C$155,0)"
+                        ws6[f"{col}{i}"] = f"=IF(AND(SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$F${calculate_exit_dates_start}:$F${calculate_exit_dates_end},0,$E${calculate_exit_dates_start}:$E${calculate_exit_dates_end},$G{i},$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\"<=\"&B$2)<1000000,SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$F${calculate_exit_dates_start}:$F${calculate_exit_dates_end},0,$E${calculate_exit_dates_start}:$E${calculate_exit_dates_end},$G{i},$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\"<=\"&{col}5)>=1000000),SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$F${calculate_exit_dates_start}:$F${calculate_exit_dates_end},0,$E${calculate_exit_dates_start}:$E${calculate_exit_dates_end},$G{i})*$C${roll_over_refinance_properties_start + 1} ,0)"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"G{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"G{i}"].border = Border(left=Side(style='medium'),
+                                                    right=Side(style='medium'),
+                                                    top=Side(style='medium'),
+                                                    bottom=Side(style='medium'))
+                        ws6[f"{col}{i}"].border = Border(left=Side(style='medium'),
+                                                     right=Side(style='medium'),
+                                                     top=Side(style='medium'),
+                                                     bottom=Side(style='medium'))
+                    else:
+                        ws6[
+                            f"{col}{i}"] = f"=IF(AND(SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$F${calculate_exit_dates_start}:$F${calculate_exit_dates_end},0,$E${calculate_exit_dates_start}:$E${calculate_exit_dates_end},$G{i},$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\"<=\"&{month_headings[index - 2]}$5)<1000000,SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$F${calculate_exit_dates_start}:$F${calculate_exit_dates_end},0,$E${calculate_exit_dates_start}:$E${calculate_exit_dates_end},$G{i},$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\"<=\"&{col}5)>=1000000),SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$F${calculate_exit_dates_start}:$F${calculate_exit_dates_end},0,$E${calculate_exit_dates_start}:$E${calculate_exit_dates_end},$G{i})*$C${roll_over_refinance_properties_start + 1} ,0)"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+
+                        ws6[f"{col}{i}"].border = Border(left=Side(style='medium'),
+                                                         right=Side(style='medium'),
+                                                         bottom=Side(style='medium'))
+
+
+
+
+
+
+            if index % 2 != 0:
+                if index == 1:
+                    for i in range(block_finance_start, block_finance_end + 1):
+                        "=SUMIFS($D$243:$D$593,$A$243:$A$593,B83,$C$243:$C$593,"<="&$I$5,$C$243:$C$593,">"&$B$2,$F$243:$F$593,0)*$E$83"
+                        ws6[f"{col}{i}"] = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$A${calculate_exit_dates_start}:$A${calculate_exit_dates_end},B{i},$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\"<=\"&{month_headings[index - 1]}5,$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\">\"&B2,$F${calculate_exit_dates_start}:$F${calculate_exit_dates_end},0)*$E{i}"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"{col}{i}"].border = Border(left=Side(style='medium'),
+                                                            right=Side(style='medium'),
+                                                            top=Side(style='medium'),
+                                                            bottom=Side(style='medium'))
+                else:
+                    for i in range(block_finance_start, block_finance_end + 1):
+                        "=SUMIFS($D$243:$D$593,$A$243:$A$593,B83,$C$243:$C$593," <= "&$I$5,$C$243:$C$593," > "&$B$2,$F$243:$F$593,0)*$E$83"
+                        ws6[
+                            f"{col}{i}"] = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$A${calculate_exit_dates_start}:$A${calculate_exit_dates_end},B{i},$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\"<=\"&{month_headings[index - 1]}5,$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\">\"&{month_headings[index - 3]}5,$F${calculate_exit_dates_start}:$F${calculate_exit_dates_end},0)*$E{i}"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        ws6[f"{col}{i}"].border = Border(left=Side(style='medium'),
+                                                         right=Side(style='medium'),
+                                                         top=Side(style='medium'),
+                                                         bottom=Side(style='medium'))
+
+
+
             if index == 0:
 
-                ws6[f"{col}{vat_row}"] = f"=-SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE, Sales!$U:$U," \
-                                         f"\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,Sales!$F:$F,1)*$C{vat_row}"
+                ws6[f"{col}{funds_available_start + 2}"] = f"=Dashboard!B13"
+                ws6[f"{col}{funds_available_start + 2}"].number_format = '#,##0'
+                ws6[f"{col}{funds_available_start + 3}"] = f"=Dashboard!B14"
+                ws6[f"{col}{funds_available_start + 3}"].number_format = '#,##0'
+                ws6[f"{col}{funds_available_start + 7}"] = f"=Dashboard!B15"
+                ws6[f"{col}{funds_available_start + 7}"].number_format = '#,##0'
+
+                ws6[f"{col}{vat_income}"] = f"=SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$W:$W," \
+                                            f"\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,Sales!$W:$W,\">\"&'Cashflow Projection'!$B$2)"
+
+                ws6[f"{col}{vat_income}"].font = Font(bold=True, color="0C0C0C", size=22)
+                ws6[f"{col}{vat_income}"].border = ws6[f"A{vat_income}"].border + Border(left=Side(style='medium'),
+                                                                                         right=Side(style='medium'),
+                                                                                         top=Side(style='medium'),
+                                                                                         bottom=Side(style='medium'))
+
+                ws6[f"{col}{vat_income}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
+                                                             fill_type="solid")
+                ws6[f"{col}{vat_income}"].number_format = '#,##0'
+                "=SUMIFS(Sales!$J:$J,Sales!$T:$T,TRUE,Sales!$W:$W,"<="&I5,Sales!$W:$W,">"&B2)"
+                ws6[f"{col}{vat_row}"] = f"=SUMIFS(Sales!$J:$J,Sales!$T:$T,TRUE,Sales!$W:$W,\"<=\"&{col}5,Sales!$W:$W,\">\"&B2)"
                 ws6[f"{col}{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 ws6[f"{col}{vat_row}"].border = ws6[f"A{vat_row}"].border + Border(left=Side(style='medium'),
                                                                                    right=Side(style='medium'),
                                                                                    top=Side(style='medium'),
                                                                                    bottom=Side(style='medium'))
-                # fill equals light red
-                ws6[f"{col}{vat_row}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+                # fill equals light green
+                ws6[f"{col}{vat_row}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+
                 ws6[f"{col}{vat_row}"].number_format = '#,##0'
 
                 ws6[
@@ -819,12 +2108,25 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws6[f"{col}{toggles_start - 2}"].number_format = 'dd-mmm-yy'
                 ws6[f"{col}{toggles_start - 2}"].font = Font(bold=True, color="0C0C0C", size=22)
 
+                for i in range(vat_payable_on_sales, vat_payable_on_sales + 1):
+                    "=IF(MOD(MONTH(I5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,"<="&EOMONTH(EDATE(I$5, 0), -1),Sales!$W:$W,">"&EOMONTH(EDATE(I$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))"
+                    ws6[
+                        f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                    # fil in light red
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+                    ws6[f"{col}{i}"].border = ws6[f"A{vat_payable_on_sales}"].border + Border(left=Side(style='medium'),
+                                                                                                right=Side(style='medium'),
+                                                                                                top=Side(style='medium'),
+                                                                                                bottom=Side(style='medium'))
+
                 for i in range(toggles_start, toggles_end + 1):
                     ws6[
-                        f"{col}{i}"] = (f"=SUMIFS(Sales!$S:$S,Sales!$H:$H,\"<=\"&'Cashflow Projection'!F$5,"
+                        f"{col}{i}"] = (f"=SUMIFS(Sales!$S:$S,Sales!$W:$W,\"<=\"&'Cashflow Projection'!I$5,"
                                         f"Sales!$E:$E,FALSE,Sales!$F:$F,'Cashflow Projection'!$C{i},Sales!$A:$A,"
                                         f"'Cashflow Projection'!$A{i},Sales!$B:$B,'Cashflow Projection'!$B{i},"
-                                        f"Sales!$H:$H,\">\"&'Cashflow Projection'!B$2)*$C{i}")
+                                        f"Sales!$W:$W,\">\"&'Cashflow Projection'!B$2)*$C{i}")
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -843,11 +2145,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 for i in range(vat_construction, vat_construction + 1):
-                    ws6[
-                        f"{col}{i}"] = (f"=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$C:$C,1,'Updated "
-                                        f"Construction'!$H:$H,\">\"&'Cashflow Projection'!$B$2,"
-                                        f"'Updated Construction'!$H:$H,\"<=\"&'Cashflow Projection'!"
-                                        f"{month_headings[index]}$5)*0.15*$C{i}")
+                    # ws6[
+                    #     f"{col}{i}"] = (f"=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$C:$C,1,'Updated "
+                    #                     f"Construction'!$H:$H,\">\"&'Cashflow Projection'!$B$2,"
+                    #                     f"'Updated Construction'!$H:$H,\"<=\"&'Cashflow Projection'!"
+                    #                     f"{month_headings[index]}$5)*0.15*$C{i}")
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -971,89 +2273,251 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                   end_color="FFF67E",
                                                                                   fill_type="solid")))
 
-                for i in range(investor_exited_unit_based, investor_exited_unit_based + 1):
-                    # "=-SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$I:$I,FALSE,'Investor Exit List'!$AA:$AA,"<="&'Cashflow Projection'!F$5,'Investor Exit List'!$AA:$AA,">"&'Cashflow Projection'!B$2,'Investor Exit List'!$U:$U,FALSE,'Investor Exit List'!$F:$F,"<>0")"
+                for i in range(rollover, rollover + 1):
                     ws6[
-                        f"{col}{i}"] = f"=-SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$I:$I,FALSE,'Investor Exit List'!$AA:$AA,\"<=\"&'Cashflow Projection'!{col}$5,'Investor Exit List'!$AA:$AA,\">\"&'Cashflow Projection'!B$2,'Investor Exit List'!$U:$U,FALSE,'Investor Exit List'!$F:$F,\"<>0\")"
+                        f"{col}{i}"] = f"=0"
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     # apply borders around the cell
-                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited_unit_based}"].border + Border(
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
                         left=Side(style='medium'),
                         right=Side(style='medium'),
                         top=Side(style='medium'),
                         bottom=Side(style='medium'))
 
-                    ws6.conditional_formatting.add(f"{col}{i}",
-                                                   formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
-                                                                              fill=PatternFill(
-                                                                                  start_color="FFC7CE",
-                                                                                  end_color="FFC7CE",
-                                                                                  fill_type="solid")))
-                    ws6.conditional_formatting.add(f"{col}{i}",
-                                                   formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
-                                                                              fill=PatternFill(
-                                                                                  start_color="BFEA7C",
-                                                                                  end_color="BFEA7C",
-                                                                                  fill_type="solid")))
-                    ws6.conditional_formatting.add(f"{col}{i}",
-                                                   formatting.rule.CellIsRule(operator='equal', formula=['0'],
-                                                                              fill=PatternFill(
-                                                                                  start_color="FFF67E",
-                                                                                  end_color="FFF67E",
-                                                                                  fill_type="solid")))
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="3ABEF9", end_color="3ABEF9", fill_type="solid")
 
-                for i in range(balance_after_exits, balance_after_exits + 1):
+                for i in range(project_income, project_income + 1):
                     ws6[
-                        f"{col}{i}"] = f"=+F{investor_exited}+F{running}"
-                    ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                        f"{col}{i}"] = f"SALES"
+                    # ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
 
                     # apply borders around the cell
-                    ws6[f"{col}{i}"].border = ws6[f"A{balance_after_exits}"].border + Border(
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
                         left=Side(style='medium'),
                         right=Side(style='medium'),
                         top=Side(style='medium'),
                         bottom=Side(style='medium'))
 
-                    ws6.conditional_formatting.add(f"{col}{i}",
-                                                   formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
-                                                                              fill=PatternFill(
-                                                                                  start_color="FFC7CE",
-                                                                                  end_color="FFC7CE",
-                                                                                  fill_type="solid")))
-                    ws6.conditional_formatting.add(f"{col}{i}",
-                                                   formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
-                                                                              fill=PatternFill(
-                                                                                  start_color="BFEA7C",
-                                                                                  end_color="BFEA7C",
-                                                                                  fill_type="solid")))
-                    ws6.conditional_formatting.add(f"{col}{i}",
-                                                   formatting.rule.CellIsRule(operator='equal', formula=['0'],
-                                                                              fill=PatternFill(
-                                                                                  start_color="FFF67E",
-                                                                                  end_color="FFF67E",
-                                                                                  fill_type="solid")))
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="749BC2", end_color="749BC2", fill_type="solid")
+
+                    # ws6.conditional_formatting.add(f"{col}{i}",
+                    #                                formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                    #                                                           fill=PatternFill(
+                    #                                                               start_color="FFC7CE",
+                    #                                                               end_color="FFC7CE",
+                    #                                                               fill_type="solid")))
+                    # ws6.conditional_formatting.add(f"{col}{i}",
+                    #                                formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                    #                                                           fill=PatternFill(
+                    #                                                               start_color="BFEA7C",
+                    #                                                               end_color="BFEA7C",
+                    #                                                               fill_type="solid")))
+                    # ws6.conditional_formatting.add(f"{col}{i}",
+                    #                                formatting.rule.CellIsRule(operator='equal', formula=['0'],
+                    #                                                           fill=PatternFill(
+                    #                                                               start_color="FFF67E",
+                    #                                                               end_color="FFF67E",
+                    #                                                               fill_type="solid")))
+
+                    # for i in range(roll_over_refinance, roll_over_refinance + 1):
+                    #     ws6[
+                    #         f"{col}{i}"] = 0
+                    #     ws6[f"{col}{i}"].number_format = '#,##0'
+                    #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                    #
+                    #     # apply borders around the cell
+                    #     ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                    #         left=Side(style='medium'),
+                    #         right=Side(style='medium'),
+                    #         top=Side(style='medium'),
+                    #         bottom=Side(style='medium'))
+                    #
+                    # for i in range(roll_over_reinvest, roll_over_reinvest + 1):
+                    #     ws6[
+                    #         f"{col}{i}"] = 0
+                    #     ws6[f"{col}{i}"].number_format = '#,##0'
+                    #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                    #
+                    #     # apply borders around the cell
+                    #     ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                    #         left=Side(style='medium'),
+                    #         right=Side(style='medium'),
+                    #         top=Side(style='medium'),
+                    #         bottom=Side(style='medium'))
+                    #
+                    # for i in range(block_finance_start, block_finance_end + 1):
+                    #     ws6[
+                    #         f"{col}{i}"] = 0
+                    #     ws6[f"{col}{i}"].number_format = '#,##0'
+                    #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                    #
+                    #     # apply borders around the cell
+                    #     ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                    #         left=Side(style='medium'),
+                    #         right=Side(style='medium'),
+                    #         top=Side(style='medium'),
+                    #         bottom=Side(style='medium'))
+
+                    for i in range(purple_blok_start, purple_blok_end):
+                        ws6[
+                            f"{col}{i}"] = f"=$B${i}*{month_headings[index + 1]}{i}"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                        # apply borders around the cell
+                        ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                            left=Side(style='medium'),
+                            right=Side(style='medium'),
+                            top=Side(style='medium'),
+                            bottom=Side(style='medium'))
+
+                    for i in range(purple_blok_end, purple_blok_end + 1):
+                        # "=SUBTOTAL(9,H95:H97)"
+                        ws6[
+                            f"{col}{i}"] = f"=SUM({col}{purple_blok_start}:{col}{purple_blok_end - 1})"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                        # apply borders around the cell
+                        ws6[f"{col}{i}"].border = Border(
+                            left=Side(style='medium'),
+                            right=Side(style='medium'),
+                            top=Side(style='medium'),
+                            bottom=Side(style='medium'))
+
+                        ws6.conditional_formatting.add(f"{col}{i}",
+                                                       formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                                                                                  fill=PatternFill(
+                                                                                      start_color="FFC7CE",
+                                                                                      end_color="FFC7CE",
+                                                                                      fill_type="solid")))
+
+                        ws6.conditional_formatting.add(f"{col}{i}",
+                                                       formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                                                                                  fill=PatternFill(
+                                                                                      start_color="BFEA7C",
+                                                                                      end_color="BFEA7C",
+                                                                                      fill_type="solid")))
+
+                        ws6.conditional_formatting.add(f"{col}{i}",
+                                                       formatting.rule.CellIsRule(operator='equal', formula=['0'],
+                                                                                  fill=PatternFill(
+                                                                                      start_color="FFF67E",
+                                                                                      end_color="FFF67E",
+                                                                                      fill_type="solid")))
+
+                        # ws6[f"{col}{i}"].fill = PatternFill(start_color="749BC2", end_color="749BC2", fill_type="solid")
+
+
+
+                    for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
+                        # "=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection (2)'!G121)"
+                        ws6[
+                            f"{col}{i}"] = f"=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection'!H{i})"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                        # apply borders around the cell
+                        ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                            left=Side(style='medium'),
+                            right=Side(style='medium'),
+                            top=Side(style='medium'),
+                            bottom=Side(style='medium'))
+
+                    for i in range(refinanced_units_start - 1, refinanced_units_start):
+                        # "=-SUM(H121:H157)"
+                        ws6[
+                            f"{col}{i}"] = f"=-SUM({col}{refinanced_units_start}:{col}{refinanced_units_end})"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                        # apply borders around the cell
+                        ws6[f"{col}{i}"].border = Border(
+                            left=Side(style='medium'),
+                            right=Side(style='medium'),
+                            top=Side(style='medium'),
+                            bottom=Side(style='medium'))
+
+                    for i in range(debenture_transaction_start, debenture_transaction_start + 1):
+                        "=$B$151*J151"
+                        ws6[
+                            f"{col}{i}"] = f"=$B{debenture_transaction_start}*{month_headings[index + 1]}{debenture_transaction_start}"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+                        # apply borders around the cell
+                        ws6[f"{col}{i}"].border = Border(
+                            left=Side(style='medium'),
+                            right=Side(style='medium'),
+                            top=Side(style='medium'),
+                            bottom=Side(style='medium'))
+
+                        # fill in blue
+                        ws6[f"{col}{i}"].fill = PatternFill(start_color="3572EF", end_color="3572EF", fill_type="solid")
+
+                for i in range(roll_over_refinance_properties_start, roll_over_refinance_properties_start + 1):
+                    "=$B$151*J151"
+                    ws6[
+                        f"{col}{i}"] = f"=sum({col}{roll_over_refinance_properties_start + 3}:{col}{roll_over_refinance_properties_end})"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    # fill in blue
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+
+                for i in range(roll_over_refinance_properties_start + 2, roll_over_refinance_properties_start + 3):
+                    "=$B$151*J151"
+                    ws6[
+                        f"{col}{i}"] = f"={col}{roll_over_refinance_properties_start}-{col}{roll_over_refinance_properties_start + 1}"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    # fill in blue
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+
+                for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_end):
+                    "=SUMIFS($D$243:$D$593,$B$243:$B$593,H157)"
+                    # print("INDEX",index, col)
+                    ws6[
+                        f"{col}{i}"].value = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},H{i})"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="000000", size=18)
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+
 
             elif index == 1:
-                for i in range(investor_exited, investor_exited + 1):
-                    # "=COUNTIFS('Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$L:$L,\"<=\"&'Cashflow Projection'!F$5,'Investor Exit List'!$L:$L,\">\"&'Cashflow Projection'!B$2)"
-                    ws6[
-                        f"{col}{i}"] = f"=COUNTIFS('Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$L:$L,\"<=\"&'Cashflow Projection'!{col}$5,'Investor Exit List'!$L:$L,\">\"&'Cashflow Projection'!B$2)"
-                    ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
-
-                for i in range(investor_exited_unit_based, investor_exited_unit_based + 1):
-                    # "=COUNTIFS('Investor Exit List'!$AA:$AA,"<="&'Cashflow Projection'!F$5,'Investor Exit List'!$AA:$AA,">"&'Cashflow Projection'!B$2,'Investor Exit List'!$I:$I,FALSE,'Investor Exit List'!$U:$U,FALSE)"
-                    ws6[
-                        f"{col}{i}"] = f"=COUNTIFS('Investor Exit List'!$AA:$AA,\"<=\"&'Cashflow Projection'!{col}$5,'Investor Exit List'!$AA:$AA,\">\"&'Cashflow Projection'!B$2,'Investor Exit List'!$I:$I,FALSE,'Investor Exit List'!$U:$U,FALSE)"
-                    ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                # for i in range(investor_exited, investor_exited + 1):
+                #     # "=COUNTIFS('Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$L:$L,\"<=\"&'Cashflow Projection'!F$5,'Investor Exit List'!$L:$L,\">\"&'Cashflow Projection'!B$2)"
+                #     ws6[
+                #         f"{col}{i}"] = f"=COUNTIFS('Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$L:$L,\"<=\"&'Cashflow Projection'!{col}$5,'Investor Exit List'!$L:$L,\">\"&'Cashflow Projection'!B$2)"
+                #     ws6[f"{col}{i}"].number_format = '#,##0'
+                #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 for i in range(toggles_start, toggles_end + 1):
                     ws6[
-                        f"{col}{i}"] = (f"=COUNTIFS(Sales!$H:$H,\"<=\"&'Cashflow Projection'!F$5,Sales!$H:$H,"
+                        f"{col}{i}"] = (f"=COUNTIFS(Sales!$H:$H,\"<=\"&'Cashflow Projection'!I$5,Sales!$H:$H,"
                                         f"\">\"&'Cashflow Projection'!B$2,Sales!$A:$A,'Cashflow Projection'!$A{i},"
                                         f"Sales!$B:$B,'Cashflow Projection'!$B{i},Sales!$F:$F,'Cashflow "
                                         f"Projection'!$C{i},Sales!$E:$E,FALSE)*$C{i}")
@@ -1063,13 +2527,181 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     # Center the text in the cell
                     ws6[f"{col}{i}"].alignment = Alignment(horizontal='center', vertical='center')
 
+                for i in range(project_income, project_income + 1):
+                    ws6[
+                        f"{col}{i}"] = f"EXIT & ROLL"
+                    # ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="749BC2", end_color="749BC2", fill_type="solid")
+
+                # for i in range(roll_over_refinance, roll_over_refinance + 1):
+                #     ws6[
+                #         f"{col}{i}"] = 0
+                #     ws6[f"{col}{i}"].number_format = '#,##0'
+                #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                #
+                #     # apply borders around the cell
+                #     ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                #         left=Side(style='medium'),
+                #         right=Side(style='medium'),
+                #         top=Side(style='medium'),
+                #         bottom=Side(style='medium'))
+                #
+                # for i in range(roll_over_reinvest, roll_over_reinvest + 1):
+                #     ws6[
+                #         f"{col}{i}"] = 0
+                #     ws6[f"{col}{i}"].number_format = '#,##0'
+                #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                #
+                #     # apply borders around the cell
+                #     ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                #         left=Side(style='medium'),
+                #         right=Side(style='medium'),
+                #         top=Side(style='medium'),
+                #         bottom=Side(style='medium'))
+                #
+                # for i in range(block_finance_start, block_finance_end + 1):
+                #     ws6[
+                #         f"{col}{i}"] = 0
+                #     ws6[f"{col}{i}"].number_format = '#,##0'
+                #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                #
+                #     # apply borders around the cell
+                #     ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                #         left=Side(style='medium'),
+                #         right=Side(style='medium'),
+                #         top=Side(style='medium'),
+                #         bottom=Side(style='medium'))
+
+                for i in range(purple_blok_start, purple_blok_end):
+                    ws6[
+                        f"{col}{i}"] = 0
+                    ws6[f"{col}{i}"].number_format = '0%'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
+                    # "=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection (2)'!G121)"
+                    # ws6[
+                    #     f"{col}{i}"] = f"=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection'!H{i})"
+                    # ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                for i in range(refinanced_units_start - 1, refinanced_units_start):
+                    # "=COUNTA(UNIQUE(J117:J149))-1"
+                    ws6[
+                        f"{col}{i}"] = f"=COUNTA({col}{refinanced_units_start}:{col}{refinanced_units_end})"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                for i in range(debenture_transaction_start, debenture_transaction_start + 1):
+                    "=$B$151*J151"
+                    ws6[
+                        f"{col}{i}"] = f"=$H{refinanced_units_start - 1}"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="3572EF", end_color="3572EF", fill_type="solid")
+
+                for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_start + 4):
+                    "=IFERROR(UNIQUE(FILTER($B$243:$B$593,($C$243:$C$593<=K$5)*($C$243:$C$593>I$5)*($F$243:$F$593=0))),"")"
+                    ws6[
+                        f"{col}{i}"].value = f"=_xlfn.IFERROR(_xlfn.UNIQUE(_xlfn.FILTER($B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},($C${calculate_exit_dates_start}:$C${calculate_exit_dates_end}<={month_headings[index + 1]}$5)*($C${calculate_exit_dates_start}:$C${calculate_exit_dates_end}>{month_headings[index - 1]}$5)*($F${calculate_exit_dates_start}:$F${calculate_exit_dates_end}=0))),\"\")"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="000000", size=18)
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    # ws6[f"{col}{i}"].fill = PatternFill(start_color="3572EF", end_color="3572EF", fill_type="solid")
+
+                for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_end):
+                    # "=SUMIFS($D$243:$D$593,$B$243:$B$593,H157)"
+                    # # print("INDEX",index, col)
+                    # ws6[
+                    #     f"{col}{i}"].value = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},H{i})"
+                    # ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="000000", size=18)
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+
+
+
             elif index > 1 and index % 2 == 0:
-                ws6[f"{col}{vat_row}"] = (f"=-SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE, Sales!$U:$U,\"<=\"&'Cashflow "
-                                          f"Projection'!{month_headings[index]}$5,Sales!$U:$U,\""
-                                          f">\"&'Cashflow Projection'!{month_headings[index - 2]}$5,Sales!$F:$F,"
-                                          f"1)*$C{vat_row}")
+                ws6[f"{col}{vat_income}"] = (
+                    f"=SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$W:$W,\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,Sales!$W:$W,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5)")
+                ws6[f"{col}{vat_income}"].font = Font(bold=True, color="0C0C0C", size=22)
+                ws6[f"{col}{vat_income}"].border = ws6[f"A{vat_income}"].border + Border(left=Side(style='medium'),
+                                                                                         right=Side(style='medium'),
+                                                                                         top=Side(style='medium'),
+                                                                                         bottom=Side(style='medium'))
+                # light green
+                ws6[f"{col}{vat_income}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
+                                                             fill_type="solid")
+                ws6[f"{col}{vat_income}"].number_format = '#,##0'
+
+
+                for i in range(vat_payable_on_sales, vat_payable_on_sales + 1):
+                    "=IF(MOD(MONTH(I5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,"<="&EOMONTH(EDATE(I$5, 0), -1),Sales!$W:$W,">"&EOMONTH(EDATE(I$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))"
+                    ws6[
+                        f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                    # fil in light red
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+                    ws6[f"{col}{i}"].border = ws6[f"A{vat_payable_on_sales}"].border + Border(left=Side(style='medium'),
+                                                                                                right=Side(style='medium'),
+                                                                                                top=Side(style='medium'),
+                                                                                                bottom=Side(style='medium'))
+
+
+                "=SUMIFS(Sales!$J:$J,Sales!$T:$T,TRUE,Sales!$W:$W,"<="&I5,Sales!$W:$W,">"&B2)"
+                ws6[f"{col}{vat_row}"] = f"=SUMIFS(Sales!$J:$J,Sales!$T:$T,TRUE,Sales!$W:$W,\"<=\"&{col}5,Sales!$W:$W,\">\"&{month_headings[index - 2]}5)"
                 ws6[f"{col}{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
-                ws6[f"{col}{vat_row}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+                # fill with light green
+                ws6[f"{col}{vat_row}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+
                 ws6[f"{col}{vat_row}"].number_format = '#,##0'
                 ws6[
                     f"{col}{profit_on_sale}"] = (f"=SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
@@ -1114,7 +2746,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                 for i in range(toggles_start, toggles_end + 1):
                     ws6[
-                        f"{col}{i}"] = f"=SUMIFS(Sales!$S:$S,Sales!$H:$H,\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,Sales!$E:$E,FALSE,Sales!$F:$F,'Cashflow Projection'!$C{i},Sales!$A:$A,'Cashflow Projection'!$A{i},Sales!$B:$B,'Cashflow Projection'!$B{i},Sales!$H:$H,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5)*$C{i}"
+                        f"{col}{i}"] = f"=SUMIFS(Sales!$S:$S,Sales!$W:$W,\"<=\"&'Cashflow Projection'!{month_headings[index]}$5,Sales!$E:$E,FALSE,Sales!$F:$F,'Cashflow Projection'!$C{i},Sales!$A:$A,'Cashflow Projection'!$A{i},Sales!$B:$B,'Cashflow Projection'!$B{i},Sales!$W:$W,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5)*$C{i}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                     ws6[f"{col}{vat_row}"].border = ws6[f"A{vat_row}"].border + Border(left=Side(style='medium'),
@@ -1131,8 +2763,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 for i in range(vat_construction, vat_construction + 1):
-                    ws6[
-                        f"{col}{i}"] = f"=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$C:$C,1,'Updated Construction'!$H:$H,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5,'Updated Construction'!$H:$H,\"<=\"&'Cashflow Projection'!{month_headings[index]}$5)*0.15*$C{i}"
+                    # ws6[
+                    #     f"{col}{i}"] = f"=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$C:$C,1,'Updated Construction'!$H:$H,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5,'Updated Construction'!$H:$H,\"<=\"&'Cashflow Projection'!{month_headings[index]}$5)*0.15*$C{i}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -1261,14 +2893,98 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                   end_color="FFF67E",
                                                                                   fill_type="solid")))
 
-                for i in range(investor_exited_unit_based, investor_exited_unit_based + 1):
+                for i in range(rollover, rollover + 1):
+                    # "=-SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$L:$L,\"<=\"&'Cashflow Projection'!H$5,'Investor Exit List'!$L:$L,\">\"&'Cashflow Projection'!F$5)"
                     ws6[
-                        f"{col}{i}"] = f"=-SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$I:$I,FALSE,'Investor Exit List'!$AA:$AA,\"<=\"&'Cashflow Projection'!{col}$5,'Investor Exit List'!$AA:$AA,\">\"&'Cashflow Projection'!{month_headings[index - 2]}$5,'Investor Exit List'!$U:$U,FALSE,'Investor Exit List'!$F:$F,\"<>0\")"
+                        f"{col}{i}"] = ws6[
+                        f"{col}{i}"] = f"=0"
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="3ABEF9", end_color="3ABEF9", fill_type="solid")
+
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                for i in range(project_income, project_income + 1):
+                    ws6[
+                        f"{col}{i}"] = f"SALES"
+                    # ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
                     # apply borders around the cell
-                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited_unit_based}"].border + Border(
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="749BC2", end_color="749BC2", fill_type="solid")
+
+                # for i in range(roll_over_refinance, roll_over_refinance + 1):
+                #     ws6[
+                #         f"{col}{i}"] = 0
+                #     ws6[f"{col}{i}"].number_format = '#,##0'
+                #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                #
+                #     # apply borders around the cell
+                #     ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                #         left=Side(style='medium'),
+                #         right=Side(style='medium'),
+                #         top=Side(style='medium'),
+                #         bottom=Side(style='medium'))
+                #
+                # for i in range(roll_over_reinvest, roll_over_reinvest + 1):
+                #     ws6[
+                #         f"{col}{i}"] = 0
+                #     ws6[f"{col}{i}"].number_format = '#,##0'
+                #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                #
+                #     # apply borders around the cell
+                #     ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                #         left=Side(style='medium'),
+                #         right=Side(style='medium'),
+                #         top=Side(style='medium'),
+                #         bottom=Side(style='medium'))
+                #
+                # for i in range(block_finance_start, block_finance_end + 1):
+                #     ws6[
+                #         f"{col}{i}"] = 0
+                #     ws6[f"{col}{i}"].number_format = '#,##0'
+                #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                #
+                #     # apply borders around the cell
+                #     ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                #         left=Side(style='medium'),
+                #         right=Side(style='medium'),
+                #         top=Side(style='medium'),
+                #         bottom=Side(style='medium'))
+
+                for i in range(purple_blok_start, purple_blok_end):
+                    ws6[
+                        f"{col}{i}"] = f"=$B${i}*{month_headings[index + 1]}{i}"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                for i in range(purple_blok_end, purple_blok_end + 1):
+                    # "=SUBTOTAL(9,H95:H97)"
+                    ws6[
+                        f"{col}{i}"] = f"=SUBTOTAL(9,{col}{purple_blok_start}:{col}{purple_blok_end - 1})"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
                         left=Side(style='medium'),
                         right=Side(style='medium'),
                         top=Side(style='medium'),
@@ -1280,71 +2996,126 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                   start_color="FFC7CE",
                                                                                   end_color="FFC7CE",
                                                                                   fill_type="solid")))
+
                     ws6.conditional_formatting.add(f"{col}{i}",
                                                    formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
                                                                               fill=PatternFill(
                                                                                   start_color="BFEA7C",
                                                                                   end_color="BFEA7C",
                                                                                   fill_type="solid")))
+
                     ws6.conditional_formatting.add(f"{col}{i}",
                                                    formatting.rule.CellIsRule(operator='equal', formula=['0'],
                                                                               fill=PatternFill(
                                                                                   start_color="FFF67E",
                                                                                   end_color="FFF67E",
                                                                                   fill_type="solid")))
-                for i in range(balance_after_exits, balance_after_exits + 1):
-                    "=H53+H57+F59"
+
+
+
+                for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
+                    # "=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection (2)'!G121)"
                     ws6[
-                        f"{col}{i}"] = f"=+{col}{investor_exited}+{col}{running}"
+                        f"{col}{i}"] = f"=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection'!{month_headings[index - 1]}{i})"
                     ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
 
                     # apply borders around the cell
-                    ws6[f"{col}{i}"].border = ws6[f"A{balance_after_exits}"].border + Border(
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
                         left=Side(style='medium'),
                         right=Side(style='medium'),
                         top=Side(style='medium'),
                         bottom=Side(style='medium'))
 
-                    ws6.conditional_formatting.add(f"{col}{i}",
-                                                   formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
-                                                                              fill=PatternFill(
-                                                                                  start_color="FFC7CE",
-                                                                                  end_color="FFC7CE",
-                                                                                  fill_type="solid")))
-                    ws6.conditional_formatting.add(f"{col}{i}",
-                                                   formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
-                                                                              fill=PatternFill(
-                                                                                  start_color="BFEA7C",
-                                                                                  end_color="BFEA7C",
-                                                                                  fill_type="solid")))
-                    ws6.conditional_formatting.add(f"{col}{i}",
-                                                   formatting.rule.CellIsRule(operator='equal', formula=['0'],
-                                                                              fill=PatternFill(
-                                                                                  start_color="FFF67E",
-                                                                                  end_color="FFF67E",
-                                                                                  fill_type="solid")))
+                for i in range(refinanced_units_start - 1, refinanced_units_start):
+                    # "=-SUM(H121:H157)"
+                    ws6[
+                        f"{col}{i}"] = f"=-SUM({col}{refinanced_units_start}:{col}{refinanced_units_end})"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                for i in range(debenture_transaction_start, debenture_transaction_start + 1):
+                    # "=$B$151*J151"
+                    ws6[
+                        f"{col}{i}"] = f"=$B{debenture_transaction_start}*{month_headings[index + 1]}{debenture_transaction_start}"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    # fill in blue
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="3572EF", end_color="3572EF", fill_type="solid")
+
+                for i in range(roll_over_refinance_properties_start, roll_over_refinance_properties_start + 1):
+                    "=$B$151*J151"
+                    ws6[
+                        f"{col}{i}"] = f"=sum({col}{roll_over_refinance_properties_start + 3}:{col}{roll_over_refinance_properties_end})"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    # fill in blue
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+
+                for i in range(roll_over_refinance_properties_start + 2, roll_over_refinance_properties_start + 3):
+                    "=$B$151*J151"
+                    ws6[
+                        f"{col}{i}"] = f"={col}{roll_over_refinance_properties_start}-{col}{roll_over_refinance_properties_start + 1}"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    # fill in blue
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+
+                for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_end):
+                    "=SUMIFS($D$243:$D$593,$B$243:$B$593,H157)"
+                    # print("INDEX",index, col)
+                    ws6[
+                        f"{col}{i}"].value = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},{month_headings[index - 1]}{i})"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="000000", size=18)
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+
+
+
 
             elif index > 2 and index % 2 != 0:
 
-                for i in range(investor_exited, investor_exited + 1):
-                    # "=COUNTIFS('Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$L:$L,\"<=\"&'Cashflow Projection'!F$5,'Investor Exit List'!$L:$L,\">\"&'Cashflow Projection'!B$2)"
-                    ws6[
-                        f"{col}{i}"] = f"=COUNTIFS('Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$L:$L,\"<=\"&'Cashflow Projection'!{month_headings[index - 1]}$5,'Investor Exit List'!$L:$L,\">\"&'Cashflow Projection'!{month_headings[index - 3]}$5)"
-                    ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
-
-                for i in range(investor_exited_unit_based, investor_exited_unit_based + 1):
-                    # "=COUNTIFS('Investor Exit List'!$AA:$AA,"<="&'Cashflow Projection'!H$5,'Investor Exit List'!$AA:$AA,">"&'Cashflow Projection'!F$5,'Investor Exit List'!$I:$I,FALSE,'Investor Exit List'!$U:$U,FALSE)"
-                    ws6[
-                        f"{col}{i}"] = f"=COUNTIFS('Investor Exit List'!$AA:$AA,\"<=\"&'Cashflow Projection'!{month_headings[index - 1]}$5,'Investor Exit List'!$AA:$AA,\">\"&'Cashflow Projection'!{month_headings[index - 3]}$5,'Investor Exit List'!$I:$I,FALSE,'Investor Exit List'!$U:$U,FALSE)"
-                    ws6[f"{col}{i}"].number_format = '#,##0'
-                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                 for i in range(toggles_start, toggles_end + 1):
                     ws6[
                         f"{col}{i}"] = (
-                        f"=COUNTIFS(Sales!$H:$H,\"<=\"&'Cashflow Projection'!{month_headings[index - 1]}"
-                        f"$5,Sales!$H:$H,\">\"&'Cashflow Projection'!{month_headings[index - 3]}$5,"
+                        f"=COUNTIFS(Sales!$W:$W,\"<=\"&'Cashflow Projection'!{month_headings[index - 1]}"
+                        f"$5,Sales!$W:$W,\">\"&'Cashflow Projection'!{month_headings[index - 3]}$5,"
                         f"Sales!$A:$A,'Cashflow Projection'!$A{i},Sales!$B:$B,'Cashflow "
                         f"Projection'!$B{i},Sales!$F:$F,'Cashflow Projection'!$C{i},Sales!$E:$E,"
                         f"FALSE)*$C{i}")
@@ -1352,6 +3123,174 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                     # Center the text in the cell
                     ws6[f"{col}{i}"].alignment = Alignment(horizontal='center', vertical='center')
+
+                for i in range(project_income, project_income + 1):
+                    ws6[
+                        f"{col}{i}"] = f"EXIT & ROLL"
+                    # ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="749BC2", end_color="749BC2", fill_type="solid")
+
+                for i in range(roll_over_refinance, roll_over_refinance + 1):
+                    ws6[
+                        f"{col}{i}"] = 0
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                for i in range(roll_over_reinvest, roll_over_reinvest + 1):
+                    ws6[
+                        f"{col}{i}"] = 0
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                # for i in range(block_finance_start, block_finance_end + 1):
+                #     ws6[
+                #         f"{col}{i}"] = 0
+                #     ws6[f"{col}{i}"].number_format = '#,##0'
+                #     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+                #
+                #     # apply borders around the cell
+                #     ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                #         left=Side(style='medium'),
+                #         right=Side(style='medium'),
+                #         top=Side(style='medium'),
+                #         bottom=Side(style='medium'))
+
+                for i in range(purple_blok_start, purple_blok_end):
+                    ws6[
+                        f"{col}{i}"] = 0
+                    ws6[f"{col}{i}"].number_format = '0%'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
+                    # "=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection (2)'!G121)"
+                    # ws6[
+                    #     f"{col}{i}"] = f"=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection'!H{i})"
+                    # ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                for i in range(refinanced_units_start - 1, refinanced_units_start):
+                    "=COUNTA(H117:H149)"
+                    ws6[
+                        f"{col}{i}"] = f"=COUNTA({col}{refinanced_units_start}:{col}{refinanced_units_end})"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = ws6[f"A{investor_exited}"].border + Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+                for i in range(debenture_transaction_start, debenture_transaction_start + 1):
+                    "=$B$151*J151"
+                    ws6[
+                        f"{col}{i}"] = f"=${month_headings[index - 2]}{refinanced_units_start - 1}"
+                    ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+                    # apply borders around the cell
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+
+                    ws6[f"{col}{i}"].fill = PatternFill(start_color="3572EF", end_color="3572EF", fill_type="solid")
+
+                for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_start + 4):
+                    try:
+                        "=IFERROR(UNIQUE(FILTER($B$243:$B$593,($C$243:$C$593<=K$5)*($C$243:$C$593>I$5)*($F$243:$F$593=0))),"")"
+                        ws6[
+                            f"{col}{i}"].value = f"=_xlfn.IFERROR(_xlfn.UNIQUE(_xlfn.FILTER($B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},($C${calculate_exit_dates_start}:$C${calculate_exit_dates_end}<={month_headings[index + 1]}$5)*($C${calculate_exit_dates_start}:$C${calculate_exit_dates_end}>{month_headings[index - 1]}$5)*($F${calculate_exit_dates_start}:$F${calculate_exit_dates_end}=0))),\"\")"
+                        ws6[f"{col}{i}"].number_format = '#,##0'
+                        ws6[f"{col}{i}"].font = Font(bold=True, color="000000", size=18)
+                        ws6[f"{col}{i}"].border = Border(
+                            left=Side(style='medium'),
+                            right=Side(style='medium'),
+                            top=Side(style='medium'),
+                            bottom=Side(style='medium'))
+                    except Exception as e:
+                        continue
+
+                for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_end):
+                    # "=SUMIFS($D$243:$D$593,$B$243:$B$593,H157)"
+                    # # print("INDEX",index, col)
+                    # ws6[
+                    #     f"{col}{i}"].value = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},{month_headings[index - 1]}{i})"
+                    # ws6[f"{col}{i}"].number_format = '#,##0'
+                    ws6[f"{col}{i}"].font = Font(bold=True, color="000000", size=18)
+                    ws6[f"{col}{i}"].border = Border(
+                        left=Side(style='medium'),
+                        right=Side(style='medium'),
+                        top=Side(style='medium'),
+                        bottom=Side(style='medium'))
+
+        for i in range(refinanced_units_start - 1, refinanced_units_start):
+            "=COUNTA(H117:H149)"
+            ws6[
+                f"H{i}"] = f"=COUNTA(H{refinanced_units_start}:H{refinanced_units_end})"
+            ws6[f"H{i}"].number_format = '#,##0'
+            ws6[f"H{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+            # apply borders around the cell
+            ws6[f"H{i}"].border = Border(
+                left=Side(style='medium'),
+                right=Side(style='medium'),
+                top=Side(style='medium'),
+                bottom=Side(style='medium'))
+
+        for i in range(refinanced_units_start, refinanced_units_end + 1):
+            # "=COUNTA(UNIQUE(J117:J149))-1"
+            #             ws6[
+            #                 f"H{i}"] = f"=COUNTA(UNIQUE({col}{refinanced_units_start}:{col}{refinanced_units_end}))-1"
+            ws6[f"H{i}"].number_format = '#,##0'
+            ws6[f"H{i}"].font = Font(bold=True, color="0C0C0C", size=18)
+
+            # apply borders around the cell
+            ws6[f"H{i}"].border = Border(
+                left=Side(style='medium'),
+                right=Side(style='medium'),
+                top=Side(style='medium'),
+                bottom=Side(style='medium'))
 
         for i in range(7, 25):
             ws6[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
@@ -1429,8 +3368,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             top=Side(style='medium'),
             bottom=Side(style='medium'))
 
-        # ws6[f"A{block_costs_end + 1}"].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
-
         ws6[f"C{block_costs_end + 1}"] = f"=107-C{block_costs_start - 1}"
         ws6[f"C{block_costs_end + 1}"].font = Font(bold=True, color="FFFFFF", size=22)
         ws6[f"C{block_costs_end + 1}"].alignment = Alignment(horizontal='center', vertical='center')
@@ -1439,7 +3376,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             right=Side(style='medium'),
             top=Side(style='medium'),
             bottom=Side(style='medium'))
-        # ws6[f"C{block_costs_end + 1}"].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+
         # fill A, B & C with Red
         ws6[f"A{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
         ws6[f"B{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
@@ -1453,11 +3390,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
         for row in ws6.iter_rows(min_row=toggles_start, max_row=toggles_end, min_col=3, max_col=3):
             for cell in row:
-                cell.value = f"=IF(A{cell.row}<>\"Heron View\",1,IF(ISERROR(VLOOKUP($B{cell.row},$A$38:$B$51,2,FALSE)),1,SUMIFS($B$38:$B$51,$A$38:$A$51,B{cell.row})))"
+                cell.value = f"=IF(A{cell.row}<>\"Heron View\",1,IF(ISERROR(VLOOKUP($B{cell.row},$A${block_costs_start}:$B${block_costs_end},2,FALSE)),1,SUMIFS($B${block_costs_start}:$B${block_costs_end},$A${block_costs_start}:$A${block_costs_end},B{cell.row})))"
 
-        for row in ws3.iter_rows(min_row=5, max_row=ws3.max_row, min_col=6, max_col=6):
-            for cell in row:
-                cell.value = f"=SUMIFS('Cashflow Projection'!$C${toggles_start}:$C${toggles_end},'Cashflow Projection'!$B${toggles_start}:$B${toggles_end},Sales!$B{cell.row},'Cashflow Projection'!$A${toggles_start}:$A${toggles_end},Sales!$A{cell.row})"
+        # for row in ws3.iter_rows(min_row=5, max_row=ws3.max_row, min_col=6, max_col=6):
+        #     for cell in row:
+        #         cell.value = f"=SUMIFS('Cashflow Projection'!$C${toggles_start}:$C${toggles_end},'Cashflow Projection'!$B${toggles_start}:$B${toggles_end},Sales!$B{cell.row},'Cashflow Projection'!$A${toggles_start}:$A${toggles_end},Sales!$A{cell.row})"
 
         for i in range(4, ws6.max_row + 3):
             for x in range(1, ws6.max_column + 1):
@@ -1477,8 +3414,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 else:
                     ws6[f"{get_column_letter(x)}{i}"].border = Border(bottom=Side(style='medium'))
 
-        columns_for_funds_available = ['D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-                                       'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC']
+        columns_for_funds_available = month_headings
 
         for index, col in enumerate(columns_for_funds_available):
             if index % 2 == 0:
@@ -1498,7 +3434,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws6[f"{col}{funds_available_end}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
                                                                       fill_type="solid")
 
-                ws6[f"{col}{funds_available_end}"].value = f"=+{col}{funds_available_start}+{col}{profit_on_sale}"
+                # ws6[f"{col}{funds_available_end}"].value = f"=+{col}{funds_available_start}+{col}{profit_on_sale}"
 
                 # conditional formatting for funds_available_start and funds_available_end
                 ws6.conditional_formatting.add(f"{col}{funds_available_start}",
@@ -1547,68 +3483,92 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                     ws6[f"{col}{i}"].number_format = '#,##0'
 
-                if index < 3:
-                    ws6[f"{col}{funds_available_start + 1}"].value = f"=Dashboard!B13"
-                    ws6[f"{col}{funds_available_start + 2}"].value = f"=Dashboard!B14"
+                # if index < 3:
+                #     ws6[f"{col}{funds_available_start + 1}"].value = f"=Dashboard!B13"
+                #     ws6[f"{col}{funds_available_start + 2}"].value = f"=Dashboard!B14"
+                #
+                #     ws6[f"{col}{funds_available_start + 4}"].value = f"=Dashboard!B16"
+                # else:
+                #     ws6[
+                #         f"{col}{funds_available_start + 2}"].value = f"={columns_for_funds_available[index - 2]}{balance_after_exits}"
 
-                    ws6[f"{col}{funds_available_start + 4}"].value = f"=Dashboard!B16"
-                else:
-                    ws6[
-                        f"{col}{funds_available_start + 2}"].value = f"={columns_for_funds_available[index - 2]}{balance_after_exits}"
+        #         if index < 7:
+        #             ws6[
+        #                 f"{col}{funds_available_start + 3}"].value = f"=Dashboard!B15*{columns_for_funds_available[index + 1]}{funds_available_start + 3}"
+        #         else:
+        #             ws6[
+        #                 f"{col}{funds_available_start + 3}"].value = f"=-{columns_for_funds_available[index - 2]}{investor_exited}*{columns_for_funds_available[index + 1]}{funds_available_start + 3}"
+        # #
+        #     else:
+        #         if index < 2:
+        #             ws6[f"{col}{funds_available_start + 3}"].value = 1
+        #             ws6[f"{col}{funds_available_start + 3}"].number_format = '0%'
+        #             ws6[f"{col}{funds_available_start + 3}"].font = Font(bold=False, color="0E46A3", size=16)
+        #
+        #         elif index < 4:
+        #             ws6[f"{col}{funds_available_start + 3}"].value = 0.15
+        #             ws6[f"{col}{funds_available_start + 3}"].number_format = '0%'
+        #             ws6[f"{col}{funds_available_start + 3}"].font = Font(bold=False, color="0E46A3", size=16)
+        #         elif index < 6:
+        #             ws6[f"{col}{funds_available_start + 3}"].value = 0.50
+        #             ws6[f"{col}{funds_available_start + 3}"].number_format = '0%'
+        #             ws6[f"{col}{funds_available_start + 3}"].font = Font(bold=False, color="0E46A3", size=16)
+        #         elif index < 8:
+        #             ws6[f"{col}{funds_available_start + 3}"].value = 0.35
+        #             ws6[f"{col}{funds_available_start + 3}"].number_format = '0%'
+        #             ws6[f"{col}{funds_available_start + 3}"].font = Font(bold=False, color="0E46A3", size=16)
+        #         else:
+        #             ws6[f"{col}{funds_available_start + 3}"].value = 0.50
+        #             ws6[f"{col}{funds_available_start + 3}"].number_format = '0%'
+        #             ws6[f"{col}{funds_available_start + 3}"].font = Font(bold=False, color="D20062", size=16)
+        #
+        # for i in range(funds_available_start, funds_available_end + 1):
+        #     ws6[f"A{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
-                if index < 7:
-                    ws6[
-                        f"{col}{funds_available_start + 3}"].value = f"=Dashboard!B15*{columns_for_funds_available[index + 1]}{funds_available_start + 3}"
-                else:
-                    ws6[
-                        f"{col}{funds_available_start + 3}"].value = f"=-{columns_for_funds_available[index - 2]}{investor_exited}*{columns_for_funds_available[index + 1]}{funds_available_start + 3}"
+        # print("funds_available_start", funds_available_start)
+        # print("funds_available_end", funds_available_end)
 
-            else:
-                if index < 2:
-                    ws6[f"{col}{funds_available_start + 3}"].value = 1
-                    ws6[f"{col}{funds_available_start + 3}"].number_format = '0%'
-                    ws6[f"{col}{funds_available_start + 3}"].font = Font(bold=False, color="0E46A3", size=16)
 
-                elif index < 4:
-                    ws6[f"{col}{funds_available_start + 3}"].value = 0.15
-                    ws6[f"{col}{funds_available_start + 3}"].number_format = '0%'
-                    ws6[f"{col}{funds_available_start + 3}"].font = Font(bold=False, color="0E46A3", size=16)
-                elif index < 6:
-                    ws6[f"{col}{funds_available_start + 3}"].value = 0.50
-                    ws6[f"{col}{funds_available_start + 3}"].number_format = '0%'
-                    ws6[f"{col}{funds_available_start + 3}"].font = Font(bold=False, color="0E46A3", size=16)
-                elif index < 8:
-                    ws6[f"{col}{funds_available_start + 3}"].value = 0.35
-                    ws6[f"{col}{funds_available_start + 3}"].number_format = '0%'
-                    ws6[f"{col}{funds_available_start + 3}"].font = Font(bold=False, color="0E46A3", size=16)
-                else:
-                    ws6[f"{col}{funds_available_start + 3}"].value = 0.50
-                    ws6[f"{col}{funds_available_start + 3}"].number_format = '0%'
-                    ws6[f"{col}{funds_available_start + 3}"].font = Font(bold=False, color="D20062", size=16)
+        for i in range(funds_available_start + 1, funds_available_end + 1):
+            ws6[f"D{i}"].border = Border(left=Side(style='medium'), right=Side(style='medium'),
+                                                               top=Side(style='medium'), bottom=Side(style='medium'))
+            # ws6[f"B{i}"].border = ws6[f"B{i}"].border + Border(left=Side(style='medium'), right=Side(style='medium'),
+            #                                                    top=Side(style='medium'), bottom=Side(style='medium'))
+            # ws6[f"C{i}"].border = ws6[f"C{i}"].border + Border(left=Side(style='medium'), right=Side(style='medium'),
+            #                                                    top=Side(style='medium'), bottom=Side(style='medium'))
+            ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            ws6[f"D{i}"].number_format = '#,##0'
 
-        for i in range(funds_available_start, funds_available_end + 1):
-            ws6[f"A{i}"].font = Font(bold=True, color="0C0C0C", size=22)
-            # ws6[f"D{i}"].number_format = '#,##0'
-            # ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
-        print("funds_available_start", funds_available_start)
-        print("funds_available_end", funds_available_end)
 
-        ws6['A37'].font = Font(bold=True, color="0C0C0C", size=22)
-        ws6['A38'].font = Font(bold=True, color="FFFFFF", size=22)
+
+            # ws6[f"B{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            # ws6[f"C{i}"].font = Font(bold=True, color="0C0C0C", size=22)
+            # ws6[f"C{i}"].number_format = '#,##0'
+
+        # filter the data for columns A to E from calculate_exit_dates_start - 1 to calculate_exit_dates_end
+
+
+        ws6.auto_filter.ref = f"A{calculate_exit_dates_start - 1}:E{calculate_exit_dates_end}"
+
+
+
+
 
         ws6[f"C{vat_row}"].value = f"=C{vat_construction}"
 
+
+
         for i in range(1, ws6.max_column + 1):
             if i == 1:
-                ws6.column_dimensions[get_column_letter(i)].width = 32.5
+                ws6.column_dimensions[get_column_letter(i)].width = 45.5
             elif i == 2:
-                ws6.column_dimensions[get_column_letter(i)].width = 16.5
+                ws6.column_dimensions[get_column_letter(i)].width = 20
             elif i == 3:
-                ws6.column_dimensions[get_column_letter(i)].width = 10
+                ws6.column_dimensions[get_column_letter(i)].width = 20
             elif i > 3 and i % 2 == 0:
                 ws6.column_dimensions[get_column_letter(i)].width = 20
             elif i > 3 and i % 2 != 0:
-                ws6.column_dimensions[get_column_letter(i)].width = 7
+                ws6.column_dimensions[get_column_letter(i)].width = 20
 
         # freeze panes at D7
         ws6.freeze_panes = ws6["D6"]
@@ -1675,7 +3635,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     '=SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Endulini",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE)',
                     '=SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Endulini",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE)'])
         transfer_endulini = ws7.max_row
-        print("Transfer Endulini", transfer_endulini)
+        # print("Transfer Endulini", transfer_endulini)
         # ws7[f'B{transfer_endulini}'].number_format = '#,##0'
 
         ws7.append(["Actual Transfer Income to hit FNB - Heron Sold",
@@ -1707,7 +3667,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-B{momentum_funds}"])
         fnb_bank = ws7.max_row
         ws7.append(["New Investors", 5598623.87, 5598623.87])
-        ws7.append(["Deposit made", 3143782, 0])
+        ws7.append(["Deposit made", 0, 0])
         deposit_made = ws7.max_row
         ws7.append(["Momentum interest to be earned", 0, 0])
         momentum_interest = ws7.max_row
@@ -1913,8 +3873,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             if index == 0:
                 income_start = ws8.max_row
         income_end = ws8.max_row
-        print("Income Start", income_start)
-        print("Income End", income_end)
+        # print("Income Start", income_start)
+        # print("Income End", income_end)
 
         ws8.append([])
         ws8.append(['Total Income'])
@@ -1960,18 +3920,18 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         other_costs_headers.sort()
 
         for index, item in enumerate(other_costs_headers):
-            print("Item", item)
+            # print("Item", item)
             ws8.append([item])
             ws8[f"A{ws8.max_row}"].font = Font(bold=False, size=12)
             if index == 0:
                 other_costs_start = ws8.max_row
         other_costs_end = ws8.max_row
 
-        print("CPC Start", cpc_start)
-        print("CPC End", cpc_end)
-
-        print("Other Costs Start", other_costs_start)
-        print("Other Costs End", other_costs_end)
+        # print("CPC Start", cpc_start)
+        # print("CPC End", cpc_end)
+        #
+        # print("Other Costs Start", other_costs_start)
+        # print("Other Costs End", other_costs_end)
 
         # other_costs_to_input = []
         # for index, item in enumerate(other_costs):
@@ -2241,7 +4201,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         ws9.append(["Revaluation of Land (Not Incl)", "=-SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A63)"])
         ws9.append([])
         ws9.append([])
-        ws9.append(["Costs", "=SUMIFS(Xero!$F:$F,Xero!$C:$C,\"Expenses\",Xero!$A:$A,\"<>\"&Heron!$A$6)"])
+        # "=SUMIFS(Xero!$F:$F,Xero!$C:$C,"Expenses",Xero!$A:$A,"="&Heron!$A$4)+SUMIFS(Xero!$F:$F,Xero!$C:$C,"Expenses",Xero!$A:$A,"="&Heron!$A$5)"
+        ws9.append(["Costs", "=SUMIFS(Xero!$F:$F,Xero!$C:$C,\"Expenses\",Xero!$A:$A,\"=\"&Heron!$A$4)+SUMIFS(Xero!$F:$F,Xero!$C:$C,\"Expenses\",Xero!$A:$A,\"=\"&Heron!$A$5)"])
         ws9.append(["Heron View Land", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A67)"])
         ws9.append(["COS - Heron Fields - Construction", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A68)"])
         ws9.append(["COS - Heron Fields - P & G", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A69)"])
@@ -2386,7 +4347,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         print("EXIT LAST ROW", exit_last_row_number)
 
         column_formulae = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-                           'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']
+                           'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC']
         for i in column_formulae:
             for row in range(exit_first_row_number, exit_last_row_number + 1):
                 ws10[f"{i}{row}"].font = Font(bold=False, size=12)
@@ -2463,10 +4424,25 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     # ws10[f"{i}{row}"].value = f"=+IF(Z{row}=\"Release\",AA{row-1}+30,\"\")"
                     ws10[f"{i}{row}"].number_format = "YYYY-MM-DD"
 
+                # put a thin border on all sides of each ro
+                elif i == 'AB':
+                    # '=C4&"-"&A4'
+                    ws10[f"{i}{row}"].value = f"=C{row}&\"-\"&A{row}"
+                    # ws10[f"{i}{row}"].value = f""
+                    # ws10[f"{i}{row}"].value = f"=+IF(Z{row}=\"Release\",AA{row-1}+30,\"\")"
+                    ws10[f"{i}{row}"].number_format = "YYYY-MM-DD"
+
+                elif i == 'AC':
+                    # '=L4'
+                    ws10[f"{i}{row}"].value = f"=L{row}"
+                    # ws10[f"{i}{row}"].value = f""
+                    # ws10[f"{i}{row}"].value = f"=+IF(Z{row}=\"Release\",AA{row-1}+30,\"\")"
+                    ws10[f"{i}{row}"].number_format = "YYYY-MM-DD"
+
                 # put a thin border on all sides of each row
                 ws10[f"{i}{row}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'),
                                                   left=Side(style='thin'),
-                                                  right=Side(style='thin'))
+                                              right=Side(style='thin'))
 
         # column_letter = 'AA'
         #
@@ -2483,6 +4459,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         ws10['Y2'].value = "Build"
         ws10['Z2'].value = "Calculate Release"
         ws10['AA2'].value = "Release Date"
+        ws10['AB2'].value = "UNIQUE ID"
 
         dev1 = ["ZZUN01", 0, "HFB215", "B", "Dev Unit", 0, "", False, False, "", "", "", "", "", "", "", "", "", "", "",
                 False,
@@ -2731,7 +4708,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                        bottom=Side(style='medium'))
                 elif x > 1 and x < 5 and i == recon_end + 2:
                     ws11[f"{get_column_letter(x)}{i}"].border = Border(bottom=Side(style='medium'))
-
 
                 if x == 2:
                     # format as currency

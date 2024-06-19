@@ -19,6 +19,25 @@ cashflow = APIRouter()
 async def construction_cashflow(data: Request):
     request = await data.json()
     data = request['data']
+
+    for item in data:
+        # loop through each individual item dictionary
+        # convert all values to float
+        for key, value in item.items():
+            if key != "Whitebox-Able" and key != "Complete Build" and key != "Blocks" and key != "Option":
+                # item[key] = float(value)
+                value = value.replace("R\xa0", "")
+                value = value.replace(",", "")
+                value = value.replace(" ", "")
+                value = value.replace("R", "")
+                value = float(value)
+                item[key] = value
+    #
+    #
+    #         # print(f"{key}: {value}")
+    print("DATA", data[0])
+
+
     try:
         db.cashflow_construction.delete_many({})
         result = db.cashflow_construction.insert_many(data)
@@ -705,11 +724,12 @@ async def trial_balance_cashflow(data: Request):
         return {"success": False, "error": str(e)}
 
 
-@cashflow.get("/construction_cashflow")
+@cashflow.get("/construction_cashflowFetch")
 async def get_construction_cashflow():
     try:
         data = list(db.cashflow_construction.find({}))
-        # print(data[0])
+
+        print("DATAXX",data[0])
         for item in data:
             item['_id'] = str(item['_id'])
         # data = list(data)
@@ -877,6 +897,8 @@ def get_investors(data):
 
 def get_construction_costs():
     try:
+
+
         construction_costs = list(db.cashflow_construction.find({}, {"Complete Build": 1,
                                                                      "Whitebox-Able": 1, "Blocks": 1, "_id": 0}))
         # filter construction costs to only include whiteboxe-Able
@@ -1439,7 +1461,7 @@ def investors_new_cashflow_nsst_report():
 
 # investors_new_cashflow_nsst_report()
 
-def get_construction_costs():
+def get_construction_costsA():
     # try:
     construction_costs = list(db.cashflow_construction.find({}))
     for cost in construction_costs:
@@ -1631,6 +1653,8 @@ def get_xero_tbs():
     try:
         xero_tbs = list(db.cashflow_xero_tb.find({}, {"_id": 0}))
         # filter xero_tbs returning only hen AccountCode exists
+        # filter out of xero_tbs where ReportTitle is "Purple Blok Projects (Pty) Ltd"
+        xero_tbs = list(filter(lambda x: x['ReportTitle'] != "Purple Blok Projects (Pty) Ltd", xero_tbs))
         xero_tbs = list(filter(lambda x: 'AccountCode' in x, xero_tbs))
         # for item in xero_tbs:
         #     if not 'AccountCode' in item:
@@ -1665,10 +1689,10 @@ def get_xero_tbs():
             )
         )
         # filter from xero_tbs2 where Category is not 'Assets'
-        xero_tbs2 = list(filter(lambda x: x['Category'] == 'Assets', xero_tbs2))
+        # xero_tbs2 = list(filter(lambda x: x['Category'] == 'Assets', xero_tbs2))
         # filter out of xero_tbs2 where AccountCode does not begin with 84
-        xero_tbs2 = list(filter(lambda x: str(x['AccountCode']).startswith("84"), xero_tbs2))
-        xero_tbs2 = list(filter(lambda x: not x['AccountCode'].startswith("8480"), xero_tbs2))
+        # xero_tbs2 = list(filter(lambda x: str(x['AccountCode']).startswith("84"), xero_tbs2))
+        # xero_tbs2 = list(filter(lambda x: not x['AccountCode'].startswith("8480"), xero_tbs2))
         # print("xero_tbs1", xero_tbs1[0])
         # print()
         # print("xero_tbs2", xero_tbs2[0])
@@ -1774,15 +1798,17 @@ def get_opportunities():
 
 
 @cashflow.post("/generate_investors_new_cashflow_nsst_report")
-async def generate_investors_new_cashflow_nsst_report(data: Request):
+async def generate_investors_new_cashflow_nsst_report(data: Request,background_tasks: BackgroundTasks):
     request = await data.json()
     date = request['date']
     # print(date)
 
     try:
         start = time.time()
+        if os.path.exists("cashflow_p&l_files/cashflow_projection.xlsx"):
+            os.remove("cashflow_p&l_files/cashflow_projection.xlsx")
         invest = investors_new_cashflow_nsst_report()
-        construction = get_construction_costs()
+        construction = get_construction_costsA()
         sales = get_sales_data(date)
         operational_costs = get_operational_costs()
         xero = get_xero_tbs()
@@ -1834,8 +1860,14 @@ async def generate_investors_new_cashflow_nsst_report(data: Request):
         # print()
         # print("investor_exit", investor_exit[0])
         # print()
-        result = cashflow_projections(invest, construction, sales, operational_costs, xero, opportunities,
+
+        # result = cashflow_projections(invest, construction, sales, operational_costs, xero, opportunities,
+        #                               investor_exit, momentum, date)
+
+        background_tasks.add_task(cashflow_projections,invest, construction, sales, operational_costs, xero, opportunities,
                                       investor_exit, momentum, date)
+
+        result = "cashflow_p&l_files/cashflow_projection.xlsx"
 
         # result = "Awesome"
         end = time.time()
@@ -1843,6 +1875,21 @@ async def generate_investors_new_cashflow_nsst_report(data: Request):
         return {"success": True, "Result": result, "time": end - start}
     except Exception as e:
         print("Error generating investors new cashflow nsst report", e)
+        return {"success": False, "error": str(e)}
+
+
+@cashflow.get("/check_if_file_exists")
+async def check_if_file_exists():
+    file = "cashflow_p&l_files/cashflow_projection.xlsx"
+    # if os.path.exists("cashflow_p&l_files/cashflow_projection.xlsx"):
+    #     os.remove("cashflow_p&l_files/cashflow_projection.xlsx")
+    try:
+        if os.path.exists(file):
+            return {"success": True}
+        else:
+            return {"success": False}
+    except Exception as e:
+        print("Error checking if file exists", e)
         return {"success": False, "error": str(e)}
 
 
