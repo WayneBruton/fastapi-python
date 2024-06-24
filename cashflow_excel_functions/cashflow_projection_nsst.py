@@ -2493,10 +2493,13 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     ws6[f"{col}{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
 
                 for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_end):
-                    "=SUMIFS($D$243:$D$593,$B$243:$B$593,H157)"
+                    # "=SUMIFS($D$243:$D$593,$B$243:$B$593,H157)"
                     # print("INDEX",index, col)
+                    # "=IF(OR(LEFT(H159,6)="HVD302",LEFT(H159,6)="HVD303",LEFT(H159,6)="HVD304"),0,SUMIFS($D$245:$D$595,$B$245:$B$595,H159))"
+                    # ws6[
+                    #     f"{col}{i}"].value = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},H{i})"
                     ws6[
-                        f"{col}{i}"].value = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},H{i})"
+                        f"{col}{i}"].value = f"=IF(OR(LEFT(H{i},6)=\"HVD302\",LEFT(H{i},6)=\"HVD303\",LEFT(H{i},6)=\"HVD304\"),0,SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},H{i}))"
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="000000", size=18)
                     ws6[f"{col}{i}"].border = Border(
@@ -3556,6 +3559,161 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
         ws6[f"C{vat_row}"].value = f"=C{vat_construction}"
 
+        for i in range(toggles_start, toggles_end + 1):
+            # fill column G in Red and make the font white
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+            if ws6[f"A{i}"] != "Heron View":
+                ws6[f"G{i}"] = "N / LK"
+            else:
+                ws6[f"G{i}"] = "N / IK"
+
+        ws6[f"G{vat_payable_on_sales}"] = "N"
+        ws6[f"G{vat_payable_on_sales}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+        ws6[f"G{vat_payable_on_sales}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G{vat_income}"] = "N"
+        ws6[f"G{vat_income}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+        ws6[f"G{vat_income}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G{vat_recovery_when_refinanced}"] = "N"
+        ws6[f"G{vat_recovery_when_refinanced}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+        ws6[f"G{vat_recovery_when_refinanced}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G{profit_on_sale}"] = "N"
+        ws6[f"G{profit_on_sale}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                                                   fill_type="solid")
+        ws6[f"G{profit_on_sale}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for i in range(funds_available_start, funds_available_start + 3):
+            ws6[f"G{i}"] = "N / IK"
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for i in range(funds_available_start + 3, funds_available_end + 1):
+            ws6[f"G{i}"] = "N / LK"
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for i in range(block_costs_start - 1, block_costs_end + 1):
+            ws6[f"G{i}"] = "N / PR"
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G{vat_construction}"] = "N"
+
+        ws6[f"G{vat_construction}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+        ws6[f"G{vat_construction}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G{operating_expenses}"] = "N"
+        ws6[f"G{operating_expenses}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+        ws6[f"G{operating_expenses}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G{monthly}"] = "N"
+        ws6[f"G{monthly}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                                         fill_type="solid")
+        ws6[f"G{monthly}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G{running}"] = "N"
+        ws6[f"G{running}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                              fill_type="solid")
+        ws6[f"G{running}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G{investor_exited}"] = "N / LK"
+        ws6[f"G{investor_exited}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                              fill_type="solid")
+        ws6[f"G{investor_exited}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G{rollover}"] = "N / LK"
+        ws6[f"G{rollover}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                                      fill_type="solid")
+        ws6[f"G{rollover}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for i in range(roll_over_refinance, block_finance_end + 1):
+            ws6[f"G{i}"] = "N / LK"
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for i in range(purple_blok_start, purple_blok_end + 1):
+            ws6[f"G{i}"] = "N / LK"
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for i in range(finance_waterfall_start + 1, finance_waterfall_end + 1):
+            ws6[f"G{i}"] = "N"
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for i in range(finance_waterfall_start + 2, finance_waterfall_start + 3):
+            ws6[f"G{i}"] = "N / WH"
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for i in range(finance_waterfall_start + 4, finance_waterfall_start + 5):
+            ws6[f"G{i}"] = "N / LK"
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+
+        ws6[f"G{refinanced_units_start - 1}"] = "N / LK"
+        ws6[f"G{refinanced_units_start - 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+        ws6[f"G{refinanced_units_start - 1}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
+            ws6[f"G{i}"] = "N / WH"
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G{debenture_transaction_start}"] = "N / LK"
+        ws6[f"G{debenture_transaction_start}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+        ws6[f"G{debenture_transaction_start}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for i in range(roll_over_refinance_properties_start, roll_over_refinance_properties_end + 1):
+            ws6[f"G{i}"] = "N / LK"
+            ws6[f"G{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+            ws6[f"G{i}"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        ws6[f"G2"] = "CHECK"
+        ws6[f"G2"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                            fill_type="solid")
+        ws6[f"G2"].font = Font(bold=True, color="FFFFFF", size=18)
+
+        for index, col in enumerate(month_headings):
+            if index % 2 == 0:
+                ws6[f"{col}2"].value = f"CHECK"
+                ws6[f"{col}2"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                                                        fill_type="solid")
+
+                ws6[f"{col}2"].font = Font(bold=True, color="FFFFFF", size=18)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         for i in range(1, ws6.max_column + 1):
@@ -3666,7 +3824,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-B{momentum_funds}",
                     f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-B{momentum_funds}"])
         fnb_bank = ws7.max_row
-        ws7.append(["New Investors", 5598623.87, 5598623.87])
+        ws7.append(["New Investors", 0, 0])
         ws7.append(["Deposit made", 0, 0])
         deposit_made = ws7.max_row
         ws7.append(["Momentum interest to be earned", 0, 0])
