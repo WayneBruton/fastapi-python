@@ -604,7 +604,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         ws6[f"C{vat_construction}"].font = Font(bold=True, color="0C0C0C", size=22)
 
         ws6.append([])
-        ws6.append(["OPERATING EXPENSES", "", 1])
+        ws6.append(["OPERATING EXPENSES", "", 0.55])
         operating_expenses = ws6.max_row
         ws6[f"A{operating_expenses}"].font = Font(bold=True, color="0C0C0C", size=22)
         ws6[f"C{operating_expenses}"].font = Font(bold=True, color="0C0C0C", size=22)
