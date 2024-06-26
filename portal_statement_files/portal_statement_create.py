@@ -14,6 +14,9 @@ def create_pdf(statement_type, data, rolled_from):
             item['borrower'] = "Purple Blok"
         elif item['Category'] == "Endulini":
             item['borrower'] = "Quinate"
+        elif item['Category'] == "NGAH":
+            item['borrower'] = "Noble Global Asset Holdings (NGAH)"
+            item['Category'] = "NGAH Capital Investment"
         else:
             item['borrower'] = "Heron Projects"
 
