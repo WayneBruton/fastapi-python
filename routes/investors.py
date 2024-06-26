@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse
 
@@ -10,6 +12,7 @@ from email.message import EmailMessage
 
 from early_releases_excel_generation.early_releases_excel import early_release_creation
 from loan_agreement_files.goodwood_loan_agreement_files.goodwood_loan_agreement import create_goodwood_la
+from loan_agreement_files.NGAH_loan_agreement_files.ngah_loan_agreement import create_ngah_la
 from configuration.db import db
 
 
@@ -153,6 +156,12 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                     # print()
                     # print("final_doc {'link': 'loan_agreements/Wayne_Bruton_A-GW3616.zip'}")
                     final_doc = create_goodwood_la(result_loan[0])
+                    return final_doc
+
+                elif result_loan[0]['pledges']['Category'] == 'NGAH':
+                    print("result_loan", result_loan[0]['pledges']['Category'])
+                    print("AWESOME SO FAR")
+                    final_doc = create_ngah_la(result_loan[0])
                     return final_doc
 
 
@@ -426,3 +435,16 @@ async def deliver_early_releases(file_name):
     except Exception as e:
         print(e)
         return {"ERROR": "Please Try again"}
+
+
+# def importNGAH():
+#     # loop through NGAH.json and print each item
+#     with open('NGAH.json') as f:
+#         data = json.load(f)
+#         for item in data:
+#             item['opportunity_final_transfer_date'] = ""
+#             print(item)
+#         result = db.opportunities.insert_many(data)
+#         print(result.inserted_ids)
+
+# importNGAH()

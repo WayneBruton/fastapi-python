@@ -837,6 +837,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                  "HVC304", "HVC305", "HVO205", "HVO305", "HVJ102", "HVJ203", "HVJ302", "HVJ103", "HVJ303", "HVJ403",
                  "HVJ201", "HVJ202", "HVJ301", "HVJ401", "HVJ402", "HVM101", "HVM102", "HVM103", "HVM104", "HVM201",
                  "HVM202", "HVM203", "HVM204"]
+
+        # units = sorted(units)
+        # sort the units only after the 5th element
+        units = units[:5] + sorted(units[5:])
+
         # print("LEN",len(units))
         for index, unit in enumerate(units):
             "=IF(F117<>0,1,0)"
