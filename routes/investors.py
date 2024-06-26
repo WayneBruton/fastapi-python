@@ -9,6 +9,7 @@ import loan_agreement_files.lender as l1
 from main import create_final_loan_agreement
 import smtplib
 from email.message import EmailMessage
+from bson.objectid import ObjectId
 
 from early_releases_excel_generation.early_releases_excel import early_release_creation
 from loan_agreement_files.goodwood_loan_agreement_files.goodwood_loan_agreement import create_goodwood_la
@@ -448,3 +449,24 @@ async def deliver_early_releases(file_name):
 #         print(result.inserted_ids)
 
 # importNGAH()
+
+# def edit_ngah_opportunities():
+#     opportunities = db.opportunities.find({"Category": "NGAH"})
+#     for opportunity in opportunities:
+#         opportunity['_id'] = str(opportunity['_id'])
+#         id = opportunity['_id']
+#
+#
+#         adjust = opportunity['opportunity_code'].split("-")
+#         print(adjust)
+#         opportunity['opportunity_code'] = f"Section {adjust[1]} - {adjust[0]}"
+#         print()
+#         print(opportunity['opportunity_code'])
+#         try:
+#             db.opportunities.update_one({"_id": ObjectId(id)}, {"$set": {"opportunity_code": opportunity['opportunity_code']}})
+#             print("success")
+#         except Exception as e:
+#             print(e)
+
+
+# edit_ngah_opportunities()

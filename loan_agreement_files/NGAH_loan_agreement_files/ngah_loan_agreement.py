@@ -88,7 +88,7 @@ def create_ngah_la(data):
     investment_amount = "R {:,.2f}".format(investment_amount)
     investor_name = data.get('investor_name', "") + ' ' + data.get('investor_surname', "")
 
-    doc = DocxTemplate("loan_agreement_files/NGAH_loan_agreement_files/QUINATE_Investment_Loan_Agreement.docx")
+    doc = DocxTemplate("loan_agreement_files/NGAH_loan_agreement_files/NGAH_Investment_Loan_Agreement.docx")
     context = {
         'erf_number': erf_number,
         'borrower': borrower,
@@ -129,3 +129,4 @@ def create_ngah_la(data):
     file_name = f"loan_agreements/{investor_name}-NGAH{erf_number}.docx"
     doc.save(file_name)
     return {'link': file_name}
+
