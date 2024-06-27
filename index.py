@@ -35,6 +35,9 @@ if not os.path.isdir("sales_client_onboarding_docs"):
 if not os.path.isdir("payment_advice"):
     os.makedirs("payment_advice")
 
+if not os.path.isdir("upload_fica"):
+    os.makedirs("upload_fica")
+
 app = FastAPI()
 
 origins = ["*"]

@@ -1,7 +1,10 @@
 import json
 
-from fastapi import APIRouter, Request
+from PyPDF2 import PdfFileMerger
+from fastapi import APIRouter, Request, UploadFile, Form
 from fastapi.responses import FileResponse
+from decouple import config
+import boto3
 
 import os
 from pydantic import BaseModel
@@ -15,6 +18,21 @@ from early_releases_excel_generation.early_releases_excel import early_release_c
 from loan_agreement_files.goodwood_loan_agreement_files.goodwood_loan_agreement import create_goodwood_la
 from loan_agreement_files.NGAH_loan_agreement_files.ngah_loan_agreement import create_ngah_la
 from configuration.db import db
+from PyPDF2 import PdfFileMerger
+
+# AWS BUCKET INFO - ENSURE IN VARIABLES ON HEROKU
+AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
+AWS_BUCKET_REGION = config("AWS_BUCKET_REGION")
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+
+# CONNECT TO S3 SERVICE
+s3 = boto3.client(
+    "s3",
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+)
+
 
 
 # from verify_token import verify_jwt_token
@@ -438,6 +456,76 @@ async def deliver_early_releases(file_name):
         return {"ERROR": "Please Try again"}
 
 
+@investor.post("/upload_fica_files/")
+async def upload_fica_files( docs: list[UploadFile], name: str = Form(...)):
+    # data = await request.json()
+    # print(data)
+    print("NAME",name)
+    try:
+        for doc in docs:
+            # print(doc)
+            doc.filename = doc.filename.replace(" ", "_")
+            print(doc.filename)
+            data = await doc.read()
+            with open(f"upload_fica/{doc.filename}", "wb") as f:
+                f.write(data)
+
+        input_folder = 'upload_fica'
+        output_pdf = f'upload_fica/{name}.pdf'
+        merge_pdfs(input_folder, output_pdf)
+
+        # delete all files in upload_fica except for the merged pdf
+        for file in os.listdir(input_folder):
+            if file != f"{name}.pdf":
+                os.remove(f"{input_folder}/{file}")
+
+        # upload to s3
+        try:
+            s3.upload_file(
+                f"upload_fica/{name}.pdf",
+                AWS_BUCKET_NAME,
+                f"{name}.pdf",
+            )
+            link = f"https://{AWS_BUCKET_NAME}.s3.{AWS_BUCKET_REGION}.amazonaws.com/{name}.pdf"
+            print("SUCCESS")
+            print(link)
+
+        except Exception as err:
+            print(err)
+
+        # delete all files in upload_fica
+        for file in os.listdir(input_folder):
+            os.remove(f"{input_folder}/{file}")
+
+        return {"fica": link}
+    except Exception as e:
+        print(e)
+        return {"ERROR": "Please Try again"}
+
+
+def merge_pdfs(input_folder, output_pdf):
+    """
+    Merge all PDF files in the input folder and save the merged PDF to the output file.
+
+    Args:
+        input_folder (str): Path to the folder containing the PDF files to merge.
+        output_pdf (str): Path to the output merged PDF file.
+    """
+    merger = PdfFileMerger()
+
+    # Get a list of all PDF files in the input folder
+    pdf_files = [os.path.join(input_folder, f) for f in os.listdir(input_folder) if f.endswith('.pdf')]
+
+    # Append each PDF file to the merger
+    for pdf_file in pdf_files:
+        with open(pdf_file, 'rb') as file:
+            merger.append(file)
+
+    # Write the merged PDF to the output file
+    with open(output_pdf, 'wb') as output_file:
+        merger.write(output_file)
+
+    print(f'Merged PDFs successfully. Output saved to: {output_pdf}')
 
 # def importNGAH():
 #     # loop through NGAH.json and print each item
