@@ -1334,7 +1334,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                     for i in range(refinanced_units_start - 1, refinanced_units_start):
                         formula_start = "="
-                        count_formula_start = "="
+                        count_formula_start = "=+F117"
                         for index, col in enumerate(month_headings):
 
                             if index % 2 == 0:
@@ -2183,7 +2183,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                 for i in range(monthly, monthly + 1):
                     ws6[
-                        f"{col}{i}"] = f"={col}{vat_row}+{col}{block_costs_start - 1}+{col}{vat_construction}+{col}{operating_expenses}"
+                        f"{col}{i}"] = f"={col}{vat_row}+{col}{block_costs_start - 1}+{col}{vat_construction}+{col}{operating_expenses}+{col}{vat_payable_on_sales}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                     ws6[f"{col}{i}"].border = ws6[f"A{vat_construction}"].border + Border(
@@ -2803,7 +2803,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 for i in range(monthly, monthly + 1):
                     # "=F27+F29+F32+F48+F50"
                     ws6[
-                        f"{col}{i}"] = f"={col}{vat_row}+{col}{block_costs_start - 1}+{col}{vat_construction}+{col}{operating_expenses}"
+                        f"{col}{i}"] = f"={col}{vat_row}+{col}{block_costs_start - 1}+{col}{vat_construction}+{col}{operating_expenses}+{col}{vat_payable_on_sales}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -3022,9 +3022,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
 
                 for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
-                    # "=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection (2)'!G121)"
+                    # "=IF(VLOOKUP($D119,Sales!$C:$D,2,FALSE)=TRUE,0,SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection'!H119))"
                     ws6[
-                        f"{col}{i}"] = f"=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection'!{month_headings[index - 1]}{i})"
+                        f"{col}{i}"] = f"=IF(VLOOKUP($D{i},Sales!$C:$D,2,FALSE)=TRUE,0,SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection'!{month_headings[index - 1]}{i}))"
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
 
@@ -3825,8 +3825,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     "=SUMIFS(Xero!$G:$G,Xero!$E:$E,\"Momentum Investors Account RU502229930\",Xero!$B:$B,'Cashflow Projection'!$B$2)",
                     "=SUMIFS(Xero!$G:$G,Xero!$E:$E,\"Momentum Investors Account RU502229930\",Xero!$B:$B,'Cashflow Projection'!$B$2)"])
         momentum_funds = ws7.max_row
+        # "=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, "84*")-SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, "8480*")-B13"
         ws7.append(["FNB Bank",
-                    f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-B{momentum_funds}",
+                    f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"8480*\")-B{momentum_funds}",
                     f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-B{momentum_funds}"])
         fnb_bank = ws7.max_row
         ws7.append(["New Investors", 0, 0])
