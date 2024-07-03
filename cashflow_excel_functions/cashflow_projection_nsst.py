@@ -3414,7 +3414,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 cell.value = f"=IF(A{cell.row}<>\"Heron View\",1,IF(ISERROR(VLOOKUP($B{cell.row},$A${block_costs_start}:$B${block_costs_end},2,FALSE)),1,SUMIFS($B${block_costs_start}:$B${block_costs_end},$A${block_costs_start}:$A${block_costs_end},B{cell.row})))"
 
         print("Step 3")
-      
+
 
         # for i in range(4, ws6.max_row + 3):
         #     for x in range(1, ws6.max_column + 1):
@@ -4264,18 +4264,22 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         ws9.append(["Development", "Heron Fields and Heron View"])
         ws9.append(["CAPITAL"])
         ws9.append(["Total Investment capital to be raised (Estimated)", 236217976.39])
+        # "=SUMIFS(Investors!$M:$M,Investors!$J:$J,"<="&'NSST Print'!B$3)"
         ws9.append(["Total Investment capital received",
-                    "=SUMIFS(Investors!$M:$M,Investors!$P:$P,FALSE,Investors!$I:$I,\"<=\"&'NSST Print'!B3)"])
+                    "=SUMIFS(Investors!$M:$M,Investors!$J:$J,\"<=\"&'NSST Print'!B3)"])
+        # "=SUMIFS(Investors!$M:$M,Investors!$J:$J,"<="&'NSST Print'!B$3)"
         ws9.append(["Total Funds Drawn Down into Development",
                     "=SUMIFS(Investors!$M:$M,Investors!$J:$J,\"<=\"&'NSST Print'!B3)"])
         ws9.append(["Momentum Investment Account", "=Dashboard!B13"])
         ws9.append(["Capital not Raised", "=B6-B7-B11"])
         ws9.append(["Available to be raised (Estimated)",
-                    "=SUMIFS(Opportunities!$E:$E,Opportunities!$D:$D,FALSE,Opportunities!$C:$C,FALSE)-SUMIFS(Opportunities!$H:$H,Opportunities!$D:$D,FALSE,Opportunities!$C:$C,FALSE)"])
+                    0])
+
         ws9.append(["Capital repaid",
-                    "=SUMIFS(Investors!$M:$M,Investors!$G:$G,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)-(SUMIFS(Investors!$M:$M,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\")))"])
+                    "=SUMIFS(Investors!$M:$M,Investors!$G:$G,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)+(SUMIFS(Investors!$M:$M,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\")))"])
+        # "=SUMIFS(Investors!$M:$M,Investors!$I:$I,"<="&'NSST Print'!B3,Investors!$K:$K,">"&'NSST Print'!B3)"
         ws9.append(["Current Investor Capital deployed",
-                    "=SUMIFS(Investors!$M:$M,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\"))"])
+                    "=SUMIFS(Investors!$M:$M,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)"])
         ws9.append(["INVESTMENTS"])
         ws9.append(
             ["No. of Capital Investments received", "=COUNTIFS(Investors!$G:$G,FALSE)+COUNTIFS(Investors!$G:$G,TRUE)"])
@@ -4532,19 +4536,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             for row in range(exit_first_row_number, exit_last_row_number + 1):
                 ws10[f"{i}{row}"].font = Font(bold=False, size=12)
                 if i == 'F':
+
+                    # "=SUMIFS(Investors!$M:$M, Investors!$I:$I, "<=" & 'NSST Print'!$B$3, Investors!$K:$K, ">" & 'NSST Print'!$B$3, Investors!$A:$A, 'Investor Exit List'!A4, Investors!$E:$E, 'Investor Exit List'!C4)""
                     ws10[
-                        f"{i}{row}"].value = (f"=SUMIFS(Investors!$M:$M,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,"
-                                              f"Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST "
-                                              f"Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},"
-                                              f"Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,"
-                                              f"'Investor Exit List'!$B{row})-(SUMIFS(Investors!$M:$M,"
-                                              f"Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\">\"&'NSST "
-                                              f"Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},"
-                                              f"Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,"
-                                              f"'Investor Exit List'!$B{row})+SUMIFS(Investors!$M:$M,Investors!$I:$I,"
-                                              f"\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\"\",Investors!$A:$A,"
-                                              f"'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C"
-                                              f"{row},Investors!$L:$L,'Investor Exit List'!$B{row}))")
+                        f"{i}{row}"].value = (f"=SUMIFS(Investors!$M:$M, Investors!$I:$I, \"<=\" & 'NSST Print'!$B$3, Investors!$K:$K, \">\" & 'NSST Print'!$B$3, Investors!$A:$A, 'Investor Exit List'!A{row}, Investors!$E:$E, 'Investor Exit List'!C{row})")
                     ws10[f"{i}{row}"].number_format = 'R#,##0.00'
                 elif i == 'G' or i == 'M':
                     ws10[f"{i}{row}"].number_format = 'yyyy-mm-dd'

@@ -743,3 +743,95 @@ async def get_retentions(request: Request):
         return {"status": "error", "error": e}
 
 
+# import os
+# import smartsheet
+# import urllib.parse
+# import hashlib
+# from decouple import config
+#
+# access_token = ""
+#
+# smart_client = smartsheet.Smartsheet(
+#     {"access_token":access_token})
+#
+#
+#
+# def authorize_url(params):
+#     auth_url = "https://app.smartsheet.com/b/authorize"
+#     print("params", params)
+#     query_string = urllib.parse.urlencode(params)
+#     return f"{auth_url}?{query_string}"
+#
+# client_id = config("SMARTSHEET_CLIENT_ID")
+# redirect_uri = config("SMARTSHEET_REDIRECT_URI")
+# app_secret = config("SMARTSHEET_APP_SECERET")
+#
+# authorization_uri = authorize_url({
+#     "response_type": "code",
+#     "client_id": client_id,
+#     "redirect_uri": redirect_uri,
+#     "scope": "READ_SHEETS",
+#     "state": "WaynesTest"
+# })
+#
+# # Redirect the user to the authorization URI
+# # res.redirect(authorization_uri)
+#
+# auth_code = "sample_auth_code"  # Received from the callback
+#
+# # Calculate the hash
+# hash_value = hashlib.sha256(f"{app_secret}|{auth_code}".encode()).hexdigest()
+#
+# # Set options for the access token request
+# options = {
+#     "queryParameters": {
+#         "client_id": "slpg1r1qxwsn1fgm554",
+#         "code": auth_code,
+#         "hash": hash_value
+#     },
+#     "contentType": "application/x-www-form-urlencoded"
+# }
+#
+# # Get the access token
+# smart_client = smartsheet.Smartsheet({"access_token":access_token})
+#
+# print("smart_client",smart_client)
+#
+# token = smart_client.tokens.get_access_token(options)
+# access_token = token.access_token
+#
+# # Create a new Smartsheet client with the access token
+# smart_client = smartsheet.Smartsheet(access_token=access_token)
+#
+# # List sheets
+# options = {
+#     "queryParameters": {
+#         "include": "attachments",
+#         "includeAll": True
+#     }
+# }
+# sheets = smart_client.sheets.list_sheets(options)
+#
+# # Filter the sheets to find the "Master Project Programme" sheet
+# master_sheet = next((sheet for sheet in sheets.data if sheet.name == "Master Project Programme"), None)
+# if master_sheet:
+#     sheet_id = master_sheet.id
+#     # Do something with the sheet
+#     print(f"Sheet ID: {sheet_id}")
+# else:
+#     print("Master Project Programme sheet not found.")
+#
+
+
+#
+# # Create a Smartsheet client
+# smart = smartsheet.Smartsheet(access_token="ujhvmnu9n79b68uit3n")
+#
+# # Get a list of all sheets
+# response = smart.Sheets.list_sheets()
+# print(response)
+# # sheets = response.data
+
+# Iterate through the sheets and print the name of each one
+# for sheet in sheets:
+#     print(sheet.name)
