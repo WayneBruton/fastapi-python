@@ -1526,16 +1526,21 @@ def get_sales_data(report_date):
 
         construction_data = list(filter(lambda x: x['Whitebox-Able'] == True, construction_data))
 
+        opportunities = list(db.opportunities.find({}, {"_id": 0}))
+
+
         # Get actual sales data from sales_processed where development is "Heron Fields" or "Heron View"
         sales_data_actual = list(
             db.sales_processed.find({}, {"_id": 0, "development": 1, "opportunity_code": 1, "opportunity_sales_date": 1,
-                                         "opportunity_actual_reg_date": 1}))
+                                         "opportunity_actual_reg_date": 1, "opportunity_potential_reg_date": 1, "opportunity_contract_price": 1}))
 
         # filter out where development is not Heron Fields or Heron View
         sales_data_actual = list(
             filter(lambda x: x["development"] == "Heron Fields" or x["development"] == "Heron View" or x[
                 "development"] == "Endulini",
                    sales_data_actual))
+
+
 
         for sale in sales_data_actual:
             # convert opportunity_sales_date to datetime
@@ -1550,23 +1555,64 @@ def get_sales_data(report_date):
 
             # convert opportunity_actual_reg_date to datetime
             try:
-                if sale['opportunity_actual_reg_date'] != "" and sale['opportunity_actual_reg_date'] != None:
+
+                if sale['opportunity_actual_reg_date'] != "" and sale['opportunity_actual_reg_date'] is not None:
+                    # print("ACTUAL",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
                     sale['opportunity_actual_reg_date'] = sale['opportunity_actual_reg_date'].replace("-", "/")
                     sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'],
                                                                             '%Y/%m/%d')
+                elif sale['opportunity_potential_reg_date'] != "" and sale['opportunity_potential_reg_date'] is not None:
+                    # print("POTENTIAL",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
+                    sale['opportunity_actual_reg_date'] = sale['opportunity_potential_reg_date'].replace("-", "/")
+                    sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_potential_reg_date'],
+                                                                            '%Y/%m/%d')
                 else:
-                    sale['opportunity_actual_reg_date'] = "None"
+
+                    opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], opportunities))
+                    # opportunity_end_date
+                    # print()
+                    # print("opportunities_filtered", opportunities_filtered[0])
+
+                    sale['opportunity_actual_reg_date'] = opportunities_filtered[0]['opportunity_end_date'].replace("-", "/")
+                    # print("END DATE",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
+                    # print()
+                    sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'],
+                                                                            '%Y/%m/%d')
+                    # print("Processed END DATE",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
+                    # print()
+                    # print(sale['opportunity_actual_reg_date'], sale['opportunity_code'])
+                    # print("Hello",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
+
+                    # sale['opportunity_actual_reg_date'] = "None"
             except Exception as e:
-                print("Error converting opportunity_actual_reg_date to datetime", e, sale['opportunity_code'])
+                print("Error converting opportunity_actual_reg_date to datetime", e, sale['opportunity_code'],sale['opportunity_potential_reg_date'], sale['opportunity_code'])
+                # print(sale['opportunity_actual_reg_date'], sale['opportunity_code'])
+
                 continue
 
         # print("sales_data", sales_data_actual[0])
 
         # print("construction_data", construction_data[0])
         sales_data = list(db.cashflow_sales.find({}, {"_id": 0}))
+
+        # for item in sales_data:
+        #     filtered_sales_data_actual = list(
+        #         filter(lambda x: x['opportunity_code'] == item['opportunity_code'], sales_data_actual))
+        #     if len(filtered_sales_data_actual) == 0:
+        #         print(len(filtered_sales_data_actual))
+        #         print()
+        #         print("item", item)
+        #         sales_data.remove(item)
+
         # print()
-        # print("sales_data", sales_data[0])
-        for sale in sales_data:
+        # print("sales_data 17", sales_data[17])
+        # print()
+        # print("sales_data 18", sales_data[18])
+        # print()
+
+        for index, sale in enumerate(sales_data):
+            # if index == 18:
+            # print("sale", sale['opportunity_code'], index)
 
             construction_data_filtered = list(filter(lambda x: x['block'] == sale['block'], construction_data))
             # print(sale['block'],construction_data_filtered )
@@ -1590,36 +1636,87 @@ def get_sales_data(report_date):
                 del sale['profit_loss_nice']
             if 'sale_price_nice' in sale:
                 del sale['sale_price_nice']
-            if sale['forecast_transfer_date'] == "":
-                sale['vat_date'] = calculate_vat_due(sale['original_planned_transfer_date'])
-            else:
-                sale['vat_date'] = calculate_vat_due(sale['forecast_transfer_date'])
+
+            # print("sales_data 18", sales_data[18])
+            # if index == 18:
+            #     print("Got here 1")
+
+
+
             # convert original_planned_transfer_date to datetime
             sale['original_planned_transfer_date'] = sale['original_planned_transfer_date'].replace("-", "/")
             sale['original_planned_transfer_date'] = datetime.strptime(sale['original_planned_transfer_date'],
                                                                        '%Y/%m/%d')
+
+
+            # print("Got here 2")
             # if forecast_transfer_date is not empty then convert to datetime
-            if sale['forecast_transfer_date'] != "":
+            sales_data_actual_filtered = list(
+                filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], sales_data_actual))
+
+            # print("Got here 3")
+            # print("sales_data_actual_filtered", sales_data_actual_filtered[0])
+            # print("sales_data_actual_filtered", len(sales_data_actual_filtered))
+            if len(sales_data_actual_filtered) > 0:
+                sale['forecast_transfer_date'] = sales_data_actual_filtered[0]['opportunity_actual_reg_date']
+                sale['forecast_transfer_date'] = sale['forecast_transfer_date'].strftime('%Y-%m-%d')
+                sale['sale_price'] = sales_data_actual_filtered[0]['opportunity_contract_price']
+            else:
+                sale['forecast_transfer_date'] = ""
+
+
+            # print("Got here 4")
+            # print("XXXXX",sale['forecast_transfer_date'])
+            # convert forecast_transfer_date to string in the format yyyy-mm-dd
+
+
+
+
+
+            if sale['forecast_transfer_date'] == "" or sale['forecast_transfer_date'] == None:
+                # if index == 18:
+                    # print("17",sales_data[17])
+                    # print()
+                    # print("18",sale)
+
+                    # convert sale['original_planned_transfer_date'] to string in the format yyyy/mm/dd
+                vat_date = sale['original_planned_transfer_date'].strftime('%Y/%m/%d')
+                sale['vat_date'] = calculate_vat_due(vat_date)
+            else:
+                sale['vat_date'] = calculate_vat_due(sale['forecast_transfer_date'])
+            # print("Got here 4A")
+            if sale['forecast_transfer_date'] != "" and sale['forecast_transfer_date'] != None:
                 sale['forecast_transfer_date'] = sale['forecast_transfer_date'].replace("-", "/")
                 sale['forecast_transfer_date'] = datetime.strptime(sale['forecast_transfer_date'], '%Y/%m/%d')
+
             # convert vat_date to datetime
             sale['vat_date'] = sale['vat_date'].replace("/", "-")
             sale['vat_date'] = datetime.strptime(sale['vat_date'], '%Y-%m-%d')
-
+            # print("Got here 5")
             filtered_sales_data_actual = list(
                 filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], sales_data_actual))
+            # print("Got here 4","len", len(filtered_sales_data_actual), filtered_sales_data_actual[0]['opportunity_sales_date'], report_date)
             if len(filtered_sales_data_actual) > 0:
+                # print("Got here 6")
+
                 if filtered_sales_data_actual[0]['opportunity_sales_date'] > report_date:
                     sale['sold'] = False
+                # print("Got here 6")
+
                 # print(sale)
                 # print()
+
                 if filtered_sales_data_actual[0]['opportunity_actual_reg_date'] != "None":
                     if filtered_sales_data_actual[0]['opportunity_actual_reg_date'] != None:
                         if filtered_sales_data_actual[0]['opportunity_actual_reg_date'] > report_date:
                             sale['transferred'] = False
+                # print("Got here 7", sale['opportunity_code'])
+            # else:
+                # print("Got here 8")
 
             # del sale['profit_loss_nice']
             # del sale['sale_price_nice']
+        print("sales_data", sales_data[0])
 
         return sales_data
     except Exception as e:
@@ -1810,6 +1907,7 @@ async def generate_investors_new_cashflow_nsst_report(data: Request,background_t
         invest = investors_new_cashflow_nsst_report()
         construction = get_construction_costsA()
         sales = get_sales_data(date)
+
         operational_costs = get_operational_costs()
         xero = get_xero_tbs()
         opportunities = get_opportunities()
