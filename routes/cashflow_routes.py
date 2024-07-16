@@ -1527,6 +1527,7 @@ def get_sales_data(report_date):
         construction_data = list(filter(lambda x: x['Whitebox-Able'] == True, construction_data))
 
         opportunities = list(db.opportunities.find({}, {"_id": 0}))
+        # print("opportunities", opportunities[0])
 
 
         # Get actual sales data from sales_processed where development is "Heron Fields" or "Heron View"
@@ -1662,7 +1663,12 @@ def get_sales_data(report_date):
                 sale['forecast_transfer_date'] = sale['forecast_transfer_date'].strftime('%Y-%m-%d')
                 sale['sale_price'] = sales_data_actual_filtered[0]['opportunity_contract_price']
             else:
-                sale['forecast_transfer_date'] = ""
+                opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], opportunities))
+                if len(opportunities_filtered) > 0:
+                    sale['forecast_transfer_date'] = opportunities_filtered[0]['opportunity_end_date']
+
+                else:
+                    sale['forecast_transfer_date'] = "ISSUE HERE"
 
 
             # print("Got here 4")
