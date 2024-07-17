@@ -2384,9 +2384,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                   fill_type="solid")))
 
                 for i in range(investor_exited, investor_exited + 1):
-                    "=I81-I160-I78"
+                    "=I44+I39-I78"
                     ws6[
-                        f"{col}{i}"] = f"={col}{project_income + 1}-{col}{investor_exited + 2}-{col}{roll_over_refinance_properties_start + 2}"
+                        f"{col}{i}"] = f"={col}{funds_available_start + 4}+{col}{funds_available_start + 9}-{col}{investor_exited + 2}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -3078,8 +3078,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 for i in range(investor_exited, investor_exited + 1):
                     "=I81-I160-I78"
                     ws6[
-                        f"{col}{i}"] = ws6[
-                        f"{col}{i}"] = f"={col}{project_income + 1}-{col}{investor_exited + 2}-{col}{roll_over_refinance_properties_start + 2}"
+                        f"{col}{i}"] = f"={col}{funds_available_start + 4}+{col}{funds_available_start + 9}-{col}{investor_exited + 2} + {month_headings[index - 2]}{investor_exited}"
                     ws6[f"{col}{i}"].number_format = '#,##0'
                     ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -4442,7 +4441,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     0])
 
         ws9.append(["Capital repaid",
-                    "=SUMIFS(Investors!$M:$M,Investors!$G:$G,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)+(SUMIFS(Investors!$M:$M,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\")))"])
+                    "=SUMIFS(Investors!$M:$M,Investors!$G:$G,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)+(SUMIFS(Investors!$M:$M,Investors!$G:$G,FALSE,Investors!$K:$K,\"<=\"&'NSST Print'!B3)-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\">\"&'NSST Print'!B3)+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$J:$J,\"\")))"])
         # "=SUMIFS(Investors!$M:$M,Investors!$I:$I,"<="&'NSST Print'!B3,Investors!$K:$K,">"&'NSST Print'!B3)"
         ws9.append(["Current Investor Capital deployed",
                     "=SUMIFS(Investors!$M:$M,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)"])

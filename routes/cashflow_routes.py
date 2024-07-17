@@ -1599,11 +1599,15 @@ def get_sales_data(report_date):
         # for item in sales_data:
         #     filtered_sales_data_actual = list(
         #         filter(lambda x: x['opportunity_code'] == item['opportunity_code'], sales_data_actual))
-        #     if len(filtered_sales_data_actual) == 0:
-        #         print(len(filtered_sales_data_actual))
-        #         print()
-        #         print("item", item)
-        #         sales_data.remove(item)
+            # if item['opportunity_code'] == "HVO205":
+            #     print("filtered_sales_data_actual", filtered_sales_data_actual[0])
+            #     print()
+            #     print("itemXX", item)
+            # if len(filtered_sales_data_actual) == 0:
+            #     print(len(filtered_sales_data_actual))
+            #     print()
+            #     print("item", item)
+            #     sales_data.remove(item)
 
         # print()
         # print("sales_data 17", sales_data[17])
@@ -1722,7 +1726,15 @@ def get_sales_data(report_date):
 
             # del sale['profit_loss_nice']
             # del sale['sale_price_nice']
-        print("sales_data", sales_data[0])
+        # print("sales_data", sales_data[0])
+        for item in sales_data:
+            filtered_opportunities = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'], opportunities))
+            # print("item", item)
+            # opportunity_sold
+            if not filtered_opportunities[0]['opportunity_sold']:
+                item['sold'] = False
+                item['transferred'] = False
+
 
         return sales_data
     except Exception as e:
