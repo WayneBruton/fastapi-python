@@ -1206,14 +1206,14 @@ def investors_new_cashflow_nsst_report():
         # print("filtered_opportunityInvest", investor['investments'])
         # filter investor["Trust"] where Category = "Heron Fields" or Category = "Heron View"
         investor["trust"] = list(
-            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", investor["trust"]))
+            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View"  or x["Category"] == "Goodwood", investor["trust"]))
         # filter investor["Investments"] where Category = "Heron Fields" or Category = "Heron View"
 
         investor["investments"] = list(
-            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", investor["investments"]))
+            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View" or x["Category"] == "Goodwood", investor["investments"]))
         # filter investor["pledges"] where Category = "Heron Fields" or Category = "Heron View"
         investor["pledges"] = list(
-            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", investor["pledges"]))
+            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View"  or x["Category"] == "Goodwood", investor["pledges"]))
 
         # filter out from investor["trust"] where release_date is not empty
     # filter out of investors where trust is empty
@@ -1230,7 +1230,7 @@ def investors_new_cashflow_nsst_report():
     opportunities = list(db.opportunities.find({}, {"_id": 0}))
 
     opportunities = list(
-        filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", opportunities))
+        filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View"  or x["Category"] == "Goodwood", opportunities))
 
     final_investors = []
 
@@ -1528,6 +1528,12 @@ def get_sales_data(report_date):
 
         opportunities = list(db.opportunities.find({}, {"_id": 0}))
         # print("opportunities", opportunities[0])
+        # filter out where Category is not "Heron Fields" or "Heron View" or "Endulini" or "Goodwood"
+        opportunities = list(
+            filter(lambda x: x['Category'] == "Heron Fields" or x['Category'] == "Heron View" or x['Category'] ==
+            "Endulini" or x['Category'] == "Goodwood",
+                   opportunities))
+
 
 
         # Get actual sales data from sales_processed where development is "Heron Fields" or "Heron View"
@@ -1538,12 +1544,14 @@ def get_sales_data(report_date):
         # filter out where development is not Heron Fields or Heron View
         sales_data_actual = list(
             filter(lambda x: x["development"] == "Heron Fields" or x["development"] == "Heron View" or x[
-                "development"] == "Endulini",
+                "development"] == "Endulini" or x[
+                "development"] == "Goodwood",
                    sales_data_actual))
 
 
 
         for sale in sales_data_actual:
+
             # convert opportunity_sales_date to datetime
             # if sale['opportunity_sales_date'] == None:
             # print(sale['opportunity_code'], sale['opportunity_sales_date'], sale['opportunity_actual_reg_date'])
@@ -1585,6 +1593,9 @@ def get_sales_data(report_date):
                     # print("Hello",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
 
                     # sale['opportunity_actual_reg_date'] = "None"
+
+                # if sale["development"] == "Goodwood":
+                #     print("Goodwood", sale)
             except Exception as e:
                 print("Error converting opportunity_actual_reg_date to datetime", e, sale['opportunity_code'],sale['opportunity_potential_reg_date'], sale['opportunity_code'])
                 # print(sale['opportunity_actual_reg_date'], sale['opportunity_code'])
@@ -1596,26 +1607,54 @@ def get_sales_data(report_date):
         # print("construction_data", construction_data[0])
         sales_data = list(db.cashflow_sales.find({}, {"_id": 0}))
 
-        # for item in sales_data:
-        #     filtered_sales_data_actual = list(
-        #         filter(lambda x: x['opportunity_code'] == item['opportunity_code'], sales_data_actual))
-            # if item['opportunity_code'] == "HVO205":
-            #     print("filtered_sales_data_actual", filtered_sales_data_actual[0])
-            #     print()
-            #     print("itemXX", item)
-            # if len(filtered_sales_data_actual) == 0:
-            #     print(len(filtered_sales_data_actual))
-            #     print()
-            #     print("item", item)
-            #     sales_data.remove(item)
+        # print("opportunities", opportunities[0])
+        for opp in opportunities:
+            filtered_sales_data = list(filter(lambda x: x['opportunity_code'] == opp['opportunity_code'], sales_data))
+            if len(filtered_sales_data) == 0:
+                # print("opp", opp['opportunity_code'])
+                sale_price = float(opp['opportunity_sale_price'])
+                if opp['opportunity_final_transfer_date'] != "":
+                    transferred = True
+                else:
+                    transferred = False
+                insert = {
+                    "Category": opp['Category'],
+                    "block": opp['opportunity_code'][-4],
+                    "opportunity_code": opp['opportunity_code'],
+                    "sold": opp['opportunity_sold'],
+                    "transferred": transferred,
+                    "complete_build": True,
+                    "original_planned_transfer_date": opp['opportunity_end_date'],
+                    "forecast_transfer_date": opp['opportunity_end_date'],
+                    "sale_price": opp['opportunity_sale_price'],
+                    "VAT": sale_price / 1.15 * 0.15,
+                    "nett": sale_price / 1.15,
+                    "opportunity_transfer_fees": 0,
+                    "opportunity_trust_release_fee": 1789,
+                    "opportunity_unforseen": sale_price * 0.005,
+                    "opportunity_commission": sale_price * 0.05,
+                    "opportunity_bond_registration": 3500,
+                    "transfer_income": (sale_price / 1.15) - 1789 - (sale_price * 0.005) - (sale_price * 0.05) - 3500,
+                    "due_to_investors": 0,
+                    "profit_loss": (sale_price / 1.15) - 1789 - (sale_price * 0.005) - (sale_price * 0.05) - 3500,
+                    "refinanced": False,
+                }
+                sales_data.append(insert)
+                # print("insert", insert)
+                # print()
 
-        # print()
-        # print("sales_data 17", sales_data[17])
-        # print()
-        # print("sales_data 18", sales_data[18])
-        # print()
+
+        # for sale in sales_data_actual:
+        #     filtered_sales_data = list(filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], sales_data))
+        #     if len(filtered_sales_data) == 0:
+        #
+        #         print("sale", sale)
+                # print()
+                # sales_data_actual.remove(sale
 
         for index, sale in enumerate(sales_data):
+            #
+
             # if index == 18:
             # print("sale", sale['opportunity_code'], index)
 
@@ -1645,6 +1684,8 @@ def get_sales_data(report_date):
             # print("sales_data 18", sales_data[18])
             # if index == 18:
             #     print("Got here 1")
+
+
 
 
 
@@ -1728,12 +1769,18 @@ def get_sales_data(report_date):
             # del sale['sale_price_nice']
         # print("sales_data", sales_data[0])
         for item in sales_data:
+
+
             filtered_opportunities = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'], opportunities))
             # print("item", item)
             # opportunity_sold
             if not filtered_opportunities[0]['opportunity_sold']:
                 item['sold'] = False
                 item['transferred'] = False
+
+
+        # sort sales_data by Category, block, opportunity_code
+        sales_data = sorted(sales_data, key=lambda x: (x['Category'], x['block'], x['opportunity_code']))
 
 
         return sales_data
@@ -1769,7 +1816,8 @@ def get_xero_tbs():
         xero_tbs = list(db.cashflow_xero_tb.find({}, {"_id": 0}))
         # filter xero_tbs returning only hen AccountCode exists
         # filter out of xero_tbs where ReportTitle is "Purple Blok Projects (Pty) Ltd"
-        xero_tbs = list(filter(lambda x: x['ReportTitle'] != "Purple Blok Projects (Pty) Ltd", xero_tbs))
+
+        # xero_tbs = list(filter(lambda x: x['ReportTitle'] != "Purple Blok Projects (Pty) Ltd", xero_tbs))
         xero_tbs = list(filter(lambda x: 'AccountCode' in x, xero_tbs))
         # for item in xero_tbs:
         #     if not 'AccountCode' in item:
@@ -1831,7 +1879,7 @@ def get_opportunities():
         # get opportunities from db where Category equals "Heron Fields" or "Heron View"
         opportunities = list(db.opportunities.find({}, {"_id": 0}))
         opportunities = list(
-            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", opportunities))
+            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View" or x["Category"] == "Goodwood", opportunities))
         # sort by Category then by opportunity_code
         opportunities = sorted(opportunities, key=lambda x: (x['Category'], x['opportunity_code']))
 
@@ -1839,10 +1887,10 @@ def get_opportunities():
         for investor in investors:
             # filter investor["Trust"] where Category = "Heron Fields" or Category = "Heron View"
             investor["trust"] = list(
-                filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", investor["trust"]))
+                filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View"  or x["Category"] == "Goodwood", investor["trust"]))
 
             investor["pledges"] = list(
-                filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View", investor["pledges"]))
+                filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View" or x["Category"] == "Goodwood", investor["pledges"]))
 
             # REMEMBER
 

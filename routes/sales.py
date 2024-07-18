@@ -541,7 +541,8 @@ async def get_investors_linked_to_sale(data: Request):
 async def save_sale(data: Request):
     try:
         request = await data.json()
-        print(request['formData']['opportunity_otp'])
+        # print(request['formData']['opportunity_otp'])
+        # print(request['formData'])
 
         # Update the opportunities collection
         opportunity_code = request['formData']['opportunity_code']
@@ -579,18 +580,25 @@ async def save_sale(data: Request):
 
         if request['formData']['id'] != "":
             id_to_update = request['formData']['id']
+            print("request['formData']", request['formData'])
+            print("id_to_update", id_to_update)
             del request['formData']['id']
+            request['formData']['opportunity_best_price'] = request['formData']['opportunity_base_price']
+
 
             obj_instance = ObjectId(id_to_update)
 
             # replace all data in the document with the new data
             response = db.sales_processed.update_one({"_id": obj_instance}, {"$set": request['formData']})
 
+            print("AWESOME")
+
             return {"updated": "Success"}
 
         else:
             obj_instance = db.sales_processed.insert_one(request['formData']).inserted_id
             sales_processed.update_one({"_id": obj_instance}, {"$set": {"id": str(obj_instance)}})
+            print("Awesome2")
             return {"id": str(obj_instance)}
     except Exception as e:
         print(e)

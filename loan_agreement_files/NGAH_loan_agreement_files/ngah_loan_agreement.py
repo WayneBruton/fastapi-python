@@ -85,6 +85,7 @@ def create_ngah_la(data):
     investor_email = data.get('investor_email', "")
     interest_rate = data['pledges']['investment_interest_rate'] + ' %'
     investment_amount = float(data['pledges']['investment_amount'])
+    number = int(investment_amount)
     investment_amount = "R {:,.2f}".format(investment_amount)
     investor_name = data.get('investor_name', "") + ' ' + data.get('investor_surname', "")
 
@@ -121,6 +122,7 @@ def create_ngah_la(data):
         'investor_email': investor_email,
         'interest_rate': interest_rate,
         'investment_amount': investment_amount,
+        "number": number,
         'investor_name': investor_name,
         'investor_id_number': investor_id_number,
 
