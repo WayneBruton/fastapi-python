@@ -37,7 +37,6 @@ async def construction_cashflow(data: Request):
     #         # print(f"{key}: {value}")
     print("DATA", data[0])
 
-
     try:
         db.cashflow_construction.delete_many({})
         result = db.cashflow_construction.insert_many(data)
@@ -729,7 +728,7 @@ async def get_construction_cashflow():
     try:
         data = list(db.cashflow_construction.find({}))
 
-        print("DATAXX",data[0])
+        print("DATAXX", data[0])
         for item in data:
             item['_id'] = str(item['_id'])
         # data = list(data)
@@ -897,7 +896,6 @@ def get_investors(data):
 
 def get_construction_costs():
     try:
-
 
         construction_costs = list(db.cashflow_construction.find({}, {"Complete Build": 1,
                                                                      "Whitebox-Able": 1, "Blocks": 1, "_id": 0}))
@@ -1203,17 +1201,19 @@ def investors_new_cashflow_nsst_report():
     # start = time.time()
     investors = list(db.investors.find({}, {"_id": 0}))
     for investor in investors:
-        # print("filtered_opportunityInvest", investor['investments'])
-        # filter investor["Trust"] where Category = "Heron Fields" or Category = "Heron View"
+
         investor["trust"] = list(
-            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View"  or x["Category"] == "Goodwood", investor["trust"]))
+            filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
+                "Category"] != "NGAH", investor["trust"]))
         # filter investor["Investments"] where Category = "Heron Fields" or Category = "Heron View"
 
         investor["investments"] = list(
-            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View" or x["Category"] == "Goodwood", investor["investments"]))
+            filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
+                "Category"] != "NGAH", investor["investments"]))
         # filter investor["pledges"] where Category = "Heron Fields" or Category = "Heron View"
         investor["pledges"] = list(
-            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View"  or x["Category"] == "Goodwood", investor["pledges"]))
+            filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
+                "Category"] != "NGAH", investor["pledges"]))
 
         # filter out from investor["trust"] where release_date is not empty
     # filter out of investors where trust is empty
@@ -1230,7 +1230,10 @@ def investors_new_cashflow_nsst_report():
     opportunities = list(db.opportunities.find({}, {"_id": 0}))
 
     opportunities = list(
-        filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View"  or x["Category"] == "Goodwood", opportunities))
+        filter(
+            lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
+                "Category"] != "NGAH",
+            opportunities))
 
     final_investors = []
 
@@ -1243,35 +1246,37 @@ def investors_new_cashflow_nsst_report():
                 filtered_opportunity = list(
                     filter(lambda x: x["opportunity_code"] == trust["opportunity_code"], opportunities))
 
-                # sold = False
-                # transferred = False
-                # if len(filtered_opportunity) > 0:
-                # print("filtered_opportunity", filtered_opportunity[0])
-                sold = filtered_opportunity[0]["opportunity_sold"]
-                if filtered_opportunity[0]["opportunity_final_transfer_date"] != "":
-                    transferred = True
-                else:
-                    transferred = False
+                if len(filtered_opportunity) > 0:
 
-                insert = {
-                    "investor_acc_number": investor["investor_acc_number"],
-                    "investor_name": investor["investor_name"],
-                    "investor_surname": investor["investor_surname"],
-                    "Category": trust["Category"],
-                    "opportunity_code": trust["opportunity_code"],
-                    "sold": sold,
-                    "tansferred": transferred,
-                    "Block": trust["opportunity_code"][-4],
-                    "deposit_date": trust["deposit_date"],
-                    "release_date": trust["release_date"],
-                    "end_date": trust.get("end_date", ""),
-                    "investment_number": trust.get("investment_number", 0),
-                    "investment_amount": float(trust["investment_amount"]),
-                    "investment_interest_rate": float(trust["investment_interest_rate"]),
-                    "early_release": trust.get("early_release", False),
-                    "still_pledged": False,
-                }
-                final_investors.append(insert)
+                    # sold = False
+                    # transferred = False
+                    # if len(filtered_opportunity) > 0:
+                    # print("filtered_opportunity", filtered_opportunity[0])
+                    sold = filtered_opportunity[0]["opportunity_sold"]
+                    if filtered_opportunity[0]["opportunity_final_transfer_date"] != "":
+                        transferred = True
+                    else:
+                        transferred = False
+
+                    insert = {
+                        "investor_acc_number": investor["investor_acc_number"],
+                        "investor_name": investor["investor_name"],
+                        "investor_surname": investor["investor_surname"],
+                        "Category": trust["Category"],
+                        "opportunity_code": trust["opportunity_code"],
+                        "sold": sold,
+                        "tansferred": transferred,
+                        "Block": trust["opportunity_code"][-4],
+                        "deposit_date": trust["deposit_date"],
+                        "release_date": trust["release_date"],
+                        "end_date": trust.get("end_date", ""),
+                        "investment_number": trust.get("investment_number", 0),
+                        "investment_amount": float(trust["investment_amount"]),
+                        "investment_interest_rate": float(trust["investment_interest_rate"]),
+                        "early_release": trust.get("early_release", False),
+                        "still_pledged": False,
+                    }
+                    final_investors.append(insert)
 
         if len(investor["investments"]) > 0:
             for investment in investor["investments"]:
@@ -1282,67 +1287,75 @@ def investors_new_cashflow_nsst_report():
                 filtered_opportunity = list(
                     filter(lambda x: x["opportunity_code"] == investment["opportunity_code"], opportunities))
 
-                sold = filtered_opportunity[0]["opportunity_sold"]
-                # if filtered_opportunity[0]["opportunity_code"] == "HVC106":
-                #     print("filtered_opportunity", filtered_opportunity)
-                #     print()
-                if filtered_opportunity[0]["opportunity_final_transfer_date"] != "":
-                    transferred = True
-                else:
-                    transferred = False
+                if len(filtered_opportunity) > 0:
 
-                insert = {
-                    "investor_acc_number": investor["investor_acc_number"],
-                    "investor_name": investor["investor_name"],
-                    "investor_surname": investor["investor_surname"],
-                    "Category": investment["Category"],
-                    "opportunity_code": investment["opportunity_code"],
-                    "sold": sold,
-                    "tansferred": transferred,
-                    "Block": investment["opportunity_code"][-4],
-                    "deposit_date": filtered_trust[0]["deposit_date"],
-                    "release_date": investment["release_date"],
-                    "end_date": investment.get("end_date", ""),
-                    "investment_number": investment.get("investment_number", 0),
-                    "investment_amount": float(investment["investment_amount"]),
-                    "investment_interest_rate": float(investment["investment_interest_rate"]),
-                    "early_release": investment.get("early_release", False),
-                    "still_pledged": False,
-                }
-                final_investors.append(insert)
+                    sold = filtered_opportunity[0]["opportunity_sold"]
+                    # if filtered_opportunity[0]["opportunity_code"] == "HVC106":
+                    #     print("filtered_opportunity", filtered_opportunity)
+                    #     print()
+                    if filtered_opportunity[0]["opportunity_final_transfer_date"] != "":
+                        transferred = True
+                    else:
+                        transferred = False
 
+                    insert = {
+                        "investor_acc_number": investor["investor_acc_number"],
+                        "investor_name": investor["investor_name"],
+                        "investor_surname": investor["investor_surname"],
+                        "Category": investment["Category"],
+                        "opportunity_code": investment["opportunity_code"],
+                        "sold": sold,
+                        "tansferred": transferred,
+                        "Block": investment["opportunity_code"][-4],
+                        "deposit_date": filtered_trust[0]["deposit_date"],
+                        "release_date": investment["release_date"],
+                        "end_date": investment.get("end_date", ""),
+                        "investment_number": investment.get("investment_number", 0),
+                        "investment_amount": float(investment["investment_amount"]),
+                        "investment_interest_rate": float(investment["investment_interest_rate"]),
+                        "early_release": investment.get("early_release", False),
+                        "still_pledged": False,
+                    }
+                    final_investors.append(insert)
+        # print(opportunities)
         if len(investor["pledges"]) > 0:
             for pledge in investor["pledges"]:
+                if pledge["Category"] != "Unallocated":
 
-                filtered_opportunity = list(
-                    filter(lambda x: x["opportunity_code"] == pledge["opportunity_code"], opportunities))
-                sold = filtered_opportunity[0]["opportunity_sold"]
+                    filtered_opportunity = list(
+                        filter(lambda x: x["opportunity_code"] == pledge["opportunity_code"], opportunities))
 
-                # print("filtered_opportunity", filtered_opportunity[0])
-                if filtered_opportunity[0]["opportunity_final_transfer_date"] != "":
-                    transferred = True
-                else:
-                    transferred = False
+                    if len(filtered_opportunity) > 0:
+                        # print(pledge)
+                        # print("filtered_opportunity", filtered_opportunity)
+                        # print("Opportunity Code:",pledge['opportunity_code'])
+                        sold = filtered_opportunity[0]["opportunity_sold"]
 
-                insert = {
-                    "investor_acc_number": investor["investor_acc_number"],
-                    "investor_name": investor["investor_name"],
-                    "investor_surname": investor["investor_surname"],
-                    "Category": pledge["Category"],
-                    "opportunity_code": pledge["opportunity_code"],
-                    "sold": sold,
-                    "tansferred": transferred,
-                    "Block": pledge["opportunity_code"][-4],
-                    "deposit_date": pledge["deposit_date"],
-                    "release_date": pledge["release_date"],
-                    "end_date": pledge.get("end_date", ""),
-                    "investment_number": pledge.get("investment_number", 0),
-                    "investment_amount": float(pledge["investment_amount"]),
-                    "investment_interest_rate": float(pledge["investment_interest_rate"]),
-                    "early_release": pledge.get("early_release", False),
-                    "still_pledged": True,
-                }
-                final_investors.append(insert)
+                        # print("filtered_opportunity", filtered_opportunity[0])
+                        if filtered_opportunity[0]["opportunity_final_transfer_date"] != "":
+                            transferred = True
+                        else:
+                            transferred = False
+
+                        insert = {
+                            "investor_acc_number": investor["investor_acc_number"],
+                            "investor_name": investor["investor_name"],
+                            "investor_surname": investor["investor_surname"],
+                            "Category": pledge["Category"],
+                            "opportunity_code": pledge["opportunity_code"],
+                            "sold": sold,
+                            "tansferred": transferred,
+                            "Block": pledge["opportunity_code"][-4],
+                            "deposit_date": pledge["deposit_date"],
+                            "release_date": pledge["release_date"],
+                            "end_date": pledge.get("end_date", ""),
+                            "investment_number": pledge.get("investment_number", 0),
+                            "investment_amount": float(pledge["investment_amount"]),
+                            "investment_interest_rate": float(pledge["investment_interest_rate"]),
+                            "early_release": pledge.get("early_release", False),
+                            "still_pledged": True,
+                        }
+                        final_investors.append(insert)
 
     rates = list(db.rates.find({}, {"_id": 0}))
     for rate in rates:
@@ -1354,15 +1367,15 @@ def investors_new_cashflow_nsst_report():
     rates = sorted(rates, key=lambda x: x['Efective_date'], reverse=True)
 
     sales_parameters = list(db.salesParameters.find({}, {"_id": 0}))
-    sales_parameters = list(
-        filter(lambda x: x["Development"] == "Heron Fields" or x["Development"] == "Heron View", sales_parameters))
+    # sales_parameters = list(
+    #     filter(lambda x: x["Development"] == "Heron Fields" or x["Development"] == "Heron View", sales_parameters))
     for param in sales_parameters:
         param["rate"] = float(param["rate"])
         param["Effective_date"] = param["Effective_date"].replace("-", "/")
         param["Effective_date"] = datetime.strptime(param["Effective_date"], "%Y/%m/%d")
 
     sales = list(db.sales_processed.find({}, {"_id": 0}))
-    sales = list(filter(lambda x: x["development"] == "Heron Fields" or x["development"] == "Heron View", sales))
+    # sales = list(filter(lambda x: x["development"] == "Heron Fields" or x["development"] == "Heron View", sales))
     # print("sales", sales[0])
 
     # FUNNIES
@@ -1528,10 +1541,10 @@ def get_sales_data(report_date):
 
         opportunities = list(db.opportunities.find({}, {"_id": 0}))
         # print("opportunities", opportunities[0])
-        # filter out where Category is not "Heron Fields" or "Heron View" or "Endulini" or "Goodwood"
+
         opportunities = list(
-            filter(lambda x: x['Category'] == "Heron Fields" or x['Category'] == "Heron View" or x['Category'] ==
-            "Endulini" or x['Category'] == "Goodwood",
+            filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
+                "Category"] != "NGAH",
                    opportunities))
 
 
@@ -1539,16 +1552,24 @@ def get_sales_data(report_date):
         # Get actual sales data from sales_processed where development is "Heron Fields" or "Heron View"
         sales_data_actual = list(
             db.sales_processed.find({}, {"_id": 0, "development": 1, "opportunity_code": 1, "opportunity_sales_date": 1,
-                                         "opportunity_actual_reg_date": 1, "opportunity_potential_reg_date": 1, "opportunity_contract_price": 1}))
+                                         "opportunity_actual_reg_date": 1, "opportunity_potential_reg_date": 1,
+                                         "opportunity_contract_price": 1}))
 
         # filter out where development is not Heron Fields or Heron View
+        # print("sales_data_actual A", len(sales_data_actual))
+        # for sale in sales_data_actual:
+        #     print(sale)
+        # sales_data_actual = list(
+        #     filter(lambda x: x["development"] == "Heron View" or x["development"] == "Heron Fields" or x[
+        #         "development"] == "Goodwood",
+        #            sales_data_actual))
+
         sales_data_actual = list(
-            filter(lambda x: x["development"] == "Heron Fields" or x["development"] == "Heron View" or x[
-                "development"] == "Endulini" or x[
-                "development"] == "Goodwood",
+            filter(lambda x: x["development"] != "Endulini" and x["development"] != "Southwark" and x[
+                "development"] != "NGAH",
                    sales_data_actual))
 
-
+        # print("sales_data_actual B", sales_data_actual[0])
 
         for sale in sales_data_actual:
 
@@ -1563,6 +1584,7 @@ def get_sales_data(report_date):
                 sale['opportunity_sales_date'] = datetime.strptime(sale['opportunity_sales_date'], '%Y/%m/%d')
 
             # convert opportunity_actual_reg_date to datetime
+
             try:
 
                 if sale['opportunity_actual_reg_date'] != "" and sale['opportunity_actual_reg_date'] is not None:
@@ -1570,19 +1592,22 @@ def get_sales_data(report_date):
                     sale['opportunity_actual_reg_date'] = sale['opportunity_actual_reg_date'].replace("-", "/")
                     sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'],
                                                                             '%Y/%m/%d')
-                elif sale['opportunity_potential_reg_date'] != "" and sale['opportunity_potential_reg_date'] is not None:
+                elif sale['opportunity_potential_reg_date'] != "" and sale[
+                    'opportunity_potential_reg_date'] is not None:
                     # print("POTENTIAL",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
                     sale['opportunity_actual_reg_date'] = sale['opportunity_potential_reg_date'].replace("-", "/")
                     sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_potential_reg_date'],
                                                                             '%Y/%m/%d')
                 else:
 
-                    opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], opportunities))
+                    opportunities_filtered = list(
+                        filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], opportunities))
                     # opportunity_end_date
                     # print()
                     # print("opportunities_filtered", opportunities_filtered[0])
 
-                    sale['opportunity_actual_reg_date'] = opportunities_filtered[0]['opportunity_end_date'].replace("-", "/")
+                    sale['opportunity_actual_reg_date'] = opportunities_filtered[0]['opportunity_end_date'].replace("-",
+                                                                                                                    "/")
                     # print("END DATE",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
                     # print()
                     sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'],
@@ -1597,7 +1622,8 @@ def get_sales_data(report_date):
                 # if sale["development"] == "Goodwood":
                 #     print("Goodwood", sale)
             except Exception as e:
-                print("Error converting opportunity_actual_reg_date to datetime", e, sale['opportunity_code'],sale['opportunity_potential_reg_date'], sale['opportunity_code'])
+                print("Error converting opportunity_actual_reg_date to datetime", e, sale['opportunity_code'],
+                      sale['opportunity_potential_reg_date'], sale['opportunity_code'])
                 # print(sale['opportunity_actual_reg_date'], sale['opportunity_code'])
 
                 continue
@@ -1605,7 +1631,13 @@ def get_sales_data(report_date):
         # print("sales_data", sales_data_actual[0])
 
         # print("construction_data", construction_data[0])
+
         sales_data = list(db.cashflow_sales.find({}, {"_id": 0}))
+
+        # filter out of sales data where Category is Endulini, Southwark or NGAH
+        sales_data = list(
+            filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x["Category"] != "NGAH",
+                   sales_data))
 
         # print("opportunities", opportunities[0])
         for opp in opportunities:
@@ -1643,14 +1675,13 @@ def get_sales_data(report_date):
                 # print("insert", insert)
                 # print()
 
-
         # for sale in sales_data_actual:
         #     filtered_sales_data = list(filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], sales_data))
         #     if len(filtered_sales_data) == 0:
         #
         #         print("sale", sale)
-                # print()
-                # sales_data_actual.remove(sale
+        # print()
+        # sales_data_actual.remove(sale
 
         for index, sale in enumerate(sales_data):
             #
@@ -1659,7 +1690,7 @@ def get_sales_data(report_date):
             # print("sale", sale['opportunity_code'], index)
 
             construction_data_filtered = list(filter(lambda x: x['block'] == sale['block'], construction_data))
-            # print(sale['block'],construction_data_filtered )
+
             if len(construction_data_filtered) > 0:
                 if construction_data_filtered[0]['Complete Build'] == False and construction_data_filtered[0][
                     'Whitebox-Able'] == True:
@@ -1685,15 +1716,10 @@ def get_sales_data(report_date):
             # if index == 18:
             #     print("Got here 1")
 
-
-
-
-
             # convert original_planned_transfer_date to datetime
             sale['original_planned_transfer_date'] = sale['original_planned_transfer_date'].replace("-", "/")
             sale['original_planned_transfer_date'] = datetime.strptime(sale['original_planned_transfer_date'],
                                                                        '%Y/%m/%d')
-
 
             # print("Got here 2")
             # if forecast_transfer_date is not empty then convert to datetime
@@ -1708,29 +1734,25 @@ def get_sales_data(report_date):
                 sale['forecast_transfer_date'] = sale['forecast_transfer_date'].strftime('%Y-%m-%d')
                 sale['sale_price'] = sales_data_actual_filtered[0]['opportunity_contract_price']
             else:
-                opportunities_filtered = list(filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], opportunities))
+                opportunities_filtered = list(
+                    filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], opportunities))
                 if len(opportunities_filtered) > 0:
                     sale['forecast_transfer_date'] = opportunities_filtered[0]['opportunity_end_date']
 
                 else:
                     sale['forecast_transfer_date'] = "ISSUE HERE"
 
-
             # print("Got here 4")
             # print("XXXXX",sale['forecast_transfer_date'])
             # convert forecast_transfer_date to string in the format yyyy-mm-dd
 
-
-
-
-
             if sale['forecast_transfer_date'] == "" or sale['forecast_transfer_date'] == None:
                 # if index == 18:
-                    # print("17",sales_data[17])
-                    # print()
-                    # print("18",sale)
+                # print("17",sales_data[17])
+                # print()
+                # print("18",sale)
 
-                    # convert sale['original_planned_transfer_date'] to string in the format yyyy/mm/dd
+                # convert sale['original_planned_transfer_date'] to string in the format yyyy/mm/dd
                 vat_date = sale['original_planned_transfer_date'].strftime('%Y/%m/%d')
                 sale['vat_date'] = calculate_vat_due(vat_date)
             else:
@@ -1763,25 +1785,34 @@ def get_sales_data(report_date):
                             sale['transferred'] = False
                 # print("Got here 7", sale['opportunity_code'])
             # else:
-                # print("Got here 8")
+            # print("Got here 8")
 
             # del sale['profit_loss_nice']
             # del sale['sale_price_nice']
         # print("sales_data", sales_data[0])
+
         for item in sales_data:
 
-
-            filtered_opportunities = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'], opportunities))
+            filtered_opportunities = list(
+                filter(lambda x: x['opportunity_code'] == item['opportunity_code'], opportunities))
             # print("item", item)
             # opportunity_sold
             if not filtered_opportunities[0]['opportunity_sold']:
                 item['sold'] = False
                 item['transferred'] = False
 
+        # filter out of sales_data where Category is Endulini
+        sales_data = list(filter(lambda x: x['Category'] != "Endulini", sales_data))
+        # filter out of sales_data where Category is Heron Fields
+        # sales_data = list(filter(lambda x: x['Category'] != "Heron Fields", sales_data))
+
+        for item in sales_data:
+            if item['Category'] == "Goodwood":
+                item['block'] = "R"
+                # print(item)
 
         # sort sales_data by Category, block, opportunity_code
         sales_data = sorted(sales_data, key=lambda x: (x['Category'], x['block'], x['opportunity_code']))
-
 
         return sales_data
     except Exception as e:
@@ -1879,7 +1910,8 @@ def get_opportunities():
         # get opportunities from db where Category equals "Heron Fields" or "Heron View"
         opportunities = list(db.opportunities.find({}, {"_id": 0}))
         opportunities = list(
-            filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View" or x["Category"] == "Goodwood", opportunities))
+            filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
+                "Category"] != "NGAH", opportunities))
         # sort by Category then by opportunity_code
         opportunities = sorted(opportunities, key=lambda x: (x['Category'], x['opportunity_code']))
 
@@ -1887,10 +1919,12 @@ def get_opportunities():
         for investor in investors:
             # filter investor["Trust"] where Category = "Heron Fields" or Category = "Heron View"
             investor["trust"] = list(
-                filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View"  or x["Category"] == "Goodwood", investor["trust"]))
+                filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
+                "Category"] != "NGAH", investor["trust"]))
 
             investor["pledges"] = list(
-                filter(lambda x: x["Category"] == "Heron Fields" or x["Category"] == "Heron View" or x["Category"] == "Goodwood", investor["pledges"]))
+                filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
+                "Category"] != "NGAH", investor["pledges"]))
 
             # REMEMBER
 
@@ -1922,12 +1956,28 @@ def get_opportunities():
                                'opportunity_code'] == "HFA205" and investor['investment_number'] == 1)]
 
         final_opportunities = []
+        print("opportunities", len(opportunities))
+        # filter opportunities so that Category is Heron View
+        # test1 = list(filter(lambda x: x['Category'] == "Heron View", opportunities))
+        # test2 = list(filter(lambda x: x['Category'] == "Heron Fields", opportunities))
+        # test3 = list(filter(lambda x: x['Category'] == "Goodwood", opportunities))
+        # test4 = list(filter(lambda x: x['Category'] == "TEST", opportunities))
+        # print("test1", len(test1))
+        # print("test2", len(test2))
+        # print("test3", len(test3))
+        # print("test4", len(test4))
 
-        for opportunity in opportunities:
+        # for opp in opportunities:
+        #     print("opp", opp)
+        #     print()
+
+        for index, opportunity in enumerate(opportunities):
+            # print("opportunity", opportunity, index)
             # convert opportunity_end_date to datetime
             opportunity['opportunity_end_date'] = opportunity['opportunity_end_date'].replace("-", "/")
             opportunity['opportunity_end_date'] = datetime.strptime(opportunity['opportunity_end_date'], '%Y/%m/%d')
             # convert opportunity_final_transfer_date to datetime
+            # print("opportunity", opportunity, index)
             if opportunity['opportunity_final_transfer_date'] != "":
                 opportunity['transferred'] = True
                 opportunity['opportunity_final_transfer_date'] = opportunity['opportunity_final_transfer_date'].replace(
@@ -1937,6 +1987,7 @@ def get_opportunities():
                     opportunity['opportunity_final_transfer_date'], '%Y/%m/%d')
             else:
                 opportunity['transferred'] = False
+
             insert = {
                 "Category": opportunity['Category'],
                 "opportunity_code": opportunity['opportunity_code'],
@@ -1961,7 +2012,7 @@ def get_opportunities():
 
 
 @cashflow.post("/generate_investors_new_cashflow_nsst_report")
-async def generate_investors_new_cashflow_nsst_report(data: Request,background_tasks: BackgroundTasks):
+async def generate_investors_new_cashflow_nsst_report(data: Request, background_tasks: BackgroundTasks):
     request = await data.json()
     date = request['date']
     # print(date)
@@ -1971,6 +2022,7 @@ async def generate_investors_new_cashflow_nsst_report(data: Request,background_t
         if os.path.exists("cashflow_p&l_files/cashflow_projection.xlsx"):
             os.remove("cashflow_p&l_files/cashflow_projection.xlsx")
         invest = investors_new_cashflow_nsst_report()
+
         construction = get_construction_costsA()
         sales = get_sales_data(date)
 
@@ -2028,8 +2080,78 @@ async def generate_investors_new_cashflow_nsst_report(data: Request,background_t
         # result = cashflow_projections(invest, construction, sales, operational_costs, xero, opportunities,
         #                               investor_exit, momentum, date)
 
-        background_tasks.add_task(cashflow_projections,invest, construction, sales, operational_costs, xero, opportunities,
-                                      investor_exit, momentum, date)
+        # for item in construction:
+        #     print(item)
+        #     print()
+        insert = {
+            "Whitebox-Able": True,
+            "Blocks": "Block R",
+            "Complete Build": 0,
+            'Option': 0,
+            'Remaining As Per Options': 0.0,
+            'To Complete After Option Achieved': 0.0,
+            ' Total Cost To Complete ': 2019943.35,
+            '2024/03/31 Actual': 0.0,
+            '30-Apr-24': 0.0,
+            '30-May-24': 0.0,
+            '29-Jun-24': 0.0,
+            '29-Jul-24': 211008.5,
+            '28-Aug-24': 302718.75,
+            '27-Sep-24': 211710.25,
+            '31-Oct-24': 5437.5,
+            '30-Nov-24': 2718.75,
+            '31-Dec-24': 2718.75,
+            '31-Jan-25': 2718.75,
+            '28-Feb-25': 2718.75
+        }
+        construction.append(insert)
+
+        # head = [0, 1, 2]
+        # k = 3
+        # print("rotat= ", k % len(head))
+        # k = k % len(head)
+        # if k > 0:
+        #     for i in range(1, k + 1):
+        #         # move the last item in the list to the first position
+        #         head.insert(0, head.pop())
+        # print("Head",head)
+
+        # print("operatonal_costs", operational_costs[0])
+        insert = {
+            ' Company ': 'Goodwood',
+            ' Account ': 'Professional & Other Fees',
+            ' Month1 ': 0,
+            ' Month2 ': 0,
+            ' Month3 ': 0,
+            ' Month4 ': 0,
+            ' Month5 ': 295387.0425,
+            ' Month6 ': 361192.3975,
+            ' Month7 ': 248820,
+            ' Month8 ': 238645,
+            ' Month9 ': 228470,
+            ' Month10 ': 215455.614,
+            ' Month11 ': 97526,
+            ' Operating Expenses ': 240785.1506
+        }
+        operational_costs.append(insert)
+
+        for item in invest:
+            if item["Category"] == "Goodwood":
+                item['Block'] = "R"
+
+        for item in investor_exit:
+            # if the unit_number begins with GW then make block = R
+            if item['unit_number'].startswith("GW"):
+                item['block'] = "R"
+                # print()
+            # if index == 0:
+            #     print(item)
+            # item['block'] = "R"
+            # print()
+
+        background_tasks.add_task(cashflow_projections, invest, construction, sales, operational_costs, xero,
+                                  opportunities,
+                                  investor_exit, momentum, date)
 
         result = "cashflow_p&l_files/cashflow_projection.xlsx"
 
@@ -2534,7 +2656,8 @@ def rollover_investors(effective_date):
                 filterered_opportunities = list(filter(lambda x: x['block'] == investment['opportunity_code'][2],
                                                        opportunities))
 
-                filtered_sold_status = list(filter(lambda x: x['opportunity_code'] == investment['opportunity_code'], sold_status))
+                filtered_sold_status = list(
+                    filter(lambda x: x['opportunity_code'] == investment['opportunity_code'], sold_status))
                 if len(filtered_sold_status) > 0:
                     sold = filtered_sold_status[0]['sold']
                     transferred = filtered_sold_status[0]['transferred']
@@ -2550,15 +2673,11 @@ def rollover_investors(effective_date):
                     filter(lambda x: x['investor'] == investor['investor_acc_number'], previous_investments))
                 previously_invested = ""
                 if len(filtered_previous_investments) > 0:
-                   for index,block in enumerate(filtered_previous_investments[0]['previous_blocks']):
-                          if index == len(filtered_previous_investments[0]['previous_blocks']) - 1:
-                              previously_invested += block
-                          else:
-                              previously_invested += block + ", "
-
-
-
-
+                    for index, block in enumerate(filtered_previous_investments[0]['previous_blocks']):
+                        if index == len(filtered_previous_investments[0]['previous_blocks']) - 1:
+                            previously_invested += block
+                        else:
+                            previously_invested += block + ", "
 
                 insert = {
                     "investment_amount": float(investment['investment_amount']),
@@ -2604,7 +2723,6 @@ def rollover_investors(effective_date):
                 insert['investment_interest'] = investment_amount * insert['investment_interest_rate'] / 365 * (
                         effective_date - release_date).days
                 insert['total_value'] = investment_amount + insert['investment_interest'] + momentum_interest
-
 
                 # print("insert", insert['investor_acc_number'])
 
@@ -2687,6 +2805,5 @@ def rollover_investors(effective_date):
     except Exception as e:
         print("Error getting investors", e)
         return {"success": False, "error": str(e)}
-
 
 # rollover_investors("2024/06/01")

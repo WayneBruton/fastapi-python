@@ -167,7 +167,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
     start = time.time()
     request = await data.json()
 
-    print("request", request)
+    print("request XXYY", request)
 
     # print("request", request['firstName'])
 
@@ -237,6 +237,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
             }
         ]
         # query_start = time.time()
+
         result = {
             "investor_list": list(db.investors.aggregate(pipeline)),
             "opportunities_list": list(db.opportunities.find({"Category": {"$in": request['Category']}})),
@@ -315,6 +316,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                         insert[item] = trust_item[item]
                     trust_list.append(insert)
 
+
         for opportunity in opportunities_list:
             opportunity['id'] = str(opportunity['_id'])
             del opportunity['_id']
@@ -339,6 +341,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
 
             if not opportunity["opportunity_sold"]:
                 opportunity["opportunity_transferred"] = False
+
 
         for sales_parameter in sales_parameters_list:
             sales_parameter['id'] = str(sales_parameter['_id'])
@@ -792,6 +795,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                                         unallocated_investments_list if
                                         unallocated_investment['deposit_date'] != ""]
 
+
         for investor in final_investors_list:
 
             # Filter unallocated_investments_list where opportunity_code is equal to investor['opportunity_code'] and
@@ -936,7 +940,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     investor['released_interest_total'] = released_interest_total
             # print("GOT HERE!!!XXX", len(final_investors_list))
             # print(final_investors_list[136])
-
+            # ALL RENTAL FIELDS MUST BE FILLED IN TO REFLECT NETT RENTAL
             for index,investor in enumerate(final_investors_list):
                 # print(index, investor['investor_acc_number'], investor['opportunity_code'], investor['investment_number'])
                 # print()
@@ -949,12 +953,14 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 investor["rental_rented_out"] = filtered_opps[0].get("rental_rented_out", False)
                 investor["rental_start_date"] = filtered_opps[0].get("rental_start_date", "")
                 investor["rental_end_date"] = filtered_opps[0].get("rental_end_date", "")
+
                 investor["rental_income_to_date"] = float(filtered_opps[0].get("rental_income_to_date", 0))
 
                 investor["rental_income_to_contract_end"] = float(
                     filtered_opps[0].get("rental_income_to_contract_end", 0))
                 investor["rental_gross_amount"] = float(filtered_opps[0].get("rental_gross_amount", 0))
                 investor["rental_deposit_amount"] = filtered_opps[0].get("rental_deposit_amount", 0)
+
                 if investor["rental_deposit_amount"] == "":
                     investor["rental_deposit_amount"] = 0
                 else:
@@ -973,7 +979,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                     investor["rental_rates"] = 0
                 else:
                     investor["rental_rates"] = float(filtered_opps[0].get("rental_rates", 0))
-                if filtered_opps[0].get("rental_other_expenses", 0) == "":
+                if filtered_opps[0].get("rental_other_expenses", 0) == "" or filtered_opps[0].get("rental_other_expenses", 0) is None:
                     investor["rental_other_expenses"] = 0
                 else:
                     investor["rental_other_expenses"] = float(filtered_opps[0].get("rental_other_expenses", 0))
@@ -1002,7 +1008,7 @@ async def get_sales_info(background_tasks: BackgroundTasks, data: Request):
                 else:
                     investor["potential_income"] = 0
 
-        # print("GOT HERE!!!YYY")
+
         for investor in final_investors_list:
             if investor['release_date'] == "" and investor['planned_release_date'] != "":
                 final_transfer_date = datetime.strptime(investor['opportunity_final_transfer_date'].replace("-", "/"),
@@ -1364,8 +1370,12 @@ def investment_status(request):
 async def create_cashflow(data: Request):
     request = await data.json()
 
+
+
     try:
         start = time.time()
+
+
 
         if len(request['Category']) > 1:
             filename = f"excel_files/Cashflow Heron.xlsx"
@@ -1605,7 +1615,7 @@ async def get_cashflow(cashflow_name):
 @excel_sales_forecast.post("/check_if_file_exists")
 async def check_if_file_exists(data: Request):
     request = await data.json()
-    print("request", request)
+    print("request XXX", request)
     filename = request['filename'].split("/")[1]
     if os.path.exists(request['filename']):
         return {"filename": filename}

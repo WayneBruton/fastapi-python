@@ -1277,7 +1277,7 @@ def create_investment_list(data, request):
 
 
 def create_cash_flow(data, request, other_data):
-    # print("data", data)
+    print("data", data)
     # print("request", request)
 
     worksheet_data = []
@@ -1359,6 +1359,7 @@ def create_cash_flow(data, request, other_data):
     ws2.column_dimensions['C'].width = 20
 
     wb.save(f"excel_files/Cashflow {heading}.xlsx")
+
 
     return f"Cashflow {heading}.xlsx"
 
