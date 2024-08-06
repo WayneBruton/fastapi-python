@@ -17,6 +17,7 @@ from bson.objectid import ObjectId
 from early_releases_excel_generation.early_releases_excel import early_release_creation
 from loan_agreement_files.goodwood_loan_agreement_files.goodwood_loan_agreement import create_goodwood_la
 from loan_agreement_files.NGAH_loan_agreement_files.ngah_loan_agreement import create_ngah_la
+from loan_agreement_files.goodwood_exit_letters.goodwood_exit_letters import create_goodwood_exit_letters
 from configuration.db import db
 from PyPDF2 import PdfFileMerger
 
@@ -526,6 +527,49 @@ def merge_pdfs(input_folder, output_pdf):
         merger.write(output_file)
 
     print(f'Merged PDFs successfully. Output saved to: {output_pdf}')
+
+
+@investor.post("/exit_letters")
+async def early_exits(data: Request):
+    request = await data.json()
+    # print(request)
+    investor = db.investors.find_one({"investor_acc_number": request['investor_acc_number']},{"investor_name": 1, "investor_surname": 1, "investor_acc_number": 1, "investments": 1, "_id": 0})
+    investor['investments'] = list(filter(lambda x: x['opportunity_code'] == request['opportunity_code'], investor['investments']))
+    data = {
+        "investor_name": f"{investor['investor_name']} {investor['investor_surname']}",
+        "investor_acc_number": investor['investor_acc_number'],
+        "opportunity_code": request['opportunity_code'],
+        "exit_date": investor['investments'][0]['end_date'],
+        "exit_amount": investor['investments'][0]['exit_amount'],
+        "rollover_amount": investor['investments'][0]['rollover_amount'],
+        "exit_value": investor['investments'][0]['exit_value'],
+        "investment_exit_rollover": investor['investments'][0]['investment_exit_rollover'],
+    }
+    # print("Data",data)
+
+    result = create_goodwood_exit_letters(data)
+    return result
+
+@investor.get("/get_exit_letter")
+async def get_exit_letter(file_name):
+    try:
+        file_name = file_name
+
+        dir_path = "loan_agreements"
+        dir_list = os.listdir(dir_path)
+
+        if file_name in dir_list:
+
+            return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
+        else:
+            return {"ERROR": "File does not exist!!"}
+    except Exception as e:
+        print(e)
+        return {"ERROR": "Please Try again"}
+
+
+    # print(investor)
+    # return request
 
 # def importNGAH():
 #     # loop through NGAH.json and print each item
