@@ -533,7 +533,7 @@ def merge_pdfs(input_folder, output_pdf):
 async def early_exits(data: Request):
     request = await data.json()
     # print(request)
-    investor = db.investors.find_one({"investor_acc_number": request['investor_acc_number']},{"investor_name": 1, "investor_surname": 1, "investor_acc_number": 1, "investments": 1, "_id": 0})
+    investor = db.investors.find_one({"investor_acc_number": request['investor_acc_number']},{"investor_name": 1, "investor_surname": 1, "investor_acc_number": 1, "investments": 1,"investor_organisation": 1, "_id": 0})
     investor['investments'] = list(filter(lambda x: x['opportunity_code'] == request['opportunity_code'], investor['investments']))
     data = {
         "investor_name": f"{investor['investor_name']} {investor['investor_surname']}",
@@ -544,6 +544,7 @@ async def early_exits(data: Request):
         "rollover_amount": investor['investments'][0]['rollover_amount'],
         "exit_value": investor['investments'][0]['exit_value'],
         "investment_exit_rollover": investor['investments'][0]['investment_exit_rollover'],
+        "investor_organisation": investor['investor_organisation']
     }
     # print("Data",data)
 

@@ -13,7 +13,12 @@ def create_goodwood_exit_letters(data):
     print("Data in Letter File:::",data)
     months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October","November", "December"]
 
-    investor_name = data.get('investor_name', "")
+
+    investor_organisation = data.get('investor_organisation', "")
+    if investor_organisation != '' and investor_organisation != None:
+        investor_name = investor_organisation
+    else:
+        investor_name = data.get('investor_name', "")
     investor_name_nsst = data.get('investor_name', "")
     investor_name_nsst = investor_name_nsst.split(' ')
 
@@ -26,7 +31,7 @@ def create_goodwood_exit_letters(data):
     opp_code = data.get('opportunity_code', "")
     exit_date = data.get('exit_date', "")
     exit_date = exit_date.split('/')
-    exit_date = f"{exit_date[2]} {months[int(exit_date[1])-1]} {exit_date[0]}"
+    exit_date = f"{int(exit_date[2])} {months[int(exit_date[1])-1]} {exit_date[0]}"
     exit_value = data.get('exit_value', "")
     exit_value = exit_value.replace('R', '')
     exit_value = exit_value.replace(' ', '')
@@ -35,10 +40,16 @@ def create_goodwood_exit_letters(data):
     # exit_value = f"R {data.get('exit_value', '')}"
     rollover_amount = float(data.get('rollover_amount', 0))
     exit_amount = float(data.get('exit_amount',0))
+    if exit_amount != 0 and rollover_amount != 0:
+        header = "PARTIAL EXIT / ROLLOVER CONFIRMATION"
+    elif exit_amount != 0 and rollover_amount == 0:
+        header = "FULL EXIT CONFIRMATION"
+    elif exit_amount == 0 and rollover_amount != 0:
+        header = "FULL ROLLOVER CONFIRMATION"
     exit_amount = f"R {exit_amount:,.2f}"
     rollover_amount = (f"R {rollover_amount:,.2f}")
-    doc = DocxTemplate("loan_agreement_files/goodwood_exit_letters/NSST_Exit - Goodwood.docx")
-    doc2 = DocxTemplate("loan_agreement_files/goodwood_exit_letters/OMH_Exit - Goodwood.docx")
+    doc = DocxTemplate("loan_agreement_files/goodwood_exit_letters/Goodwood - NSST Exit Letter (Template).docx")
+    doc2 = DocxTemplate("loan_agreement_files/goodwood_exit_letters/Purple Blok Exit Letter (Template).docx")
     context = {
         'investor_name': investor_name,
         'investor_acc_number': investor_acc_number,
@@ -47,7 +58,8 @@ def create_goodwood_exit_letters(data):
         'exit_value': exit_value,
         'exit_amount': exit_amount,
         'rollover_amount': rollover_amount,
-        "investor_name_nsst": investor_name_nsst
+        "investor_name_nsst": investor_name_nsst,
+        "header": header
     }
     doc.render(context)
     doc2.render(context)
