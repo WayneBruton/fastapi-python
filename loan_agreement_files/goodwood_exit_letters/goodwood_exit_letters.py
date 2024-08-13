@@ -10,7 +10,7 @@ def create_goodwood_exit_letters(data):
     if os.path.exists("loan_agreements/exit_letter_omh.docx"):
         os.remove("loan_agreements/exit_letter_omh.docx")
         print("File deleted")
-    print("Data in Letter File:::",data)
+    # print("Data in Letter File:::",data)
     months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October","November", "December"]
 
 
