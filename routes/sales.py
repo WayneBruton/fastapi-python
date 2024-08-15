@@ -750,10 +750,10 @@ async def get_all_sales():
             del item['surplusReceived']
 
             # del item['categoryId']
-            del item['blocked']
-            del item['id']
-            del item['opportunity_final_transfer_date']
-            del item['opportunity_occupation_date']
+            # del item['blocked']
+            # del item['id']
+            # del item['opportunity_final_transfer_date']
+            # del item['opportunity_occupation_date']
 
             item['opportunity_originalBayNo'] = item.get('opportunity_originalBayNo', "")
             item['opportunity_client_type'] = item.get('opportunity_client_type', "")

@@ -9,7 +9,6 @@ from datetime import datetime
 import time
 
 
-
 def calculate_vat_due(sale_date):
     vat_periods = {
         1: "03/31", 3: "05/31", 5: "07/31",
@@ -204,7 +203,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         "Actual": actual,
                         "Date": date,
                         "Amount": amount,
-                        "Renamed_block": original_dict["Renamed_block"]
+                        "Renamed_block": original_dict["Renamed_block"],
+                    "Development": original_dict["Development"]
                     }
 
                     converted_dicts.append(actual_dict)
@@ -244,7 +244,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
         ws2b['A1'] = "Updated Construction"
 
-        headers = ["Whitebox-Able", "Blocks", "Complete Build", "Actual", "Date", "Amount", "Renamed_block",
+        headers = ["Whitebox-Able", "Blocks", "Complete Build", "Actual", "Date", "Amount", "Renamed_block","Development",
                    "Vat Due", ]
         ws2b.append(headers)
         for item in converted_dicts:
@@ -261,7 +261,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
         for row in ws3.iter_rows(min_row=5, max_row=ws3.max_row, min_col=18, max_col=18):
             for cell in row:
-
                 cell.value = f"=IF($F{cell.row}=1,((SUMIFS(Investors!$M:$M,Investors!$E:$E,Sales!$C{cell.row},Investors!$O:$O,FALSE)+SUMIFS(Investors!$S:$S,Investors!$E:$E,Sales!$C{cell.row},Investors!$O:$O,FALSE))*$F{cell.row})-SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$Y:$Y,1,'Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$C:$C,Sales!$C{cell.row}),(SUMIFS(Investors!$M:$M,Investors!$E:$E,Sales!$C{cell.row},Investors!$O:$O,FALSE)+SUMIFS(Investors!$S:$S,Investors!$E:$E,Sales!$C{cell.row},Investors!$O:$O,FALSE))*$F{cell.row})"
 
                 cell.number_format = '#,##0.00'
@@ -471,15 +470,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 other_costs_start = ws8.max_row
         other_costs_end = ws8.max_row
 
-        # print("CPC Start", cpc_start)
-        # print("CPC End", cpc_end)
-        #
-        # print("Other Costs Start", other_costs_start)
-        # print("Other Costs End", other_costs_end)
-
-        # other_costs_to_input = []
-        # for index, item in enumerate(other_costs):
-
         expense_end = ws8.max_row
         print("Expense Start", expense_start)
         print("Expense End", expense_end)
@@ -628,7 +618,16 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         tab_colors = ["FF204E", "399918", "FF8225", "7C00FE", "F6FB7A", "36C2CE"]
         # print("Got this far")
 
+        # global block_cost_range_start, block_cost_range_end
+        block_cost_range_start = []
+        block_cost_range_end = []
+
+        refinanced_units_start_range = []
+        refinanced_units_end_range = []
+
+
         for idx, project in enumerate(reports_by_project):
+
 
             if idx == 0:
                 ws6 = wb.create_sheet('Cashflow Projection')
@@ -664,6 +663,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             ws6['A4'] = ''
             sale_info = []
+
             # sale_profit_info = []
             for sale in sales:
                 if not sale['transferred']:
@@ -702,7 +702,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             else:
                 sale_info_filtered = [sale for sale in sale_info if sale['Development'] == project]
 
-            for sale in sale_info:
+            for sale in sale_info_filtered:
                 for key in sale:
                     row.append(sale[key])
                 ws6.append(row)
@@ -723,7 +723,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6[f"{month_headings[len(month_headings) - 1]}1"] = 'C.3.e'
             ws6[f"{month_headings[len(month_headings) - 1]}1"].font = Font(bold=True, size=28)
             # center the above
-            ws6[f"{month_headings[len(month_headings) - 1]}1"].alignment = Alignment(horizontal='center', vertical='center')
+            ws6[f"{month_headings[len(month_headings) - 1]}1"].alignment = Alignment(horizontal='center',
+                                                                                     vertical='center')
             # put a border around the above cell
             ws6[f"{month_headings[len(month_headings) - 1]}1"].border = Border(left=Side(style='medium'),
                                                                                right=Side(style='medium'),
@@ -776,7 +777,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6[f"C{vat_payable_on_sales}"].font = Font(bold=True, color="0C0C0C", size=22)
             ws6[f"D{vat_payable_on_sales}"].number_format = '#,##0'
             ws6[f"D{vat_payable_on_sales}"].font = Font(bold=True, color="0C0C0C", size=22)
-            ws6[f"D{vat_payable_on_sales}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+            ws6[f"D{vat_payable_on_sales}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE",
+                                                               fill_type="solid")
             ws6[f"D{vat_payable_on_sales}"].border = ws6[f"A{vat_payable_on_sales}"].border + Border(
                 left=Side(style='medium'),
                 right=Side(style='medium'),
@@ -846,14 +848,16 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6.append(["INCOME"])
             funds_available_end = ws6.max_row
 
-            ws6[f'D{funds_available_start}'].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+            ws6[f'D{funds_available_start}'].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
+                                                                fill_type="solid")
             ws6[f'D{funds_available_start}'].font = Font(bold=True, color="0C0C0C", size=22)
             ws6[f'D{funds_available_start}'].border = Border(left=Side(style='medium'),
                                                              right=Side(style='medium'),
                                                              top=Side(style='medium'),
                                                              bottom=Side(style='medium'))
 
-            ws6[f'D{funds_available_end}'].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+            ws6[f'D{funds_available_end}'].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
+                                                              fill_type="solid")
             ws6[f'D{funds_available_end}'].font = Font(bold=True, color="0C0C0C", size=22)
             ws6[f'D{funds_available_end}'].border = Border(left=Side(style='medium'),
                                                            right=Side(style='medium'),
@@ -889,13 +893,35 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             block_costs_start = ws6.max_row + 1
 
+            projectA = project
+            # block_costs_start = 1000
+
+            # Dynamically create a global variable
+            globals()[f"block_costs_start_{projectA}"] = block_costs_start
+
+            # Access the dynamically created variable
+            # print(f"Block Costs Start - {projectA}", globals()[f"block_costs_start_{projectA}"])
+
+
+
+            if project == "Consolidated":
+                construction_filtered_block = construction
+            else:
+                construction_filtered_block = [item for item in construction if item['Development'] == project]
+
+
+
             construction_blocks = []
-            for item in construction:
-                construction_blocks.append(item['Renamed_block'])
+            if len(construction_filtered_block) > 0:
+                for item in construction_filtered_block:
+                    construction_blocks.append(item['Renamed_block'])
+            else:
+                construction_blocks.append("No Blocks")
             construction_blocks = list(set(construction_blocks))
             construction_blocks = sorted(construction_blocks)
 
             for block in construction_blocks:
+
                 filtered_construction = [item for item in construction if
                                          item['Renamed_block'] == block and item['Whitebox-Able'] == True]
 
@@ -905,9 +931,26 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 else:
                     ws6.append([f"{block}", 1])
             block_costs_end = ws6.max_row
-            print("block_costs_start", block_costs_start)
-            print("block_costs_end", block_costs_end)
 
+            globals()[f"block_costs_end_{projectA}"] = block_costs_end
+
+            # Access the dynamically created variable
+
+
+            print()
+            print(f"Block Costs Start - {projectA}", globals()[f"block_costs_start_{projectA}"])
+            print(f"Block Costs End - {projectA}", globals()[f"block_costs_end_{projectA}"])
+            print()
+
+            block_cost_range_start.append(globals()[f"block_costs_start_{projectA}"])
+
+            block_cost_range_end.append(globals()[f"block_costs_end_{projectA}"])
+
+            print("block_cost_range_start", block_cost_range_start)
+            print("block_cost_range_end", block_cost_range_end)
+            print("block_costs_start", block_costs_start)
+
+            print("block_costs_end", block_costs_end)
 
             for row in ws6.iter_rows(min_row=block_costs_start, max_row=block_costs_end, min_col=4, max_col=4):
                 for cell in row:
@@ -918,7 +961,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                          top=Side(style='medium'),
                                          bottom=Side(style='medium'))
 
-            for row in ws6.iter_rows(min_row=block_costs_start, max_row=block_costs_end, min_col=9, max_col=ws6.max_column):
+            for row in ws6.iter_rows(min_row=block_costs_start, max_row=block_costs_end, min_col=9,
+                                     max_col=ws6.max_column):
                 for cell in row:
                     cell.number_format = '#,##0'
                     cell.font = Font(bold=True, color="0C0C0C", size=22)
@@ -945,7 +989,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             print("vat_construction", vat_construction)
 
-
             ws6.append([])
             ws6.append(["OPERATING EXPENSES", "", 0.55])
             operating_expenses = ws6.max_row
@@ -954,7 +997,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             # format the above cell as a percentage
             ws6[f"C{operating_expenses}"].number_format = '0%'
-
 
             ws6.append([])
             ws6.append(["MONTHLY"])
@@ -1034,9 +1076,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             block_finance_category = sorted(block_finance_category, key=lambda x: (x['Development'], x['Block']))
             print("block_finance_category", block_finance_category)
 
-            block_finance = ['C', 'D', 'E','F','G', 'H', 'J','K','L', 'M', 'N', 'O', 'P']
-
-
+            block_finance = ['C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P']
 
             ws6.append([""])
             block_finance_start = ws6.max_row
@@ -1211,6 +1251,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6.append([""])
             refinanced_units_start = ws6.max_row
 
+            # projectA = project
+            # block_costs_start = 1000
+
+            # Dynamically create a global variable
+            globals()[f"refinanced_units_start_{projectA}"] = refinanced_units_start + 1
+
+
+
             # print("test",sales[0])
 
             # let units_a equals opportunity_code where sold is false
@@ -1236,7 +1284,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     if unit['Category'] == project:
                         units.append(unit['opportunity_code'])
 
-
             # units = ["HVD302", "HVD303", "HVD304", "HVC202", "HVC204", "HVC302", "HVC304", "HVC305", "HVJ101", "HVJ102",
             #          "HVJ103",
             #          "HVJ201", "HVJ202", "HVJ203", "HVJ301", "HVJ302", "HVJ303", "HVJ401", "HVJ402", "HVJ403", "HVM101",
@@ -1257,7 +1304,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                 # Put a border around Units and make font 22 and bold and fill in light green
                 ws6[f"D{refinanced_units_start + index + 1}"].font = Font(bold=True, color="0C0C0C", size=22)
-                ws6[f"D{refinanced_units_start + index + 1}"].fill = PatternFill(start_color="B5C18E", end_color="B5C18E",
+                ws6[f"D{refinanced_units_start + index + 1}"].fill = PatternFill(start_color="B5C18E",
+                                                                                 end_color="B5C18E",
                                                                                  fill_type="solid")
                 ws6[f"D{refinanced_units_start + index + 1}"].border = Border(left=Side(style='medium'),
                                                                               right=Side(style='medium'),
@@ -1273,6 +1321,15 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 # if index == len(units) - 1:
                 #     ws6.append([""])
             refinanced_units_end = ws6.max_row
+
+            globals()[f"refinanced_units_end_{projectA}"] = refinanced_units_end
+
+            refinanced_units_start_range.append(globals()[f"refinanced_units_start_{projectA}"])
+            refinanced_units_end_range.append(globals()[f"refinanced_units_end_{projectA}"])
+            print()
+            print("refinanced_units_start_range", refinanced_units_start_range)
+            print("refinanced_units_end_range", refinanced_units_end_range)
+            print()
 
             # "=SUM(E117:E149)-E115"
             ws6[
@@ -1332,7 +1389,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6[f"C{roll_over_refinance_properties_start + 1}"].value = "25%"
             ws6[f"C{roll_over_refinance_properties_start + 1}"].font = Font(bold=True, color="000000", size=22)
             # fill in yellow
-            ws6[f"C{roll_over_refinance_properties_start + 1}"].fill = PatternFill(start_color="FFF67E", end_color="FFF67E",
+            ws6[f"C{roll_over_refinance_properties_start + 1}"].fill = PatternFill(start_color="FFF67E",
+                                                                                   end_color="FFF67E",
                                                                                    fill_type="solid")
             ws6[f"B{roll_over_refinance_properties_start + 1}"].font = Font(bold=True, color="000000", size=22)
 
@@ -1374,9 +1432,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6[f"G{ws6.max_row}"].font = Font(bold=True, color="0C0C0C", size=22)
 
             calculate_exit_dates_start = ws6.max_row
-            ws6[f"G{calculate_exit_dates_start}"].value = f"=_xlfn.UNIQUE(_xlfn.FILTER(E{calculate_exit_dates_start}:E{calculate_exit_dates_start + 800},(F{calculate_exit_dates_start}:F{calculate_exit_dates_start + 800}=0)))"
+            ws6[
+                f"G{calculate_exit_dates_start}"].value = f"=_xlfn.UNIQUE(_xlfn.FILTER(E{calculate_exit_dates_start}:E{calculate_exit_dates_start + 800},(F{calculate_exit_dates_start}:F{calculate_exit_dates_start + 800}=0)))"
             print("calculate_exit_dates_start", calculate_exit_dates_start)
-            ws6[f"F{calculate_exit_dates_start}"].value = f"=IF(SUMIFS($E${refinanced_units_start + 1}:$E${refinanced_units_end},$D${refinanced_units_start + 1}:$D${refinanced_units_end},E{ws6.max_row + 1})<>0,E{ws6.max_row + 1},0)"
+            ws6[
+                f"F{calculate_exit_dates_start}"].value = f"=IF(SUMIFS($E${refinanced_units_start + 1}:$E${refinanced_units_end},$D${refinanced_units_start + 1}:$D${refinanced_units_end},E{ws6.max_row + 1})<>0,E{ws6.max_row + 1},0)"
             for i in range(350):
                 ws6.append([f"=mid(E{ws6.max_row + 1}, 3, 1)",
                             "",
@@ -1413,7 +1473,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     cell.value = f"=IF(H{cell.row}<>\"\",I$5,IF(J{cell.row}<>\"\",K$5,IF(L{cell.row}<>\"\",M$5,IF(N{cell.row}<>\"\",O$5,IF(P{cell.row}<>\"\",Q$5,IF(R{cell.row}<>\"\",S$5,IF(T{cell.row}<>\"\",U$5,IF(V{cell.row}<>\"\",W$5,IF(X{cell.row}<>\"\",Y$5,IF(Z{cell.row}<>\"\",AA$5,IF(AB{cell.row}<>\"\",AC$5,IF(AD{cell.row}<>\"\",AE$5,\"\"))))))))))))"
                     # cell.value = "XX"
 
-            print("SALES", ws3.max_column)
+
 
             ws3["W4"].value = "New Forecast Date"
             ws3["X4"].value = "New VAT Date"
@@ -1422,12 +1482,13 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             for i in range(5, ws3.max_row + 1):
                 ws3[f"Z{i}"].value = False
-                "=IF(OR(Z24=TRUE,SUMIFS('Cashflow Projection'!$E$117:$E$149,'Cashflow Projection'!$D$117:$D$149,Sales!C24)=1),0,SUMIFS('Cashflow Projection'!$C$7:$C$23,'Cashflow Projection'!$B$7:$B$23,Sales!B24,'Cashflow Projection'!$A$7:$A$23,Sales!A24))"
-                ws3[
-                    f"F{i}"].value = f"=IF(OR(Z{i}=TRUE,SUMIFS('Cashflow Projection'!$E${refinanced_units_start + 1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})=1),0,SUMIFS('Cashflow Projection'!$C${toggles_start}:$C${toggles_end},'Cashflow Projection'!$B${toggles_start}:$B${toggles_end},Sales!B{i},'Cashflow Projection'!$A${toggles_start}:$A${toggles_end},Sales!A{i}))"
-                "=IF(SUMIFS('Cashflow Projection'!$E$117:$E$149,'Cashflow Projection'!$D$117:$D$149,Sales!C24)=1,SUMIFS('Cashflow Projection'!$C$117:$C$149,'Cashflow Projection'!$D$117:$D$149,Sales!C24),+Sales!H24)"
-                ws3[
-                    f"W{i}"].value = f"=IF(SUMIFS('Cashflow Projection'!$E${refinanced_units_start + 1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})=1,SUMIFS('Cashflow Projection'!$C${refinanced_units_start + 1}:$C${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i}),+Sales!H{i})"
+                if project == "Consolidated":
+                    ws3[
+                        f"F{i}"].value = f"=IF(OR(Z{i}=TRUE,SUMIFS('Cashflow Projection'!$E${refinanced_units_start + 1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})=1),0,SUMIFS('Cashflow Projection'!$C${toggles_start}:$C${toggles_end},'Cashflow Projection'!$B${toggles_start}:$B${toggles_end},Sales!B{i},'Cashflow Projection'!$A${toggles_start}:$A${toggles_end},Sales!A{i}))"
+                    ws3[
+                        f"W{i}"].value = f"=IF(SUMIFS('Cashflow Projection'!$E${refinanced_units_start + 1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})=1,SUMIFS('Cashflow Projection'!$C${refinanced_units_start + 1}:$C${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i}),+Sales!H{i})"
+                    ws3[
+                        f'T{i}'].value = f"=IF(SUMIFS('Cashflow Projection'!$E${refinanced_units_start + 1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})<>0,TRUE,FALSE)"
                 # format as date
                 ws3[f"W{i}"].number_format = 'dd-mm-yyyy'
                 "=IF(MOD(MONTH(W24), 2) <> 0, EOMONTH(W24, 2), EOMONTH(W24, 1))"
@@ -1439,9 +1500,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 "=K5-SUM(L5:P5)"
                 ws3[f"Q{i}"].value = f"=K{i}-SUM(L{i}:P{i})"
                 ws3[f"Q{i}"].number_format = '#,##0'
-                "=IF(SUMIFS('Cashflow Projection'!$E$117:$E$149,'Cashflow Projection'!$D$117:$D$149,Sales!C5)<>0,TRUE,FALSE)"
-                ws3[
-                    f'T{i}'].value = f"=IF(SUMIFS('Cashflow Projection'!$E${refinanced_units_start + 1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})<>0,TRUE,FALSE)"
+
+
 
             sales_columns = []
 
@@ -1497,7 +1557,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6[f"D{block_costs_start - 1}"] = f"=SUM(D{block_costs_start}:D{block_costs_end})"
             ws6[f"D{block_costs_start - 1}"].font = Font(bold=True, color="0C0C0C", size=22)
             ws6[f"D{block_costs_start - 1}"].number_format = '#,##0'
-            ws6[f"D{block_costs_start - 1}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+            ws6[f"D{block_costs_start - 1}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80",
+                                                                fill_type="solid")
             ws6[f"D{block_costs_start - 1}"].border = Border(left=Side(style='medium'),
                                                              right=Side(style='medium'),
                                                              top=Side(style='medium'),
@@ -1526,7 +1587,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                               bottom=Side(style='medium'))
 
             for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
-
                 ws6[f"B{i}"] = f"=_xlfn.MINIFS('Investor Exit List'!$L:$L,'Investor Exit List'!$C:$C,D{i})"
                 ws6[f"B{i}"].number_format = 'dd-mm-yyyy'
                 # put a border around the cell
@@ -1878,12 +1938,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
             # "=IF(SUMIFS($B$50:$B$64,$E$50:$E$64,"Goodwood")>0,Cashflow!B14,'Cashflow - Heron'!B14)"
             # ws6[f"D{funds_available_start + 3}"] = "=Cashflow!B14"
-            ws6[f"D{funds_available_start + 3}"] = f"=IF(SUMIFS($B${block_costs_start}:$B${block_costs_end},$E${block_costs_start}:$E${block_costs_end},\"Goodwood\")>0,Cashflow!B14,'Cashflow - Heron'!B14)"
+            ws6[
+                f"D{funds_available_start + 3}"] = f"=IF(SUMIFS($B${block_costs_start}:$B${block_costs_end},$E${block_costs_start}:$E${block_costs_end},\"Goodwood\")>0,Cashflow!B14,'Cashflow - Heron'!B14)"
             for index, col in enumerate(month_headings):
 
                 ws6[f"{col}{toggles_start - 1}"] = f"=SUM({col}{toggles_start}:{col}{toggles_end})"
                 ws6[f"{col}{toggles_start - 1}"].number_format = '#,##0'
-                ws6[f"D{toggles_start - 1}"].fill = PatternFill(start_color="D4E7C5", end_color="D4E7C5", fill_type="solid")
+                ws6[f"D{toggles_start - 1}"].fill = PatternFill(start_color="D4E7C5", end_color="D4E7C5",
+                                                                fill_type="solid")
                 ws6[f"{col}{toggles_start - 1}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                 # apply borders to the cell
@@ -2104,8 +2166,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     except:
                         pass
 
-
-
                     ws6[
                         f"H{finance_waterfall_start + 1}"] = f"=sum(H{finance_waterfall_start + 2}:H{finance_waterfall_start + 8})"
                     ws6[f"H{finance_waterfall_start + 1}"].number_format = '#,##0'
@@ -2157,7 +2217,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         if project == "Consolidated":
                             ws6[f"H{finance_waterfall_start + 8}"] = f"=Cashflow!B14+Cashflow!B13"
                         else:
-                            ws6[f"H{finance_waterfall_start + 8}"] = f"='Cashflow - {project}'!B14+'Cashflow - {project}'!B13"
+                            ws6[
+                                f"H{finance_waterfall_start + 8}"] = f"='Cashflow - {project}'!B14+'Cashflow - {project}'!B13"
                         ws6[f"H{finance_waterfall_start + 8}"].number_format = '#,##0'
                         ws6[f"{col}{finance_waterfall_start + 8}"] = f"=H{finance_waterfall_start + 8}"
                         ws6[f"{col}{finance_waterfall_start + 8}"].number_format = '#,##0'
@@ -2176,7 +2237,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             right=Side(style='medium'),
                             top=Side(style='medium'),
                             bottom=Side(style='medium'))
-                        ws6[f"{col}{CPC_INVOICES_STILL_DUE}"].fill = PatternFill(start_color="FFF67E", end_color="FFF67E",
+                        ws6[f"{col}{CPC_INVOICES_STILL_DUE}"].fill = PatternFill(start_color="FFF67E",
+                                                                                 end_color="FFF67E",
                                                                                  fill_type="solid")
                         # make the font size 22
                         ws6[f"{col}{CPC_INVOICES_STILL_DUE}"].font = Font(bold=True, color="0C0C0C", size=22)
@@ -2303,7 +2365,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             f"{col}{finance_waterfall_start + 11}"] = f"={month_headings[index - 1]}{finance_waterfall_start + 11}"
                         ws6[f"{col}{finance_waterfall_start + 11}"].number_format = '#,##0'
 
-
                         ws6[
                             f"{month_headings[index - 1]}{finance_waterfall_start + 12}"] = f"={col}{finance_waterfall_start + 12}-{col}{block_costs_start - 4}"
                         ws6[f"{month_headings[index - 1]}{finance_waterfall_start + 12}"].number_format = '#,##0'
@@ -2369,7 +2430,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     # ws6[
                     #     f"{col}{funds_available_start + 11}"] = "XXX"
                     ws6[f"{col}{funds_available_start + 11}"].number_format = '#,##0'
-
 
                     ws6[
                         f"{col}{vat_construction}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,((SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$E:$E,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),'Updated Construction'!$E:$E,\">\"&EOMONTH(EDATE({col}$5, 0), -3),'Updated Construction'!$C:$C,1)/1.15*0.15)+(-{col}{vat_construction + 2}*1.4)/1.15*0.15))*C{vat_construction}"
@@ -2483,7 +2543,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 if index % 2 != 0:
                     if index == 1:
                         for i in range(block_finance_start, block_finance_end + 1):
-
                             ws6[
                                 f"{col}{i}"] = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$A${calculate_exit_dates_start}:$A${calculate_exit_dates_end},B{i},$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\"<=\"&{month_headings[index - 1]}5,$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\">\"&B2,$F${calculate_exit_dates_start}:$F${calculate_exit_dates_end},0)*$E{i}"
                             ws6[f"{col}{i}"].number_format = '#,##0'
@@ -2494,7 +2553,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                              bottom=Side(style='medium'))
                     else:
                         for i in range(block_finance_start, block_finance_end + 1):
-
                             ws6[
                                 f"{col}{i}"] = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$A${calculate_exit_dates_start}:$A${calculate_exit_dates_end},B{i},$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\"<=\"&{month_headings[index - 1]}5,$C${calculate_exit_dates_start}:$C${calculate_exit_dates_end},\">\"&{month_headings[index - 3]}5,$F${calculate_exit_dates_start}:$F${calculate_exit_dates_end},0)*$E{i}"
                             ws6[f"{col}{i}"].number_format = '#,##0'
@@ -2540,7 +2598,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     ws6[f"{col}{vat_income}"].border = ws6[f"A{vat_income}"].border + Border(left=Side(style='medium'),
                                                                                              right=Side(style='medium'),
                                                                                              top=Side(style='medium'),
-                                                                                             bottom=Side(style='medium'))
+                                                                                             bottom=Side(
+                                                                                                 style='medium'))
 
                     ws6[f"{col}{vat_income}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
                                                                  fill_type="solid")
@@ -2556,14 +2615,32 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                        top=Side(style='medium'),
                                                                                        bottom=Side(style='medium'))
                     # fill equals light green
-                    ws6[f"{col}{vat_row}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+                    ws6[f"{col}{vat_row}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
+                                                              fill_type="solid")
 
                     ws6[f"{col}{vat_row}"].number_format = '#,##0'
 
-                    ws6[
-                        f"{col}{profit_on_sale}"] = (f"=SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
-                                                     f"\"<=\"&{month_headings[index]}$5,"
-                                                     f"Sales!$H:$H,\">\"&$B$2)")
+                    if project == "Consolidated":
+                        ws6[
+                            f"{col}{profit_on_sale}"] = (
+                            f"=SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
+                            f"\"<=\"&{month_headings[index]}$5,"
+                            f"Sales!$H:$H,\">\"&$B$2)")
+                    elif project == "Heron":
+                        ws6[
+                            f"{col}{profit_on_sale}"] = (
+                            f"=SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
+                            f"\"<=\"&{month_headings[index]}$5,"
+                            f"Sales!$H:$H,\">\"&$B$2,Sales!$A:$A,\"Heron View\")+SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
+                            f"\"<=\"&{month_headings[index]}$5,"
+                            f"Sales!$H:$H,\">\"&$B$2,Sales!$A:$A,\"Heron Fields\")")
+                    else:
+                        ws6[
+                            f"{col}{profit_on_sale}"] = (
+                            f"=SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
+                            f"\"<=\"&{month_headings[index]}$5,"
+                            f"Sales!$H:$H,\">\"&$B$2,Sales!$A:$A,\"{project}\")")
+
                     ws6[f"{col}{profit_on_sale}"].border = ws6[f"A{profit_on_sale}"].border + Border(
                         left=Side(style='medium'),
                         right=Side(style='medium'),
@@ -2600,44 +2677,72 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                     for i in range(vat_payable_on_sales, vat_payable_on_sales + 1):
 
-                        ws6[
-                            f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))*C{vat_payable_on_sales}"
+                        if project == "Consolidated":
+                            ws6[
+                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))*C{vat_payable_on_sales}"
+                        elif project == "Heron":
+                            ws6[
+                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron View\")--SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron Fields\"))*C{vat_payable_on_sales}"
+                        else:
+                            ws6[
+                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"{project}\"))*C{vat_payable_on_sales}"
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                         # fil in light red
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
-                        ws6[f"{col}{i}"].border = ws6[f"A{vat_payable_on_sales}"].border + Border(left=Side(style='medium'),
-                                                                                                  right=Side(
-                                                                                                      style='medium'),
-                                                                                                  top=Side(style='medium'),
-                                                                                                  bottom=Side(
-                                                                                                      style='medium'))
+                        ws6[f"{col}{i}"].border = ws6[f"A{vat_payable_on_sales}"].border + Border(
+                            left=Side(style='medium'),
+                            right=Side(
+                                style='medium'),
+                            top=Side(style='medium'),
+                            bottom=Side(
+                                style='medium'))
 
                     for i in range(toggles_start, toggles_end + 1):
-                        ws6[
-                            f"{col}{i}"] = (f"=SUMIFS(Sales!$S:$S,Sales!$W:$W,\"<=\"&I$5,"
-                                            f"Sales!$E:$E,FALSE,Sales!$F:$F,$C{i},Sales!$A:$A,"
-                                            f"$A{i},Sales!$B:$B,$B{i},"
-                                            f"Sales!$W:$W,\">\"&B$2)*$C{i}")
+                        if project == "Consolidated":
+                            ws6[
+                                f"{col}{i}"] = (f"=SUMIFS(Sales!$S:$S,Sales!$W:$W,\"<=\"&I$5,"
+                                                f"Sales!$E:$E,FALSE,Sales!$F:$F,$C{i},Sales!$A:$A,"
+                                                f"$A{i},Sales!$B:$B,$B{i},"
+                                                f"Sales!$W:$W,\">\"&B$2)*$C{i}")
+                        elif project == "Heron":
+                            ws6[
+                                f"{col}{i}"] = (f"=(SUMIFS(Sales!$S:$S,Sales!$W:$W,\"<=\"&I$5,"
+                                                f"Sales!$E:$E,FALSE,Sales!$F:$F,$C{i},Sales!$A:$A,"
+                                                f"$A{i},Sales!$B:$B,$B{i},"
+                                                f"Sales!$W:$W,\">\"&B$2,Sales!$A:A,\"Heron View\")+SUMIFS(Sales!$S:$S,Sales!$W:$W,\"<=\"&I$5,"
+                                                f"Sales!$E:$E,FALSE,Sales!$F:$F,$C{i},Sales!$A:$A,"
+                                                f"$A{i},Sales!$B:$B,$B{i},"
+                                                f"Sales!$W:$W,\">\"&B$2,Sales!$A:A,\"Heron Fields\"))*$C{i}")
+                        else:
+                            ws6[
+                                f"{col}{i}"] = (f"=SUMIFS(Sales!$S:$S,Sales!$W:$W,\"<=\"&I$5,"
+                                                f"Sales!$E:$E,FALSE,Sales!$F:$F,$C{i},Sales!$A:$A,"
+                                                f"$A{i},Sales!$B:$B,$B{i},"
+                                                f"Sales!$W:$W,\">\"&B$2, Sales!$A:$A,\"{project}\")*$C{i}")
+
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     for i in range(block_costs_start, block_costs_end + 1):
+                        # I AM HERE
+
                         ws6[
-                            f"{col}{i}"] = (f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,"
-                                            f"'Updated Construction'!$G:$G,$A{i},"
-                                            f"'Updated Construction'!$E:$E,\"<=\"&"
-                                            f"{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&'Cashflow "
-                                            f"Projection'!$B$2)+(SUMIFS('Updated Construction'!$F:$F,"
-                                            f"'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,"
-                                            f"$A{i},'Updated Construction'!$E:$E,\"<=\"&'Cashflow "
-                                            f"Projection'!{month_headings[index]}$5,'Updated Construction'!$E:$E,"
-                                            f"\">\"&$B$2)*$B{i}))*1.15")
+                            f"{col}{i}"] = (
+                            f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,"
+                            f"'Updated Construction'!$G:$G,$A{i},"
+                            f"'Updated Construction'!$E:$E,\"<=\"&"
+                            f"{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&$B$2)"
+                            f"+(SUMIFS('Updated Construction'!$F:$F,"
+                            f"'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,"
+                            f"$A{i},'Updated Construction'!$E:$E,\"<=\"&"
+                            f"{month_headings[index]}$5,'Updated Construction'!$E:$E,"
+                            f"\">\"&$B$2)*$B{i}))*1.15")
+
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     for i in range(vat_construction, vat_construction + 1):
-
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -2663,8 +2768,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             right=Side(style='medium'),
                             top=Side(style='medium'),
                             bottom=Side(style='medium'))
-
-
 
                     for i in range(monthly, monthly + 1):
                         ws6[
@@ -2732,7 +2835,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                       fill_type="solid")))
 
                     for i in range(investor_exited, investor_exited + 1):
-
                         ws6[
                             f"{col}{i}"] = f"={col}{funds_available_start + 4}+{col}{funds_available_start + 9}-{col}{investor_exited + 2}"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -2794,8 +2896,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="749BC2", end_color="749BC2", fill_type="solid")
 
-
-
                         for i in range(purple_blok_start, purple_blok_end):
                             ws6[
                                 f"{col}{i}"] = f"=$B${i}*{month_headings[index + 1]}{i}"
@@ -2824,14 +2924,16 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                 bottom=Side(style='medium'))
 
                             ws6.conditional_formatting.add(f"{col}{i}",
-                                                           formatting.rule.CellIsRule(operator='lessThan', formula=['0'],
+                                                           formatting.rule.CellIsRule(operator='lessThan',
+                                                                                      formula=['0'],
                                                                                       fill=PatternFill(
                                                                                           start_color="FFC7CE",
                                                                                           end_color="FFC7CE",
                                                                                           fill_type="solid")))
 
                             ws6.conditional_formatting.add(f"{col}{i}",
-                                                           formatting.rule.CellIsRule(operator='greaterThan', formula=['0'],
+                                                           formatting.rule.CellIsRule(operator='greaterThan',
+                                                                                      formula=['0'],
                                                                                       fill=PatternFill(
                                                                                           start_color="BFEA7C",
                                                                                           end_color="BFEA7C",
@@ -2844,12 +2946,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                           end_color="FFF67E",
                                                                                           fill_type="solid")))
 
-                            # ws6[f"{col}{i}"].fill = PatternFill(start_color="749BC2", end_color="749BC2", fill_type="solid")
-
                         for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
-                            # "=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection (2)'!G121)"
-                            ws6[
-                                f"{col}{i}"] = f"=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, H{i})"
+                            if project == "Consolidated":
+                                ws6[
+                                    f"{col}{i}"] = f"=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, H{i})"
+                            else:
+                                ws6[
+                                    f"{col}{i}"] = f"=SUMIFS('Investor Exit List - {project}'!$Q:$Q, 'Investor Exit List - {project}'!$C:$C, H{i})"
+
                             ws6[f"{col}{i}"].number_format = '#,##0'
                             ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
 
@@ -2861,7 +2965,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                 bottom=Side(style='medium'))
 
                         for i in range(refinanced_units_start - 1, refinanced_units_start):
-                            # "=-SUM(H121:H157)"
                             ws6[
                                 f"{col}{i}"] = f"=-SUM({col}{refinanced_units_start}:{col}{refinanced_units_end})"
                             ws6[f"{col}{i}"].number_format = '#,##0'
@@ -2889,10 +2992,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                 bottom=Side(style='medium'))
 
                             # fill in blue
-                            ws6[f"{col}{i}"].fill = PatternFill(start_color="3572EF", end_color="3572EF", fill_type="solid")
+                            ws6[f"{col}{i}"].fill = PatternFill(start_color="3572EF", end_color="3572EF",
+                                                                fill_type="solid")
 
                     for i in range(roll_over_refinance_properties_start, roll_over_refinance_properties_start + 1):
-
                         ws6[
                             f"{col}{i}"] = f"=sum({col}{roll_over_refinance_properties_start + 3}:{col}{roll_over_refinance_properties_end})"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -2909,7 +3012,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
 
                     for i in range(roll_over_refinance_properties_start + 2, roll_over_refinance_properties_start + 3):
-
                         ws6[
                             f"{col}{i}"] = f"={col}{roll_over_refinance_properties_start}-{col}{roll_over_refinance_properties_start + 1}"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -2926,7 +3028,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
 
                     for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_end):
-
                         ws6[
                             f"{col}{i}"].value = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},H{i})"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -2941,13 +3042,13 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                 elif index == 1:
 
-
                     for i in range(toggles_start, toggles_end + 1):
                         ws6[
                             f"{col}{i}"] = (f"=COUNTIFS(Sales!$H:$H,\"<=\"&I$5,Sales!$H:$H,"
                                             f"\">\"&B$2,Sales!$A:$A,$A{i},"
                                             f"Sales!$B:$B,$B{i},Sales!$F:$F,'Cashflow "
                                             f"Projection'!$C{i},Sales!$E:$E,FALSE)*$C{i}")
+
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -2969,8 +3070,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="749BC2", end_color="749BC2", fill_type="solid")
 
-
-
                     for i in range(purple_blok_start, purple_blok_end):
                         ws6[
                             f"{col}{i}"] = 0
@@ -2985,10 +3084,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             bottom=Side(style='medium'))
 
                     for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
-                        # "=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection (2)'!G121)"
-                        # ws6[
-                        #     f"{col}{i}"] = f"=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, H{i})"
-                        # ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
 
                         # apply borders around the cell
@@ -3003,7 +3098,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         ws6[f"H{i}"].fill = PatternFill(start_color="FFFF80", end_color="FFFF80", fill_type="solid")
 
                     for i in range(refinanced_units_start - 1, refinanced_units_start):
-
                         ws6[
                             f"{col}{i}"] = f"=COUNTA({col}{refinanced_units_start}:{col}{refinanced_units_end})"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -3017,7 +3111,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             bottom=Side(style='medium'))
 
                     for i in range(debenture_transaction_start, debenture_transaction_start + 1):
-                        "=$B$151*J151"
                         ws6[
                             f"{col}{i}"] = f"=$H{refinanced_units_start - 1}"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -3033,7 +3126,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="3572EF", end_color="3572EF", fill_type="solid")
 
                     for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_start + 4):
-
                         ws6[
                             f"{col}{i}"].value = f"=_xlfn.IFERROR(_xlfn.UNIQUE(_xlfn.FILTER($B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},($C${calculate_exit_dates_start}:$C${calculate_exit_dates_end}<={month_headings[index + 1]}$5)*($C${calculate_exit_dates_start}:$C${calculate_exit_dates_end}>{month_headings[index - 1]}$5)*($F${calculate_exit_dates_start}:$F${calculate_exit_dates_end}=0))),\"\")"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -3044,9 +3136,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             top=Side(style='medium'),
                             bottom=Side(style='medium'))
 
-
                     for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_end):
-
                         ws6[f"{col}{i}"].font = Font(bold=True, color="000000", size=18)
                         ws6[f"{col}{i}"].border = Border(
                             left=Side(style='medium'),
@@ -3080,18 +3170,27 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         right=Side(style='medium'),
                         top=Side(style='medium'),
                         bottom=Side(style='medium'))
-                    ws6[f"{col}{CPC_INVOICES_STILL_DUE + 1}"].fill = PatternFill(start_color="3572EF", end_color="3572EF",
+                    ws6[f"{col}{CPC_INVOICES_STILL_DUE + 1}"].fill = PatternFill(start_color="3572EF",
+                                                                                 end_color="3572EF",
                                                                                  fill_type="solid")
                     # make the font size 22
                     ws6[f"{col}{CPC_INVOICES_STILL_DUE + 1}"].font = Font(bold=True, color="0C0C0C", size=22)
+                    if project == "Consolidated":
+                        ws6[f"{col}{vat_income}"] = (
+                            f"=SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$W:$W,\"<=\"&{month_headings[index]}$5,Sales!$W:$W,\">\"&{month_headings[index - 2]}$5)*C{vat_income}")
+                    elif project == "Heron":
+                        ws6[f"{col}{vat_income}"] = (
+                            f"=(SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$W:$W,\"<=\"&{month_headings[index]}$5,Sales!$W:$W,\">\"&{month_headings[index - 2]}$5,Sales!$A:$A,\"Heron Fields\")+SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$W:$W,\"<=\"&{month_headings[index]}$5,Sales!$W:$W,\">\"&{month_headings[index - 2]}$5,Sales!$A:$A,\"Heron View\"))*C{vat_income}")
+                    else:
+                        ws6[f"{col}{vat_income}"] = (
+                            f"=SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$W:$W,\"<=\"&{month_headings[index]}$5,Sales!$W:$W,\">\"&{month_headings[index - 2]}$5,Sales!$A:$A,\"{project}\")*C{vat_income}")
 
-                    ws6[f"{col}{vat_income}"] = (
-                        f"=SUMIFS(Sales!$J:$J,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$W:$W,\"<=\"&{month_headings[index]}$5,Sales!$W:$W,\">\"&{month_headings[index - 2]}$5)*C{vat_income}")
                     ws6[f"{col}{vat_income}"].font = Font(bold=True, color="0C0C0C", size=22)
                     ws6[f"{col}{vat_income}"].border = ws6[f"A{vat_income}"].border + Border(left=Side(style='medium'),
                                                                                              right=Side(style='medium'),
                                                                                              top=Side(style='medium'),
-                                                                                             bottom=Side(style='medium'))
+                                                                                             bottom=Side(
+                                                                                                 style='medium'))
                     # light green
                     ws6[f"{col}{vat_income}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
                                                                  fill_type="solid")
@@ -3099,24 +3198,29 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                     for i in range(vat_payable_on_sales, vat_payable_on_sales + 1):
 
-                        ws6[
-                            f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
+                        if project == "Consolidated":
+                            ws6[
+                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
+                        elif project == "Heron":
+                            ws6[
+                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,((-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron Fields\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron View\")))+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
+                        else:
+                            ws6[
+                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"{project}\"))+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                         # fil in light red
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
-                        ws6[f"{col}{i}"].border = ws6[f"A{vat_payable_on_sales}"].border + Border(left=Side(style='medium'),
-                                                                                                  right=Side(
-                                                                                                      style='medium'),
-                                                                                                  top=Side(style='medium'),
-                                                                                                  bottom=Side(
-                                                                                                      style='medium'))
-
-
+                        ws6[f"{col}{i}"].border = ws6[f"A{vat_payable_on_sales}"].border + Border(
+                            left=Side(style='medium'),
+                            right=Side(
+                                style='medium'),
+                            top=Side(style='medium'),
+                            bottom=Side(
+                                style='medium'))
 
                     ws6[
                         f"{col}{vat_row}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,((+{month_headings[index - 3]}{refinanced_units_start - 1}+{month_headings[index - 1]}{refinanced_units_start - 1})*156521.739130435)*C{vat_row})"
-
 
                     ws6[f"{col}{vat_row}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -3125,15 +3229,37 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                        top=Side(style='medium'),
                                                                                        bottom=Side(style='medium'))
                     # fill equals light green
-                    ws6[f"{col}{vat_row}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C", fill_type="solid")
+                    ws6[f"{col}{vat_row}"].fill = PatternFill(start_color="BFEA7C", end_color="BFEA7C",
+                                                              fill_type="solid")
 
                     ws6[f"{col}{vat_row}"].number_format = '#,##0'
 
-                    ws6[
-                        f"{col}{profit_on_sale}"] = (f"=SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
-                                                     f"\"<=\"&{month_headings[index]}$5,"
-                                                     f"Sales!$H:$H,\">\"&"
-                                                     f"{month_headings[index - 2]}$5)")
+                    if project == "Consolidated":
+
+                        ws6[
+                            f"{col}{profit_on_sale}"] = (
+                            f"=SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
+                            f"\"<=\"&{month_headings[index]}$5,"
+                            f"Sales!$H:$H,\">\"&"
+                            f"{month_headings[index - 2]}$5)")
+                    elif project == "Heron":
+                        ws6[
+                            f"{col}{profit_on_sale}"] = (
+                            f"=SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
+                            f"\"<=\"&{month_headings[index]}$5,"
+                            f"Sales!$H:$H,\">\"&"
+                            f"{month_headings[index - 2]}$5,Sales!$A:$A,\"Heron Fields\")+SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
+                            f"\"<=\"&{month_headings[index]}$5,"
+                            f"Sales!$H:$H,\">\"&"
+                            f"{month_headings[index - 2]}$5,Sales!$A:$A,\"Heron View\")")
+                    else:
+                        ws6[
+                            f"{col}{profit_on_sale}"] = (
+                            f"=SUMIFS(Sales!$S:$S,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,"
+                            f"\"<=\"&{month_headings[index]}$5,"
+                            f"Sales!$H:$H,\">\"&"
+                            f"{month_headings[index - 2]}$5,Sales!$A:$A,\"{project}\")")
+
                     ws6[f"{col}{profit_on_sale}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     ws6[f"{col}{profit_on_sale}"].number_format = '#,##0'
@@ -3165,8 +3291,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                   fill_type="solid")))
 
                     ws6[
-                        f"{col}{toggles_start - 2}"] = (f"=EOMONTH(EDATE({month_headings[index - 2]}${toggles_start - 2}, "
-                                                        f"0), 1)")
+                        f"{col}{toggles_start - 2}"] = (
+                        f"=EOMONTH(EDATE({month_headings[index - 2]}${toggles_start - 2}, "
+                        f"0), 1)")
                     ws6[f"{col}{toggles_start - 2}"].font = Font(bold=True, color="0C0C0C", size=22)
                     ws6[f"{col}{toggles_start - 2}"].number_format = 'dd-mmm-yy'
 
@@ -3189,7 +3316,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     for i in range(vat_construction, vat_construction + 1):
-
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -3216,7 +3342,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             right=Side(style='medium'),
                             top=Side(style='medium'),
                             bottom=Side(style='medium'))
-
 
                     for i in range(monthly, monthly + 1):
                         # "=F27+F29+F32+F48+F50"
@@ -3348,8 +3473,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="749BC2", end_color="749BC2", fill_type="solid")
 
-
-
                     for i in range(purple_blok_start, purple_blok_end):
                         ws6[
                             f"{col}{i}"] = f"=$B${i}*{month_headings[index + 1]}{i}"
@@ -3399,9 +3522,13 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                       fill_type="solid")))
 
                     for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
-
-                        ws6[
-                            f"{col}{i}"] = f"=IF(VLOOKUP($D{i},Sales!$C:$D,2,FALSE)=TRUE,0,SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, {month_headings[index - 1]}{i}))"
+                        # I AM HERE
+                        if project == "Consolidated":
+                            ws6[
+                                f"{col}{i}"] = f"=IF(VLOOKUP($D{i},Sales!$C:$D,2,FALSE)=TRUE,0,SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, {month_headings[index - 1]}{i}))"
+                        else:
+                            ws6[
+                                f"{col}{i}"] = f"=IF(VLOOKUP($D{i},Sales!$C:$D,2,FALSE)=TRUE,0,SUMIFS('Investor Exit List - {project}'!$Q:$Q, 'Investor Exit List - {project}'!$C:$C, {month_headings[index - 1]}{i}))"
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
 
@@ -3413,7 +3540,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             bottom=Side(style='medium'))
 
                     for i in range(refinanced_units_start - 1, refinanced_units_start):
-                        # "=-SUM(H121:H157)"
                         ws6[
                             f"{col}{i}"] = f"=-SUM({col}{refinanced_units_start}:{col}{refinanced_units_end})"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -3427,7 +3553,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             bottom=Side(style='medium'))
 
                     for i in range(debenture_transaction_start, debenture_transaction_start + 1):
-                        # "=$B$151*J151"
                         ws6[
                             f"{col}{i}"] = f"=$B{debenture_transaction_start}*{month_headings[index + 1]}{debenture_transaction_start}"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -3461,7 +3586,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
 
                     for i in range(roll_over_refinance_properties_start + 2, roll_over_refinance_properties_start + 3):
-                        "=$B$151*J151"
                         ws6[
                             f"{col}{i}"] = f"={col}{roll_over_refinance_properties_start}-{col}{roll_over_refinance_properties_start + 1}"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -3478,8 +3602,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
 
                     for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_end):
-                        "=SUMIFS($D$243:$D$593,$B$243:$B$593,H157)"
-                        # print("INDEX",index, col)
                         ws6[
                             f"{col}{i}"].value = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},{month_headings[index - 1]}{i})"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -3491,12 +3613,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             bottom=Side(style='medium'))
 
 
-
-
-
                 elif index > 2 and index % 2 != 0:
 
                     for i in range(toggles_start, toggles_end + 1):
+                        # if project == "Consolidated":
                         ws6[
                             f"{col}{i}"] = (
                             f"=COUNTIFS(Sales!$W:$W,\"<=\"&{month_headings[index - 1]}"
@@ -3504,6 +3624,26 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             f"Sales!$A:$A,$A{i},Sales!$B:$B,'Cashflow "
                             f"Projection'!$B{i},Sales!$F:$F,$C{i},Sales!$E:$E,"
                             f"FALSE)*$C{i}")
+                        # elif project == "Heron":
+                        #     ws6[
+                        #         f"{col}{i}"] = (
+                        #         f"=(COUNTIFS(Sales!$W:$W,\"<=\"&{month_headings[index - 1]}"
+                        #         f"$5,Sales!$W:$W,\">\"&{month_headings[index - 3]}$5,"
+                        #         f"Sales!$A:$A,$A{i},Sales!$B:$B,'Cashflow "
+                        #         f"Projection'!$B{i},Sales!$F:$F,$C{i},Sales!$E:$E,"
+                        #         f"FALSE,Sales!$A:$A,\"Heron Fields\")+COUNTIFS(Sales!$W:$W,\"<=\"&{month_headings[index - 1]}"
+                        #         f"$5,Sales!$W:$W,\">\"&{month_headings[index - 3]}$5,"
+                        #         f"Sales!$A:$A,$A{i},Sales!$B:$B,'Cashflow "
+                        #         f"Projection'!$B{i},Sales!$F:$F,$C{i},Sales!$E:$E,"
+                        #         f"FALSE,Sales!$A:$A,\"Heron View\"))*$C{i}")
+                        # else:
+                        #     ws6[
+                        #         f"{col}{i}"] = (
+                        #         f"=COUNTIFS(Sales!$W:$W,\"<=\"&{month_headings[index - 1]}"
+                        #         f"$5,Sales!$W:$W,\">\"&{month_headings[index - 3]}$5,"
+                        #         f"Sales!$A:$A,$A{i},Sales!$B:$B,'Cashflow "
+                        #         f"Projection'!$B{i},Sales!$F:$F,$C{i},Sales!$E:$E,"
+                        #         f"FALSE,Sales!$A:$A,\"{project}\")*$C{i}")
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                         # Center the text in the cell
@@ -3550,8 +3690,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             top=Side(style='medium'),
                             bottom=Side(style='medium'))
 
-
-
                     for i in range(purple_blok_start, purple_blok_end):
                         ws6[
                             f"{col}{i}"] = 0
@@ -3566,10 +3704,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             bottom=Side(style='medium'))
 
                     for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
-                        # "=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, 'Cashflow Projection (2)'!G121)"
-                        # ws6[
-                        #     f"{col}{i}"] = f"=SUMIFS('Investor Exit List'!$Q:$Q, 'Investor Exit List'!$C:$C, H{i})"
-                        # ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=18)
                         # for i in range(refinanced_units_start + 1, refinanced_units_end + 1):
                         ws6[f"{col}{i}"].fill = PatternFill(start_color="FFFF80", end_color="FFFF80", fill_type="solid")
@@ -3582,7 +3716,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             bottom=Side(style='medium'))
 
                     for i in range(refinanced_units_start - 1, refinanced_units_start):
-                        "=COUNTA(H117:H149)"
                         ws6[
                             f"{col}{i}"] = f"=COUNTA({col}{refinanced_units_start}:{col}{refinanced_units_end})"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -3596,7 +3729,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             bottom=Side(style='medium'))
 
                     for i in range(debenture_transaction_start, debenture_transaction_start + 1):
-                        "=$B$151*J151"
                         ws6[
                             f"{col}{i}"] = f"=${month_headings[index - 2]}{refinanced_units_start - 1}"
                         ws6[f"{col}{i}"].number_format = '#,##0'
@@ -3627,11 +3759,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             continue
 
                     for i in range(roll_over_refinance_properties_start + 3, roll_over_refinance_properties_end):
-                        # "=SUMIFS($D$243:$D$593,$B$243:$B$593,H157)"
-                        # # print("INDEX",index, col)
-                        # ws6[
-                        #     f"{col}{i}"].value = f"=SUMIFS($D${calculate_exit_dates_start}:$D${calculate_exit_dates_end},$B${calculate_exit_dates_start}:$B${calculate_exit_dates_end},{month_headings[index - 1]}{i})"
-                        # ws6[f"{col}{i}"].number_format = '#,##0'
+
                         ws6[f"{col}{i}"].font = Font(bold=True, color="000000", size=18)
                         ws6[f"{col}{i}"].border = Border(
                             left=Side(style='medium'),
@@ -3654,7 +3782,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     bottom=Side(style='medium'))
 
             for i in range(refinanced_units_start, refinanced_units_end + 1):
-
                 ws6[f"H{i}"].number_format = '#,##0'
                 ws6[f"H{i}"].font = Font(bold=True, color="0C0C0C", size=18)
 
@@ -3665,7 +3792,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     top=Side(style='medium'),
                     bottom=Side(style='medium'))
 
-            for i in range(7, 25):
+            for i in range(toggles_start, toggles_end + 1):
                 ws6[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
                 ws6[f"C{i}"].alignment = Alignment(horizontal='center', vertical='center')
                 # make font bold and 22 in columns A,B & C
@@ -3674,18 +3801,24 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws6[f"C{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
             for i in range(block_costs_start, block_costs_end + 1):
-                ws6[f"A{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'), right=Side(style='medium'),
-                                                                   top=Side(style='medium'), bottom=Side(style='medium'))
-                ws6[f"B{i}"].border = ws6[f"B{i}"].border + Border(left=Side(style='medium'), right=Side(style='medium'),
-                                                                   top=Side(style='medium'), bottom=Side(style='medium'))
-                ws6[f"C{i}"].border = ws6[f"C{i}"].border + Border(left=Side(style='medium'), right=Side(style='medium'),
-                                                                   top=Side(style='medium'), bottom=Side(style='medium'))
+                ws6[f"A{i}"].border = ws6[f"A{i}"].border + Border(left=Side(style='medium'),
+                                                                   right=Side(style='medium'),
+                                                                   top=Side(style='medium'),
+                                                                   bottom=Side(style='medium'))
+                ws6[f"B{i}"].border = ws6[f"B{i}"].border + Border(left=Side(style='medium'),
+                                                                   right=Side(style='medium'),
+                                                                   top=Side(style='medium'),
+                                                                   bottom=Side(style='medium'))
+                ws6[f"C{i}"].border = ws6[f"C{i}"].border + Border(left=Side(style='medium'),
+                                                                   right=Side(style='medium'),
+                                                                   top=Side(style='medium'),
+                                                                   bottom=Side(style='medium'))
                 # make font bold and 22
                 ws6[f"A{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                 ws6[f"B{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                 ws6[f"C{i}"].font = Font(bold=True, color="FFFFFF", size=22)
 
-                if ws6[f"A{i}"].value not in [ "D", "H", "N"]:
+                if ws6[f"A{i}"].value not in ["D", "H", "N"]:
                     ws6[f"A{i}"].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
                     ws6[f"B{i}"].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
                     if ws6[f"A{i}"].value == "E":
@@ -3751,28 +3884,27 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 bottom=Side(style='medium'))
 
             # fill A, B & C with Red
-            ws6[f"A{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
-            ws6[f"B{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
-            ws6[f"C{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+            ws6[f"A{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                                              fill_type="solid")
+            ws6[f"B{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                                              fill_type="solid")
+            ws6[f"C{block_costs_end + 1}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                                              fill_type="solid")
             ws6.append([])
             # print("WS 6 Max Row: ",ws6.max_row)
 
             for row in ws2b.iter_rows(min_row=5, max_row=ws2b.max_row, min_col=3, max_col=3):
                 for cell in row:
-                    cell.value = f"=IF(A{cell.row}=FALSE, 1,SUMIFS('Cashflow Projection'!$C${block_costs_start}:$C${block_costs_end}, 'Cashflow Projection'!$B$33:$B$45, 'Updated Construction'!G{cell.row}))"
+                    # I AM HERE
+                    if project == "Consolidated":
+                        cell.value = f"=IF(A{cell.row}=FALSE, 1,SUMIFS('Cashflow Projection'!$C${block_costs_start}:$C${block_costs_end}, 'Cashflow Projection'!$B$33:$B$45, 'Updated Construction'!G{cell.row}))"
+                    else:
+                        cell.value = f"=IF(A{cell.row}=FALSE, 1,SUMIFS('Cashflow Projection - {project}'!$C${block_costs_start}:$C${block_costs_end}, 'Cashflow Projection - {project}'!$B$33:$B$45, 'Updated Construction'!G{cell.row}))"
 
             for row in ws6.iter_rows(min_row=toggles_start, max_row=toggles_end, min_col=3, max_col=3):
                 for cell in row:
                     "=IF(ISERROR(VLOOKUP($B7,$A$50:$B$63,2,FALSE)),0,SUMIFS($B$50:$B$63,$A$50:$A$63,B7))"
                     cell.value = f"=IF(ISERROR(VLOOKUP($B{cell.row},$A{block_costs_start}:$B{block_costs_end},2,FALSE)),0,IF(SUMIFS($B{block_costs_start}:$B{block_costs_end},$A{block_costs_start}:$A{block_costs_end},B{cell.row})>0,1,0))"
-                    # cell.value = f"=IF(A{cell.row}<>\"Heron View\",1,IF(ISERROR(VLOOKUP($B{cell.row},$A${block_costs_start}:$B${block_costs_end},2,FALSE)),1,SUMIFS($B${block_costs_start}:$B${block_costs_end},$A${block_costs_start}:$A${block_costs_end},B{cell.row})))"
-
-            # for i in range(4, ws6.max_row + 3):
-            #     for x in range(1, ws6.max_column + 1):
-            #         if i < ws6.max_row + 2 and x == 1:
-            #             ws6[f"{get_column_letter(x)}{i}"].border = Border(left=Side(style='medium'))
-            #         elif i < ws6.max_row + 2 and x == ws6.max_column:
-            #             ws6[f"{get_column_letter(x)}{i}"].border = Border(right=Side(style='medium'))
 
             for i in range(ws6.max_row + 1, ws6.max_row + 2):
                 for x in range(1, ws6.max_column + 1):
@@ -3881,7 +4013,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws6[f"G{i}"] = "DJ / IK"
 
             ws6[f"G{vat_payable_on_sales}"] = "DJ"
-            ws6[f"G{vat_payable_on_sales}"].fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+            ws6[f"G{vat_payable_on_sales}"].fill = PatternFill(start_color="FF0000", end_color="FF0000",
+                                                               fill_type="solid")
             ws6[f"G{vat_payable_on_sales}"].font = Font(bold=True, color="FFFFFF", size=18)
 
             ws6[f"G{vat_income}"] = "DJ"
@@ -4006,11 +4139,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             for i in range(block_costs_start, block_costs_end + 1):
                 # "=XLOOKUP(A53,$B$7:$B$26,$A$7:$A$26,"Heron View")"
-                ws6[f"E{i}"] = f"=_xlfn.XLOOKUP(A{i},$B${toggles_start}:$B${toggles_end},$A${toggles_start}:$A${toggles_end},\"Heron View\")"
+                ws6[
+                    f"E{i}"] = f"=_xlfn.XLOOKUP(A{i},$B${toggles_start}:$B${toggles_end},$A${toggles_start}:$A${toggles_end},\"\")"
                 ws6[f"E{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                 ws6[f"E{i}"].border = Border(left=Side(style='medium'), right=Side(style='medium'),
-                                                top=Side(style='medium'), bottom=Side(style='medium'))
-
+                                             top=Side(style='medium'), bottom=Side(style='medium'))
 
             for index, col in enumerate(month_headings):
                 if index % 2 == 0:
@@ -4034,10 +4167,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             # freeze panes at D7
             ws6.freeze_panes = ws6["D6"]
-
-
-
-
 
             if idx == 0:
                 ws7 = wb.create_sheet('Cashflow')
@@ -4115,8 +4244,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             f'=+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"{project}",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1)'])
             transfer_endulini = ws7.max_row
 
-
-
             transfer_heron = ws7.max_row
             if project == "Consolidated":
                 ws7.append([f"Projected Transfer Income  - {project}  Not yet Sold (Profit)",
@@ -4169,19 +4296,22 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             momentum_interest = ws7.max_row
             ws7.append(["Investor funds to hit Momentum Account to draw", 0, 0])
             if project == "Consolidated" or project == "Heron":
-                ws7.append([f"Deposit made", f"='Cashflow Projection'!D{funds_available_start + 5}+'Cashflow Projection'!D{funds_available_start + 6}+'Cashflow Projection'!D{funds_available_start + 7}+'Cashflow Projection'!D{funds_available_start + 8}+'Cashflow Projection'!D{funds_available_start + 10}", 0])
+                ws7.append([f"Deposit made",
+                            f"='Cashflow Projection'!D{funds_available_start + 5}+'Cashflow Projection'!D{funds_available_start + 6}+'Cashflow Projection'!D{funds_available_start + 7}+'Cashflow Projection'!D{funds_available_start + 8}+'Cashflow Projection'!D{funds_available_start + 10}",
+                            0])
             else:
                 ws7.append([f"Deposit made", 0, 0])
             ws7.append([])
             investor_funds = ws7.max_row
 
-
             ws7.append(
-                ["Total Cash", f"=sum(B{momentum_funds}:B{investor_funds})", f"=sum(B{momentum_funds}:B{investor_funds})"])
+                ["Total Cash", f"=sum(B{momentum_funds}:B{investor_funds})",
+                 f"=sum(B{momentum_funds}:B{investor_funds})"])
             total_funds = ws7.max_row
             ws7.append([])
             ws7.append(
-                ["Total funds available to draw", f"=B{total_funds}+B{total_income}", f"=C{total_funds}+C{total_income}"])
+                ["Total funds available to draw", f"=B{total_funds}+B{total_income}",
+                 f"=C{total_funds}+C{total_income}"])
             total_funds_draw = ws7.max_row
             ws7.append([])
             if project == "Consolidated":
@@ -4192,7 +4322,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             f"=SUMIFS('Cashflow Projection'!$D$49:$D$64,'Cashflow Projection'!$E$49:$E$64,\"Heron View\")",
                             0])
             else:
-                ws7.append(["Cost to complete Heron Projects (CPC)", f"=SUMIFS('Cashflow Projection'!$D$49:$D$64,'Cashflow Projection'!$E$49:$E$64,\"{project}\")", 0])
+                ws7.append(["Cost to complete Heron Projects (CPC)",
+                            f"=SUMIFS('Cashflow Projection'!$D$49:$D$64,'Cashflow Projection'!$E$49:$E$64,\"{project}\")",
+                            0])
             cpc = ws7.max_row
             if project == "Consolidated" or project == "Heron":
                 ws7.append(["Company Running Costs", f"='Cashflow Projection'!D{operating_expenses}",
@@ -4208,15 +4340,13 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws7.append(["VAT Payable", 0, 0])
                 vat_payable = ws7.max_row
 
-
-
-
             ws7.append([])
             ws7.append(["Project Costs", f"=B{cpc}+B{company_running_costs}+B{vat_payable}",
                         f"=C{cpc}+C{company_running_costs}+C{vat_payable}"])
             project_costs = ws7.max_row
             ws7.append([])
-            ws7.append(["NETT EFFECT", f"=B{total_funds_draw}+B{project_costs}", f"=C{total_funds_draw}+C{project_costs}"])
+            ws7.append(
+                ["NETT EFFECT", f"=B{total_funds_draw}+B{project_costs}", f"=C{total_funds_draw}+C{project_costs}"])
             nett_effect = ws7.max_row
 
             style = '#,##0.00'
@@ -4296,13 +4426,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             "=+D72+D46"
             ws6[f"D{running}"] = f"=D{running - 2}+D{block_costs_start - 4}"
 
-
-
             #
             # # freeze panes at cell B10
             # ws8.freeze_panes = ws8['B10']
             # convert project to upper case
-
 
             if idx == 0:
                 ws9 = wb.create_sheet('NSST Print')
@@ -4333,25 +4460,28 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws9.append(["Development", f"{project.title()} Open Projects"])
             ws9.append(["CAPITAL"])
             if project == "Consolidated":
-                ws9.append(["Total Investment capital to be raised (Estimated)", f"=SUMIFS(Opportunities!$E:$E,Opportunities!$A:$A,\"<>\"&\"\")"])
+                ws9.append(["Total Investment capital to be raised (Estimated)",
+                            f"=SUMIFS(Opportunities!$E:$E,Opportunities!$A:$A,\"<>\"&\"\")"])
             elif project == "Heron":
-                ws9.append(["Total Investment capital to be raised (Estimated)", f"=SUMIFS(Opportunities!$E:$E,Opportunities!$A:$A,\"Heron Fields\")+SUMIFS(Opportunities!$E:$E,Opportunities!$A:$A,\"Heron View\")"])
+                ws9.append(["Total Investment capital to be raised (Estimated)",
+                            f"=SUMIFS(Opportunities!$E:$E,Opportunities!$A:$A,\"Heron Fields\")+SUMIFS(Opportunities!$E:$E,Opportunities!$A:$A,\"Heron View\")"])
             else:
-                ws9.append(["Total Investment capital to be raised (Estimated)", f"=SUMIFS(Opportunities!$E:$E,Opportunities!$A:$A,\"{project}\")"])
+                ws9.append(["Total Investment capital to be raised (Estimated)",
+                            f"=SUMIFS(Opportunities!$E:$E,Opportunities!$A:$A,\"{project}\")"])
             # I AM HERE
 
             # "=SUMIFS(Investors!$M:$M,Investors!$J:$J,"<="&'NSST Print'!B$3)"
             if project == "Consolidated":
-                "=SUMIFS(Investors!$M:$M,Investors!$I:$I,"<="&'NSST Print'!$B$3)"
+                "=SUMIFS(Investors!$M:$M,Investors!$I:$I," <= "&'NSST Print'!$B$3)"
                 ws9.append(["Total Investment capital received",
-                        "=SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3)"])
+                            "=SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3)"])
             elif project == "Heron":
                 # "=SUMIFS(Investors!$M:$M,Investors!$I:$I,"<="&'NSST Print'!$B$3,Investors!$D:$D,"<>"&"Goodwood")"
                 ws9.append(["Total Investment capital received",
-                        "=SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"Heron Fields\")+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"Heron View\")"])
+                            "=SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"Heron Fields\")+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"Heron View\")"])
             else:
                 ws9.append(["Total Investment capital received",
-                        f"=SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"{project}\")"])
+                            f"=SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"{project}\")"])
             if project == "Consolidated":
                 # "=SUMIFS(Investors!$M:$M,Investors!$P:$P,FALSE,Investors!$J:$J,"<="&'NSST Print'!$B$3)"
                 ws9.append(["Total Funds Drawn Down into Development",
@@ -4376,13 +4506,12 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws9.append(["Available to be raised (Estimated)",
                         "=IF((B6-B7)<=0,0,B6-B7)"])
 
-
             # I AM HERE
             if project == "Consolidated":
                 # "=SUMIFS(Investors!$M:$M,Investors!$K:$K,"<="&'NSST Print'!$B$3)"
                 ws9.append(["Capital repaid",
                             "=SUMIFS(Investors!$M:$M,Investors!$K:$K,\"<=\"&'NSST Print'!$B$3)"])
-            # "=SUMIFS(Investors!$M:$M,Investors!$K:$K,">"&'NSST Print'!$B$3,Investors!$P:$P,FALSE)"
+                # "=SUMIFS(Investors!$M:$M,Investors!$K:$K,">"&'NSST Print'!$B$3,Investors!$P:$P,FALSE)"
                 ws9.append(["Current Investor Capital deployed",
                             "=SUMIFS(Investors!$M:$M,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$P:$P,FALSE)"])
             elif project == "Heron":
@@ -4400,13 +4529,12 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws9.append(["Current Investor Capital deployed",
                             f"=SUMIFS(Investors!$M:$M,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$P:$P,FALSE,Investors!$D:$D,\"{project}\")"])
 
-
-
             ws9.append(["INVESTMENTS"])
             if project == "Consolidated":
                 # "=COUNTIFS(Investors!$G:$G,FALSE,Investors!$I:$I,"<="&'NSST Print'!$B$3)+COUNTIFS(Investors!$G:$G,TRUE,Investors!$I:$I,"<="&'NSST Print'!$B$3)"
                 ws9.append(
-                    ["No. of Capital Investments received", "=COUNTIFS(Investors!$G:$G,FALSE,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)+COUNTIFS(Investors!$G:$G,TRUE,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)"])
+                    ["No. of Capital Investments received",
+                     "=COUNTIFS(Investors!$G:$G,FALSE,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)+COUNTIFS(Investors!$G:$G,TRUE,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)"])
                 # "=COUNTIFS(Investors!$G:$G,TRUE,Investors!$K:$K,"<="&'NSST Print'!$B$3)+COUNTIFS(Investors!$G:$G,FALSE,Investors!$K:$K,"<="&'NSST Print'!$B$3)"]
                 ws9.append(["No. Investments exited to date",
                             "=COUNTIFS(Investors!$G:$G,TRUE,Investors!$K:$K,\"<=\"&'NSST Print'!$B$3)+COUNTIFS(Investors!$G:$G,FALSE,Investors!$K:$K,\"<=\"&'NSST Print'!$B$3)"])
@@ -4465,7 +4593,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             "=SUMIFS(Sales!$M:$M,Sales!$E:$E,TRUE)",
                             "=SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE)",
                             "=SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE)"])
-
 
                 ws9.append(["Unforseen (0.05%)",
                             "=SUMIFS(Sales!$N:$N,Sales!$D:$D,TRUE)+SUMIFS(Sales!$N:$N,Sales!$D:$D,FALSE)-C53",
@@ -4541,14 +4668,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             f"=SUMIFS(Sales!$L:$L,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
                             f"=SUMIFS(Sales!$L:$L,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"{project}\")"])
 
-
                 ws9.append(["Bond Registration",
                             f"=SUMIFS(Sales!$P:$P,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$P:$P,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,FALSE)",
                             f"=SUMIFS(Sales!$P:$P,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
                             f"=SUMIFS(Sales!$P:$P,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
                             f"=SUMIFS(Sales!$P:$P,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"{project}\")"])
-
-
 
                 ws9.append(["Security Release Fee",
                             f"=SUMIFS(Sales!$M:$M,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$M:$M,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,FALSE)",
@@ -4561,7 +4685,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             f"=SUMIFS(Sales!$N:$N,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
                             f"=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
                             f"=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"{project}\")-C53"])
-
 
             ws9.append(
                 ["Transfer Income", "=B21-SUM(B22:B26)", "=C21-SUM(C22:C26)", "=D21-SUM(D22:D26)", "=E21-SUM(E22:E26)"])
@@ -4605,7 +4728,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             f"=SUMIFS(Investors!$T:$T,Investors!$G:$G,FALSE,Investors!$O:$O,FALSE,Investors!$D:$D,\"{project}\")+SUMIFS(Investors!$Q:$Q,Investors!$G:$G,FALSE,Investors!$O:$O,FALSE,Investors!$D:$D,\"{project}\")"])
                 ws9.append(["Interest Due to be Earned to Exit", "=B31-B32"])
 
-
             ws9.append(["FUNDING AVAILABLE"])
             if project == "Consolidated":
                 ws9.append(["Total Draw funds available", "=Cashflow!B21"])
@@ -4622,12 +4744,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws9.append(["PROJECTED PROFIT"])
             ws9.append(["Projected Nett Revenue", "=+B21+SUM(B56:B63)"])
             ws9.append(
-                ["Other Income (interest received)", "=-SUMIFS(Xero!$F:$F,Xero!$E:$E,\"Interest Received - Momentum\")"])
+                ["Other Income (interest received)",
+                 "=-SUMIFS(Xero!$F:$F,Xero!$E:$E,\"Interest Received - Momentum\")"])
             ws9.append(["Total Estimated Development and Sales Costs", "=+B78-C47-C48-C49-C50+SUM(D22:E26)"])
             ws9.append(["Interest Expense", "=B29-B30-C51"])
             ws9.append(["Profit", "=B41+B42-B43-B44"])
             ws9.append(["Sales Increase", 0,
-                        "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B46", "",
+                        "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B46",
+                        "",
                         "=C46/$E$20"])
             ws9.append(
                 ["CPC Construction", 0, "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)*B47",
@@ -4670,7 +4794,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws9.append(["Heron View Land", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A67)"])
             ws9.append(["COS - Heron Fields - Construction", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A68)"])
             ws9.append(["COS - Heron Fields - P & G", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A69)"])
-            ws9.append(["COS - Heron Fields - Printing & Stationary", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A70)"])
+            ws9.append(
+                ["COS - Heron Fields - Printing & Stationary", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A70)"])
             ws9.append(["COS - Heron View - Construction",
                         "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A71)+SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)"])
             ws9.append(["COS - Heron View - P&G", "=SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A72)"])
@@ -4678,7 +4803,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws9.append(["CPSD", "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A74)"])
             ws9.append(["OppInvest", "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75)"])
             ws9.append(["Professional Fees", "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A76)"])
-            ws9.append(["Rent Salaries and Wages", "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A77)"])
+            ws9.append(
+                ["Rent Salaries and Wages", "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A77)"])
             ws9.append(["Total Costs", "=SUM(B66:B77)"])
 
             # make the first column 55 and the others 20
@@ -4703,8 +4829,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         ws9[f"{get_column_letter(i)}{j}"].number_format = 'R#,##0.00'
                     # After row 2, put a border around all cells until row 46
                     if j > 1 and j < 46:
-                        ws9[f"{get_column_letter(i)}{j}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'),
-                                                                          left=Side(style='thin'), right=Side(style='thin'))
+                        ws9[f"{get_column_letter(i)}{j}"].border = Border(top=Side(style='thin'),
+                                                                          bottom=Side(style='thin'),
+                                                                          left=Side(style='thin'),
+                                                                          right=Side(style='thin'))
 
             rows_for_full_merge = [2, 5, 14, 18, 28, 34, 40]
             for i in rows_for_full_merge:
@@ -4717,7 +4845,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws9['A2'].font = Font(bold=True, size=26, color="FFFFFF")
             ws9['E1'].font = Font(bold=True, size=22)
 
-            rows_for_part_merger = [3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39,
+            rows_for_part_merger = [3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 29, 30, 31, 32, 33, 35, 36, 37, 38,
+                                    39,
                                     41, 42, 43, 44, 45]
             for i in rows_for_part_merger:
                 ws9.merge_cells(f"B{i}:E{i}")
@@ -4738,10 +4867,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws9.row_dimensions[32].hidden = True
             ws9.row_dimensions[33].hidden = True
 
-            for i in range(40,46):
+            for i in range(40, 46):
                 ws9.row_dimensions[i].hidden = True
 
-            for i in range(56,79):
+            for i in range(56, 79):
                 ws9.row_dimensions[i].hidden = True
 
             # in row 19 and 20, center the text from column B to E
@@ -4749,15 +4878,12 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws9[f"{get_column_letter(i)}19"].alignment = Alignment(horizontal='center', vertical='center')
                 ws9[f"{get_column_letter(i)}20"].alignment = Alignment(horizontal='center', vertical='center')
 
-
             if idx == 0:
                 ws10 = wb.create_sheet('Investor Exit List')
             else:
                 ws10 = wb.create_sheet(f'Investor Exit List - {project}')
             # make tab color red
             ws10.sheet_properties.tabColor = tab_colors[idx]
-
-
 
             ws10['A1'] = f"Investor Exit List - {report_date}"
             ws10['A1'].font = Font(bold=True, color="FFFFFF", size=22)
@@ -4806,7 +4932,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 else:
                     ws10.column_dimensions[get_column_letter(i)].width = 15
 
-
             # If project == "Heron" then filter out of investor_exit those which unit_number do not begin with "H"
             if project == "Heron" and project != "Consolidated":
                 investor_exit_use = []
@@ -4818,23 +4943,20 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             investor_exit_use.append(item)
 
             elif project != "Consolidated" and project != "Heron":
-                    investor_exit_use = []
-                    for item in investor_exit:
-                        invest_filtered = [itemI for itemI in invest if itemI['opportunity_code'] == item['unit_number']]
-                        if len(invest_filtered) > 0:
-                            if invest_filtered[0]['Category'] == project:
-                                investor_exit_use.append(item)
+                investor_exit_use = []
+                for item in investor_exit:
+                    invest_filtered = [itemI for itemI in invest if itemI['opportunity_code'] == item['unit_number']]
+                    if len(invest_filtered) > 0:
+                        if invest_filtered[0]['Category'] == project:
+                            investor_exit_use.append(item)
 
             else:
                 investor_exit_use = investor_exit
-
-
 
             for index, item in enumerate(investor_exit_use):
 
                 row = []
                 for key in item:
-
                     row.append(item[key])
 
                 ws10.append(row)
@@ -4872,7 +4994,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         if project == "Consolidated":
                             ws10[f"{i}{row}"].value = f"=SUMIFS(Sales!$H:$H,Sales!$C:$C,'Investor Exit List'!$C{row})"
                         else:
-                            ws10[f"{i}{row}"].value = f"=SUMIFS(Sales!$H:$H,Sales!$C:$C,'Investor Exit List - {project}'!$C{row})"
+                            ws10[
+                                f"{i}{row}"].value = f"=SUMIFS(Sales!$H:$H,Sales!$C:$C,'Investor Exit List - {project}'!$C{row})"
                         ws10[f"{i}{row}"].number_format = 'yyyy-mm-dd'
                     elif i == 'K':
                         ws10[f"{i}{row}"].value = f"=IF(I{row}=TRUE,J{row},\"\")"
@@ -4978,9 +5101,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws10['AA2'].value = "Release Date"
             ws10['AB2'].value = "UNIQUE ID"
             if project == "Consolidated" or project == "Heron":
-                dev1 = ["ZZUN01", 0, "HFB215", "B", "Dev Unit", 0, "", False, False, "", "", "", "", "", "", "", "", "", "", "",
-                    False,
-                    "", 1330640.05, False]
+                dev1 = ["ZZUN01", 0, "HFB215", "B", "Dev Unit", 0, "", False, False, "", "", "", "", "", "", "", "", "",
+                        "", "",
+                        False,
+                        "", 1330640.05, False]
                 ws10.append(dev1)
             # dev2 = ["ZZUN01", 0, "HFB315", "B", "Dev Unit", 0, "", False, False, "", "", "", "", "", "", "", "", "", "", "",
             #         False,
@@ -4992,8 +5116,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 for x in range(1, ws10.max_column + 1):
 
                     # put a border around each cell
-                    ws10[f"{get_column_letter(x)}{i}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'),
-                                                                       left=Side(style='thin'), right=Side(style='thin'))
+                    ws10[f"{get_column_letter(x)}{i}"].border = Border(top=Side(style='thin'),
+                                                                       bottom=Side(style='thin'),
+                                                                       left=Side(style='thin'),
+                                                                       right=Side(style='thin'))
                     # in columns, F & W format as currency
                     if i == 6 or i == 23:
                         ws10[f"{get_column_letter(x)}{i}"].number_format = 'R#,##0.00'
@@ -5025,12 +5151,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 if ws10[f"H{row}"].value == True and ws10[f"I{row}"].value == False:
                     # color in a light green
                     for i in range(1, ws10.max_column + 1):
-                        ws10[f"{get_column_letter(i)}{row}"].fill = PatternFill(start_color="C6EFCE", end_color="C6EFCE",
+                        ws10[f"{get_column_letter(i)}{row}"].fill = PatternFill(start_color="C6EFCE",
+                                                                                end_color="C6EFCE",
                                                                                 fill_type="solid")
 
                 if ws10[f"I{row}"].value == True:
                     for i in range(1, ws10.max_column + 1):
-                        ws10[f"{get_column_letter(i)}{row}"].fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE",
+                        ws10[f"{get_column_letter(i)}{row}"].fill = PatternFill(start_color="FFC7CE",
+                                                                                end_color="FFC7CE",
                                                                                 fill_type="solid")
                     # hide the row
                     ws10.row_dimensions[row].hidden = True
@@ -5041,6 +5169,70 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             columns_to_hide = [2, 7, 8, 9, 10, 11, 12, 13, 15, 20, 21, 24]
             for i in columns_to_hide:
                 ws10.column_dimensions[get_column_letter(i)].hidden = True
+
+        # for i in range(block_cost_range_start[0], block_cost_range_end[0] + 1):
+        #     formula = "="
+        #     print(i)
+        #     for r in range(1, len(block_cost_range_start)):
+        #         formula += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$B${block_cost_range_start[r]}:$B${block_cost_range_end[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$A${block_cost_range_start[r]}:$A${block_cost_range_end[r]}, A{i}, 'Cashflow Projection - {reports_by_project[r]}'!$E${block_cost_range_start[r]}:$E${block_cost_range_end[r]}, E{i})"
+        #     print(formula)
+        #     print()
+        #     # ws6[f"F{i}"].value = formula
+        #     ws6[f"Cashflow Projection!B{i}"].value = formula
+
+        # for i in range(block_cost_range_start[0], block_cost_range_end[0] + 1):
+        #     formula = "="
+        #     print(i)
+        #     for r in range(1, len(block_cost_range_start)):
+        #         formula += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$B${block_cost_range_start[r]}:$B${block_cost_range_end[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$A${block_cost_range_start[r]}:$A${block_cost_range_end[r]}, A{i}, 'Cashflow Projection - {reports_by_project[r]}'!$E${block_cost_range_start[r]}:$E${block_cost_range_end[r]}, E{i})"
+        #     print(formula)
+        #     print()
+        #     # Directly assign the formula to the cell in ws6
+        #     ws6[f"B{i}"].value = formula  # Assigning to the current worksheet
+
+        # Get the 'Cashflow Projection' worksheet
+        ws_cashflow = wb['Cashflow Projection']
+
+        for i in range(block_cost_range_start[0], block_cost_range_end[0] + 1):
+            formula = "="
+            print(f"Row: {i}")
+            for r in range(1, len(block_cost_range_start)):
+                formula += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$B${block_cost_range_start[r]}:$B${block_cost_range_end[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$A${block_cost_range_start[r]}:$A${block_cost_range_end[r]}, A{i}, 'Cashflow Projection - {reports_by_project[r]}'!$E${block_cost_range_start[r]}:$E${block_cost_range_end[r]}, E{i})"
+
+            print(f"Formula for B{i}: {formula}")
+            ws_cashflow[f"B{i}"].value = formula  # Assign the formula to the 'Cashflow Projection' worksheet
+
+        for i in range(refinanced_units_start_range[0], refinanced_units_end_range[0] + 1):
+            "=SUMIFS('Cashflow Projection - Goodwood'!$C$95:$C$177,'Cashflow Projection - Goodwood'!$D$95:$D$177,'Cashflow Projection'!D125)"
+            "=SUMIFS('Cashflow Projection - Goodwood'!$E$95:$E$177,'Cashflow Projection - Goodwood'!$D$95:$D$177,'Cashflow Projection'!D125)"
+            formula = ""
+            formula2 = "="
+            print(f"Row: {i}")
+            for r in range(1, len(refinanced_units_start_range)):
+                formula += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$C${refinanced_units_start_range[r]}:$C${refinanced_units_start_range[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$D${refinanced_units_start_range[r]}:$D${refinanced_units_start_range[r]}, D{i})"
+                formula2 += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$E${refinanced_units_start_range[r]}:$E${refinanced_units_start_range[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$D${refinanced_units_start_range[r]}:$D${refinanced_units_start_range[r]}, D{i})"
+
+
+            print(f"Formula for C{i}: {formula}")
+            print()
+            print(f"Formula for E{i}: {formula2}")
+            formula = f"=IF({formula}=0, \"\", {formula})"
+            ws_cashflow[f"C{i}"].value = formula
+            ws_cashflow[f"E{i}"].value = formula2# Assign the formula to the 'Cashflow Projection' worksheet
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         ws11 = wb.create_sheet('Momentum')
         # make tab color red
@@ -5306,8 +5498,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         #     ws = wb[sheet]
         #     sheet_names.move_sheet(ws, -1)
 
-
-
         # remove the default sheet
         ws6.column_dimensions.group('F', 'H', hidden=False)
         ws6.row_dimensions.group(toggles_start, toggles_end, hidden=False)
@@ -5326,8 +5516,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         ws6.page_setup.scale = 50
         ws6.page_setup.fitToWidth = 1
         ws6.page_setup.fitToHeight = 1
-
-
 
         # Set page margins
         ws6.page_margins.left = 0.5

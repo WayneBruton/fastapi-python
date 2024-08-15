@@ -15,6 +15,27 @@ from cashflow_excel_functions.cashflow_projection_nsst import cashflow_projectio
 cashflow = APIRouter()
 
 
+def calculate_formula():
+    report_by_project = ["Consolidated", "Goodwood", "Heron", "TEST"]
+    refinanced_units_start_range = [125, 95, 121, 96]
+    refinanced_units_end_range = [297, 177, 205, 100]
+    block_cost_range_start = [50, 34, 47, 35]
+    block_cost_range_end = [64, 34, 60, 35]
+
+    for i in range(block_cost_range_start[0], block_cost_range_end[0] + 1):
+        formula = "="
+        print(i)
+        for r in range(1,len(block_cost_range_start)):
+            formula += f"+SUMIFS('Cashflow Projection - {report_by_project[r]}'!$B${block_cost_range_start[r]}:$B${block_cost_range_end[r]}, 'Cashflow Projection - {report_by_project[r]}'!$A${block_cost_range_start[r]}:$A${block_cost_range_end[r]}, A{i}, 'Cashflow Projection - {report_by_project[r]}'!$E${block_cost_range_start[r]}:$E${block_cost_range_end[r]}, E{i})"
+        print(formula)
+        print()
+
+# calculate_formula()
+
+
+
+
+
 @cashflow.post("/construction_cashflow")
 async def construction_cashflow(data: Request):
     request = await data.json()
@@ -24,7 +45,7 @@ async def construction_cashflow(data: Request):
         # loop through each individual item dictionary
         # convert all values to float
         for key, value in item.items():
-            if key != "Whitebox-Able" and key != "Complete Build" and key != "Blocks" and key != "Option":
+            if key != "Whitebox-Able" and key != "Complete Build" and key != "Blocks" and key != "Option" and key != "Development":
                 # item[key] = float(value)
                 value = value.replace("R\xa0", "")
                 value = value.replace(",", "")
@@ -2086,6 +2107,7 @@ async def generate_investors_new_cashflow_nsst_report(data: Request, background_
         insert = {
             "Whitebox-Able": True,
             "Blocks": "Block R",
+            'Development': 'Goodwood',
             "Complete Build": 0,
             'Option': 0,
             'Remaining As Per Options': 0.0,
@@ -2102,7 +2124,8 @@ async def generate_investors_new_cashflow_nsst_report(data: Request, background_
             '30-Nov-24': 2718.75,
             '31-Dec-24': 2718.75,
             '31-Jan-25': 2718.75,
-            '28-Feb-25': 2718.75
+            '28-Feb-25': 2718.75,
+
         }
         construction.append(insert)
 
