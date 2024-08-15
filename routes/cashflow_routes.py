@@ -15,27 +15,6 @@ from cashflow_excel_functions.cashflow_projection_nsst import cashflow_projectio
 cashflow = APIRouter()
 
 
-def calculate_formula():
-    report_by_project = ["Consolidated", "Goodwood", "Heron", "TEST"]
-    refinanced_units_start_range = [125, 95, 121, 96]
-    refinanced_units_end_range = [297, 177, 205, 100]
-    block_cost_range_start = [50, 34, 47, 35]
-    block_cost_range_end = [64, 34, 60, 35]
-
-    for i in range(block_cost_range_start[0], block_cost_range_end[0] + 1):
-        formula = "="
-        print(i)
-        for r in range(1,len(block_cost_range_start)):
-            formula += f"+SUMIFS('Cashflow Projection - {report_by_project[r]}'!$B${block_cost_range_start[r]}:$B${block_cost_range_end[r]}, 'Cashflow Projection - {report_by_project[r]}'!$A${block_cost_range_start[r]}:$A${block_cost_range_end[r]}, A{i}, 'Cashflow Projection - {report_by_project[r]}'!$E${block_cost_range_start[r]}:$E${block_cost_range_end[r]}, E{i})"
-        print(formula)
-        print()
-
-# calculate_formula()
-
-
-
-
-
 @cashflow.post("/construction_cashflow")
 async def construction_cashflow(data: Request):
     request = await data.json()
@@ -1222,7 +1201,6 @@ def investors_new_cashflow_nsst_report():
     # start = time.time()
     investors = list(db.investors.find({}, {"_id": 0}))
     for investor in investors:
-
         investor["trust"] = list(
             filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
                 "Category"] != "NGAH", investor["trust"]))
@@ -1567,8 +1545,6 @@ def get_sales_data(report_date):
             filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
                 "Category"] != "NGAH",
                    opportunities))
-
-
 
         # Get actual sales data from sales_processed where development is "Heron Fields" or "Heron View"
         sales_data_actual = list(
@@ -1941,11 +1917,11 @@ def get_opportunities():
             # filter investor["Trust"] where Category = "Heron Fields" or Category = "Heron View"
             investor["trust"] = list(
                 filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
-                "Category"] != "NGAH", investor["trust"]))
+                    "Category"] != "NGAH", investor["trust"]))
 
             investor["pledges"] = list(
                 filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
-                "Category"] != "NGAH", investor["pledges"]))
+                    "Category"] != "NGAH", investor["pledges"]))
 
             # REMEMBER
 

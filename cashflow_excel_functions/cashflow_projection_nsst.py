@@ -1489,6 +1489,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         f"W{i}"].value = f"=IF(SUMIFS('Cashflow Projection'!$E${refinanced_units_start + 1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})=1,SUMIFS('Cashflow Projection'!$C${refinanced_units_start + 1}:$C${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i}),+Sales!H{i})"
                     ws3[
                         f'T{i}'].value = f"=IF(SUMIFS('Cashflow Projection'!$E${refinanced_units_start + 1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})<>0,TRUE,FALSE)"
+                    ws3[f"J{i}"].value = f"=I{i}/115*15"
+                    ws3[f"K{i}"].value = f"=I{i}-J{i}"
                 # format as date
                 ws3[f"W{i}"].number_format = 'dd-mm-yyyy'
                 "=IF(MOD(MONTH(W24), 2) <> 0, EOMONTH(W24, 2), EOMONTH(W24, 1))"
@@ -5207,15 +5209,15 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             "=SUMIFS('Cashflow Projection - Goodwood'!$E$95:$E$177,'Cashflow Projection - Goodwood'!$D$95:$D$177,'Cashflow Projection'!D125)"
             formula = ""
             formula2 = "="
-            print(f"Row: {i}")
+            # print(f"Row: {i}")
             for r in range(1, len(refinanced_units_start_range)):
                 formula += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$C${refinanced_units_start_range[r]}:$C${refinanced_units_start_range[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$D${refinanced_units_start_range[r]}:$D${refinanced_units_start_range[r]}, D{i})"
                 formula2 += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$E${refinanced_units_start_range[r]}:$E${refinanced_units_start_range[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$D${refinanced_units_start_range[r]}:$D${refinanced_units_start_range[r]}, D{i})"
 
 
-            print(f"Formula for C{i}: {formula}")
-            print()
-            print(f"Formula for E{i}: {formula2}")
+            # print(f"Formula for C{i}: {formula}")
+            # print()
+            # print(f"Formula for E{i}: {formula2}")
             formula = f"=IF({formula}=0, \"\", {formula})"
             ws_cashflow[f"C{i}"].value = formula
             ws_cashflow[f"E{i}"].value = formula2# Assign the formula to the 'Cashflow Projection' worksheet
