@@ -5197,11 +5197,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
         for i in range(block_cost_range_start[0], block_cost_range_end[0] + 1):
             formula = "="
-            print(f"Row: {i}")
+            # print(f"Row: {i}")
             for r in range(1, len(block_cost_range_start)):
                 formula += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$B${block_cost_range_start[r]}:$B${block_cost_range_end[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$A${block_cost_range_start[r]}:$A${block_cost_range_end[r]}, A{i}, 'Cashflow Projection - {reports_by_project[r]}'!$E${block_cost_range_start[r]}:$E${block_cost_range_end[r]}, E{i})"
 
-            print(f"Formula for B{i}: {formula}")
+            # print(f"Formula for B{i}: {formula}")
             ws_cashflow[f"B{i}"].value = formula  # Assign the formula to the 'Cashflow Projection' worksheet
 
         for i in range(refinanced_units_start_range[0], refinanced_units_end_range[0] + 1):
