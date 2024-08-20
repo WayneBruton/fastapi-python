@@ -462,9 +462,9 @@ async def deliver_early_releases(file_name):
 async def uploadLoanAgreement( doc: UploadFile, name: str = Form(...), inv: str = Form(...), unit: str = Form(...)):
     # data = await request.json()
     # print(data)
-    # print("NAME",name)
-    # print("INVESTOR",inv)
-    # print("UNIT",unit)
+    print("NAME",name)
+    print("INVESTOR",inv)
+    print("UNIT",unit)
     try:
         # for doc in docs:
         # print(doc)
@@ -484,9 +484,9 @@ async def uploadLoanAgreement( doc: UploadFile, name: str = Form(...), inv: str 
         merge_pdfs(input_folder, output_pdf)
 
         # delete all files in upload_fica except for the merged pdf
-        # for file in os.listdir(input_folder):
-        #     if file != f"{name}.pdf":
-        #         os.remove(f"{input_folder}/{file}")
+        for file in os.listdir(input_folder):
+            if file != f"{name}.pdf":
+                os.remove(f"{input_folder}/{file}")
 
         # upload to s3
         try:
@@ -639,6 +639,33 @@ async def upload_fica_files( docs: list[UploadFile], name: str = Form(...), inv:
         print(e)
         return {"ERROR": "Please Try again"}
 
+
+@investor.post("/deleteAgreement")
+async def delete_agreement_file(data: Request):
+    request = await data.json()
+    print(request)
+    # return {"message": "File Deleted"}
+    investor = db.investors.find_one({"investor_acc_number": request['investor_acc_number']})
+    # print("INVESTOR",investor['trust'])
+    for i in investor['trust']:
+        if i.get('opportunityPlusInvestment',"") == request['name']:
+            i['loanAgreement'] = ""
+    db.investors.update_one({"investor_acc_number": request['investor_acc_number']}, {"$set": investor})
+    return {"message": "File Deleted"}
+
+
+@investor.post("/deleteExit")
+async def delete_exit_file(data: Request):
+    request = await data.json()
+    print(request)
+    # return {"message": "File Deleted"}
+    investor = db.investors.find_one({"investor_acc_number": request['investor_acc_number']})
+    # print("INVESTOR",investor['trust'])
+    for i in investor['trust']:
+        if i.get('opportunityPlusInvestment',"") == request['name']:
+            i['exit_rollover_documents'] = ""
+    db.investors.update_one({"investor_acc_number": request['investor_acc_number']}, {"$set": investor})
+    return {"message": "File Deleted"}
 
 @investor.post("/upload_general_files/")
 async def upload_general_files( docs: list[UploadFile], name: str = Form(...),inv: str = Form(...)):
