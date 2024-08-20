@@ -1,7 +1,7 @@
 import json
 
 from PyPDF2 import PdfFileMerger
-from fastapi import APIRouter, Request, UploadFile, Form
+from fastapi import APIRouter, Request, UploadFile, Form, File
 from fastapi.responses import FileResponse
 from decouple import config
 import boto3
@@ -457,8 +457,135 @@ async def deliver_early_releases(file_name):
         return {"ERROR": "Please Try again"}
 
 
+
+@investor.post("/uploadLoanAgreement")
+async def uploadLoanAgreement( doc: UploadFile, name: str = Form(...), inv: str = Form(...), unit: str = Form(...)):
+    # data = await request.json()
+    # print(data)
+    # print("NAME",name)
+    # print("INVESTOR",inv)
+    # print("UNIT",unit)
+    try:
+        # for doc in docs:
+        # print(doc)
+        name = name + unit
+        name = name.replace(" ", "_")
+        doc.filename = doc.filename.replace(" ", "_")
+        # doc.filename = name
+        # print("CCCCC",doc.filename)
+        data = await doc.read()
+        with open(f"upload_loanAgreement/{doc.filename}", "wb") as f:
+            f.write(data)
+
+        # print("UPLOAD PARTLY SUCCESSFUL")
+
+        input_folder = 'upload_loanAgreement'
+        output_pdf = f'upload_loanAgreement/{name}.pdf'
+        merge_pdfs(input_folder, output_pdf)
+
+        # delete all files in upload_fica except for the merged pdf
+        # for file in os.listdir(input_folder):
+        #     if file != f"{name}.pdf":
+        #         os.remove(f"{input_folder}/{file}")
+
+        # upload to s3
+        try:
+            s3.upload_file(
+                f"upload_loanAgreement/{name}.pdf",
+                AWS_BUCKET_NAME,
+                f"{name}.pdf",
+            )
+            link = f"https://{AWS_BUCKET_NAME}.s3.{AWS_BUCKET_REGION}.amazonaws.com/{name}.pdf"
+            # print("SUCCESS")
+            # print(link)
+            investor = db.investors.find_one({"investor_acc_number": inv})
+            # print("INVESTOR",investor)
+            # investor['id'] = str(investor['_id'])
+            # del investor['_id']
+            for i in investor['trust']:
+                if i['opportunityPlusInvestment'] == unit:
+                    i['loanAgreement'] = link
+            db.investors.update_one({"investor_acc_number": inv}, {"$set": investor})
+
+        except Exception as err:
+            print("ERR",err)
+
+        # delete all files in upload_fica
+        for file in os.listdir(input_folder):
+            os.remove(f"{input_folder}/{file}")
+        unit = unit.split(" ")[0]
+
+        return {"agreement": link, "unit": unit}
+    except Exception as e:
+        print("E",e)
+        return {"ERROR": "Please Try again"}
+
+
+@investor.post("/uploadExitLetters")
+async def uploadExitLetters( doc: UploadFile, name: str = Form(...), inv: str = Form(...), unit: str = Form(...)):
+    # data = await request.json()
+    # print(data)
+    print("NAME",name)
+    print("INVESTOR",inv)
+    print("UNIT",unit)
+    try:
+        # for doc in docs:
+        # print(doc)
+        name = name + unit
+        name = name.replace(" ", "_")
+        doc.filename = doc.filename.replace(" ", "_")
+        # doc.filename = name
+        # print("CCCCC",doc.filename)
+        data = await doc.read()
+        with open(f"upload_exit_letters/{doc.filename}", "wb") as f:
+            f.write(data)
+
+        # print("UPLOAD PARTLY SUCCESSFUL")
+
+        input_folder = 'upload_exit_letters'
+        output_pdf = f'upload_exit_letters/{name}.pdf'
+        merge_pdfs(input_folder, output_pdf)
+
+        # delete all files in upload_fica except for the merged pdf
+        # for file in os.listdir(input_folder):
+        #     if file != f"{name}.pdf":
+        #         os.remove(f"{input_folder}/{file}")
+
+        # upload to s3
+        try:
+            s3.upload_file(
+                f"upload_exit_letters/{name}.pdf",
+                AWS_BUCKET_NAME,
+                f"{name}.pdf",
+            )
+            link = f"https://{AWS_BUCKET_NAME}.s3.{AWS_BUCKET_REGION}.amazonaws.com/{name}.pdf"
+            print("SUCCESS")
+            print(link)
+            investor = db.investors.find_one({"investor_acc_number": inv})
+            # print("INVESTOR",investor)
+            # investor['id'] = str(investor['_id'])
+            # del investor['_id']
+            for i in investor['trust']:
+                if i['opportunityPlusInvestment'] == unit:
+                    i['exit_rollover_documents'] = link
+            db.investors.update_one({"investor_acc_number": inv}, {"$set": investor})
+
+        except Exception as err:
+            print("ERR",err)
+
+        # delete all files in upload_fica
+        for file in os.listdir(input_folder):
+            os.remove(f"{input_folder}/{file}")
+        unit = unit.split(" ")[0]
+
+        return {"exitDoc": link, "unit": unit}
+    except Exception as e:
+        print("E",e)
+        return {"ERROR": "Please Try again"}
+
+
 @investor.post("/upload_fica_files/")
-async def upload_fica_files( docs: list[UploadFile], name: str = Form(...)):
+async def upload_fica_files( docs: list[UploadFile], name: str = Form(...), inv: str = Form(...)):
     # data = await request.json()
     # print(data)
     print("NAME",name)
@@ -490,6 +617,15 @@ async def upload_fica_files( docs: list[UploadFile], name: str = Form(...)):
             link = f"https://{AWS_BUCKET_NAME}.s3.{AWS_BUCKET_REGION}.amazonaws.com/{name}.pdf"
             print("SUCCESS")
             print(link)
+            investor = db.investors.find_one({"investor_acc_number": inv})
+            # print("INVESTOR",investor)
+            # investor['id'] = str(investor['_id'])
+            # del investor['_id']
+            # for i in investor['trust']:
+            #     if i['opportunityPlusInvestment'] == unit:
+            #         i['exit_rollover_documents'] = link
+            investor['fileFica'] = link
+            db.investors.update_one({"investor_acc_number": inv}, {"$set": investor})
 
         except Exception as err:
             print(err)
@@ -499,6 +635,62 @@ async def upload_fica_files( docs: list[UploadFile], name: str = Form(...)):
             os.remove(f"{input_folder}/{file}")
 
         return {"fica": link}
+    except Exception as e:
+        print(e)
+        return {"ERROR": "Please Try again"}
+
+
+@investor.post("/upload_general_files/")
+async def upload_general_files( docs: list[UploadFile], name: str = Form(...),inv: str = Form(...)):
+    # data = await request.json()
+    # print(data)
+    print("NAME",name)
+    try:
+        for doc in docs:
+            # print(doc)
+            doc.filename = doc.filename.replace(" ", "_")
+            print(doc.filename)
+            data = await doc.read()
+            with open(f"upload_general/{doc.filename}", "wb") as f:
+                f.write(data)
+
+        input_folder = 'upload_general'
+        output_pdf = f'upload_general/{name}.pdf'
+        merge_pdfs(input_folder, output_pdf)
+
+        # delete all files in upload_fica except for the merged pdf
+        for file in os.listdir(input_folder):
+            if file != f"{name}.pdf":
+                os.remove(f"{input_folder}/{file}")
+
+        # upload to s3
+        try:
+            s3.upload_file(
+                f"upload_general/{name}.pdf",
+                AWS_BUCKET_NAME,
+                f"{name}.pdf",
+            )
+            link = f"https://{AWS_BUCKET_NAME}.s3.{AWS_BUCKET_REGION}.amazonaws.com/{name}.pdf"
+            print("SUCCESS")
+            print(link)
+            investor = db.investors.find_one({"investor_acc_number": inv})
+            # print("INVESTOR",investor)
+            # investor['id'] = str(investor['_id'])
+            # del investor['_id']
+            # for i in investor['trust']:
+            #     if i['opportunityPlusInvestment'] == unit:
+            #         i['exit_rollover_documents'] = link
+            investor['fileGeneral'] = link
+            db.investors.update_one({"investor_acc_number": inv}, {"$set": investor})
+
+        except Exception as err:
+            print(err)
+
+        # delete all files in upload_fica
+        for file in os.listdir(input_folder):
+            os.remove(f"{input_folder}/{file}")
+
+        return {"general": link}
     except Exception as e:
         print(e)
         return {"ERROR": "Please Try again"}

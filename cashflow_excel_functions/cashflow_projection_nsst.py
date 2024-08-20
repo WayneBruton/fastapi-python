@@ -2678,16 +2678,18 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     ws6[f"{col}{toggles_start - 2}"].font = Font(bold=True, color="0C0C0C", size=22)
 
                     for i in range(vat_payable_on_sales, vat_payable_on_sales + 1):
+                        # print("month_headings",month_headings[index])
 
                         if project == "Consolidated":
+                            # I AM HERE - CHANGE REFERENCE 28 & 31
                             ws6[
-                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))*C{vat_payable_on_sales}"
+                                f"{col}{i}"] = f"=(IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE)+{col}{vat_recovery_when_refinanced}-{col}{vat_recovery_when_refinanced + 3})-SUMIFS(Sales!$J:$J,Sales!$W:$W,\">\"&EOMONTH(EDATE(I$5, 0), -3),Sales!$W:$W,\"<=\"&EOMONTH(EDATE(I$5, 0), -2),Sales!$D:$D,TRUE)))*$C{vat_payable_on_sales}"
                         elif project == "Heron":
                             ws6[
-                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron View\")--SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron Fields\"))*C{vat_payable_on_sales}"
+                                f"{col}{i}"] = f"=(IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron View\")--SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron Fields\")+{col}{vat_recovery_when_refinanced}-{col}{vat_recovery_when_refinanced + 3})-SUMIFS(Sales!$J:$J,Sales!$W:$W,\">\"&EOMONTH(EDATE(I$5, 0), -3),Sales!$W:$W,\"<=\"&EOMONTH(EDATE(I$5, 0), -2),Sales!$D:$D,TRUE,Sales!$A:$A,\"Heron View\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\">\"&EOMONTH(EDATE(I$5, 0), -3),Sales!$W:$W,\"<=\"&EOMONTH(EDATE(I$5, 0), -2),Sales!$D:$D,TRUE,Sales!$A:$A,\"Heron Fields\")))*$C{vat_payable_on_sales}"
                         else:
                             ws6[
-                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"{project}\"))*C{vat_payable_on_sales}"
+                                f"{col}{i}"] = f"=(IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"{project}\")+{col}{vat_recovery_when_refinanced}-{col}{vat_recovery_when_refinanced + 3})-SUMIFS(Sales!$J:$J,Sales!$W:$W,\">\"&EOMONTH(EDATE(I$5, 0), -3),Sales!$W:$W,\"<=\"&EOMONTH(EDATE(I$5, 0), -2),Sales!$D:$D,TRUE,Sales!$A:$A,\"{project}\")))*$C{vat_payable_on_sales}"
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                         # fil in light red
@@ -5204,23 +5206,16 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             # print(f"Formula for B{i}: {formula}")
             ws_cashflow[f"B{i}"].value = formula  # Assign the formula to the 'Cashflow Projection' worksheet
 
-        for i in range(refinanced_units_start_range[0], refinanced_units_end_range[0] + 1):
-            "=SUMIFS('Cashflow Projection - Goodwood'!$C$95:$C$177,'Cashflow Projection - Goodwood'!$D$95:$D$177,'Cashflow Projection'!D125)"
-            "=SUMIFS('Cashflow Projection - Goodwood'!$E$95:$E$177,'Cashflow Projection - Goodwood'!$D$95:$D$177,'Cashflow Projection'!D125)"
-            formula = ""
-            formula2 = "="
-            # print(f"Row: {i}")
-            for r in range(1, len(refinanced_units_start_range)):
-                formula += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$C${refinanced_units_start_range[r]}:$C${refinanced_units_start_range[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$D${refinanced_units_start_range[r]}:$D${refinanced_units_start_range[r]}, D{i})"
-                formula2 += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$E${refinanced_units_start_range[r]}:$E${refinanced_units_start_range[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$D${refinanced_units_start_range[r]}:$D${refinanced_units_start_range[r]}, D{i})"
-
-
-            # print(f"Formula for C{i}: {formula}")
-            # print()
-            # print(f"Formula for E{i}: {formula2}")
-            formula = f"=IF({formula}=0, \"\", {formula})"
-            ws_cashflow[f"C{i}"].value = formula
-            ws_cashflow[f"E{i}"].value = formula2# Assign the formula to the 'Cashflow Projection' worksheet
+        # for i in range(refinanced_units_start_range[0], refinanced_units_end_range[0] + 1):
+        #     formula = ""
+        #     formula2 = "="
+        #     # print(f"Row: {i}")
+        #     for r in range(1, len(refinanced_units_start_range)):
+        #         formula += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$C${refinanced_units_start_range[r]}:$C${refinanced_units_start_range[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$D${refinanced_units_start_range[r]}:$D${refinanced_units_start_range[r]}, D{i})"
+        #         formula2 += f"+SUMIFS('Cashflow Projection - {reports_by_project[r]}'!$E${refinanced_units_start_range[r]}:$E${refinanced_units_start_range[r]}, 'Cashflow Projection - {reports_by_project[r]}'!$D${refinanced_units_start_range[r]}:$D${refinanced_units_start_range[r]}, D{i})"
+        #     formula = f"=IF({formula}=0, \"\", {formula})"
+        #     ws_cashflow[f"C{i}"].value = formula
+        #     ws_cashflow[f"E{i}"].value = formula2# Assign the formula to the 'Cashflow Projection' worksheet
 
 
 

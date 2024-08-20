@@ -14,6 +14,136 @@ from cashflow_excel_functions.cashflow_projection_nsst import cashflow_projectio
 
 cashflow = APIRouter()
 
+def recalc_interest():
+    try:
+        sales = list(db.sales_processed.find({},{"_id": 0,"development": 1, "opportunity_code": 1,"opportunity_potential_reg_date": 1, "opportunity_actual_reg_date": 1}))
+        # sort sales where development is Heron Fields or Heron View
+        sales = list(filter(lambda x: x['development'] == "Heron Fields" or x['development'] == "Heron View", sales))
+        for sale in sales:
+            if sale['opportunity_potential_reg_date'] != "" and sale['opportunity_potential_reg_date'] != None:
+                sale['opportunity_potential_reg_date'] = datetime.strptime(sale['opportunity_potential_reg_date'].replace("-","/"), "%Y/%m/%d")
+            else:
+                sale['opportunity_potential_reg_date'] = ""
+            if sale['opportunity_actual_reg_date'] != "" and sale['opportunity_actual_reg_date'] != None:
+                sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'].replace("-","/"), "%Y/%m/%d")
+            else:
+                sale['opportunity_actual_reg_date'] = ""
+        print("SALES", sales[0])
+        print()
+        rates = list(db.rates.find({},{"_id":0}))
+        for rate in rates:
+            rate['rate'] = float(rate['rate'])
+            rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace("-","/"), "%Y/%m/%d")
+        # sort rates by Efective_date descending
+        rates = sorted(rates, key=lambda x: x['Efective_date'], reverse=True)
+        # print("RATES",rates)
+
+        opportunities = list(db.opportunities.find({},{ "_id": 0,"Category": 1, "opportunity_code": 1, "opportunity_end_date": 1, "opportunity_final_transfer_date": 1, "opportunity_sold": 1}))
+        # filter opporunities to include only Heron Fields and Heron View
+        opportunities = list(filter(lambda x: x['Category'] == "Heron Fields" or x['Category'] == "Heron View", opportunities))
+        print("OPPORTUNITIES", opportunities[0])
+        investors = list(db.investors.find({}))
+        investments = []
+        released = []
+        for investor in investors:
+            trust = list(filter(lambda x: x['Category'] == "Heron Fields" or x['Category'] == "Heron View",
+                                investor['trust']))
+
+            investment = list(filter(lambda x: x['Category'] == "Heron Fields" or x['Category'] == "Heron View",
+                                        investor['investments']))
+            # print()
+            if len(trust) > 0:
+                # print("TRUST", trust[0])
+                for item in trust:
+                    # convert item['deposit_date'] to datetime object
+                    if item['deposit_date'] != "" and item['deposit_date'] != None:
+                        deposit_date = datetime.strptime(item['deposit_date'], "%Y/%m/%d")
+                    else:
+                        deposit_date = ""
+                    if item['release_date'] != "" and item['release_date'] != None:
+                        release_date = datetime.strptime(item['release_date'], "%Y/%m/%d")
+                    else:
+                        release_date = ""
+                    item['end_date'] = item.get('end_date', "")
+                    if item['end_date'] != "" and item['end_date'] != None:
+                        end_date = datetime.strptime(item['end_date'], "%Y/%m/%d")
+                    else:
+                        end_date = ""
+                    insert = {
+                        'investor_acc_number': investor['investor_acc_number'],
+                        'investor_name': investor['investor_name'],
+                        'investor_surname': investor['investor_surname'],
+                        'investment_amount': float(item['investment_amount']),
+                        # 'deposit_date': deposit_date,
+                        'release_date': release_date,
+                        'end_date': end_date,
+                        'opportunity_code': item['opportunity_code'],
+                        'Category': item['Category'],
+                        'rate': item['rate'],
+                        'investment_number': item['investment_number'],
+                    }
+                    investments.append(insert)
+
+            # print()
+            if len(investment) > 0:
+                for item in investment:
+                    # convert item['deposit_date'] to datetime object
+                    # if item['deposit_date'] != "" and item['deposit_date'] != None:
+                    #     deposit_date = datetime.strptime(item['deposit_date'], "%Y/%m/%d")
+                    # else:
+                    #     deposit_date = ""
+                    if item['release_date'] != "" and item['release_date'] != None:
+                        release_date = datetime.strptime(item['release_date'], "%Y/%m/%d")
+                    else:
+                        release_date = ""
+                    if item['end_date'] != "" and item['end_date'] != None:
+                        end_date = datetime.strptime(item['end_date'], "%Y/%m/%d")
+                    else:
+                        end_date = ""
+                    insert = {
+                        'investor_acc_number': investor['investor_acc_number'],
+                        'investor_name': investor['investor_name'],
+                        'investor_surname': investor['investor_surname'],
+                        'investment_amount': float(item['investment_amount']),
+                        # 'deposit_date': deposit_date,
+                        'release_date': release_date,
+                        'end_date': end_date,
+                        'opportunity_code': item['opportunity_code'],
+                        'Category': item['Category'],
+                        'rate': float(item['investment_interest_rate']),
+                        'investment_number': item.get('investment_number',0),
+                    }
+                    released.append(insert)
+
+
+        print("INVESTMENTS", investments[0])
+        print()
+        print("RELEASED", released[0])
+
+        for item in investments:
+            filtered_released = list(filter(lambda x: x['investor_acc_number'] == item['investor_acc_number'] and x['opportunity_code'] == item['opportunity_code'] and x['investment_number'] == item['investment_number'], released))
+            if len(filtered_released) > 0:
+                item['end_date'] = filtered_released[0]['end_date']
+                item['rate'] = filtered_released[0]['rate']
+
+        print()
+        print("INVESTMENTS", investments[0])
+        print()
+        print("RELEASED", released[0])
+        print("RELEASED", len(released))
+        print("INVESTMENTS", len(investments))
+
+        # for item in investments:
+
+
+                # print("INVESTMENT", investment[0])
+    except Exception as e:
+        print("ERROR", e)
+
+# recalc_interest()
+
+
+
 
 @cashflow.post("/construction_cashflow")
 async def construction_cashflow(data: Request):

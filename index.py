@@ -38,6 +38,15 @@ if not os.path.isdir("payment_advice"):
 if not os.path.isdir("upload_fica"):
     os.makedirs("upload_fica")
 
+if not os.path.isdir("upload_exit_letters"):
+    os.makedirs("upload_exit_letters")
+
+if not os.path.isdir("upload_general"):
+    os.makedirs("upload_general")
+
+if not os.path.isdir("upload_loanAgreement"):
+    os.makedirs("upload_loanAgreement")
+
 app = FastAPI()
 
 origins = ["*"]
