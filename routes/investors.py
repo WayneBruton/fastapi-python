@@ -547,9 +547,9 @@ async def uploadExitLetters( doc: UploadFile, name: str = Form(...), inv: str = 
         merge_pdfs(input_folder, output_pdf)
 
         # delete all files in upload_fica except for the merged pdf
-        # for file in os.listdir(input_folder):
-        #     if file != f"{name}.pdf":
-        #         os.remove(f"{input_folder}/{file}")
+        for file in os.listdir(input_folder):
+            if file != f"{name}.pdf":
+                os.remove(f"{input_folder}/{file}")
 
         # upload to s3
         try:

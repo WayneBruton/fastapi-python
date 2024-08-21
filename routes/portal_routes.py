@@ -1117,3 +1117,76 @@ async def update_flagged_for_rollover(request: Request):
         return {"status": "success"}
     except Exception as e:
         return {"ERROR": "Please Try again", "Error": e}
+
+@portal_info.post("/get_loan_agreements")
+async def get_loan_agreements(request: Request):
+    data = await request.json()
+    # print(data)
+    try:
+        loan_agreements = []
+        investor = db.investors.find_one({"investor_acc_number": data['investor_acc_number']})
+        for item in investor['trust']:
+            insert = {
+                "_id": str(investor['_id']),
+                "account_number": data['investor_acc_number'],
+                "development": item['Category'],
+                "unit": item['opportunity_code'],
+                "loanAgreement": item.get('loanAgreement',""),
+            }
+            loan_agreements.append(insert)
+
+        # filter out all documents where the "loanAgreement" = ""
+        loan_agreements = list(filter(lambda x: x.get('loanAgreement', False) != "", loan_agreements))
+        # print(loan_agreements)
+        return {"loan_agreements": loan_agreements}
+
+        # print(investor)
+    except Exception as e:
+        print("Error", e)
+        return {"message": "Failure"}
+
+@portal_info.post("/get_other_documents")
+async def get_other_documents(request: Request):
+    data = await request.json()
+    # print(data)
+    try:
+        documents = []
+        investor = db.investors.find_one({"investor_acc_number": data['investor_acc_number']})
+        insert = {
+            "_id": str(investor['_id']),
+            "account_number": data['investor_acc_number'],
+            "document": investor.get('fileFica',""),
+            "document_type": "FICA",
+            "development": "All",
+            "unit": "N/A"
+        }
+        documents.append(insert)
+        insert = {
+            "_id": str(investor['_id']),
+            "account_number": data['investor_acc_number'],
+            "document": investor.get('fileGeneral', ""),
+            "document_type": "General Documentation",
+            "development": "All",
+            "unit": "N/A"
+        }
+        documents.append(insert)
+        for item in investor['trust']:
+            insert = {
+                "_id": str(investor['_id']),
+                "account_number": data['investor_acc_number'],
+                "development": item['Category'],
+                "unit": item['opportunity_code'],
+                "document": item.get('exit_rollover_documents',""),
+                "document_type": "Exit/Rollover Documents"
+            }
+            documents.append(insert)
+
+        # filter out all documents where the "loanAgreement" = ""
+        documents = list(filter(lambda x: x.get('document', False) != "", documents))
+        # print(documents)
+        return {"documents": documents}
+
+        # print(investor)
+    except Exception as e:
+        print("Error", e)
+        return {"message": "Failure"}
