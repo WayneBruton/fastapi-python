@@ -18,6 +18,7 @@ from early_releases_excel_generation.early_releases_excel import early_release_c
 from loan_agreement_files.goodwood_loan_agreement_files.goodwood_loan_agreement import create_goodwood_la
 from loan_agreement_files.NGAH_loan_agreement_files.ngah_loan_agreement import create_ngah_la
 from loan_agreement_files.goodwood_exit_letters.goodwood_exit_letters import create_goodwood_exit_letters
+from cashflow_excel_functions.rolled_from_and_consultant import create_workbook
 from configuration.db import db
 from PyPDF2 import PdfFileMerger
 
@@ -790,6 +791,66 @@ async def get_exit_letter(file_name):
 
     # print(investor)
     # return request
+
+@investor.post("/get_rollover_consultants")
+async def get_rollover_consultants():
+
+    consultants = list(db.investmentCommissionStatement.find({},{"_id": 0, "development": 1, "unit_number": 1, "investor": 1, "investment_amount": 1, "investor_acc_number": 1, "consultantName": 1}))
+    # consultants = list(consultants)
+    # print(consultants)
+    investors = list(db.investors.find({},{"_id": 0, "investor_acc_number": 1, "investor_name": 1, "investor_surname": 1, "investments": 1}))
+    # print()
+    # print(investors)
+    investments = []
+    for inv in investors:
+        # filter investments to only include investments where Category != Southwark and Category != TEST and Category != Endulini
+        inv['investments'] = list(filter(lambda x: x['Category'] != "Southwark" and x['Category'] != "TEST" and x['Category'] != "Endulini", inv['investments']))
+        for i in inv['investments']:
+
+            insert = {
+                "investor_acc_number": inv['investor_acc_number'],
+                "investor_name": f"{inv['investor_name']} {inv['investor_surname']}",
+                "Category": i['Category'],
+                "opportunity_code": i['opportunity_code'],
+                "investment_amount": float(i['investment_amount']),
+                "opportunity_code_rolled_from": i.get('opportunity_code_rolled_from',""),
+            }
+            investments.append(insert)
+
+        # print(investments)
+        for item in investments:
+            consultants_filtered = list(filter(lambda x: x['investor_acc_number'] == item['investor_acc_number'] and x['unit_number'] == item['opportunity_code'] and x["investment_amount"], consultants))
+            if len(consultants_filtered) > 0:
+                item['consultantName'] = consultants_filtered[0]['consultantName']
+            else:
+                item['consultantName'] = ""
+
+    print(len(investments))
+
+    result = create_workbook(investments)
+    return {"href": result }
+
+@investor.get("/get_rolled_from")
+async def get_rolled_from(file_name):
+    try:
+        print("file_name",file_name)
+        file_name = file_name
+        print(file_name)
+
+
+        dir_path = "excel_files"
+        dir_list = os.listdir(dir_path)
+
+        if file_name in dir_list:
+
+            return FileResponse(f"{dir_path}/{file_name}", filename=file_name)
+        else:
+            return {"ERROR": "File does not exist!!"}
+    except Exception as e:
+        print(e)
+        return {"ERROR": "Please Try again"}
+
+    # return investments
 
 # def importNGAH():
 #     # loop through NGAH.json and print each item
