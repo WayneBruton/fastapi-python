@@ -11,36 +11,45 @@ from configuration.db import db
 from bson.objectid import ObjectId
 import time
 from cashflow_excel_functions.cashflow_projection_nsst import cashflow_projections
+from cashflow_excel_functions.daily_cashflow import daily_cashflow
 
 cashflow = APIRouter()
 
+
 def recalc_interest():
     try:
-        sales = list(db.sales_processed.find({},{"_id": 0,"development": 1, "opportunity_code": 1,"opportunity_potential_reg_date": 1, "opportunity_actual_reg_date": 1}))
+        sales = list(db.sales_processed.find({}, {"_id": 0, "development": 1, "opportunity_code": 1,
+                                                  "opportunity_potential_reg_date": 1,
+                                                  "opportunity_actual_reg_date": 1}))
         # sort sales where development is Heron Fields or Heron View
         sales = list(filter(lambda x: x['development'] == "Heron Fields" or x['development'] == "Heron View", sales))
         for sale in sales:
             if sale['opportunity_potential_reg_date'] != "" and sale['opportunity_potential_reg_date'] != None:
-                sale['opportunity_potential_reg_date'] = datetime.strptime(sale['opportunity_potential_reg_date'].replace("-","/"), "%Y/%m/%d")
+                sale['opportunity_potential_reg_date'] = datetime.strptime(
+                    sale['opportunity_potential_reg_date'].replace("-", "/"), "%Y/%m/%d")
             else:
                 sale['opportunity_potential_reg_date'] = ""
             if sale['opportunity_actual_reg_date'] != "" and sale['opportunity_actual_reg_date'] != None:
-                sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'].replace("-","/"), "%Y/%m/%d")
+                sale['opportunity_actual_reg_date'] = datetime.strptime(
+                    sale['opportunity_actual_reg_date'].replace("-", "/"), "%Y/%m/%d")
             else:
                 sale['opportunity_actual_reg_date'] = ""
         print("SALES", sales[0])
         print()
-        rates = list(db.rates.find({},{"_id":0}))
+        rates = list(db.rates.find({}, {"_id": 0}))
         for rate in rates:
             rate['rate'] = float(rate['rate'])
-            rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace("-","/"), "%Y/%m/%d")
+            rate['Efective_date'] = datetime.strptime(rate['Efective_date'].replace("-", "/"), "%Y/%m/%d")
         # sort rates by Efective_date descending
         rates = sorted(rates, key=lambda x: x['Efective_date'], reverse=True)
         # print("RATES",rates)
 
-        opportunities = list(db.opportunities.find({},{ "_id": 0,"Category": 1, "opportunity_code": 1, "opportunity_end_date": 1, "opportunity_final_transfer_date": 1, "opportunity_sold": 1}))
+        opportunities = list(db.opportunities.find({}, {"_id": 0, "Category": 1, "opportunity_code": 1,
+                                                        "opportunity_end_date": 1, "opportunity_final_transfer_date": 1,
+                                                        "opportunity_sold": 1}))
         # filter opporunities to include only Heron Fields and Heron View
-        opportunities = list(filter(lambda x: x['Category'] == "Heron Fields" or x['Category'] == "Heron View", opportunities))
+        opportunities = list(
+            filter(lambda x: x['Category'] == "Heron Fields" or x['Category'] == "Heron View", opportunities))
         print("OPPORTUNITIES", opportunities[0])
         investors = list(db.investors.find({}))
         investments = []
@@ -50,7 +59,7 @@ def recalc_interest():
                                 investor['trust']))
 
             investment = list(filter(lambda x: x['Category'] == "Heron Fields" or x['Category'] == "Heron View",
-                                        investor['investments']))
+                                     investor['investments']))
             # print()
             if len(trust) > 0:
                 # print("TRUST", trust[0])
@@ -111,17 +120,18 @@ def recalc_interest():
                         'opportunity_code': item['opportunity_code'],
                         'Category': item['Category'],
                         'rate': float(item['investment_interest_rate']),
-                        'investment_number': item.get('investment_number',0),
+                        'investment_number': item.get('investment_number', 0),
                     }
                     released.append(insert)
-
 
         print("INVESTMENTS", investments[0])
         print()
         print("RELEASED", released[0])
 
         for item in investments:
-            filtered_released = list(filter(lambda x: x['investor_acc_number'] == item['investor_acc_number'] and x['opportunity_code'] == item['opportunity_code'] and x['investment_number'] == item['investment_number'], released))
+            filtered_released = list(filter(
+                lambda x: x['investor_acc_number'] == item['investor_acc_number'] and x['opportunity_code'] == item[
+                    'opportunity_code'] and x['investment_number'] == item['investment_number'], released))
             if len(filtered_released) > 0:
                 item['end_date'] = filtered_released[0]['end_date']
                 item['rate'] = filtered_released[0]['rate']
@@ -135,14 +145,12 @@ def recalc_interest():
 
         # for item in investments:
 
-
-                # print("INVESTMENT", investment[0])
+        # print("INVESTMENT", investment[0])
     except Exception as e:
         print("ERROR", e)
 
+
 # recalc_interest()
-
-
 
 
 @cashflow.post("/construction_cashflow")
@@ -2152,6 +2160,11 @@ async def generate_investors_new_cashflow_nsst_report(data: Request, background_
 
         construction = get_construction_costsA()
         sales = get_sales_data(date)
+        for sale in sales:
+            if sale['sale_price'] == "" or sale['sale_price'] == None:
+                sale['sale_price'] = 0
+            sale['sale_price'] = float(sale['sale_price'])
+        print("sales", sales[0])
 
         operational_costs = get_operational_costs()
         xero = get_xero_tbs()
@@ -2611,13 +2624,7 @@ async def get_cash_projection(file_name):
     try:
         print(file_name)
         file_directory = "cashflow_p&l_files"
-        # file_name = f"{file_directory}/{file_name}"
-        print(file_name)
 
-        # file_name = file_name + ".xlsx"
-        # # file_name = file_name.replace("_", " ")
-        # # file_name = file_name.replace("xx", "&")
-        #
         # dir_path = "early_releases_excel_generation"
         dir_list = os.listdir(file_directory)
         print(dir_list)
@@ -2935,4 +2942,129 @@ def rollover_investors(effective_date):
         print("Error getting investors", e)
         return {"success": False, "error": str(e)}
 
+
 # rollover_investors("2024/06/01")
+
+@cashflow.post("/get_daily_cashflow")
+async def get_daily_cashflow(request: Request):
+    request = await request.json()
+    print("request", request)
+    date = request['date']
+    if request['development'] == "Heron":
+        development = ["Heron View", "Heron Fields"]
+    else:
+        development = [request['development']]
+
+    print("development", development)
+
+    try:
+        # if file exists delete it
+        if os.path.exists("cashflow_p&l_files/daily_cashflow.xlsx"):
+            os.remove("cashflow_p&l_files/daily_cashflow.xlsx")
+
+        # investors = investors_new_cashflow_nsst_report()
+        # investors = list(filter(lambda x: x['Category'] in development, investors))
+        investors = list(db.investors.find({}, {"_id": 0, "investor_acc_number": 1, "investments": 1, "trust": 1,
+                                                "investor_name": 1, "investor_surname": 1}))
+        # filter out of investors where trust is empty
+        for investor in investors:
+            investor["trust"] = list(filter(lambda x: x["Category"] in development, investor["trust"]))
+            investor["investments"] = list(filter(lambda x: x["Category"] in development, investor["investments"]))
+        investors = list(filter(lambda x: len(x["trust"]) > 0, investors))
+
+        investor_exit = []
+
+        for investor in investors:
+            for trust in investor['trust']:
+                filtered_investments = list(filter(lambda x: x['opportunity_code'] == trust['opportunity_code']
+                                                   ,
+                                                   investor['investments']))
+                if len(filtered_investments) > 0:
+                    investment_interest_rate = float(filtered_investments[0].get("investment_interest_rate", 0)) / 100
+                    if filtered_investments[0].get("end_date", "") != "":
+                        end_date = datetime.strptime(filtered_investments[0].get("end_date", "").replace("/", "-"),
+                                                     "%Y-%m-%d")
+                    else:
+                        end_date = datetime.strptime(trust.get("release_date", "").replace("/", "-"),
+                                                     "%Y-%m-%d") + timedelta(days=731)
+                else:
+                    investment_interest_rate = 0
+                    end_date = ""
+                if trust.get("release_date", "") != "":
+                    release_date = datetime.strptime(trust.get("release_date", "").replace("/", "-"), "%Y-%m-%d")
+                else:
+                    release_date = ""
+
+                if trust["Category"] == "Goodwood":
+                    block = "R"
+                else:
+                    block = trust['opportunity_code'][-4:-3]
+
+                insert = {
+                    "investor_acc_number": investor['investor_acc_number'],
+                    "investor_name": investor['investor_name'],
+                    "investor_surname": investor['investor_surname'],
+                    "Category": trust['Category'],
+                    "block": block,
+                    "investment_number": trust.get('investment_number', 0),
+                    "unit_number": trust['opportunity_code'],
+                    "deposit_date": datetime.strptime(trust.get("deposit_date", "").replace("/", "-"), "%Y-%m-%d"),
+                    "release_date": release_date,
+                    "end_date": end_date,
+                    "investment_amount": float(trust['investment_amount']),
+                    "investment_interest_rate": investment_interest_rate,
+                    "trust_interest": 0,
+                    "released_interest": 0,
+                    "total_interest": 0,
+                    "current_exit_date": "",
+                }
+                investor_exit.append(insert)
+
+        sales = get_sales_data(date)
+
+        # filter sales where Category is in development
+        sales = list(filter(lambda x: x['Category'] in development, sales))
+
+        for sale in sales:
+            try:
+                sale['sale_price'] = float(sale['sale_price'])
+            except:
+                sale['sale_price'] = 0.0
+
+        opportunities = get_opportunities()
+        # filter opportunities where Category is in development
+        opportunities = list(filter(lambda x: x['Category'] in development, opportunities))
+        # DO FOR INVESTOR EXIT REPORT THEN CREATE A FUNCTION
+
+        current_report_date = date.replace("-", "/")
+        current_report_date = datetime.strptime(current_report_date, '%Y/%m/%d')
+
+        # result = background_tasks.add_task(daily_cashflow(sales, investor_exit,date))
+        result = daily_cashflow(sales, investor_exit, date)
+        print("result", result)
+        #
+        # return {"sales": sales, "investors": investor_exit, "opportunities": opportunities}
+        return {"filename": result['filename'], "success": True}
+
+    except Exception as e:
+        print("Error getting daily cashflow", e)
+        return {"success": False, "error": str(e)}
+
+@cashflow.get("/get_dailycashflow")
+async def get_dailycashflow(file_name):
+    try:
+        print(file_name)
+        file_directory = "cashflow_p&l_files"
+
+        # dir_path = "early_releases_excel_generation"
+        dir_list = os.listdir(file_directory)
+        print(dir_list)
+
+        if file_name in dir_list:
+
+            return FileResponse(f"{file_directory}/{file_name}", filename=file_name)
+        else:
+            return {"ERROR": "File does not exist!!"}
+    except Exception as e:
+        print(e)
+        return {"ERROR": "Please Try again"}
