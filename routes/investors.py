@@ -852,35 +852,33 @@ async def get_rolled_from(file_name):
 
     # return investments
 
-# def importNGAH():
-#     # loop through NGAH.json and print each item
-#     with open('NGAH.json') as f:
-#         data = json.load(f)
-#         for item in data:
-#             item['opportunity_final_transfer_date'] = ""
-#             print(item)
-#         result = db.opportunities.insert_many(data)
-#         print(result.inserted_ids)
-
-# importNGAH()
-
-# def edit_ngah_opportunities():
-#     opportunities = db.opportunities.find({"Category": "NGAH"})
-#     for opportunity in opportunities:
-#         opportunity['_id'] = str(opportunity['_id'])
-#         id = opportunity['_id']
+# def get_opportunities():
+#     try:
+#         opportunities = list(db.opportunities.find({}))
+#         for index, opportunity in enumerate(opportunities):
+#             opportunity['_id'] = str(opportunity['_id'])
+#             id = opportunity['_id']
 #
+#             del opportunity['_id']
+#             if opportunity['Category'] == "Goodwood":
+#                 opportunity['block'] = "R"
+#             elif opportunity['Category'] == "Southwark":
+#                 opportunity['block'] = "S"
+#             elif opportunity['Category'] == "NGAH":
+#                 block = opportunity['opportunity_code'].split(" ")
+#                 block = block[len(block) - 1][0:-3]
+#                 # print("block",block)
+#                 opportunity['block'] = block
+#             else:
+#                 opportunity['block'] = opportunity['opportunity_code'][-4:-3]
+#                 # print("block",opportunity['opportunity_code'][-4:-3])
+#             print(opportunity)
+#             print()
+#             # update opportunities with the block
+#             db.opportunities.update_one({"_id": ObjectId(id)}, {"$set": { "block": opportunity['block']}})
+#         # print(opportunities[0])
 #
-#         adjust = opportunity['opportunity_code'].split("-")
-#         print(adjust)
-#         opportunity['opportunity_code'] = f"Section {adjust[1]} - {adjust[0]}"
-#         print()
-#         print(opportunity['opportunity_code'])
-#         try:
-#             db.opportunities.update_one({"_id": ObjectId(id)}, {"$set": {"opportunity_code": opportunity['opportunity_code']}})
-#             print("success")
-#         except Exception as e:
-#             print(e)
+#     except Exception as e:
+#         print("Error getting opportunities", e)
 
-
-# edit_ngah_opportunities()
+# get_opportunities()

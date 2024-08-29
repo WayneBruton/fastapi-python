@@ -266,11 +266,11 @@ def daily_cashflow(sales, investor_exit, report_date):
     # format column A as date the rest as currency
     date_format_columns = ['A']
     for column in date_format_columns:
-        for i in range(3, 183):
+        for i in range(3, 731):
             ws5[f'{column}{i}'].number_format = 'yyyy-mm-dd'
     currency_format_columns = ['B', 'C', 'D', 'E', 'F', 'G', 'H']
     for column in currency_format_columns:
-        for i in range(3, 183):
+        for i in range(3, 731):
             ws5[f'{column}{i}'].number_format = '"R" #,##0.00'
 
 
@@ -278,8 +278,10 @@ def daily_cashflow(sales, investor_exit, report_date):
             ws5[f"C{i}"] = f"=SUMIFS(Sales!$S:$S,Sales!$H:$H,A{i})+SUMIFS(Sales!$J:$J,Sales!$H:$H,A{i})"
             "=SUMIFS(Sales!$J:$J,Sales!$U:$U,A3)"
             ws5[f"D{i}"] = f"=SUMIFS(Sales!$J:$J,Sales!$U:$U,A{i})"
-            "=IF(C3<>0,0,SUMIFS(Investors!$Q:$Q,Investors!$J:$J,A3))"
-            ws5[f"E{i}"] = f"=IF(C{i}<>0,0,SUMIFS(Investors!$Q:$Q,Investors!$J:$J,A{i}))"
+
+            "=IF(C3<>0,SUMIFS(Investors!$Q:$Q,Investors!$P:$P,A3)-SUMIFS(Sales!$R:$R,Sales!$H:$H,A3),SUMIFS(Investors!$Q:$Q,Investors!$P:$P,A3))"
+
+            ws5[f"E{i}"] = f"=IF(C{i}<>0,SUMIFS(Investors!$Q:$Q,Investors!$P:$P,A{i})-SUMIFS(Sales!$R:$R,Sales!$H:$H,A{i}),SUMIFS(Investors!$Q:$Q,Investors!$P:$P,A{i}))"
             "=SUMIFS('General Expenses'!$C:$C,'General Expenses'!$A:$A,A3)"
             ws5[f"F{i}"] = f"=SUMIFS('General Expenses'!$C:$C,'General Expenses'!$A:$A,A{i})"
             "=B3+C3-D3-E3"
@@ -300,7 +302,7 @@ def daily_cashflow(sales, investor_exit, report_date):
         ws5[f'{column}1'].number_format = '"R" #,##0.00'
 
 
-    for i in range(3, 183):
+    for i in range(3, 731):
         if i == 3:
             ws5[f"A{i}"] = f"{report_date}"
             ws5[f"A{i}"].font = "yyyy-mm-dd"
