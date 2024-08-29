@@ -66,6 +66,9 @@ def daily_cashflow(sales, investor_exit, report_date):
         ws1[f"R{i}"] = f"=IF(E{i}=FALSE,SUMIFS(Investors!$R:$R,Investors!$G:$G,Sales!C{i}),0)"
         # "=Q5-R5"
         ws1[f"S{i}"] = f"=Q{i}-R{i}"
+        "=IF(MOD(MONTH(H5), 2) <> 0, EOMONTH(H5, 2), EOMONTH(H5, 1))"
+        ws1[f'U{i}'] = f"=IF(MOD(MONTH(H{i}), 2) <> 0, EOMONTH(H{i}, 2), EOMONTH(H{i}, 1))"
+
 
     # freeze panes at row 4
     ws1.freeze_panes = "A5"
@@ -251,7 +254,7 @@ def daily_cashflow(sales, investor_exit, report_date):
     ws5['A1'] = "Daily"
     ws5['A1'].font = Font(size=20, bold=True)
     ws5['A1'].alignment = Alignment(horizontal='center')
-    row = ["Date", "Opening Balance", "Transfer", "Early Exit", "General Expenses", "Daily Balance", "Cumulative Balance"]
+    row = ["Date", "Opening Balance", "Transfer","VAT Sales", "Early Exit", "General Expenses", "Daily Balance", "Cumulative Balance"]
     ws5.append(row)
     # make all columns 20 width
     for i in range(1, len(row) + 1):
@@ -265,30 +268,33 @@ def daily_cashflow(sales, investor_exit, report_date):
     for column in date_format_columns:
         for i in range(3, 183):
             ws5[f'{column}{i}'].number_format = 'yyyy-mm-dd'
-    currency_format_columns = ['B', 'C', 'D', 'E', 'F', 'G']
+    currency_format_columns = ['B', 'C', 'D', 'E', 'F', 'G', 'H']
     for column in currency_format_columns:
         for i in range(3, 183):
             ws5[f'{column}{i}'].number_format = '"R" #,##0.00'
 
 
             "=SUMIFS(Sales!$S:$S,Sales!$H:$H,A3)"
-            ws5[f"C{i}"] = f"=SUMIFS(Sales!$S:$S,Sales!$H:$H,A{i})"
+            ws5[f"C{i}"] = f"=SUMIFS(Sales!$S:$S,Sales!$H:$H,A{i})+SUMIFS(Sales!$J:$J,Sales!$H:$H,A{i})"
+            "=SUMIFS(Sales!$J:$J,Sales!$U:$U,A3)"
+            ws5[f"D{i}"] = f"=SUMIFS(Sales!$J:$J,Sales!$U:$U,A{i})"
             "=IF(C3<>0,0,SUMIFS(Investors!$Q:$Q,Investors!$J:$J,A3))"
-            ws5[f"D{i}"] = f"=IF(C{i}<>0,0,SUMIFS(Investors!$Q:$Q,Investors!$J:$J,A{i}))"
+            ws5[f"E{i}"] = f"=IF(C{i}<>0,0,SUMIFS(Investors!$Q:$Q,Investors!$J:$J,A{i}))"
             "=SUMIFS('General Expenses'!$C:$C,'General Expenses'!$A:$A,A3)"
-            ws5[f"E{i}"] = f"=SUMIFS('General Expenses'!$C:$C,'General Expenses'!$A:$A,A{i})"
+            ws5[f"F{i}"] = f"=SUMIFS('General Expenses'!$C:$C,'General Expenses'!$A:$A,A{i})"
             "=B3+C3-D3-E3"
-            ws5[f"F{i}"] = f"=B{i}+C{i}-D{i}-E{i}"
+            ws5[f"G{i}"] = f"=B{i}+C{i}-D{i}-E{i}-F{i}"
             "=G2+F3"
-            ws5[f"G{i}"] = f"=G{i-1}+F{i}"
+            ws5[f"H{i}"] = f"=H{i-1}+G{i}"
             if i == 3:
                 ws5[f'A{i}'] = 0
                 "=F3"
-                ws5[f'G{i}'] = f"=F{i}"
+                ws5[f'H{i}'] = f"=G{i}"
                 # fill in yellow
                 ws5[f'B{i}'].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
+                ws5[f'A{i}'].fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
 
-    subtotal_rows = ['C', 'D', 'E', 'F']
+    subtotal_rows = ['C', 'D', 'E', 'F','G']
     for column in subtotal_rows:
         ws5[f'{column}1' ] = f"=subtotal(9,{column}3:{column}{ws5.max_row})"
         ws5[f'{column}1'].number_format = '"R" #,##0.00'
@@ -301,6 +307,9 @@ def daily_cashflow(sales, investor_exit, report_date):
         else:
             ws5[f"A{i}"] = f"=A{i-1}+1"
             ws5[f"A{i}"].font = "yyyy-mm-dd"
+
+    # freeze panes at row 4
+    ws5.freeze_panes = "A3"
 
 
 
