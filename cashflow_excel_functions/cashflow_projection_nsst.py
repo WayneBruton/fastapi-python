@@ -4254,9 +4254,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws7.append([f"Projected Transfer Income  - {project}  Not yet Sold (Profit)",
                             f'=+SUMIFS(Sales!$S:$S,Sales!$D:$D,FALSE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection\'!B2)'])
             elif project == "Heron":
-                # "=+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron Fields",Sales!$D:$D,FALSE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&'Cashflow Projection - Heron'!B2)++SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron View",Sales!$D:$D,FALSE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&'Cashflow Projection - Heron'!B2)"
+
                 ws7.append([f"Projected Transfer Income  - {project}  Not yet Sold (Profit)",
-                            '=+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron Fields",Sales!$D:$D,FALSE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&''Cashflow Projection - Heron\'!B2)++SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron View",Sales!$D:$D,FALSE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection - Heron\'!B2)'])
+                            '=+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron Fields",Sales!$D:$D,FALSE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection - Heron\'!B2)++SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron View",Sales!$D:$D,FALSE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection - Heron\'!B2)'])
             else:
                 ws7.append([f"Projected Transfer Income  - {project}  Not yet Sold (Profit)",
                             f'=+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"{project}",Sales!$D:$D,FALSE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection - {project}\'!B2)'])
