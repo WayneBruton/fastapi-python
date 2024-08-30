@@ -4711,11 +4711,12 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws9.append(["INTEREST"])
             if project == "Consolidated":
 
+
                 ws9.append(["Total Estimated Interest",
-                            "=SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE)+SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE)"])
+                            "=SUMIFS(Investors!$S:$S,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)"])
 
                 ws9.append(["Interest Paid to Date",
-                            "=SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE)+SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE)"])
+                            "=SUMIFS(Investors!$S:$S,Investors!$K:$K,\"<=\"&'NSST Print'!$B$3)"])
                 ws9.append(["Remaining Interest to Exit", "=B29-B30"])
 
                 ws9.append(["Interest Due to date",
@@ -4723,12 +4724,13 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws9.append(["Interest Due to be Earned to Exit", "=B31-B32"])
 
             elif project == "Heron":
+                # "=SUMIFS(Investors!$S:$S,Investors!$D:$D,"Heron Fields",Investors!$I:$I,"<="&$B$3)+SUMIFS(Investors!$S:$S,Investors!$D:$D,"Heron View",Investors!$I:$I,"<="&$B$3)"
 
                 ws9.append(["Total Estimated Interest",
-                            "=SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE,Investors!$D:$D,\"Heron Fields\")+SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE,Investors!$D:$D,\"Heron Fields\")+SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE,Investors!$D:$D,\"Heron View\")+SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE,Investors!$D:$D,\"Heron View\")"])
-
+                            f"=SUMIFS(Investors!$S:$S,Investors!$D:$D,\"Heron Fields\",Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)+SUMIFS(Investors!$S:$S,Investors!$D:$D,\"Heron View\",Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)"])
+                # "=SUMIFS(Investors!$S:$S,Investors!$K:$K,"<="&$B$3,Investors!$D:$D,"Heron Fields")+SUMIFS(Investors!$S:$S,Investors!$K:$K,"<="&$B$3,Investors!$D:$D,"Heron View")"
                 ws9.append(["Interest Paid to Date",
-                            "=SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE,Investors!$D:$D,\"Heron Fields\")+SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$D:$D,\"Heron Fields\")+SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE,Investors!$D:$D,\"Heron View\")+SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$D:$D,\"Heron View\")"])
+                            f"=SUMIFS(Investors!$S:$S,Investors!$K:$K,\"<=\"&'NSST Print'!$B$3,Investors!$D:$D,\"Heron Fields\")+SUMIFS(Investors!$S:$S,Investors!$K:$K,\"<=\"&'NSST Print'!$B$3,Investors!$D:$D,\"Heron View\")"])
                 ws9.append(["Remaining Interest to Exit", "=B29-B30"])
 
                 ws9.append(["Interest Due to date",
@@ -4738,10 +4740,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             else:
 
                 ws9.append(["Total Estimated Interest",
-                            f"=SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE,Investors!$D:$D,\"{project}\")+SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE,Investors!$D:$D,\"{project}\")"])
+                            f"=SUMIFS(Investors!$S:$S,Investors!$D:$D,\"{project}\",Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)"])
 
                 ws9.append(["Interest Paid to Date",
-                            f"=SUMIFS(Investors!$S:$S,Investors!$G:$G,TRUE,Investors!$D:$D,\"{project}\")+SUMIFS(Investors!$S:$S,Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$D:$D,\"{project}\")"])
+                            f"=SUMIFS(Investors!$S:$S,Investors!$K:$K,\"<=\"&'NSST Print'!$B$3,Investors!$D:$D,\"{project}s\")"])
                 ws9.append(["Remaining Interest to Exit", "=B29-B30"])
 
                 ws9.append(["Interest Due to date",
@@ -5039,12 +5041,13 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         ws10[f"{i}{row}"].value = f"=IF(AND(N{row}<90,N{row}>0),Q{row},0)"
                         ws10[f"{i}{row}"].number_format = 'R#,##0.00'
                     elif i == 'Q':
-                        if project == "Consolidated":
-                            ws10[
-                                f"{i}{row}"].value = f"=SUMIFS(Investors!$M:$M,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row})-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\">\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row})+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\"\",Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row}))+SUMIFS(Investors!$S:$S,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row})-(SUMIFS(Investors!$S:$S,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\">\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row})+SUMIFS(Investors!$S:$S,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\"\",Investors!$A:$A,'Investor Exit List'!$A{row},Investors!$E:$E,'Investor Exit List'!$C{row},Investors!$L:$L,'Investor Exit List'!$B{row}))"
-                        else:
-                            ws10[
-                                f"{i}{row}"].value = f"=SUMIFS(Investors!$M:$M,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row})-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\">\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row})+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\"\",Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row}))+SUMIFS(Investors!$S:$S,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row})-(SUMIFS(Investors!$S:$S,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\">\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row})+SUMIFS(Investors!$S:$S,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\"\",Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row}))"
+                        # if project == "Consolidated":
+                        #     "=IF(F5<>0,SUMIFS(Investors!$S:$S,Investors!$A:$A,A5,Investors!$E:$E,C5)+F5,0)"
+                        ws10[
+                            f"{i}{row}"].value = f"=IF(F{row}<>0,SUMIFS(Investors!$S:$S,Investors!$A:$A,A{row},Investors!$E:$E,C{row})+F{row},0)"
+                        # else:
+                        #     ws10[
+                        #         f"{i}{row}"].value = f"=SUMIFS(Investors!$M:$M,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row})-(SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\">\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row})+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\"\",Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row}))+SUMIFS(Investors!$S:$S,Investors!$O:$O,FALSE,Investors!$P:$P,FALSE,Investors!$K:$K,\">\"&'NSST Print'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row})-(SUMIFS(Investors!$S:$S,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\">\"&'NSST Print'!$B$3,Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row})+SUMIFS(Investors!$S:$S,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3,Investors!$J:$J,\"\",Investors!$A:$A,'Investor Exit List - {project}'!$A{row},Investors!$E:$E,'Investor Exit List - {project}'!$C{row},Investors!$L:$L,'Investor Exit List - {project}'!$B{row}))"
                         ws10[f"{i}{row}"].number_format = 'R#,##0.00'
                     elif i == 'R':
                         ws10[f"{i}{row}"].value = f"=IF(AND(H{row}=TRUE,I{row}=FALSE),Q{row},0)"
@@ -5158,12 +5161,28 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         f"{i}{exit_first_row_number - 1}"].value = f"=SUBTOTAL(109,{i}{exit_first_row_number}:{i}{exit_last_row_number + 3})"
                     ws10[f"{i}{exit_first_row_number - 1}"].number_format = 'R#,##0.00'
                 elif i == 'C':
-                    ws10[
-                        f"{i}{exit_first_row_number - 1}"].value = f"=COUNTIFS(Investors!$G:$G,FALSE)+COUNTIFS(Investors!$G:$G,TRUE)-(COUNTIFS(Investors!$G:$G,TRUE)+COUNTIFS(Investors!$G:$G,FALSE,Investors!$O:$O,TRUE,Investors!$P:$P,FALSE))"
+                    if project == "Consolidated":
+                        ws10[
+                            f"{i}{exit_first_row_number - 1}"].value = f"='NSST Print'!B17"
+                    elif project == "Heron":
+                        ws10[
+                            f"{i}{exit_first_row_number - 1}"].value = f"='NSST Print - Heron'!B17"
+                    else:
+                        ws10[
+                            f"{i}{exit_first_row_number - 1}"].value = f"='NSST Print - {project}'!B17"
+
                     ws10[f"{i}{exit_first_row_number - 1}"].number_format = '0'
                 elif i == 'A':
-                    ws10[
-                        f"{i}{exit_first_row_number - 1}"].value = f"=COUNTIFS(Sales!$E:$E,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,TRUE)+COUNTIFS(Sales!$E:$E,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\",Sales!$D:$D,FALSE)"
+                    if project == "Consolidated":
+                        ws10[
+                            f"{i}{exit_first_row_number - 1}"].value = f"='NSST Print'!E20+'NSST Print'!D20"
+                    elif project == "Heron":
+                        ws10[
+                            f"{i}{exit_first_row_number - 1}"].value = f"='NSST Print - Heron'!E20+'NSST Print - Heron'!D20"
+                    else:
+                        ws10[
+                            f"{i}{exit_first_row_number - 1}"].value = f"='NSST Print - {project}'!E20+'NSST Print - {project}'!D20"
+
                     ws10[f"{i}{exit_first_row_number - 1}"].number_format = '0'
 
                 else:
