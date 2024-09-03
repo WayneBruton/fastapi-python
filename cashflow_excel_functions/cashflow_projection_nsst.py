@@ -975,7 +975,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6.append([])
             ws6.append([])
 
-            ws6.append(["VAT ON CONSTRUCTION", "", 1])
+            if project != "Goodwood":
+                ws6.append(["VAT ON CONSTRUCTION", "", 1])
+            else:
+                ws6.append(["VAT ON CONSTRUCTION", "", 0])
             vat_construction = ws6.max_row
             ws6[f"A{vat_construction}"].font = Font(bold=True, color="0C0C0C", size=22)
             ws6[f"C{vat_construction}"].font = Font(bold=True, color="0C0C0C", size=22)
@@ -1489,7 +1492,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                         f"W{i}"].value = f"=IF(SUMIFS('Cashflow Projection'!$E${refinanced_units_start + 1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})=1,SUMIFS('Cashflow Projection'!$C${refinanced_units_start + 1}:$C${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i}),+Sales!H{i})"
                     ws3[
                         f'T{i}'].value = f"=IF(SUMIFS('Cashflow Projection'!$E${refinanced_units_start + 1}:$E${refinanced_units_end},'Cashflow Projection'!$D${refinanced_units_start + 1}:$D${refinanced_units_end},Sales!C{i})<>0,TRUE,FALSE)"
-                    ws3[f"J{i}"].value = f"=I{i}/115*15"
+                    ws3[f"J{i}"].value = f"=IF(A{i}=\"Goodwood\",0,I{i}/115*15)"
                     ws3[f"K{i}"].value = f"=I{i}-J{i}"
                 # format as date
                 ws3[f"W{i}"].number_format = 'dd-mm-yyyy'
@@ -1940,8 +1943,12 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
             # "=IF(SUMIFS($B$50:$B$64,$E$50:$E$64,"Goodwood")>0,Cashflow!B14,'Cashflow - Heron'!B14)"
             # ws6[f"D{funds_available_start + 3}"] = "=Cashflow!B14"
-            ws6[
-                f"D{funds_available_start + 3}"] = f"=IF(SUMIFS($B${block_costs_start}:$B${block_costs_end},$E${block_costs_start}:$E${block_costs_end},\"Goodwood\")>0,Cashflow!B14,'Cashflow - Heron'!B14)"
+            if project == "Consolidated":
+                ws6[
+                    f"D{funds_available_start + 3}"] = f"=IF(SUMIFS($B${block_costs_start}:$B${block_costs_end},$E${block_costs_start}:$E${block_costs_end},\"Goodwood\")>0,Cashflow!B14,'Cashflow - Heron'!B14)"
+            else:
+                ws6[
+                    f"D{funds_available_start + 3}"] = f"='Cashflow - {project}'!B14"
             for index, col in enumerate(month_headings):
 
                 ws6[f"{col}{toggles_start - 1}"] = f"=SUM({col}{toggles_start}:{col}{toggles_end})"
@@ -2731,17 +2738,31 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     for i in range(block_costs_start, block_costs_end + 1):
                         # I AM HERE
 
-                        ws6[
-                            f"{col}{i}"] = (
-                            f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,"
-                            f"'Updated Construction'!$G:$G,$A{i},"
-                            f"'Updated Construction'!$E:$E,\"<=\"&"
-                            f"{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&$B$2)"
-                            f"+(SUMIFS('Updated Construction'!$F:$F,"
-                            f"'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,"
-                            f"$A{i},'Updated Construction'!$E:$E,\"<=\"&"
-                            f"{month_headings[index]}$5,'Updated Construction'!$E:$E,"
-                            f"\">\"&$B$2)*$B{i}))*1.15")
+                        if project == "Goodwood":
+                            ws6[
+                                f"{col}{i}"] = (
+                                f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,"
+                                f"'Updated Construction'!$G:$G,$A{i},"
+                                f"'Updated Construction'!$E:$E,\"<=\"&"
+                                f"{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&$B$2)"
+                                f"+(SUMIFS('Updated Construction'!$F:$F,"
+                                f"'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,"
+                                f"$A{i},'Updated Construction'!$E:$E,\"<=\"&"
+                                f"{month_headings[index]}$5,'Updated Construction'!$E:$E,"
+                                f"\">\"&$B$2)*$B{i}))")
+                        else:
+
+                            ws6[
+                                f"{col}{i}"] = (
+                                f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,"
+                                f"'Updated Construction'!$G:$G,$A{i},"
+                                f"'Updated Construction'!$E:$E,\"<=\"&"
+                                f"{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&$B$2)"
+                                f"+(SUMIFS('Updated Construction'!$F:$F,"
+                                f"'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,"
+                                f"$A{i},'Updated Construction'!$E:$E,\"<=\"&"
+                                f"{month_headings[index]}$5,'Updated Construction'!$E:$E,"
+                                f"\">\"&$B$2)*$B{i}))*1.15")
 
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
@@ -3312,10 +3333,16 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                                            bottom=Side(style='medium'))
 
                     for i in range(block_costs_start, block_costs_end + 1):
-                        ws6[
-                            f"{col}{i}"] = f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,'Updated Construction'!$G:$G,$A{i},'Updated Construction'!$E:$E," \
-                                           f"\"<=\"&{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&{month_headings[index - 2]}$5)+(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,$A{i},'Updated Construction'!$E:$E," \
-                                           f"\"<=\"&{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&{month_headings[index - 2]}$5)*$B{i}))*1.15"
+                        if project == "Goodwood":
+                            ws6[
+                                f"{col}{i}"] = f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,'Updated Construction'!$G:$G,$A{i},'Updated Construction'!$E:$E," \
+                                               f"\"<=\"&{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&{month_headings[index - 2]}$5)+(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,$A{i},'Updated Construction'!$E:$E," \
+                                               f"\"<=\"&{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&{month_headings[index - 2]}$5)*$B{i}))"
+                        else:
+                            ws6[
+                                f"{col}{i}"] = f"=-(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,FALSE,'Updated Construction'!$G:$G,$A{i},'Updated Construction'!$E:$E," \
+                                               f"\"<=\"&{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&{month_headings[index - 2]}$5)+(SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$A:$A,TRUE,'Updated Construction'!$G:$G,$A{i},'Updated Construction'!$E:$E," \
+                                               f"\"<=\"&{month_headings[index]}$5,'Updated Construction'!$E:$E,\">\"&{month_headings[index - 2]}$5)*$B{i}))*1.15"
                         ws6[f"{col}{i}"].number_format = '#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
 
@@ -4355,9 +4382,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 vat_payable = ws7.max_row
 
             else:
-                ws7.append(["Company Running Costs", 0, 0])
+                ws7.append(["Company Running Costs", f"='Cashflow Projection - {project}'!D{operating_expenses}", 0])
                 company_running_costs = ws7.max_row
-                ws7.append(["VAT Payable", 0, 0])
+                ws7.append(["VAT Payable", f"='Cashflow Projection - {project}'!D{vat_payable_on_sales}+'Cashflow Projection - {project}'!D{vat_row}+'Cashflow Projection - {project}'!D{vat_construction}", 0])
                 vat_payable = ws7.max_row
 
             ws7.append([])
@@ -4438,11 +4465,17 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             ws['T4'] = "Interest to Date"
 
-            "=IF(J5<>"",M5*N5/365/100*('Cashflow Projection'!$B$2-Investors!J5),0)"
+            # "=IF(J5<>"",M5*N5/365/100*('Cashflow Projection'!$B$2-Investors!J5),0)"
             inv_last = ws.max_row
             for i in range(5, inv_last + 1):
                 ws[f"T{i}"] = f"=IF(J{i}<>\"\",M{i}*N{i}/365/100*('Cashflow Projection'!$B$2-Investors!J{i}),0)"
                 ws[f"T{i}"].number_format = '#,##0'
+                # "=IF(J5<>"",M5*N5/100/365*(K5-J5),M5*N5/100/365*(K5-(I5+30)))"
+                ws[f"R{i}"] = f"=IF(J{i}<>\"\",M{i}*N{i}/100/365*(K{i}-J{i}),M{i}*N{i}/100/365*(K{i}-(I{i}+30)))"
+                # ws[f"S{i}"].number_format = '#,##0'
+                # "=R5+Q5"
+                ws[f"S{i}"] = f"=R{i}+Q{i}"
+                # ws[f"S{i}"].number_format = '#,##0'
             "=+D72+D46"
             ws6[f"D{running}"] = f"=D{running - 2}+D{block_costs_start - 4}"
 
@@ -4663,8 +4696,51 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron Fields\")+SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron View\")-C53"])
 
 
-            else:
 
+            elif project == "Goodwood":
+
+                ws9.append(["Units",
+                            f"=COUNTIFS(Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")+COUNTIFS(Sales!$E:$E,FALSE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=COUNTIFS(Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"{project}\")"])
+                ws9.append(["Sales Income",
+                            f"=SUMIFS(Sales!$K:$K,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$K:$K,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,FALSE)+C46",
+                            f"=SUMIFS(Sales!$K:$K,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"{project}\")+C46"])
+
+                ws9.append(["Commission",
+                            f"=(SUMIFS(Sales!$O:$O,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$O:$O,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,FALSE))-C52",
+                            f"=SUMIFS(Sales!$O:$O,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"{project}\")-C52"])
+
+                ws9.append(["Transfer Fees",
+                            f"=SUMIFS(Sales!$L:$L,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$L:$L,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,FALSE)",
+                            f"=SUMIFS(Sales!$L:$L,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$L:$L,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$L:$L,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"{project}\")"])
+
+                ws9.append(["Bond Registration",
+                            f"=SUMIFS(Sales!$P:$P,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$P:$P,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,FALSE)",
+                            f"=SUMIFS(Sales!$P:$P,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$P:$P,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$P:$P,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"{project}\")"])
+
+                ws9.append(["Security Release Fee",
+                            f"=SUMIFS(Sales!$M:$M,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$M:$M,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,FALSE)",
+                            f"=SUMIFS(Sales!$M:$M,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"{project}\")"])
+
+                ws9.append(["Unforseen (0.05%)",
+                            f"=SUMIFS(Sales!$N:$N,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$N:$N,Sales!$A:$A,\"=\"&\"{project}\",Sales!$D:$D,FALSE)-C53",
+                            f"=SUMIFS(Sales!$N:$N,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
+                            f"=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"{project}\")-C53"])
+
+            else:
                 ws9.append(["Units",
                             f"=COUNTIFS(Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")+COUNTIFS(Sales!$E:$E,FALSE,Sales!$A:$A,\"=\"&\"{project}\")",
                             f"=COUNTIFS(Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"{project}\")",
@@ -5527,7 +5603,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         sheet_names = wb.sheetnames
         # print(sheet_names)
         sheet_names_to_hide = ['Updated Construction', 'Operational Costs', 'Xero', 'Other Costs', 'Investors', 'Sales',
-                               'Construction', 'Opportunities', 'Heron']
+                               'Construction', 'Opportunities', 'Heron', 'Cashflow Projection', 'Cashflow','NSST Print', 'Investor Exit List','Momentum', 'Checklist']
         # loop through the sheets and hide the ones in the list
 
         for sheet in sheet_names_to_hide:

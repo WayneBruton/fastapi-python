@@ -1356,13 +1356,7 @@ def investors_new_cashflow_nsst_report():
     # filter out of investors where trust is empty
     investors = list(filter(lambda x: len(x["trust"]) > 0, investors))
 
-    # filter out of investors where investments is empty
-    # I AM HERE
-    # if investor['investor_acc_number'] == "ZMAN01":
-    #     print("filtered_opportunityTrust", investor['trust'])
-    #     print()
 
-    # investors = list(filter(lambda x: len(x["investments"]) > 0, investors))
 
     opportunities = list(db.opportunities.find({}, {"_id": 0}))
 
@@ -1706,7 +1700,12 @@ def get_sales_data(report_date):
 
         # print("sales_data_actual B", sales_data_actual[0])
 
-        for sale in sales_data_actual:
+        # print(len(sales_data_actual))
+        # print(sales_data_actual[160])
+        # print()
+        # print(sales_data_actual[161])
+
+        for index, sale in enumerate(sales_data_actual):
 
             # convert opportunity_sales_date to datetime
             # if sale['opportunity_sales_date'] == None:
@@ -1719,7 +1718,7 @@ def get_sales_data(report_date):
                 sale['opportunity_sales_date'] = datetime.strptime(sale['opportunity_sales_date'], '%Y/%m/%d')
 
             # convert opportunity_actual_reg_date to datetime
-
+            # print("Got this far!!!!", index)
             try:
 
                 if sale['opportunity_actual_reg_date'] != "" and sale['opportunity_actual_reg_date'] is not None:
@@ -1767,6 +1766,7 @@ def get_sales_data(report_date):
 
         # print("construction_data", construction_data[0])
 
+
         sales_data = list(db.cashflow_sales.find({}, {"_id": 0}))
 
         # filter out of sales data where Category is Endulini, Southwark or NGAH
@@ -1775,6 +1775,7 @@ def get_sales_data(report_date):
                    sales_data))
 
         # print("opportunities", opportunities[0])
+
         for opp in opportunities:
             filtered_sales_data = list(filter(lambda x: x['opportunity_code'] == opp['opportunity_code'], sales_data))
             if len(filtered_sales_data) == 0:
@@ -1826,6 +1827,7 @@ def get_sales_data(report_date):
 
             construction_data_filtered = list(filter(lambda x: x['block'] == sale['block'], construction_data))
 
+
             if len(construction_data_filtered) > 0:
                 if construction_data_filtered[0]['Complete Build'] == False and construction_data_filtered[0][
                     'Whitebox-Able'] == True:
@@ -1864,6 +1866,7 @@ def get_sales_data(report_date):
             # print("Got here 3")
             # print("sales_data_actual_filtered", sales_data_actual_filtered[0])
             # print("sales_data_actual_filtered", len(sales_data_actual_filtered))
+
             if len(sales_data_actual_filtered) > 0:
                 sale['forecast_transfer_date'] = sales_data_actual_filtered[0]['opportunity_actual_reg_date']
                 sale['forecast_transfer_date'] = sale['forecast_transfer_date'].strftime('%Y-%m-%d')
@@ -1925,6 +1928,7 @@ def get_sales_data(report_date):
             # del sale['profit_loss_nice']
             # del sale['sale_price_nice']
         # print("sales_data", sales_data[0])
+
 
         for item in sales_data:
 
@@ -2962,8 +2966,7 @@ async def get_daily_cashflow(request: Request):
         if os.path.exists("cashflow_p&l_files/daily_cashflow.xlsx"):
             os.remove("cashflow_p&l_files/daily_cashflow.xlsx")
 
-        # investors = investors_new_cashflow_nsst_report()
-        # investors = list(filter(lambda x: x['Category'] in development, investors))
+
         investors = list(db.investors.find({}, {"_id": 0, "investor_acc_number": 1, "investments": 1, "trust": 1,
                                                 "investor_name": 1, "investor_surname": 1}))
         # filter out of investors where trust is empty
