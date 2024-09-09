@@ -2227,59 +2227,59 @@ async def generate_investors_new_cashflow_nsst_report(data: Request, background_
         # for item in construction:
         #     print(item)
         #     print()
-        insert = {
-            "Whitebox-Able": True,
-            "Blocks": "Block R",
-            'Development': 'Goodwood',
-            "Complete Build": 0,
-            'Option': 0,
-            'Remaining As Per Options': 0.0,
-            'To Complete After Option Achieved': 0.0,
-            ' Total Cost To Complete ': 2019943.35,
-            '2024/03/31 Actual': 0.0,
-            '30-Apr-24': 0.0,
-            '30-May-24': 0.0,
-            '29-Jun-24': 0.0,
-            '29-Jul-24': 211008.5,
-            '28-Aug-24': 302718.75,
-            '27-Sep-24': 211710.25,
-            '31-Oct-24': 5437.5,
-            '30-Nov-24': 2718.75,
-            '31-Dec-24': 2718.75,
-            '31-Jan-25': 2718.75,
-            '28-Feb-25': 2718.75,
-
-        }
-        construction.append(insert)
-
-        # head = [0, 1, 2]
-        # k = 3
-        # print("rotat= ", k % len(head))
-        # k = k % len(head)
-        # if k > 0:
-        #     for i in range(1, k + 1):
-        #         # move the last item in the list to the first position
-        #         head.insert(0, head.pop())
-        # print("Head",head)
-
-        # print("operatonal_costs", operational_costs[0])
-        insert = {
-            ' Company ': 'Goodwood',
-            ' Account ': 'Professional & Other Fees',
-            ' Month1 ': 0,
-            ' Month2 ': 0,
-            ' Month3 ': 0,
-            ' Month4 ': 0,
-            ' Month5 ': 295387.0425,
-            ' Month6 ': 361192.3975,
-            ' Month7 ': 248820,
-            ' Month8 ': 238645,
-            ' Month9 ': 228470,
-            ' Month10 ': 215455.614,
-            ' Month11 ': 97526,
-            ' Operating Expenses ': 240785.1506
-        }
-        operational_costs.append(insert)
+        # insert = {
+        #     "Whitebox-Able": True,
+        #     "Blocks": "Block R",
+        #     'Development': 'Goodwood',
+        #     "Complete Build": 0,
+        #     'Option': 0,
+        #     'Remaining As Per Options': 0.0,
+        #     'To Complete After Option Achieved': 0.0,
+        #     ' Total Cost To Complete ': 2019943.35,
+        #     '2024/03/31 Actual': 0.0,
+        #     '30-Apr-24': 0.0,
+        #     '30-May-24': 0.0,
+        #     '29-Jun-24': 0.0,
+        #     '29-Jul-24': 211008.5,
+        #     '28-Aug-24': 302718.75,
+        #     '27-Sep-24': 211710.25,
+        #     '31-Oct-24': 5437.5,
+        #     '30-Nov-24': 2718.75,
+        #     '31-Dec-24': 2718.75,
+        #     '31-Jan-25': 2718.75,
+        #     '28-Feb-25': 2718.75,
+        #
+        # }
+        # construction.append(insert)
+        #
+        # # head = [0, 1, 2]
+        # # k = 3
+        # # print("rotat= ", k % len(head))
+        # # k = k % len(head)
+        # # if k > 0:
+        # #     for i in range(1, k + 1):
+        # #         # move the last item in the list to the first position
+        # #         head.insert(0, head.pop())
+        # # print("Head",head)
+        #
+        # # print("operatonal_costs", operational_costs[0])
+        # insert = {
+        #     ' Company ': 'Goodwood',
+        #     ' Account ': 'Professional & Other Fees',
+        #     ' Month1 ': 0,
+        #     ' Month2 ': 0,
+        #     ' Month3 ': 0,
+        #     ' Month4 ': 0,
+        #     ' Month5 ': 295387.0425,
+        #     ' Month6 ': 361192.3975,
+        #     ' Month7 ': 248820,
+        #     ' Month8 ': 238645,
+        #     ' Month9 ': 228470,
+        #     ' Month10 ': 215455.614,
+        #     ' Month11 ': 97526,
+        #     ' Operating Expenses ': 240785.1506
+        # }
+        # operational_costs.append(insert)
 
         for item in invest:
             if item["Category"] == "Goodwood":
