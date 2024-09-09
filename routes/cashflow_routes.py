@@ -2037,7 +2037,19 @@ def get_xero_tbs():
             # convert ReportDate to datetime
             item['ReportDate'] = item['ReportDate'].replace("-", "/")
             item['ReportDate'] = datetime.strptime(item['ReportDate'], '%Y/%m/%d')
-
+        # print(xero_tbs[0])
+        # filter xero_tbs to only include AccountCode that equals 8400/000 or 8440/000 or 8400/010
+        # xero_tbs = list(
+        #     filter(
+        #         lambda x: x['AccountCode']
+        #                   in [
+        #                       '8400/000',
+        #                       '8440/000',
+        #                       '8400/010',
+        #                   ],
+        #         xero_tbs,
+        #     )
+        # )
         return xero_tbs
     except Exception as e:
         print("Error getting xero tbs", e)
@@ -2168,10 +2180,11 @@ async def generate_investors_new_cashflow_nsst_report(data: Request, background_
             if sale['sale_price'] == "" or sale['sale_price'] == None:
                 sale['sale_price'] = 0
             sale['sale_price'] = float(sale['sale_price'])
-        print("sales", sales[0])
+        # print("sales", sales[0])
 
         operational_costs = get_operational_costs()
         xero = get_xero_tbs()
+        # print("xero", xero[0])
         opportunities = get_opportunities()
         # DO FOR INVESTOR EXIT REPORT THEN CREATE A FUNCTION
         # print("invest", invest[0])

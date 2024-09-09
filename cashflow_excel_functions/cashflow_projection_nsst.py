@@ -290,6 +290,50 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws5[f"{col}2"].number_format = '#,##0.00'
             # format from row 5 to last row as currency
 
+        # ws5.auto_filter.ref = f"A4:{get_column_letter(ws5.max_column)}{last_row}"
+        # ws5.freeze_panes = "A5"
+        # filter column D to only show 8400/000, 8440/000 and 8400/010
+
+        ws5c = wb.create_sheet('Xero_bank')
+        xero_bank = list(
+            filter(
+                lambda x: x['AccountCode']
+                          in [
+                              '8400/000',
+                              '8440/000',
+                              '8400/010',
+                          ],
+                xero,
+            )
+        )
+        xero_bank = list(
+            filter(
+                lambda x: x['ReportTitle']
+                            in ["Heron Fields (Pty) Ltd", "Purple Blok Projects (Pty) Ltd"],
+                xero_bank,
+            )
+        )
+
+        ws5c.sheet_properties.tabColor = "1072BA"
+        ws5c['A1'] = "Xero Bank"
+        ws5c.append([])
+        ws5c.append([])
+        ws5c.append(["ReportTitle", "ReportDate", "Category", "AccountCode", "AccountName", "Current", "Ytd"])
+        for item in xero_bank:
+            ws5c.append([item[key] for key in item])
+        # filter from row 4
+        ws5c.auto_filter.ref = f"A4:{get_column_letter(ws5c.max_column)}{ws5c.max_row}"
+        ws5c.freeze_panes = "A5"
+
+
+
+
+
+
+
+
+
+
         ws5b = wb.create_sheet('Other Costs')
 
         ws5b.sheet_properties.tabColor = "1072BA"
@@ -312,6 +356,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             for key in item:
                 row.append(item[key])
             ws5b.append(row)
+
+
 
         ws8 = wb.create_sheet('Heron')
 
@@ -1946,7 +1992,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                                                            bottom=Side(style='medium'))
 
             for i in range(running, running + 1):
-                ws6[f"D{i}"] = f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, $B$2, Xero!$D:$D, \"84*\")+8823977"
+                ws6[f"D{i}"] = f"=SUMIFS(Xero_bank!$G:$G, Xero_bank!$B:$B, $B$2, Xero_bank!$D:$D, \"84*\")+8823977"
                 ws6[f"D{i}"].number_format = 'R#,##0'
                 ws6[f"D{i}"].font = Font(bold=True, color="0C0C0C", size=22)
             # "=IF(SUMIFS($B$50:$B$64,$E$50:$E$64,"Goodwood")>0,Cashflow!B14,'Cashflow - Heron'!B14)"
@@ -2699,16 +2745,17 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     for i in range(vat_payable_on_sales, vat_payable_on_sales + 1):
                         # print("month_headings",month_headings[index])
 
-                        if project == "Consolidated":
+                        if project == "Heron":
                             # I AM HERE - CHANGE REFERENCE 28 & 31
+                            # "=(IF(MOD(MONTH(I5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,"<="&EOMONTH(EDATE(I$5,0),-1),Sales!$W:$W,">"&EOMONTH(EDATE(I$5,0),-3),Sales!$A:$A,"Heron View")-SUMIFS(Sales!$J:$J,Sales!$W:$W,"<="&EOMONTH(EDATE(I$5,0),-1),Sales!$W:$W,">"&EOMONTH(EDATE(I$5,0),-3),Sales!$A:$A,"Heron Fields")*$C25))"
                             ws6[
-                                f"{col}{i}"] = f"=(IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE)+{col}{vat_recovery_when_refinanced}-{col}{vat_recovery_when_refinanced + 3})-SUMIFS(Sales!$J:$J,Sales!$W:$W,\">\"&EOMONTH(EDATE(I$5, 0), -3),Sales!$W:$W,\"<=\"&EOMONTH(EDATE(I$5, 0), -2),Sales!$D:$D,TRUE)))*$C{vat_payable_on_sales}"
-                        elif project == "Heron":
+                                f"{col}{i}"] = f"=(IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$A:$A,\"Heron View\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$A:$A,\"Heron Fields\")*$C{vat_payable_on_sales}))"
+                        elif project == "Consolidated":
                             ws6[
-                                f"{col}{i}"] = f"=(IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron View\")--SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron Fields\")+{col}{vat_recovery_when_refinanced}-{col}{vat_recovery_when_refinanced + 3})-SUMIFS(Sales!$J:$J,Sales!$W:$W,\">\"&EOMONTH(EDATE(I$5, 0), -3),Sales!$W:$W,\"<=\"&EOMONTH(EDATE(I$5, 0), -2),Sales!$D:$D,TRUE,Sales!$A:$A,\"Heron View\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\">\"&EOMONTH(EDATE(I$5, 0), -3),Sales!$W:$W,\"<=\"&EOMONTH(EDATE(I$5, 0), -2),Sales!$D:$D,TRUE,Sales!$A:$A,\"Heron Fields\")))*$C{vat_payable_on_sales}"
+                                f"{col}{i}"] = f"=(IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3))-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3))*$C{vat_payable_on_sales}))"
                         else:
                             ws6[
-                                f"{col}{i}"] = f"=(IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"{project}\")+{col}{vat_recovery_when_refinanced}-{col}{vat_recovery_when_refinanced + 3})-SUMIFS(Sales!$J:$J,Sales!$W:$W,\">\"&EOMONTH(EDATE(I$5, 0), -3),Sales!$W:$W,\"<=\"&EOMONTH(EDATE(I$5, 0), -2),Sales!$D:$D,TRUE,Sales!$A:$A,\"{project}\")))*$C{vat_payable_on_sales}"
+                                f"{col}{i}"] = f"=(IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$A:$A,\"{project}\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$A:$A,\"{project}\")*$C{vat_payable_on_sales}))"
                         ws6[f"{col}{i}"].number_format = 'R#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                         # fil in light red
@@ -3235,15 +3282,33 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
                     for i in range(vat_payable_on_sales, vat_payable_on_sales + 1):
 
-                        if project == "Consolidated":
-                            ws6[
-                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
-                        elif project == "Heron":
-                            ws6[
-                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,((-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron Fields\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron View\")))+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
+                        if index > 2:
+
+                            if project == "Consolidated":
+                                ws6[
+                                    f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE))+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
+                            elif project == "Heron":
+                                ws6[
+                                    f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,((-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron Fields\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"Heron View\")))+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
+                            else:
+                                ws6[
+                                    f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"{project}\"))+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
                         else:
-                            ws6[
-                                f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,(-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$F:$F,1,Sales!$E:$E,FALSE,Sales!$A:$A,\"{project}\"))+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
+                            if project == "Heron":
+                                # "=IF(MOD(MONTH(K5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,"<="&EOMONTH(EDATE(K$5, 0), -2),Sales!$W:$W,">"&EOMONTH(EDATE(K$5, 0), -3),Sales!$A:$A,"Heron Fields")-SUMIFS(Sales!$J:$J,Sales!$W:$W,"<="&EOMONTH(EDATE(K$5, 0), -2),Sales!$W:$W,">"&EOMONTH(EDATE(K$5, 0), -3),Sales!$A:$A,"Heron View")-SUMIFS(Sales!$J:$J,Sales!$W:$W,"<="&EOMONTH(EDATE(K$5, 0), -1),Sales!$W:$W,">"&EOMONTH(EDATE(K$5, 0), -2),Sales!$A:$A,"Heron Fields",Sales!$F:$F,1)-SUMIFS(Sales!$J:$J,Sales!$W:$W,"<="&EOMONTH(EDATE(K$5, 0), -1),Sales!$W:$W,">"&EOMONTH(EDATE(K$5, 0), -2),Sales!$A:$A,"Heron View",Sales!$F:$F,1)+K24-K27)*C25"
+                                ws6[
+                                    f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -2),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$A:$A,\"Heron Fields\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -2),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$A:$A,\"Heron View\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -2),Sales!$A:$A,\"Heron Fields\",Sales!$F:$F,1)-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -2),Sales!$A:$A,\"Heron View\",Sales!$F:$F,1)+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
+                            elif project == "Consolidated":
+                                ws6[
+                                    f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -2),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3))-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -2),Sales!$F:$F,1)+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
+                            else:
+                                ws6[
+                                    f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -2),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$A:$A,\"{project}\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -2),Sales!$A:$A,\"{project}\",Sales!$F:$F,1)+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
+
+
+
+
+
                         ws6[f"{col}{i}"].number_format = 'R#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                         # fil in light red
@@ -3659,14 +3724,22 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 elif index > 2 and index % 2 != 0:
 
                     for i in range(toggles_start, toggles_end + 1):
-                        # if project == "Consolidated":
-                        ws6[
-                            f"{col}{i}"] = (
-                            f"=COUNTIFS(Sales!$W:$W,\"<=\"&{month_headings[index - 1]}"
-                            f"$5,Sales!$W:$W,\">\"&{month_headings[index - 3]}$5,"
-                            f"Sales!$A:$A,$A{i},Sales!$B:$B,'Cashflow "
-                            f"Projection'!$B{i},Sales!$F:$F,$C{i},Sales!$E:$E,"
-                            f"FALSE)*$C{i}")
+                        if project == "Consolidated":
+                            ws6[
+                                f"{col}{i}"] = (
+                                f"=COUNTIFS(Sales!$W:$W,\"<=\"&{month_headings[index - 1]}"
+                                f"$5,Sales!$W:$W,\">\"&{month_headings[index - 3]}$5,"
+                                f"Sales!$A:$A,$A{i},Sales!$B:$B,'Cashflow "
+                                f"Projection'!$B{i},Sales!$F:$F,$C{i},Sales!$E:$E,"
+                                f"FALSE)*$C{i}")
+                        else:
+                            ws6[
+                                f"{col}{i}"] = (
+                                f"=COUNTIFS(Sales!$W:$W,\"<=\"&{month_headings[index - 1]}"
+                                f"$5,Sales!$W:$W,\">\"&{month_headings[index - 3]}$5,"
+                                f"Sales!$A:$A,$A{i},Sales!$B:$B,'Cashflow "
+                                f"Projection - {project}'!$B{i},Sales!$F:$F,$C{i},Sales!$E:$E,"
+                                f"FALSE)*$C{i}")
                         # elif project == "Heron":
                         #     ws6[
                         #         f"{col}{i}"] = (
@@ -4322,23 +4395,23 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             if project == "Consolidated" or project == "Heron":
 
                 ws7.append(["Momentum funds available to draw",
-                            "=SUMIFS(Xero!$G:$G,Xero!$E:$E,\"Momentum Investors Account RU502229930\",Xero!$B:$B,'Cashflow Projection'!$B$2)",
-                            "=SUMIFS(Xero!$G:$G,Xero!$E:$E,\"Momentum Investors Account RU502229930\",Xero!$B:$B,'Cashflow Projection'!$B$2)"])
+                            "=SUMIFS(Xero_bank!$G:$G,Xero_bank!$E:$E,\"Momentum Investors Account RU502229930\",Xero_bank!$B:$B,'Cashflow Projection'!$B$2)",
+                            "=SUMIFS(Xero_bank!$G:$G,Xero_bank!$E:$E,\"Momentum Investors Account RU502229930\",Xero_bank!$B:$B,'Cashflow Projection'!$B$2)"])
             else:
-                ws7.append([f"Momentum funds available to drawd", 0, 0])
+                ws7.append([f"Momentum funds available to draw", 0, 0])
             momentum_funds = ws7.max_row
             # "=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, "84*")-SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, "8480*")-B13"
             if project == "Consolidated":
                 ws7.append(["FNB Bank",
-                            f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"8480*\")-B{momentum_funds}",
-                            f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-B{momentum_funds}"])
+                            f"=SUMIFS(Xero_bank!$G:$G, Xero_bank!$B:$B, 'Cashflow Projection'!$B$2, Xero_bank!$D:$D, \"84*\")-SUMIFS(Xero_bank!$G:$G, Xero_bank!$B:$B, 'Cashflow Projection'!$B$2, Xero_bank!$D:$D, \"8480*\")-B{momentum_funds}",
+                            f"=SUMIFS(Xero_bank!$G:$G, Xero_bank!$B:$B, 'Cashflow Projection'!$B$2, Xero_bank!$D:$D, \"84*\")-B{momentum_funds}"])
             elif project == "Heron":
                 ws7.append(["FNB Bank",
-                            f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\",Xero!$A:$A,\"<>Purple Blok Projects (Pty) Ltd\")-SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"8480*\")-B{momentum_funds}",
-                            f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\")-B{momentum_funds}"])
+                            f"=SUMIFS(Xero_bank!$G:$G, Xero_bank!$B:$B, 'Cashflow Projection'!$B$2, Xero_bank!$D:$D, \"84*\",Xero_bank!$A:$A,\"<>Purple Blok Projects (Pty) Ltd\")-SUMIFS(Xero_bank!$G:$G, Xero_bank!$B:$B, 'Cashflow Projection'!$B$2, Xero_bank!$D:$D, \"8480*\")-B{momentum_funds}",
+                            f"=SUMIFS(Xero_bank!$G:$G, Xero_bank!$B:$B, 'Cashflow Projection'!$B$2, Xero_bank!$D:$D, \"84*\")-B{momentum_funds}"])
             elif project == "Goodwood":
                 ws7.append(["FNB Bank",
-                            f"=SUMIFS(Xero!$G:$G, Xero!$B:$B, 'Cashflow Projection'!$B$2, Xero!$D:$D, \"84*\",Xero!$A:$A,\"Purple Blok Projects (Pty) Ltd\")"])
+                            f"=SUMIFS(Xero_bank!$G:$G, Xero_bank!$B:$B, 'Cashflow Projection'!$B$2, Xero_bank!$D:$D, \"84*\",Xero_bank!$A:$A,\"Purple Blok Projects (Pty) Ltd\")"])
 
             fnb_bank = ws7.max_row
             ws7.append(["New Investors", 0, 0])
@@ -5431,7 +5504,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         for row in ws3.iter_rows(min_row=5, max_row=ws3.max_row, min_col=18, max_col=18):
             for cell in row:
                 # "=IF(SUMIFS('Cashflow Projection - Heron'!$E$120:$E$199,'Cashflow Projection - Heron'!$D$120:$D$199,Sales!C158)=1,0,IF(AND($F158=1,T158=FALSE),((SUMIFS(Investors!$M:$M,Investors!$E:$E,Sales!$C158,Investors!$O:$O,FALSE,Investors!$K:$K,">="&'NSST Print'!$B$3)+SUMIFS(Investors!$S:$S,Investors!$E:$E,Sales!$C158,Investors!$O:$O,FALSE,Investors!$K:$K,">="&'NSST Print'!$B$3))*$F158)-SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$Y:$Y,1,'Investor Exit List'!$Z:$Z,"Release",'Investor Exit List'!$C:$C,Sales!$C158),0)*$F158)"
-                cell.value = f"=IF(SUMIFS('Cashflow Projection - Heron'!$E${refinanced_units_start_heron + 1}:$E${refinanced_units_end_heron },'Cashflow Projection - Heron'!$D${refinanced_units_start_heron + 1}:$D${refinanced_units_end_heron},Sales!C{cell.row})=1,0,IF(AND($F{cell.row}=1,T{cell.row}=FALSE),((SUMIFS(Investors!$M:$M,Investors!$E:$E,Sales!C{cell.row},Investors!O:O,FALSE,Investors!K:K,\">=\"&'NSST Print'!$B$3)+SUMIFS(Investors!$S:$S,Investors!$E:$E,Sales!C{cell.row},Investors!O:O,FALSE,Investors!K:K,\">=\"&'NSST Print'!$B$3))*$F{cell.row})-SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$Y:$Y,1,'Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$C:$C,Sales!C{cell.row}),0)*$F{cell.row})"
+                cell.value = f"=IF(SUMIFS('Cashflow Projection - Heron'!$E${refinanced_units_start_heron + 1}:$E${refinanced_units_end_heron },'Cashflow Projection - Heron'!$D${refinanced_units_start_heron + 1}:$D${refinanced_units_end_heron},Sales!C{cell.row})>1,0,IF(AND($F{cell.row}=1,T{cell.row}=FALSE),((SUMIFS(Investors!$M:$M,Investors!$E:$E,Sales!C{cell.row},Investors!O:O,FALSE,Investors!K:K,\">=\"&'NSST Print'!$B$3)+SUMIFS(Investors!$S:$S,Investors!$E:$E,Sales!C{cell.row},Investors!O:O,FALSE,Investors!K:K,\">=\"&'NSST Print'!$B$3))*$F{cell.row})-SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$Y:$Y,1,'Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$C:$C,Sales!C{cell.row}),0)*$F{cell.row})"
 
                 cell.number_format = '#,##0.00'
 
@@ -5705,13 +5778,23 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
         # get a list of sheets in the workbook
         sheet_names = wb.sheetnames
         # print(sheet_names)
-        sheet_names_to_hide = ['Updated Construction', 'Operational Costs', 'Xero', 'Other Costs', 'Investors', 'Sales',
+        sheet_names_to_hide = ['Updated Construction', 'Operational Costs', 'Xero', 'Xero_bank', 'Other Costs', 'Investors', 'Sales',
                                'Construction', 'Opportunities', 'Heron', 'Cashflow Projection', 'Cashflow','NSST Print', 'Investor Exit List','Momentum', 'Checklist']
         # loop through the sheets and hide the ones in the list
 
         for sheet in sheet_names_to_hide:
             ws = wb[sheet]
             ws.sheet_state = 'hidden'
+
+
+        # filter column D in ws5 to only show 8400/000 and 8440/000 and 8400/010 and hide the rest using filter from row 4 to the last row
+
+
+
+
+
+
+
 
         # move sheet 'NSST Print' to the beginning of the workbook
 
