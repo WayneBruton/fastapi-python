@@ -3305,10 +3305,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                                 ws6[
                                     f"{col}{i}"] = f"=IF(MOD(MONTH({col}5),2)=0,0,-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -2),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -3),Sales!$A:$A,\"{project}\")-SUMIFS(Sales!$J:$J,Sales!$W:$W,\"<=\"&EOMONTH(EDATE({col}$5, 0), -1),Sales!$W:$W,\">\"&EOMONTH(EDATE({col}$5, 0), -2),Sales!$A:$A,\"{project}\",Sales!$F:$F,1)+{col}{vat_payable_on_sales - 1}-{col}{vat_payable_on_sales + 2})*C{vat_payable_on_sales}"
 
-
-
-
-
                         ws6[f"{col}{i}"].number_format = 'R#,##0'
                         ws6[f"{col}{i}"].font = Font(bold=True, color="0C0C0C", size=22)
                         # fil in light red
