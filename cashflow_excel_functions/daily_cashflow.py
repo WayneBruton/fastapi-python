@@ -148,6 +148,12 @@ def daily_cashflow(sales, investor_exit, report_date):
         "=IF(J6<SUMIFS(Sales!$H:$H,Sales!$C:$C,Investors!G6),0,Investors!Q6)"
         ws2[
             f"R{i}"] = f"=IF(J{i}<SUMIFS(Sales!$H:$H,Sales!$C:$C,Investors!G{i}),0,Investors!Q{i})"
+        # "=SUMIFS(Sales!$H:$H,Sales!$C:$C,Investors!G90)"
+        ws2[f"S{i}"] = f"=SUMIFS(Sales!$H:$H,Sales!$C:$C,Investors!G{i})"
+        # format as date
+        ws2[f"S{i}"].number_format = 'yyyy-mm-dd'
+        # "=IF(J90<S90,"Exit","Sale")"
+        ws2[f"T{i}"] = f"=IF(J{i}<S{i},\"Exit\",\"Sale\")"
 
 
     # freeze panes at row 4
@@ -220,6 +226,28 @@ def daily_cashflow(sales, investor_exit, report_date):
     # filter the data from row 4 to the last row
     ws3.auto_filter.ref = f"A4:{get_column_letter(ws3.max_column)}{ws3.max_row}"
 
+    for i in range(2, ws3.max_row + 1):
+        for j in range(1, ws3.max_column + 1):
+            ws3.cell(row=i, column=j).border = Border(left=Side(border_style="thin"),
+                                                       right=Side(border_style="thin"),
+                                                       top=Side(border_style="thin"),
+                                                       bottom=Side(border_style="thin"))
+
+            if i == 2 or i == 3 or i == 4:
+                # set font size to 14 and color to white
+                ws3.cell(row=i, column=j).font = Font(size=14, color="FFFFFF")
+
+            if i == 2:
+                # fill in red
+                ws3.cell(row=i, column=j).fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+            if i == 3 or i == 4:
+                # fill in blue
+                ws3.cell(row=i, column=j).fill = PatternFill(start_color="0000FF", end_color="0000FF", fill_type="solid")
+
+
+
+
+
     # hide column D
     ws3.column_dimensions['D'].hidden = True
 
@@ -279,10 +307,10 @@ def daily_cashflow(sales, investor_exit, report_date):
             "=SUMIFS(Sales!$J:$J,Sales!$U:$U,A3)"
             ws5[f"D{i}"] = f"=SUMIFS(Sales!$J:$J,Sales!$U:$U,A{i})"
 
-            "=IF(C3<>0,SUMIFS(Investors!$Q:$Q,Investors!$P:$P,A3)-SUMIFS(Sales!$R:$R,Sales!$H:$H,A3),SUMIFS(Investors!$Q:$Q,Investors!$P:$P,A3))"
+            # "=SUMIFS(Investors!$Q:$Q,Investors!$T:$T,"Exit",Investors!$J:$J,Daily!A3)"
 
-            ws5[f"E{i}"] = f"=IF(C{i}<>0,SUMIFS(Investors!$Q:$Q,Investors!$P:$P,A{i})-SUMIFS(Sales!$R:$R,Sales!$H:$H,A{i}),SUMIFS(Investors!$Q:$Q,Investors!$P:$P,A{i}))"
-            "=SUMIFS('General Expenses'!$C:$C,'General Expenses'!$A:$A,A3)"
+            ws5[f"E{i}"] = f"=SUMIFS(Investors!$Q:$Q,Investors!$T:$T,\"Exit\",Investors!$J:$J,Daily!A{i})"
+            # "=SUMIFS('General Expenses'!$C:$C,'General Expenses'!$A:$A,A3)"
             ws5[f"F{i}"] = f"=SUMIFS('General Expenses'!$C:$C,'General Expenses'!$A:$A,A{i})"
             "=B3+C3-D3-E3"
             ws5[f"G{i}"] = f"=B{i}+C{i}-D{i}-E{i}-F{i}"

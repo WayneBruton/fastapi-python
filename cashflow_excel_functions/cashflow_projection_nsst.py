@@ -1,5 +1,6 @@
 import os
 from openpyxl import Workbook, formatting, formula
+from openpyxl.formatting.rule import FormulaRule
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.worksheet.page import PageMargins, PrintOptions
 from openpyxl.utils import get_column_letter
@@ -4352,14 +4353,14 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             if project == "Consolidated":
                 ws7.append([f"Actual Transfer Income to hit FNB - {project} Sold",
-                            '=+SUMIFS(Sales!$S:$S,Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection\'!B2)'])
+                            '=+SUMIFS(Sales!$S:$S,Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection\'!B2,Sales!$H:$H,"<="&\'Cashflow Projection\'!AE5)'])
             elif project == "Heron":
                 # "=+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron Fields",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&'Cashflow Projection - Heron'!B2)+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron View",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&'Cashflow Projection - Heron'!B2)"
                 ws7.append([f"Actual Transfer Income to hit FNB - {project} Sold",
-                            f'=+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron Fields",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection - Heron\'!B2)+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron View",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection - Heron\'!B2)'])
+                            f'=+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron Fields",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection - Heron\'!B2,Sales!$H:$H,"<="&\'Cashflow Projection - Heron\'!AE5)+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"Heron View",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection - Heron\'!B2,Sales!$H:$H,"<="&\'Cashflow Projection - Heron\'!AE5)'])
             else:
                 ws7.append([f"Actual Transfer Income to hit FNB - {project} Sold",
-                            f'=+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"{project}",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection - {project}\'!B2)'])
+                            f'=+SUMIFS(Sales!$S:$S,Sales!$A:$A,"="&"{project}",Sales!$D:$D,TRUE,Sales!$E:$E,FALSE,Sales!$F:$F,1,Sales!$H:$H,">"&\'Cashflow Projection - {project}\'!B2,Sales!$H:$H,"<="&\'Cashflow Projection - {project}\'!AE5)'])
             # format as currency
 
             transfer_endulini = ws7.max_row
@@ -5243,6 +5244,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     elif i == 'H':
                         # "=VLOOKUP($C4,Sales!$C:$E,2,FALSE)"
                         ws10[f"{i}{row}"].value = f"=VLOOKUP($C{row},Sales!$C:$E,2,FALSE)"
+                        # if ws10[f"{i}{row}"].value in H is TRUE then fill the row in light grey
+                        # print(ws10[f"C{row}"].value)
+
+
+
                     elif i == 'I':
                         ws10[f"{i}{row}"].value = f"=VLOOKUP($C{row},Sales!$C:$E,3,FALSE)"
                     elif i == 'J':
@@ -5340,6 +5346,27 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     ws10[f"{i}{row}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'),
                                                       left=Side(style='thin'),
                                                       right=Side(style='thin'))
+
+
+            rows_to_fill = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R','S', 'T', 'U', 'V', 'W']
+
+            for row in range(5, ws10.max_row + 1):
+                # print(ws10[f"C{row}"].value)
+                filtered_sales = [item for item in sales if item['opportunity_code'] == ws10[f"C{row}"].value]
+                # print("filtered_sales",filtered_sales)
+                if len(filtered_sales) > 0:
+                    if filtered_sales[0]['sold'] == True and filtered_sales[0]['transferred'] == True:
+                        for i in rows_to_fill:
+                            ws10[f"{i}{row}"].fill = PatternFill(start_color="D2E0FB", end_color="D2E0FB",
+                                                                fill_type="solid")
+                    elif filtered_sales[0]['sold'] == True and filtered_sales[0]['transferred'] == False:
+                        for i in rows_to_fill:
+                            ws10[f"{i}{row}"].fill = PatternFill(start_color="C6EFCE", end_color="C6EFCE",
+                                                                fill_type="solid")
+
+
+
+
 
             # column_letter = 'AA'
             #
