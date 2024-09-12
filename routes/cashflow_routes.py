@@ -1684,32 +1684,19 @@ def get_sales_data(report_date):
                                          "opportunity_actual_reg_date": 1, "opportunity_potential_reg_date": 1,
                                          "opportunity_contract_price": 1}))
 
-        # filter out where development is not Heron Fields or Heron View
-        # print("sales_data_actual A", len(sales_data_actual))
-        # for sale in sales_data_actual:
-        #     print(sale)
-        # sales_data_actual = list(
-        #     filter(lambda x: x["development"] == "Heron View" or x["development"] == "Heron Fields" or x[
-        #         "development"] == "Goodwood",
-        #            sales_data_actual))
+
 
         sales_data_actual = list(
             filter(lambda x: x["development"] != "Endulini" and x["development"] != "Southwark" and x[
                 "development"] != "NGAH",
                    sales_data_actual))
 
-        # print("sales_data_actual B", sales_data_actual[0])
 
-        # print(len(sales_data_actual))
-        # print(sales_data_actual[160])
-        # print()
-        # print(sales_data_actual[161])
 
         for index, sale in enumerate(sales_data_actual):
 
-            # convert opportunity_sales_date to datetime
-            # if sale['opportunity_sales_date'] == None:
-            # print(sale['opportunity_code'], sale['opportunity_sales_date'], sale['opportunity_actual_reg_date'])
+
+
             if 'opportunity_sales_date' in sale:
                 sale['opportunity_sales_date'] = sale['opportunity_sales_date'].replace("-", "/")
                 sale['opportunity_sales_date'] = datetime.strptime(sale['opportunity_sales_date'], '%Y/%m/%d')
@@ -1736,25 +1723,14 @@ def get_sales_data(report_date):
 
                     opportunities_filtered = list(
                         filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], opportunities))
-                    # opportunity_end_date
-                    # print()
-                    # print("opportunities_filtered", opportunities_filtered[0])
+
 
                     sale['opportunity_actual_reg_date'] = opportunities_filtered[0]['opportunity_end_date'].replace("-",
                                                                                                                     "/")
-                    # print("END DATE",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
-                    # print()
+
                     sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'],
                                                                             '%Y/%m/%d')
-                    # print("Processed END DATE",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
-                    # print()
-                    # print(sale['opportunity_actual_reg_date'], sale['opportunity_code'])
-                    # print("Hello",sale['opportunity_actual_reg_date'], sale['opportunity_code'])
 
-                    # sale['opportunity_actual_reg_date'] = "None"
-
-                # if sale["development"] == "Goodwood":
-                #     print("Goodwood", sale)
             except Exception as e:
                 print("Error converting opportunity_actual_reg_date to datetime", e, sale['opportunity_code'],
                       sale['opportunity_potential_reg_date'], sale['opportunity_code'])
@@ -1762,9 +1738,7 @@ def get_sales_data(report_date):
 
                 continue
 
-        # print("sales_data", sales_data_actual[0])
 
-        # print("construction_data", construction_data[0])
 
 
         sales_data = list(db.cashflow_sales.find({}, {"_id": 0}))
@@ -1773,6 +1747,15 @@ def get_sales_data(report_date):
         sales_data = list(
             filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x["Category"] != "NGAH",
                    sales_data))
+
+        # if item in sales data but not in sales_data_actual then remove from sales_data
+        for sale in sales_data:
+            filtered_sales_data_actual = list(
+                filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], sales_data_actual))
+            if len(filtered_sales_data_actual) == 0:
+                sales_data.remove(sale)
+
+
 
         # print("opportunities", opportunities[0])
 
@@ -1863,9 +1846,7 @@ def get_sales_data(report_date):
             sales_data_actual_filtered = list(
                 filter(lambda x: x['opportunity_code'] == sale['opportunity_code'], sales_data_actual))
 
-            # print("Got here 3")
-            # print("sales_data_actual_filtered", sales_data_actual_filtered[0])
-            # print("sales_data_actual_filtered", len(sales_data_actual_filtered))
+
 
             if len(sales_data_actual_filtered) > 0:
                 sale['forecast_transfer_date'] = sales_data_actual_filtered[0]['opportunity_actual_reg_date']
@@ -1880,9 +1861,7 @@ def get_sales_data(report_date):
                 else:
                     sale['forecast_transfer_date'] = "ISSUE HERE"
 
-            # print("Got here 4")
-            # print("XXXXX",sale['forecast_transfer_date'])
-            # convert forecast_transfer_date to string in the format yyyy-mm-dd
+
 
             if sale['forecast_transfer_date'] == "" or sale['forecast_transfer_date'] == None:
                 # if index == 18:
@@ -1952,6 +1931,18 @@ def get_sales_data(report_date):
 
         # sort sales_data by Category, block, opportunity_code
         sales_data = sorted(sales_data, key=lambda x: (x['Category'], x['block'], x['opportunity_code']))
+
+        # print(opportunities[0])
+        # print()
+
+        for item in sales_data:
+            if item['sold'] == False:
+                opps_filtered = list(filter(lambda x: x['opportunity_code'] == item['opportunity_code'], opportunities))
+                item['sale_price'] = float(opps_filtered[0]['opportunity_sale_price'])
+            # if item['opportunity_code'] == "HVE104":
+            #     print(item)
+
+
 
         return sales_data
     except Exception as e:
@@ -2177,6 +2168,8 @@ async def generate_investors_new_cashflow_nsst_report(data: Request, background_
         construction = get_construction_costsA()
         sales = get_sales_data(date)
         for sale in sales:
+            # if sale['opportunity_code'] == "HVK206":
+            #     print("sale", sale)
             if sale['sale_price'] == "" or sale['sale_price'] == None:
                 sale['sale_price'] = 0
             sale['sale_price'] = float(sale['sale_price'])

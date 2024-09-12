@@ -1128,7 +1128,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             # filter out duplicates
             block_finance_category = [dict(t) for t in {tuple(d.items()) for d in block_finance_category}]
             block_finance_category = sorted(block_finance_category, key=lambda x: (x['Development'], x['Block']))
-            print("block_finance_category", block_finance_category)
+            # print("block_finance_category", block_finance_category)
 
             block_finance = ['C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P']
 
@@ -5530,7 +5530,9 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 cell.value = f"=IF(SUMIFS('Cashflow Projection - Heron'!$E${refinanced_units_start_heron + 1}:$E${refinanced_units_end_heron },'Cashflow Projection - Heron'!$D${refinanced_units_start_heron + 1}:$D${refinanced_units_end_heron},Sales!C{cell.row})>1,0,IF(AND($F{cell.row}=1,T{cell.row}=FALSE),((SUMIFS(Investors!$M:$M,Investors!$E:$E,Sales!C{cell.row},Investors!O:O,FALSE,Investors!K:K,\">=\"&'NSST Print'!$B$3)+SUMIFS(Investors!$S:$S,Investors!$E:$E,Sales!C{cell.row},Investors!O:O,FALSE,Investors!K:K,\">=\"&'NSST Print'!$B$3))*$F{cell.row})-SUMIFS('Investor Exit List'!$Q:$Q,'Investor Exit List'!$Y:$Y,1,'Investor Exit List'!$Z:$Z,\"Release\",'Investor Exit List'!$C:$C,Sales!C{cell.row}),0)*$F{cell.row})"
 
                 cell.number_format = '#,##0.00'
-
+        # for sale in sales:
+        #     if sale['opportunity_code'] == "HVK206":
+        #         print(sale)
 
         for i in range(5, ws3.max_row + 1):
             # if ws3[f"A{i}"].value == "Heron Fields" or ws3[f"A{i}" == "Heron View"]:

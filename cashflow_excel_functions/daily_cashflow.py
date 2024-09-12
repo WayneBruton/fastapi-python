@@ -341,6 +341,60 @@ def daily_cashflow(sales, investor_exit, report_date):
     # freeze panes at row 4
     ws5.freeze_panes = "A3"
 
+    ws6 = wb.create_sheet("Movement")
+    ws6.tabColor = "1072BA"
+    ws6.title = "Movement"
+    ws6.append(["Dates", "Date No:","", "Number", "Investor Code", "Name", "Surname", "Unit", "Date Exit", "Capital", "Interest", "Exit Amount", "Cumulative"])
+    # make all columns 20 width
+    for i in range(1, 14):
+        ws6.column_dimensions[get_column_letter(i)].width = 15
+    # all cells bold and centrered
+    for i in range(1, 14):
+        ws6.cell(row=1, column=i).font = Font(bold=True)
+        ws6.cell(row=1, column=i).alignment = Alignment(horizontal='center')
+
+    # format column A  and I as date
+    date_format_columns = ['A', 'I']
+    for column in date_format_columns:
+        for i in range(2, 731):
+            ws6[f'{column}{i}'].number_format = 'yyyy-mm-dd'
+
+    currency_format_columns = ['J', 'K', 'L', 'M']
+    for column in currency_format_columns:
+        for i in range(2, 731):
+            ws6[f'{column}{i}'].number_format = '"R" #,##0.00'
+
+    for i in range(2, 52):
+        ws6[f"B{i}"] = f"=row()-1"
+        ws6[f"B{i}"].number_format = '0'
+
+
+    "=SORT(UNIQUE(FILTER(Investors!$P$5:$P$629,Investors!$P$5:$P$629>=Daily!A4)))"
+    ws6['A2'].value = f"=_xlfn.SORT(_xlfn.UNIQUE(_xlfn.FILTER(Investors!$P$5:$P${ws2.max_row},Investors!$P$5:$P${ws2.max_row}>=Daily!A4)))"
+
+    ws6['D2'].value = 1
+    "=UNIQUE(FILTER(Investors!$A$4:$A$629,(Investors!$P$4:$P$629=XLOOKUP(D2,$B$2:$B$51,$A$2:$A$51,""))))"
+    ws6['E2'].value = f"=_xlfn.UNIQUE(_xlfn.FILTER(Investors!$A$4:$A${ws2.max_row},(Investors!$P$4:$P${ws2.max_row}=_xlfn.XLOOKUP(D2,$B$2:$B$51,$A$2:$A$51,\"\"))))"
+
+    # "=XLOOKUP($E2,Investors!$A:$A,Investors!$B:$B,"Not Found")"
+    ws6['F2'].value = f"=_xlfn.XLOOKUP($E2,Investors!$A:$A,Investors!$B:$B,\"Not Found\")"
+    # "=XLOOKUP($E2,Investors!$A:$A,Investors!$C:$C,"Not Found")"
+    ws6['G2'].value = f"=_xlfn.XLOOKUP($E2,Investors!$A:$A,Investors!$C:$C,\"Not Found\")"
+    "=XLOOKUP(1,(Investors!$A:$A=Movement!E2)*(Investors!$P:$P=Movement!I2),Investors!$G:$G)"
+    ws6['H2'].value = f"=_xlfn.XLOOKUP(1,(Investors!$A:$A=E2)*(Investors!$P:$P=I2),Investors!$G:$G)"
+    "=XLOOKUP($D2,$B$2:$B$51,$A$2:$A$51,"")"
+    ws6['I2'].value = f"=_xlfn.XLOOKUP($D2,$B$2:$B$51,$A$2:$A$51,\"\")"
+    "=SUMIFS(Investors!$K:$K,Investors!$P:$P,Movement!$I2,Investors!$A:$A,Movement!$E2)"
+    ws6['J2'].value = f"=SUMIFS(Investors!$K:$K,Investors!$P:$P,$I2,Investors!$A:$A,$E2)"
+    "=SUMIFS(Investors!$O:$O,Investors!$P:$P,$I2,Investors!$A:$A,$E2)"
+    ws6['K2'].value = f"=SUMIFS(Investors!$O:$O,Investors!$P:$P,$I2,Investors!$A:$A,$E2)"
+    "=SUMIFS(Investors!$Q:$Q,Investors!$P:$P,$I2,Investors!$A:$A,$E2)"
+    ws6['L2'].value = f"=SUMIFS(Investors!$Q:$Q,Investors!$P:$P,$I2,Investors!$A:$A,$E2)"
+    "=IFERROR(M1+L2,+L2)"
+    ws6['M2'].value = f"=IFERROR(M1+L2,+L2)"
+
+
+
 
 
 
