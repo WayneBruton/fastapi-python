@@ -175,6 +175,8 @@ async def get_units_for_sales(data: Request):
                 'opportunity_sale_price': 1,
                 'opportunity_name': 1,
                 'opportunity_sold': 1,
+                'saleable': 1,
+                'Category': 1,
 
             }
         }
@@ -187,7 +189,14 @@ async def get_units_for_sales(data: Request):
         unit['actual_price'] = unit['opportunity_sale_price']
         unit['opportunity_sale_price'] = f"R{unit['opportunity_sale_price']:,.2f}"
 
-    # print(result)
+
+    # filter out of results where Category = 'NGAH' AND saleable = False
+    result = [x for x in result if not (x['Category'] == 'NGAH' and x['saleable'] == False)]
+
+
+
+
+    # print("Result",result)
     # print(len(result))
     return result
 
@@ -542,7 +551,8 @@ async def save_sale(data: Request):
     try:
         request = await data.json()
         # print(request['formData']['opportunity_otp'])
-        # print(request['formData'])
+        # print("FormData",request['formData']['development'])
+        # print()
 
         # Update the opportunities collection
         opportunity_code = request['formData']['opportunity_code']
@@ -550,6 +560,8 @@ async def save_sale(data: Request):
             opportunity_sold = True
         else:
             opportunity_sold = False
+
+
 
         # result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
         #     "opportunity_sold": opportunity_sold}})
@@ -572,16 +584,28 @@ async def save_sale(data: Request):
             # opportunity_sold = True
             result = opportunities.update_one({"opportunity_code": opportunity_code}, {"$set": {
                 "opportunity_sold": opportunity_sold,
-                "opportunity_final_transfer_date": request['formData']['opportunity_actual_reg_date']}})
+                "opportunity_final_transfer_date": request['formData']['opportunity_actual_reg_date'],"saleable": True}})
+
+            if request['formData']['development'] != "NGAH":
+                query = opportunities.find_one({'Category': "NGAH", 'opportunity_code': {'$regex': opportunity_code, '$options': 'i'}})
+
+                if query != None:
+                    result2 = opportunities.update_one({"opportunity_code": query['opportunity_code']},{"$set": {"saleable": True}})
+
+            # print("query",query)
+            # print()
+
         else:
             result = opportunities.update_one({"opportunity_code": opportunity_code},
                                               {"$set": {"opportunity_sold": opportunity_sold,
-                                                        "opportunity_final_transfer_date": ""}})
+                                                        "opportunity_final_transfer_date": "", "saleable": False}})
+
+
 
         if request['formData']['id'] != "":
             id_to_update = request['formData']['id']
-            print("request['formData']", request['formData'])
-            print("id_to_update", id_to_update)
+            # print("request['formData']", request['formData'])
+            # print("id_to_update", id_to_update)
             del request['formData']['id']
             request['formData']['opportunity_best_price'] = request['formData']['opportunity_base_price']
 
@@ -603,6 +627,7 @@ async def save_sale(data: Request):
     except Exception as e:
         print(e)
         return {"error": str(e)}
+
 
 
 # DELETE A SALE AND ASSOCIATED UPLOADED DOCUMENTS
