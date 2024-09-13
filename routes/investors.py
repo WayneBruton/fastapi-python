@@ -159,7 +159,8 @@ async def get_investor_for_loan_agreement(investor_acc_number: InvestorAccNumber
                                   "income_tax_number": 1,
                                   "members_directors": 1, "members_directors2": 1, "members_directors_id": 1,
                                   "members_directors_id2": 1, "registration_number": 1,
-                                  "telefax_number": 1, "trading_name": 1, "vat_number": 1, "pledges": 1,
+                                  "telefax_number": 1, "trading_name": 1, "vat_number": 1, "pledges": 1, "alternate_contact": 1,
+                                  "alternate_contact_details": 1,
                                   "id": {'$toString': "$_id"}, "_id": 0, }}]))
 
             if len(result_loan) == 0:

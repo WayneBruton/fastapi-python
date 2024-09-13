@@ -55,6 +55,8 @@ def create_ngah_la(data):
     investor_physical_city = data.get('investor_physical_city', "")
     investor_physical_postal_code = data.get('investor_physical_postal_code', "")
     investor_physical_country = data.get('investor_physical_country', "")
+    alternate_contact_details = data.get('alternate_contact_details', "")
+    alternate_contact = data.get('alternate_contact', "")
     if data.get('investor_postal_street_box', "") == '':
         investor_postal_street_box = investor_physical_street
     else:
@@ -125,7 +127,8 @@ def create_ngah_la(data):
         "number": number,
         'investor_name': investor_name,
         'investor_id_number': investor_id_number,
-
+        'alternate_contact_details': alternate_contact_details,
+        'alternate_contact': alternate_contact
     }
     doc.render(context)
     file_name = f"loan_agreements/{investor_name}-NGAH{erf_number}.docx"
