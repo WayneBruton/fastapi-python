@@ -1,5 +1,5 @@
 from docxtpl import DocxTemplate
-
+import math
 
 def create_ngah_la(data):
     # for item in data:
@@ -87,9 +87,16 @@ def create_ngah_la(data):
     investor_email = data.get('investor_email', "")
     interest_rate = data['pledges']['investment_interest_rate'] + ' %'
     investment_amount = float(data['pledges']['investment_amount'])
-    number = int(investment_amount)
+    # round up investment_amount to the nearest whole number
+
+
+
+    number = math.ceil(investment_amount)
+
     investment_amount = "R {:,.2f}".format(investment_amount)
     investor_name = data.get('investor_name', "") + ' ' + data.get('investor_surname', "")
+
+    # print(investor_name)
 
     doc = DocxTemplate("loan_agreement_files/NGAH_loan_agreement_files/NGAH_Investment_Loan_Agreement.docx")
     context = {
@@ -130,6 +137,8 @@ def create_ngah_la(data):
         'alternate_contact_details': alternate_contact_details,
         'alternate_contact': alternate_contact
     }
+
+    # print(context)
     doc.render(context)
     file_name = f"loan_agreements/{investor_name}-NGAH{erf_number}.docx"
     doc.save(file_name)
