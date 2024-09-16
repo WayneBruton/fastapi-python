@@ -1654,7 +1654,7 @@ def get_construction_costsA():
     #     return {"success": False, "error": str(e)}
 
 
-def get_sales_data(report_date):
+def get_sales_data(report_date, report_type="Monthly"):
     # print("report_date", report_date)
     report_date = report_date.replace("-", "/")
     report_date = datetime.strptime(report_date, "%Y/%m/%d")
@@ -1673,10 +1673,16 @@ def get_sales_data(report_date):
         opportunities = list(db.opportunities.find({}, {"_id": 0}))
         # print("opportunities", opportunities[0])
 
-        opportunities = list(
-            filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
-                "Category"] != "NGAH",
-                   opportunities))
+        if report_type == 'Monthly':
+
+            opportunities = list(
+                filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x[
+                    "Category"] != "NGAH",
+                       opportunities))
+        else:
+            opportunities = list(
+                filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark",
+                       opportunities))
 
         # Get actual sales data from sales_processed where development is "Heron Fields" or "Heron View"
         sales_data_actual = list(
@@ -1686,15 +1692,19 @@ def get_sales_data(report_date):
 
 
 
-        sales_data_actual = list(
-            filter(lambda x: x["development"] != "Endulini" and x["development"] != "Southwark" and x[
-                "development"] != "NGAH",
-                   sales_data_actual))
+        if report_type == 'Monthly':
+            sales_data_actual = list(
+                filter(lambda x: x["development"] != "Endulini" and x["development"] != "Southwark" and x[
+                    "development"] != "NGAH",
+                       sales_data_actual))
+        else:
+            sales_data_actual = list(
+                filter(lambda x: x["development"] != "Endulini" and x["development"] != "Southwark",
+                       sales_data_actual))
 
-
+        # print("sales_data_actual", len(sales_data_actual))
 
         for index, sale in enumerate(sales_data_actual):
-
 
 
             if 'opportunity_sales_date' in sale:
@@ -1706,6 +1716,8 @@ def get_sales_data(report_date):
 
             # convert opportunity_actual_reg_date to datetime
             # print("Got this far!!!!", index)
+
+
             try:
 
                 if sale['opportunity_actual_reg_date'] != "" and sale['opportunity_actual_reg_date'] is not None:
@@ -1729,7 +1741,8 @@ def get_sales_data(report_date):
                                                                                                                     "/")
 
                     sale['opportunity_actual_reg_date'] = datetime.strptime(sale['opportunity_actual_reg_date'],
-                                                                            '%Y/%m/%d')
+                                                                           '%Y/%m/%d')
+
 
             except Exception as e:
                 print("Error converting opportunity_actual_reg_date to datetime", e, sale['opportunity_code'],
@@ -1740,13 +1753,18 @@ def get_sales_data(report_date):
 
 
 
-
         sales_data = list(db.cashflow_sales.find({}, {"_id": 0}))
 
         # filter out of sales data where Category is Endulini, Southwark or NGAH
-        sales_data = list(
-            filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x["Category"] != "NGAH",
-                   sales_data))
+        if report_type == 'Monthly':
+            sales_data = list(
+                filter(lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark" and x["Category"] != "NGAH",
+                       sales_data))
+        else:
+            sales_data = list(
+                filter(
+                    lambda x: x["Category"] != "Endulini" and x["Category"] != "Southwark",
+                    sales_data))
 
         # if item in sales data but not in sales_data_actual then remove from sales_data
         for sale in sales_data:
@@ -1759,15 +1777,21 @@ def get_sales_data(report_date):
 
         # print("opportunities", opportunities[0])
 
-        for opp in opportunities:
+
+        # print(len(opportunities))
+        # print(opportunities[326])
+        # print()
+        # print(opportunities[327])
+        for ind, opp in enumerate(opportunities):
             filtered_sales_data = list(filter(lambda x: x['opportunity_code'] == opp['opportunity_code'], sales_data))
             if len(filtered_sales_data) == 0:
                 # print("opp", opp['opportunity_code'])
-                sale_price = float(opp['opportunity_sale_price'])
-                if opp['opportunity_final_transfer_date'] != "":
+                sale_price = float(opp.get('opportunity_sale_price',0))
+                if opp.get('opportunity_final_transfer_date',"") != "":
                     transferred = True
                 else:
                     transferred = False
+
                 insert = {
                     "Category": opp['Category'],
                     "block": opp['opportunity_code'][-4],
@@ -1791,6 +1815,7 @@ def get_sales_data(report_date):
                     "refinanced": False,
                 }
                 sales_data.append(insert)
+                # print("Got this far!!!!", ind)
                 # print("insert", insert)
                 # print()
 
@@ -3029,7 +3054,7 @@ async def get_daily_cashflow(request: Request):
                 }
                 investor_exit.append(insert)
 
-        sales = get_sales_data(date)
+        sales = get_sales_data(date, report_type="Daily")
 
         # filter sales where Category is in development
         sales = list(filter(lambda x: x['Category'] in development, sales))
