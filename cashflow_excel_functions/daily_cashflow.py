@@ -251,10 +251,10 @@ def daily_cashflow(sales, investor_exit, report_date):
     # hide column D
     ws3.column_dimensions['D'].hidden = True
 
-    ws4 = wb.create_sheet("General Expenses")
+    ws4 = wb.create_sheet("Adjustments")
     ws4.tabColor = "1072BA"
-    ws4.title = "General Expenses"
-    ws4['A1'] = "General Expenses"
+    ws4.title = "Adjustments"
+    ws4['A1'] = "Adjustments"
     ws4['A1'].font = Font(size=20, bold=True)
     ws4['A1'].alignment = Alignment(horizontal='center')
     row = ["Date", "Description", "Amount"]
@@ -282,7 +282,7 @@ def daily_cashflow(sales, investor_exit, report_date):
     ws5['A1'] = "Daily"
     ws5['A1'].font = Font(size=20, bold=True)
     ws5['A1'].alignment = Alignment(horizontal='center')
-    row = ["Date", "Opening Balance", "Transfer","VAT Sales", "Early Exit", "General Expenses", "Daily Balance", "Cumulative Balance"]
+    row = ["Date", "Opening Balance", "Transfer","VAT Sales", "Early Exit", "Adjustments", "Daily Balance", "Cumulative Balance"]
     ws5.append(row)
     # make all columns 20 width
     for i in range(1, len(row) + 1):
@@ -310,10 +310,10 @@ def daily_cashflow(sales, investor_exit, report_date):
             # "=SUMIFS(Investors!$Q:$Q,Investors!$T:$T,"Exit",Investors!$J:$J,Daily!A3)"
 
             ws5[f"E{i}"] = f"=SUMIFS(Investors!$Q:$Q,Investors!$T:$T,\"Exit\",Investors!$J:$J,Daily!A{i})"
-            # "=SUMIFS('General Expenses'!$C:$C,'General Expenses'!$A:$A,A3)"
-            ws5[f"F{i}"] = f"=SUMIFS('General Expenses'!$C:$C,'General Expenses'!$A:$A,A{i})"
+
+            ws5[f"F{i}"] = f"=SUMIFS('Adjustments'!$C:$C,'Adjustments'!$A:$A,A{i})"
             "=B3+C3-D3-E3"
-            ws5[f"G{i}"] = f"=B{i}+C{i}-D{i}-E{i}-F{i}"
+            ws5[f"G{i}"] = f"=B{i}+C{i}-D{i}-E{i}+F{i}"
             "=G2+F3"
             ws5[f"H{i}"] = f"=H{i-1}+G{i}"
             if i == 3:
