@@ -143,7 +143,7 @@ async def generate_otp(data: Request):
 
         print("Email", email)
 
-        plain_text = f"Good Day,\n\n{pin} is your OTP to change your password on the OMH Portal."
+        plain_text = f"Good Day,\n\n{pin} is your OTP to change your password."
         msg.set_content(plain_text)
 
         message = f"""\
@@ -151,7 +151,7 @@ async def generate_otp(data: Request):
                       <body>
                         <p>Good Day,<br> 
                         <br /><br />       
-                            <strong>{pin}</strong> is your OTP to change your password on the OMH Portal. <br><br>             
+                            <strong>{pin}</strong> is your OTP to change your password. <br><br>             
                       </body>
                     </html>
                     """
