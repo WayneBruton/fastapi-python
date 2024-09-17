@@ -594,6 +594,10 @@ def send_email_to_sales_person(sales_person, lead):
     sender_email = config('SENDER_EMAIL')
     password = config('EMAIL_PASSWORD')
 
+    plain_text = f"Dear {sales_person['name']},\n\nA new sales lead has been generated. Please see the details below:\n\nLead Details\n\nFirst Name: {lead['name']}\nLast Name: {lead['surname']}\nCell: {lead['contact']}\nEmail: {lead['email']}\nOrigin: {lead['origin']}\nDevelopment: {lead['development']}\nBest Time: {lead['contact_time']}\nMessage: {lead['message']}\n\nPlease contact the lead as soon as possible and follow up by inputting into the app.\n\nKind Regards,\nOMH App"
+
+
+
     message = f"""
                 <html>
                   <body>
@@ -624,7 +628,8 @@ def send_email_to_sales_person(sales_person, lead):
     msg['Subject'] = "Sales Lead"
     msg['From'] = sender_email
     msg['To'] = email_sp
-    msg.set_content(message, subtype='html')
+    msg.set_content(plain_text)
+    msg.add_alternative(message, subtype='html')
 
     try:
         with smtplib.SMTP_SSL(smtp_server, port) as server:
@@ -645,6 +650,8 @@ def send_email_to_leandri(lead):
     port = config('SMTP_PORT')
     sender_email = config('SENDER_EMAIL')
     password = config('EMAIL_PASSWORD')
+
+    plain_text = f"Dear Leandri,\n\nA new investment lead has been categorised as {lead['category']}.\n\nLead Details\n\nFirst Name: {lead['name']}\nLast Name: {lead['surname']}\nCell: {lead['contact']}\nEmail: {lead['email']}\nMessage: {lead['message']}\n\nKind Regards,\nOMH App"
 
     message = f"""
                 <html>
@@ -671,7 +678,8 @@ def send_email_to_leandri(lead):
     msg['Subject'] = "Investment Lead"
     msg['From'] = sender_email
     msg['To'] = email_sp
-    msg.set_content(message, subtype='html')
+    msg.set_content(plain_text)
+    msg.add_alternative(message, subtype='html')
 
     try:
         with smtplib.SMTP_SSL(smtp_server, port) as server:
@@ -691,6 +699,8 @@ def send_email_to_mario(lead):
     port = config('SMTP_PORT')
     sender_email = config('SENDER_EMAIL')
     password = config('EMAIL_PASSWORD')
+
+    plain_text = f"Dear Mario,\n\nA new investment lead has been categorised as Rental.\n\nLead Details\n\nFirst Name: {lead['name']}\nLast Name: {lead['surname']}\nCell: {lead['contact']}\nEmail: {lead['email']}\nMessage: {lead['message']}\n\nKind Regards,\nOMH App"
 
     message = f"""
                 <html>
@@ -717,7 +727,8 @@ def send_email_to_mario(lead):
     msg['Subject'] = "Investment Lead"
     msg['From'] = sender_email
     msg['To'] = email_sp
-    msg.set_content(message, subtype='html')
+    msg.set_content(plain_text)
+    msg.add_alternative(message, subtype='html')
 
     try:
         with smtplib.SMTP_SSL(smtp_server, port) as server:
@@ -741,6 +752,8 @@ def send_email_to_sales_lead(sales_person, lead):
     password = config('EMAIL_PASSWORD')
 
     image_attached = False
+
+    plain_text = f"Good Day {lead['name']},\n\nThank you for your enquiry.\n\nThe following agent will be in contact with you shortly:\n\nAgent Details\n\nFirst Name: {sales_person['name']}\nLast Name: {sales_person['surname']}\nCell: {sales_person['cell']}\nEmail: {sales_person['email']}\n\nPlease keep a lookout for their call.\n\nKind Regards,\nOpportunity Property"
 
     message = f"""\
                     <html>
@@ -775,7 +788,8 @@ def send_email_to_sales_lead(sales_person, lead):
     msg['Subject'] = "Opportunity Property"
     msg['From'] = sender_email
     msg['To'] = email_lead
-    msg.attach(MIMEText(message, 'html'))
+    msg.set_content(plain_text)
+
     # msg.set_content(message, subtype='html')
 
     with open("annexures/Signature OppProp.jpg", "rb") as image_file:
@@ -784,6 +798,8 @@ def send_email_to_sales_lead(sales_person, lead):
 
         image.add_header("Content-ID", "<image1>")
         msg.attach(image)
+
+    msg.add_alternative(message, 'html')
 
     try:
         with smtplib.SMTP_SSL(smtp_server, port) as server:
@@ -806,6 +822,8 @@ def send_email_to_consultant(consultant_person, lead):
     port = config('SMTP_PORT')
     sender_email = config('SENDER_EMAIL')
     password = config('EMAIL_PASSWORD')
+
+    plain_text = f"Dear {consultant_person['name']},\n\nA new investment lead has been generated. Please see the details below:\n\nLead Details\n\nFirst Name: {lead['name']}\nLast Name: {lead['surname']}\nCell: {lead['contact']}\nEmail: {lead['email']}\nOrigin: {lead['origin']}\nInterested in: {lead['investment_choice']}\nHas R100 0000 minimum to invest: {lead['min_value']}\nRange keen to invest: {lead['investment_amount']}\n\nPlease contact the lead as soon as possible and follow up by inputting into the app.\n\nKind Regards,\nOMH App"
 
     message = f"""\
                 <html>
@@ -841,7 +859,8 @@ def send_email_to_consultant(consultant_person, lead):
     msg['Subject'] = "Investment Lead"
     msg['From'] = sender_email
     msg['To'] = email_consultant
-    msg.set_content(message, subtype='html')
+    msg.set_content(plain_text)
+    msg.add_alternative(message, subtype='html')
 
     try:
         with smtplib.SMTP_SSL(smtp_server, port) as server:
@@ -864,6 +883,8 @@ def send_email_to_consultant_unanswered(consultant_person, lead):
     port = config('SMTP_PORT')
     sender_email = config('SENDER_EMAIL')
     password = config('EMAIL_PASSWORD')
+
+    plain_text = f"Dear {consultant_person['name']},\n\nThis potential client did not answer, perhaps you want to follow up? It has been around 48 hours. Please see the details below:\n\nLead Details\n\nFirst Name: {lead['name']}\nLast Name: {lead['surname']}\nCell: {lead['contact']}\nEmail: {lead['email']}\nOrigin: {lead['origin']}\nInterested in: {lead['investment_choice']}\nHas R100 0000 minimum to invest: {lead['min_value']}\nRange keen to invest: {lead['investment_amount']}\n\nPlease contact the lead as soon as possible and follow up by inputting into the app.\n\nKind Regards,\nOMH App"
 
     message = f"""\
                 <html>
@@ -899,7 +920,8 @@ def send_email_to_consultant_unanswered(consultant_person, lead):
     msg['Subject'] = "Investment Lead"
     msg['From'] = sender_email
     msg['To'] = email_consultant
-    msg.set_content(message, subtype='html')
+    msg.set_content(plain_text)
+    msg.add_alternative(message, subtype='html')
 
     try:
         with smtplib.SMTP_SSL(smtp_server, port) as server:
@@ -923,32 +945,14 @@ def send_email_to_investment_lead(consultant_person, lead):
     sender_email = config('SENDER_EMAIL')
     password = config('EMAIL_PASSWORD')
 
-    message = f"""\
-                    <html>
-                      <body>
-                        <p>Good Day {lead['name']},<br>
-                        <br /><br />
-                        Thank you for your interest in this investment offering.<br />
-                        <br /><br />
-                        <b>Our investment consultant will be in touch with you shortly.</b><br />
-                        <br /><br />
-                        Please keep a lookout for their call.<br />
-                        <br /><br />
-                        Thank You,<br /><br />
-                        021 919 9944<br />
-                        <a href=mailTo:invest@opportunity.co.za>invest@opportunity.co.za</a><br />
-                        <a href=www.opportunity.co.za>www.opportunity.co.za</a><br />
 
-                      </body>
-                    </html>
-                    """
 
     # msg = EmailMessage()
     msg = MIMEMultipart()
     msg['Subject'] = "Opportunity Private Capital"
     msg['From'] = sender_email
     msg['To'] = email_lead
-    msg.attach(MIMEText(message, 'html'))
+
     # msg.set_content(message, subtype='html')
 
     with open("annexures/image002.png", "rb") as image_file:
@@ -957,6 +961,32 @@ def send_email_to_investment_lead(consultant_person, lead):
 
         image.add_header("Content-ID", "<image1>")
         msg.attach(image)
+
+    plain_text = f"Good Day {lead['name']},\n\nThank you for your interest in this investment offering.\n\nThe following consultant will be in contact with you shortly:\n\nConsultant Details\n\nFirst Name: {consultant_person['name']}\nLast Name: {consultant_person['surname']}\nCell: {consultant_person['cell']}\nEmail: {consultant_person['email']}\n\nPlease keep a lookout for their call.\n\nKind Regards,\nOpportunity Private Capital"
+
+    message = f"""\
+                        <html>
+                          <body>
+                            <p>Good Day {lead['name']},<br>
+                            <br /><br />
+                            Thank you for your interest in this investment offering.<br />
+                            <br /><br />
+                            <b>Our investment consultant will be in touch with you shortly.</b><br />
+                            <br /><br />
+                            Please keep a lookout for their call.<br />
+                            <br /><br />
+                            Thank You,<br /><br />
+                            021 919 9944<br />
+                            <a href=mailTo:invest@opportunity.co.za>invest@opportunity.co.za</a><br />
+                            <a href=www.opportunity.co.za>www.opportunity.co.za</a><br />
+                            <img src="cid:image1" alt="Investment Image"><br />
+
+                          </body>
+                        </html>
+                        """
+
+    msg.set_content(plain_text)
+    msg.add_alternative(message, 'html')
 
     try:
         with smtplib.SMTP_SSL(smtp_server, port) as server:

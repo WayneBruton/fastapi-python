@@ -131,21 +131,32 @@ async def generate_otp(data: Request):
         sender_email = 'omh-app@opportunitymanagement.co.za'
         password = "12071994Wb!"
 
-        message = f"""\
-            <html>
-              <body>
-                <p>Good Day,<br> 
-                <br /><br />       
-                    <strong>{pin}</strong> is your OTP to change your password on the OMH Portal. <br><br>             
-              </body>
-            </html>
-            """
+
+
+
 
         msg = EmailMessage()
-        msg['Subject'] = "OMH Portal - OTP"
+        msg['Subject'] = "OMH Site - One Time Pin (OTP)"
         msg['From'] = sender_email
         msg['To'] = email
-        msg.set_content(message, subtype='html')
+
+
+        print("Email", email)
+
+        plain_text = f"Good Day,\n\n{pin} is your OTP to change your password on the OMH Portal."
+        msg.set_content(plain_text)
+
+        message = f"""\
+                    <html>
+                      <body>
+                        <p>Good Day,<br> 
+                        <br /><br />       
+                            <strong>{pin}</strong> is your OTP to change your password on the OMH Portal. <br><br>             
+                      </body>
+                    </html>
+                    """
+
+        msg.add_alternative(message, subtype='html')
 
         try:
             with smtplib.SMTP_SSL(smtp_server, port) as server:
