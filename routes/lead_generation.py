@@ -507,7 +507,7 @@ async def edit_sales_lead(background_task: BackgroundTasks, data: Request):
 async def add_sales_lead(data: Request):
     try:
         request = await data.json()
-        # print("request", request)
+
         created_at = datetime.now()
         print("created_at", created_at)
         request['created_at'] = created_at
@@ -589,6 +589,7 @@ async def edit_investment_lead(background_tasks: BackgroundTasks, data: Request)
 
 def send_email_to_sales_person(sales_person, lead):
     email_sp = sales_person['email'].strip()
+    print("email_sp", email_sp)
     smtp_server = config('SMTP_SERVER')
     port = config('SMTP_PORT')
     sender_email = config('SENDER_EMAIL')
@@ -1381,6 +1382,8 @@ def check_emails_p24():
         # if sender == "leads@syte.co.za" and subject == "Inquiry from https://opportunityprop.co.za/":
         if sender == "leads@syte.co.za":
 
+
+
             enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
                 = "", "", "", "", "", "", ""
 
@@ -1512,8 +1515,8 @@ def process_property_24_leads(data):
 
         db.leads_sales.insert_one(email_data)
 
-        sp_email = send_email_to_sales_person(sales_person, email_data)
-        client_email = send_email_to_sales_lead(sales_person, email_data)
+        send_email_to_sales_person(sales_person, email_data)
+        # client_email = send_email_to_sales_lead(sales_person, email_data)
 
         name = email_data['name'] + " " + email_data['surname']
         send_sms(sales_person['cell'], name)
@@ -1591,3 +1594,4 @@ async def get_sales_lead_spreadsheet(file_name):
     except Exception as e:
         print(e)
         return {"ERROR": "Please Try again"}
+

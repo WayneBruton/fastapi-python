@@ -55,8 +55,8 @@ def daily_cashflow(sales, investor_exit, report_date):
         ws1[f"{sales_currency_format_columns[i]}2"].number_format = '"R" #,##0.00'
 
     for i in range(5, ws1.max_row + 1):
-        # "=I5/115*15"
-        ws1[f"J{i}"] = f"=I{i}/115*15"
+        # "=IF(A91<>"Goodwood",I91/115*15, 0)"
+        ws1[f"J{i}"] = f"=IF(A{i}<>\"Goodwood\",I{i}/115*15, 0)"
         # ws1[f"J{i}"].number_fo/rmat = '"R" #,##0.00'
         # "=I5-J5"
         ws1[f"K{i}"] = f"=I{i}-J{i}"
