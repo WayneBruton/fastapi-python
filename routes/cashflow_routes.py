@@ -1804,7 +1804,7 @@ def get_sales_data(report_date, report_type="Monthly"):
                     "sale_price": opp['opportunity_sale_price'],
                     "VAT": sale_price / 1.15 * 0.15,
                     "nett": sale_price / 1.15,
-                    "opportunity_transfer_fees": 0,
+                    "opportunity_transfer_fees": 18502.08,
                     "opportunity_trust_release_fee": 1789,
                     "opportunity_unforseen": sale_price * 0.005,
                     "opportunity_commission": sale_price * 0.05,
