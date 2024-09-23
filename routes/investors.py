@@ -464,26 +464,34 @@ async def deliver_early_releases(file_name):
 async def uploadLoanAgreement( doc: UploadFile, name: str = Form(...), inv: str = Form(...), unit: str = Form(...)):
     # data = await request.json()
     # print(data)
-    print("NAME",name)
-    print("INVESTOR",inv)
-    print("UNIT",unit)
+    # print("NAME",name)
+    # print("INVESTOR",inv)
+    # print("UNIT",unit)
     try:
         # for doc in docs:
         # print(doc)
         name = name + unit
         name = name.replace(" ", "_")
+        # print("NAME",name)
         doc.filename = doc.filename.replace(" ", "_")
         # doc.filename = name
-        # print("CCCCC",doc.filename)
+        # print("Filename",doc.filename)
         data = await doc.read()
         with open(f"upload_loanAgreement/{doc.filename}", "wb") as f:
             f.write(data)
 
         # print("UPLOAD PARTLY SUCCESSFUL")
 
+
         input_folder = 'upload_loanAgreement'
         output_pdf = f'upload_loanAgreement/{name}.pdf'
+        # print("INPUT FOLDER",input_folder)
+        # print("OUTPUT PDF",output_pdf)
+
         merge_pdfs(input_folder, output_pdf)
+        # print("Got this far")
+
+
 
         # delete all files in upload_fica except for the merged pdf
         for file in os.listdir(input_folder):
@@ -537,7 +545,7 @@ async def uploadExitLetters( doc: UploadFile, name: str = Form(...), inv: str = 
         name = name.replace(" ", "_")
         doc.filename = doc.filename.replace(" ", "_")
         # doc.filename = name
-        # print("CCCCC",doc.filename)
+        print("Filename",doc.filename)
         data = await doc.read()
         with open(f"upload_exit_letters/{doc.filename}", "wb") as f:
             f.write(data)
@@ -546,7 +554,10 @@ async def uploadExitLetters( doc: UploadFile, name: str = Form(...), inv: str = 
 
         input_folder = 'upload_exit_letters'
         output_pdf = f'upload_exit_letters/{name}.pdf'
+        print("INPUT FOLDER",input_folder)
+        print("OUTPUT PDF",output_pdf)
         merge_pdfs(input_folder, output_pdf)
+        print("Got this far")
 
         # delete all files in upload_fica except for the merged pdf
         for file in os.listdir(input_folder):
