@@ -689,14 +689,17 @@ async def upload_general_files( docs: list[UploadFile], name: str = Form(...),in
         for doc in docs:
             # print(doc)
             doc.filename = doc.filename.replace(" ", "_")
-            print(doc.filename)
             data = await doc.read()
             with open(f"upload_general/{doc.filename}", "wb") as f:
                 f.write(data)
 
+
         input_folder = 'upload_general'
         output_pdf = f'upload_general/{name}.pdf'
+
+
         merge_pdfs(input_folder, output_pdf)
+
 
         # delete all files in upload_fica except for the merged pdf
         for file in os.listdir(input_folder):
