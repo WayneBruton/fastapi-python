@@ -337,6 +337,7 @@ async def update_user(data: Request):
 async def investment_termination(data: Request):
     request = await data.json()
     print(request)
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
     try:
         insert = {
             "investor_acc_number": request['investor_acc_number'],
@@ -349,6 +350,7 @@ async def investment_termination(data: Request):
             "full_rollover": request['full_rollover'],
             "partial_exit": request['partial_exit'],
             "from_portal": True,
+            "date": date
         }
 
         # get document from investorRollOversPortal collection where investor_acc_number = request[
@@ -409,6 +411,36 @@ async def investment_termination(data: Request):
         port = 465  # For starttls
         sender_email = 'omh-app@opportunitymanagement.co.za'
         password = "12071994Wb!"
+
+        plain_text = f"""\
+        Dear {investor_name},\n\n
+            
+                We have received your preferred options when your investment in {request['opportunity_code']} is 
+                due for exit.\n\n
+                
+                Based on today's date, your investment balance is R {request['float_balance']:,.2f}.\n\n
+                
+                {request['opportunity_code']}\n\n
+                Option Chosen: {option_chosen}\n\n
+                Exit Amount: {exit_amount}\n\n
+                Rollover Amount: {rollover_amount}\n\n
+                
+                We will be in contact with you in due course to finalise the process.\n\n
+                
+                Investor Returns: The projected returns below are applicable to the next investment cycle, and take effect 
+                once capital is deployed into the project. Please note that these are subject to change and should this 
+                occur, Opportunity will communicate this to you.\n\n
+                
+                1. Investments of R 100 000 – R 499 000 @ 14% p.a\n
+                2. Investments of R 500 000 – R 999 000 @ 16% p.a\n
+                3. Investments of R 1 000 000 upwards @ 18% p.a\n\n
+                
+                Please do not reply to this email as it is not monitored. Any questions can be directed to 
+                Leandri Kriel at leandri@opportunity.co.za\n\n
+                kind Regards\n
+                The OMH Team\n
+        """
+
         #
         message = f"""\
         <html>
@@ -462,7 +494,8 @@ async def investment_termination(data: Request):
         # msg['Cc'] = "nick@opportunity.co.za, wynand@capeprojects.co.za, debbie@opportunity.co.za, " \
         #             "dirk@cpconstruction.co.za"
 
-        msg.set_content(message, subtype='html')
+        msg.set_content(plain_text)
+        msg.add_alternative(message, subtype='html')
 
         try:
             with smtplib.SMTP_SSL(smtp_server, port) as server:

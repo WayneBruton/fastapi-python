@@ -1,5 +1,5 @@
 import json
-from time import sleep
+from time import sleep, time
 
 from bson.objectid import ObjectId
 from fastapi import APIRouter, Request, BackgroundTasks
@@ -362,6 +362,7 @@ async def opportunity_contact_form(background_tasks: BackgroundTasks, data: Requ
 
 @leads.post('/get_sales_leads')
 async def get_sales_leads(request: Request):
+    start = time()
     request = await request.json()
 
     print("request", request)
@@ -370,10 +371,13 @@ async def get_sales_leads(request: Request):
     else:
         create_sales_lead_excel_sheet()
         leads = list(db.leads_sales.find())
-    # opportunities =list(db.opportunities.find())
-    # get all opportunities and project only 'opportunity_code' and 'Category'
-    opportunities = list(db.opportunities.find({}, {"opportunity_code": 1, "Category": 1, "_id": 0}))
+    # opportunities =list(db.opportunities.find()) get all opportunities and project only 'opportunity_code' and
+    # 'Category' but exclude where Category = "NGAH" or "Endulini" or "Southwark" or "Goodwood"
 
+    opportunities = list(db.opportunities.find({"Category": {"$nin": ["NGAH", "Endulini", "Goodwood", "Southwark"]}},
+                                               {"opportunity_code": 1, "Category": 1, "_id": 0}))
+
+    end = time()
     # leads = list(db.leads_sales.find())
     default_values = {
         'action_taken': "",
@@ -385,15 +389,18 @@ async def get_sales_leads(request: Request):
         'purchased_date': "",
         'purchased_unit': ""
     }
-
-    for lead in leads:
+    print(len(leads))
+    for index, lead in enumerate(leads):
         lead["_id"] = str(lead["_id"])
         lead["created_at"] = lead["created_at"].strftime("%Y-%m-%d %H:%M:%S")
         lead['rental_enquiry'] = lead.get('rental_enquiry', False)
+
         for key, default in default_values.items():
             lead[key] = lead.get(key, default)
 
     leads = sorted(leads, key=lambda x: x['created_at'], reverse=True)
+
+    print("Time taken to get sales leads:", end - start)
 
     return {"message": "success", "leads": leads, "opportunities": opportunities}
 
@@ -596,8 +603,6 @@ def send_email_to_sales_person(sales_person, lead):
     password = config('EMAIL_PASSWORD')
 
     plain_text = f"Dear {sales_person['name']},\n\nA new sales lead has been generated. Please see the details below:\n\nLead Details\n\nFirst Name: {lead['name']}\nLast Name: {lead['surname']}\nCell: {lead['contact']}\nEmail: {lead['email']}\nOrigin: {lead['origin']}\nDevelopment: {lead['development']}\nBest Time: {lead['contact_time']}\nMessage: {lead['message']}\n\nPlease contact the lead as soon as possible and follow up by inputting into the app.\n\nKind Regards,\nOMH App"
-
-
 
     message = f"""
                 <html>
@@ -945,8 +950,6 @@ def send_email_to_investment_lead(consultant_person, lead):
     port = config('SMTP_PORT')
     sender_email = config('SENDER_EMAIL')
     password = config('EMAIL_PASSWORD')
-
-
 
     # msg = EmailMessage()
     msg = MIMEMultipart()
@@ -1382,8 +1385,6 @@ def check_emails_p24():
         # if sender == "leads@syte.co.za" and subject == "Inquiry from https://opportunityprop.co.za/":
         if sender == "leads@syte.co.za":
 
-
-
             enquiry_by, contact_number, email_address_in_mail, message, address, development, body \
                 = "", "", "", "", "", "", ""
 
@@ -1526,7 +1527,6 @@ def process_property_24_leads(data):
     return {"message": "success"}
 
 
-
 def check_unanswered_leads():
     leads = list(db.leads_investments.find({"action_taken": "Called - No Answer"}))
     for lead in leads:
@@ -1541,7 +1541,6 @@ def check_unanswered_leads():
         if difference > timedelta(hours=47):
             consultant = db.lead_investment_consultants.find_one({"_id": ObjectId(lead.get('consultant_id', ""))})
             send_email_to_consultant_unanswered(consultant, lead)
-
 
 
 @leads.post('/check_emails_omh_app')
@@ -1571,7 +1570,6 @@ def insert_lead_sales():
 # insert_lead_sales()
 
 
-
 def create_sales_lead_excel_sheet():
     lead_sales = list(db.leads_sales.find({}, {"_id": 0}))
     # order by created_at in descending order
@@ -1579,6 +1577,7 @@ def create_sales_lead_excel_sheet():
     # print("lead_sales", lead_sales[0])
     df = pd.DataFrame(lead_sales)
     df.to_excel('sales_leads.xlsx', index=False)
+
 
 # create_sales_lead_excel_sheet()
 
@@ -1594,4 +1593,3 @@ async def get_sales_lead_spreadsheet(file_name):
     except Exception as e:
         print(e)
         return {"ERROR": "Please Try again"}
-
