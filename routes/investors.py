@@ -464,9 +464,9 @@ async def deliver_early_releases(file_name):
 async def uploadLoanAgreement( doc: UploadFile, name: str = Form(...), inv: str = Form(...), unit: str = Form(...)):
     # data = await request.json()
     # print(data)
-    # print("NAME",name)
-    # print("INVESTOR",inv)
-    # print("UNIT",unit)
+    print("NAME",name)
+    print("INVESTOR",inv)
+    print("UNIT",unit)
     try:
         # for doc in docs:
         # print(doc)
@@ -506,8 +506,8 @@ async def uploadLoanAgreement( doc: UploadFile, name: str = Form(...), inv: str 
                 f"{name}.pdf",
             )
             link = f"https://{AWS_BUCKET_NAME}.s3.{AWS_BUCKET_REGION}.amazonaws.com/{name}.pdf"
-            # print("SUCCESS")
-            # print(link)
+            print("SUCCESS")
+            print("LINK",link)
             investor = db.investors.find_one({"investor_acc_number": inv})
             # print("INVESTOR",investor)
             # investor['id'] = str(investor['_id'])
@@ -523,7 +523,8 @@ async def uploadLoanAgreement( doc: UploadFile, name: str = Form(...), inv: str 
         # delete all files in upload_fica
         for file in os.listdir(input_folder):
             os.remove(f"{input_folder}/{file}")
-        unit = unit.split(" ")[0]
+
+        unit = unit.split(" - in")[0]
 
         return {"agreement": link, "unit": unit}
     except Exception as e:
