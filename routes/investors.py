@@ -603,11 +603,17 @@ async def upload_fica_files( docs: list[UploadFile], name: str = Form(...), inv:
     # data = await request.json()
     # print(data)
     print("NAME",name)
+    link = ""
+    input_folder = 'upload_fica'
+    for file in os.listdir(input_folder):
+        # clear all files in the upload_fica folder
+        os.remove(f"{input_folder}/{file}")
+
     try:
         for doc in docs:
-            # print(doc)
-            doc.filename = doc.filename.replace(" ", "_")
             print(doc.filename)
+            doc.filename = doc.filename.replace(" ", "_")
+            # print(doc.filename)
             data = await doc.read()
             with open(f"upload_fica/{doc.filename}", "wb") as f:
                 f.write(data)
@@ -623,16 +629,18 @@ async def upload_fica_files( docs: list[UploadFile], name: str = Form(...), inv:
 
         # upload to s3
         try:
+            print("PRINTING THIS:",f"upload_fica/{name}.pdf")
             s3.upload_file(
                 f"upload_fica/{name}.pdf",
                 AWS_BUCKET_NAME,
                 f"{name}.pdf",
             )
             link = f"https://{AWS_BUCKET_NAME}.s3.{AWS_BUCKET_REGION}.amazonaws.com/{name}.pdf"
+            print("NAME",name)
             print("SUCCESS")
             print(link)
             investor = db.investors.find_one({"investor_acc_number": inv})
-            # print("INVESTOR",investor)
+            print("INVESTOR",investor)
             # investor['id'] = str(investor['_id'])
             # del investor['_id']
             # for i in investor['trust']:
@@ -645,8 +653,8 @@ async def upload_fica_files( docs: list[UploadFile], name: str = Form(...), inv:
             print(err)
 
         # delete all files in upload_fica
-        for file in os.listdir(input_folder):
-            os.remove(f"{input_folder}/{file}")
+        # for file in os.listdir(input_folder):
+        #     os.remove(f"{input_folder}/{file}")
 
         return {"fica": link}
     except Exception as e:
@@ -688,7 +696,7 @@ async def upload_general_files( docs: list[UploadFile], name: str = Form(...),in
     print("NAME",name)
     try:
         for doc in docs:
-            # print(doc)
+            print(doc.filename)
             doc.filename = doc.filename.replace(" ", "_")
             data = await doc.read()
             with open(f"upload_general/{doc.filename}", "wb") as f:
@@ -757,10 +765,14 @@ def merge_pdfs(input_folder, output_pdf):
     for pdf_file in pdf_files:
         with open(pdf_file, 'rb') as file:
             merger.append(file)
+            print("Here We Are", pdf_file)
 
     # Write the merged PDF to the output file
     with open(output_pdf, 'wb') as output_file:
         merger.write(output_file)
+
+
+
 
     print(f'Merged PDFs successfully. Output saved to: {output_pdf}')
 
