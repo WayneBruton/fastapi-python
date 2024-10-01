@@ -764,8 +764,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6.merge_cells(f"A3:{month_headings[len(month_headings) - 1]}3")
 
             ws6['A3'].alignment = Alignment(horizontal='center', vertical='center')
-
-            ws6[f"{month_headings[len(month_headings) - 1]}1"] = 'C.3.e'
+            if project != "Goodwood":
+                ws6[f"{month_headings[len(month_headings) - 1]}1"] = 'C.3.e'
+            else:
+                ws6[f"{month_headings[len(month_headings) - 1]}1"] = 'C.5.1'
             ws6[f"{month_headings[len(month_headings) - 1]}1"].font = Font(bold=True, size=28)
             # center the above
             ws6[f"{month_headings[len(month_headings) - 1]}1"].alignment = Alignment(horizontal='center',
@@ -4292,8 +4294,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws7 = wb.create_sheet(f'Cashflow - {project}')
             # make tab color red
             ws7.sheet_properties.tabColor = tab_colors[idx]
-
-            ws7['B1'] = "C.3.f"
+            if project != "Goodwood":
+                ws7['B1'] = "C.3.f"
+            else:
+                ws7['B1'] = "C.5.3"
             ws7["B1"].font = Font(bold=True, color="31304D", size=22)
             # center the text
             ws7['B1'].alignment = Alignment(horizontal='center', vertical='center')
@@ -4606,8 +4610,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws9 = wb.create_sheet(f'NSST Print - {project}')
             # make tab color red
             ws9.sheet_properties.tabColor = tab_colors[idx]
-
-            ws9.append(["", "", "", "", "C.3_d"])
+            if project != "Goodwood":
+                ws9.append(["", "", "", "", "C.3_d"])
+            else:
+                ws9.append(["", "", "", "", "C.5.2"])
             # Merger the first 4 cells in the first row
             ws9.merge_cells('A1:D1')
             # make D1 bold, make the font 20 and put a border around it
@@ -4734,16 +4740,16 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             "=COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,TRUE)",
                             "=COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,FALSE)"])
                 ws9.append(["Sales Income",
-                            "=SUMIFS(Sales!$K:$K,Sales!$D:$D,TRUE)+SUMIFS(Sales!$K:$K,Sales!$D:$D,FALSE)+C46",
+                            "=SUMIFS(Sales!$K:$K,Sales!$D:$D,TRUE)+SUMIFS(Sales!$K:$K,Sales!$D:$D,FALSE)+C52",
                             "=SUMIFS(Sales!$K:$K,Sales!$E:$E,TRUE)",
                             "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE)",
-                            "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE)+C46"])
+                            "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE)+C52"])
                 # "=(SUMIFS(Sales!$O:$O,Sales!$D:$D,TRUE)+SUMIFS(Sales!$O:$O,Sales!$D:$D,FALSE))/1.15-C52"
                 ws9.append(["Commission",
-                            "=(SUMIFS(Sales!$O:$O,Sales!$D:$D,TRUE)+SUMIFS(Sales!$O:$O,Sales!$D:$D,FALSE))/1.15-C52",
+                            "=(SUMIFS(Sales!$O:$O,Sales!$D:$D,TRUE)+SUMIFS(Sales!$O:$O,Sales!$D:$D,FALSE))/1.15-C58",
                             "=SUMIFS(Sales!$O:$O,Sales!$E:$E,TRUE)/1.15",
                             "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE)/1.15",
-                            "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE)/1.15-C52"])
+                            "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE)/1.15-C58"])
 
                 ws9.append(["Transfer Fees",
                             "=SUMIFS(Sales!$L:$L,Sales!$D:$D,TRUE)+SUMIFS(Sales!$L:$L,Sales!$D:$D,FALSE)",
@@ -4764,7 +4770,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             "=SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE)"])
 
                 ws9.append(["Unforseen (0.05%)",
-                            "=SUMIFS(Sales!$N:$N,Sales!$D:$D,TRUE)+SUMIFS(Sales!$N:$N,Sales!$D:$D,FALSE)-C53",
+                            "=SUMIFS(Sales!$N:$N,Sales!$D:$D,TRUE)+SUMIFS(Sales!$N:$N,Sales!$D:$D,FALSE)-C59",
                             "=SUMIFS(Sales!$N:$N,Sales!$E:$E,TRUE)",
                             "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE)",
                             "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE)"])
@@ -4776,16 +4782,16 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             "=COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"Heron Fields\")+COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"Heron View\")",
                             "=COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron Fields\")+COUNTIFS(Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron View\")"])
                 ws9.append(["Sales Income",
-                            "=SUMIFS(Sales!$K:$K,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$K:$K,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,FALSE)+SUMIFS(Sales!$K:$K,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$K:$K,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,FALSE)+C46",
+                            "=SUMIFS(Sales!$K:$K,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$K:$K,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,FALSE)+SUMIFS(Sales!$K:$K,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$K:$K,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,FALSE)+C52",
                             "=SUMIFS(Sales!$K:$K,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"Heron Fields\")+SUMIFS(Sales!$K:$K,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"Heron View\")",
                             "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"Heron Fields\")+SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"Heron View\")",
-                            "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron Fields\")+SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron View\")+C46"])
+                            "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron Fields\")+SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron View\")+C52"])
 
                 ws9.append(["Commission",
-                            "=(SUMIFS(Sales!$O:$O,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$O:$O,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,FALSE)+SUMIFS(Sales!$O:$O,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$O:$O,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,FALSE))/1.15-C52",
+                            "=(SUMIFS(Sales!$O:$O,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$O:$O,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,FALSE)+SUMIFS(Sales!$O:$O,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$O:$O,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,FALSE))/1.15-C58",
                             "=SUMIFS(Sales!$O:$O,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"Heron Fields\")/1.15+SUMIFS(Sales!$O:$O,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"Heron View\")/1.15",
                             "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"Heron Fields\")/1.15+SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"Heron View\")/1.15",
-                            "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron Fields\")/1.15+SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron View\")/1.15-C52"])
+                            "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron Fields\")/1.15+SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron View\")/1.15-C58"])
 
                 ws9.append(["Transfer Fees",
                             "=SUMIFS(Sales!$L:$L,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$L:$L,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,FALSE)+SUMIFS(Sales!$L:$L,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$L:$L,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,FALSE)",
@@ -4806,10 +4812,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                             "=SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron Fields\")+SUMIFS(Sales!$M:$M,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron View\")"])
 
                 ws9.append(["Unforseen (0.05%)",
-                            "=SUMIFS(Sales!$N:$N,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$N:$N,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,FALSE)+SUMIFS(Sales!$N:$N,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$N:$N,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,FALSE)-C53",
+                            "=SUMIFS(Sales!$N:$N,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$N:$N,Sales!$A:$A,\"=\"&\"Heron Fields\",Sales!$D:$D,FALSE)+SUMIFS(Sales!$N:$N,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,TRUE)+SUMIFS(Sales!$N:$N,Sales!$A:$A,\"=\"&\"Heron View\",Sales!$D:$D,FALSE)-C59",
                             "=SUMIFS(Sales!$N:$N,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"Heron Fields\")+SUMIFS(Sales!$N:$N,Sales!$E:$E,TRUE,Sales!$A:$A,\"=\"&\"Heron View\")",
                             "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"Heron Fields\")+SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,TRUE,Sales!$A:$A,\"=\"&\"Heron View\")",
-                            "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron Fields\")+SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron View\")-C53"])
+                            "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron Fields\")+SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"=\"&\"Heron View\")-C59"])
 
 
 
@@ -4955,6 +4961,18 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws9.append(["Total Current Funds Available", "=B35+B36"])
                 ws9.append(["Current Construction Cost", "=-Cashflow!B29+C47+C48+C49+C50+C51"])
                 ws9.append(["Total funds (required)/Surplus", "=B37-B38"])
+            elif project == "Heron":
+                ws9.append(["Total Draw funds available", f"='Cashflow - {project}'!B21"])
+                ws9.append(["Projected Heron Projects Income", f"='Cashflow - {project}'!B11+C52"])
+                ws9.append(["Total Current Funds Available", "=B35+B36"])
+                ws9.append(["Current Construction Cost", f"=-'Cashflow - {project}'!B29+C53+C54+C55+C56+C57"])
+                ws9.append(["Total funds (required)/Surplus", "=B37-B38"])
+            elif project == "Goodwood":
+                ws9.append(["Total Draw funds available", f"='Cashflow - {project}'!B21"])
+                ws9.append(["Projected Purple Blok Projects Income", f"='Cashflow - {project}'!B11+C46"])
+                ws9.append(["Total Current Funds Available", "=B35+B36"])
+                ws9.append(["Current Construction Cost", f"=-'Cashflow - {project}'!B29+C47+C48+C49+C50+C51"])
+                ws9.append(["Total funds (required)/Surplus", "=B37-B38"])
             else:
                 ws9.append(["Total Draw funds available", f"='Cashflow - {project}'!B21"])
                 ws9.append(["Projected Heron Projects Income", f"='Cashflow - {project}'!B11+C46"])
@@ -4962,40 +4980,103 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws9.append(["Current Construction Cost", f"=-'Cashflow - {project}'!B29+C47+C48+C49+C50+C51"])
                 ws9.append(["Total funds (required)/Surplus", "=B37-B38"])
             ws9.append(["PROJECTED PROFIT"])
-            ws9.append(["Projected Nett Revenue", "=+B21+SUM(B56:B63)"])
-            ws9.append(
-                ["Other Income (interest received)",
-                 "=-SUMIFS(Xero!$F:$F,Xero!$E:$E,\"Interest Received - Momentum\")"])
-            ws9.append(["Total Estimated Development and Sales Costs", "=+B78-C47-C48-C49-C50+SUM(D22:E26)"])
-            ws9.append(["Interest Expense", "=B29-B30-C51"])
-            ws9.append(["Profit", "=B41+B42-B43-B44"])
-            ws9.append(["Sales Increase", 0,
-                        "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B46",
-                        "",
-                        "=C46/$E$20"])
-            ws9.append(
-                ["CPC Construction", 0, "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)*B47",
-                 "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)-C47", "=C47/$E$20"])
-            ws9.append(["Rent Salaries and wages", 0, "=400000*B48",
-                        "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A48,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C48",
-                        "=C48/$E$20"])
-            ws9.append(["CPSD", 0,
-                        "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A49,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)*B49",
-                        "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A49,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C49",
-                        "=C49/$E$20"])
-            ws9.append(["OppInvest", 0,
-                        "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)*B50",
-                        "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C50",
-                        "=C50/$E$20"])
-            ws9.append(["investor interest", 0, "=(B29-B30)*B51", "=(B29-B30)-C51", "=C51/$E$20"])
-            ws9.append(["Commissions", 0,
-                        "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15*B52",
-                        "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15-C52",
-                        "=C52/$E$20"])
-            ws9.append(["Unforseen", 0,
-                        "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B53",
-                        "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")-C53",
-                        "=C53/$E$20"])
+            if project == "Goodwood":
+                ws9.append(["Projected Nett Income", "=+B27"])
+                ws9.append(
+                    ["Other Income (interest received)",
+                     0])
+                ws9.append(["Total Estimated Development and Sales Costs", 0])
+                # fill in yellow
+                estimated_costs_goodwood = ws9[f'B{ws9.max_row}']
+                estimated_costs_goodwood.fill = PatternFill(start_color="EBF400", end_color="EBF400", fill_type="solid")
+                ws9.append(["Capital and Interest Expense", "=B29-C51+B7"])
+                ws9.append(["Profit", "=B41-B43-B44"])
+
+            elif project == "Heron":
+                ws9.append(["Projected Nett Income", "=+B21+SUM(B56:B63)"])
+                ws9.append(
+                    ["Other Income (interest received)",
+                     "=-SUMIFS(Xero!$F:$F,Xero!$E:$E,\"Interest Received - Momentum\")"])
+                ws9.append(["Total Estimated Development and Sales Costs", "=+B84-C53-C54-C55-C56+SUM(D22:E26)"])
+                ws9.append(["Interest Expense", "=B29-B30-C51"])
+                ws9.append(["Profit", "=B41+B42-B43-B44"])
+                # print("XXXXX",ws9.max_row)
+                ws9.append(["TRANSACTION SUMMARY","GROSS","","NETT",""])
+                ws9.append(["Gross Income still due from Sales income", "=(SUM(D21:E21)*1.15)","","=SUM(D27:E27)",""])
+                ws9.append(["Cost to complete project (CPC)", "=0*115/100","","=B48/1.15",""])
+                cpc = ws9[f'B{ws9.max_row}']
+                cpc.fill = PatternFill(start_color="EBF400", end_color="EBF400", fill_type="solid")
+                ws9.append(["Gross Income", "=B47-B48","","=D47-D48",""])
+                ws9.append(["Investor Capital & Interest due", "='Investor Exit List - Heron'!Q4","","=B50",""])
+                ws9.append(["Surplus / Shortfall", "=B49-B50","","=D49-D50",""])
+
+
+            else:
+                ws9.append(["Projected Nett Income", "=+B21+SUM(B56:B63)"])
+                ws9.append(
+                    ["Other Income (interest received)",
+                     "=-SUMIFS(Xero!$F:$F,Xero!$E:$E,\"Interest Received - Momentum\")"])
+                ws9.append(["Total Estimated Development and Sales Costs", "=+B78-C47-C48-C49-C50+SUM(D22:E26)"])
+                ws9.append(["Interest Expense", "=B29-B30-C51"])
+                ws9.append(["Profit", "=B41+B42-B43-B44"])
+
+            if project == "Heron":
+                ws9.append(["Sales Increase", 0,
+                            "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B52",
+                            "",
+                            "=C52/$E$20"])
+                ws9.append(
+                    ["CPC Construction", 0, "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)*B53",
+                     "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)-C53", "=C53/$E$20"])
+                ws9.append(["Rent Salaries and wages", 0, "=400000*B54",
+                            "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A48,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C54",
+                            "=C54/$E$20"])
+                ws9.append(["CPSD", 0,
+                            "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A49,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)*B55",
+                            "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A49,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C55",
+                            "=C55/$E$20"])
+                ws9.append(["OppInvest", 0,
+                            "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)*B56",
+                            "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C56",
+                            "=C56/$E$20"])
+                ws9.append(["investor interest", 0, "=(B29-B30)*B57", "=(B29-B30)-C57", "=C57/$E$20"])
+                ws9.append(["Commissions", 0,
+                            "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15*B58",
+                            "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15-C58",
+                            "=C58/$E$20"])
+                ws9.append(["Unforseen", 0,
+                            "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B59",
+                            "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")-C59",
+                            "=C53/$E$20"])
+            else:
+                ws9.append(["Sales Increase", 0,
+                            "=SUMIFS(Sales!$K:$K,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B46",
+                            "",
+                            "=C46/$E$20"])
+                ws9.append(
+                    ["CPC Construction", 0,
+                     "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)*B47",
+                     "=SUMIFS('Updated Construction'!$F:$F,'Updated Construction'!$D:$D,FALSE)-C47", "=C47/$E$20"])
+                ws9.append(["Rent Salaries and wages", 0, "=400000*B48",
+                            "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A48,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C48",
+                            "=C48/$E$20"])
+                ws9.append(["CPSD", 0,
+                            "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A49,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)*B49",
+                            "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A49,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C49",
+                            "=C49/$E$20"])
+                ws9.append(["OppInvest", 0,
+                            "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)*B50",
+                            "=SUMIFS('Other Costs'!$D:$D,'Other Costs'!$A:$A,'NSST Print'!$A75,'Other Costs'!$C:$C,\">\"&'NSST Print'!$B$3)-C50",
+                            "=C50/$E$20"])
+                ws9.append(["investor interest", 0, "=(B29-B30)*B51", "=(B29-B30)-C51", "=C51/$E$20"])
+                ws9.append(["Commissions", 0,
+                            "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15*B52",
+                            "=SUMIFS(Sales!$O:$O,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")/1.15-C52",
+                            "=C52/$E$20"])
+                ws9.append(["Unforseen", 0,
+                            "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")*B53",
+                            "=SUMIFS(Sales!$N:$N,Sales!$E:$E,FALSE,Sales!$D:$D,FALSE,Sales!$A:$A,\"<>\"&\"Endulini\")-C53",
+                            "=C53/$E$20"])
             ws9.append([])
             ws9.append([])
             ws9.append(["Rental Income", "=-SUMIFS(Xero!$F:$F,Xero!$E:$E,'NSST Print'!$A56)"])
@@ -5065,6 +5146,67 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws9['A2'].font = Font(bold=True, size=26, color="FFFFFF")
             ws9['E1'].font = Font(bold=True, size=22)
 
+            if project == 'Heron':
+                cols_to_format = ['A', 'B', 'C', 'D', 'E']
+                for col in cols_to_format:
+                    ws9[f"{col}46"].alignment = Alignment(horizontal='center', vertical='center')
+                    ws9[f"{col}46"].font = Font(bold=True, size=18, color="FFFFFF")
+                    ws9[f"{col}46"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+                # ws9[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
+                # ws9[f"B{i}"].font = Font(bold=True, size=18, color="FFFFFF")
+                # ws9[f"B{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+                # ws9[f"C{i}"].alignment = Alignment(horizontal='center', vertical='center')
+                # ws9[f"C{i}"].font = Font(bold=True, size=18, color="FFFFFF")
+                # ws9[f"C{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+                # ws9[f"D{i}"].alignment = Alignment(horizontal='center', vertical='center')
+                # ws9[f"D{i}"].font = Font(bold=True, size=18, color="FFFFFF")
+                # ws9[f"D{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+                # ws9[f"E{i}"].alignment = Alignment(horizontal='center', vertical='center')
+                # ws9[f"E{i}"].font = Font(bold=True, size=18, color="FFFFFF")
+                # ws9[f"E{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+
+
+            rows_for_half_merge = [46,47,48,49,50,51]
+
+            if project == 'Heron':
+                # if i == 46:
+                #     ws9[f"A{i}"].alignment = Alignment(horizontal='center', vertical='center')
+                #     ws9[f"A{i}"].font = Font(bold=True, size=18, color="FFFFFF")
+                #     ws9[f"A{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+                #     # ws9[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
+                #     # ws9[f"B{i}"].font = Font(bold=True, size=18, color="FFFFFF")
+                #     # ws9[f"B{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+                #     # ws9[f"C{i}"].alignment = Alignment(horizontal='center', vertical='center')
+                #     # ws9[f"C{i}"].font = Font(bold=True, size=18, color="FFFFFF")
+                #     # ws9[f"C{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+                #     # ws9[f"D{i}"].alignment = Alignment(horizontal='center', vertical='center')
+                #     # ws9[f"D{i}"].font = Font(bold=True, size=18, color="FFFFFF")
+                #     # ws9[f"D{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+                #     # ws9[f"E{i}"].alignment = Alignment(horizontal='center', vertical='center')
+                #     # ws9[f"E{i}"].font = Font(bold=True, size=18, color="FFFFFF")
+                #     # ws9[f"E{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+
+                for i in rows_for_half_merge:
+                    ws9[f"A{i}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'), left=Side(style='thin'),
+                                                 right=Side(style='thin'))
+                    ws9[f"B{i}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'), left=Side(style='thin'),
+                                                 right=Side(style='thin'))
+                    ws9[f"C{i}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'), left=Side(style='thin'),
+                                                 right=Side(style='thin'))
+                    ws9[f"D{i}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'), left=Side(style='thin'),
+                                                 right=Side(style='thin'))
+                    ws9[f"E{i}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'), left=Side(style='thin'),
+                                                 right=Side(style='thin'))
+                    ws9.merge_cells(f"B{i}:C{i}")
+                    ws9.merge_cells(f"D{i}:E{i}")
+
+                # put a thin border around all the cells
+
+
+
+
+
+
             rows_for_part_merger = [3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 29, 30, 31, 32, 33, 35, 36, 37, 38,
                                     39,
                                     41, 42, 43, 44, 45]
@@ -5072,8 +5214,11 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws9.merge_cells(f"B{i}:E{i}")
                 ws9[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
 
-            for i in range(46, 54):
-                if i == 48:
+
+
+            for i in range(52, 60):
+
+                if i == 54:
                     # format the cell in row 48 as an integer
                     ws9[f"B{i}"].number_format = '0'
                 else:
@@ -5087,11 +5232,15 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws9.row_dimensions[32].hidden = True
             ws9.row_dimensions[33].hidden = True
 
-            for i in range(40, 46):
-                ws9.row_dimensions[i].hidden = True
-
-            for i in range(56, 79):
-                ws9.row_dimensions[i].hidden = True
+            if project != 'Goodwood':# Hide rows 46 to 51
+                for i in range(40, 46):
+                    ws9.row_dimensions[i].hidden = True
+            if project != "Heron":
+                for i in range(56, 79):
+                    ws9.row_dimensions[i].hidden = True
+            else:
+                for i in range(62, 85):
+                    ws9.row_dimensions[i].hidden = True
 
             # in row 19 and 20, center the text from column B to E
             for i in range(2, 6):
@@ -5135,8 +5284,10 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws10 = wb.create_sheet(f'Investor Exit List - {project}')
             # make tab color red
             ws10.sheet_properties.tabColor = tab_colors[idx]
-
-            ws10['W1'] = "C.3_e"
+            if project != "Goodwood":
+                ws10['W1'] = "C.3_e"
+            else:
+                ws10['W1'] = "C.5.4"
             ws10['W1'].font = Font(bold=True, size=22)
             ws10['W1'].alignment = Alignment(horizontal='center', vertical='center')
             ws10['W1'].border = Border(top=Side(style='medium'), bottom=Side(style='medium'), left=Side(style='medium'),

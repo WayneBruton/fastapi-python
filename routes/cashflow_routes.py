@@ -2326,6 +2326,13 @@ async def generate_investors_new_cashflow_nsst_report(data: Request, background_
             # item['block'] = "R"
             # print()
 
+        # print(sales[0])
+        for sale in sales:
+            if sale['Category'] == "Goodwood":
+                sale['opportunity_transfer_fees'] = 0
+                sale['opportunity_bond_registration'] = 0
+
+
         background_tasks.add_task(cashflow_projections, invest, construction, sales, operational_costs, xero,
                                   opportunities,
                                   investor_exit, momentum, date)

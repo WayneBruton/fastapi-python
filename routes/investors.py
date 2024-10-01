@@ -602,7 +602,7 @@ async def uploadExitLetters( doc: UploadFile, name: str = Form(...), inv: str = 
 async def upload_fica_files( docs: list[UploadFile], name: str = Form(...), inv: str = Form(...)):
     # data = await request.json()
     # print(data)
-    print("NAME",name)
+    # print("NAME",name)
     link = ""
     input_folder = 'upload_fica'
     for file in os.listdir(input_folder):
@@ -611,7 +611,7 @@ async def upload_fica_files( docs: list[UploadFile], name: str = Form(...), inv:
 
     try:
         for doc in docs:
-            print(doc.filename)
+            # print(doc.filename)
             doc.filename = doc.filename.replace(" ", "_")
             # print(doc.filename)
             data = await doc.read()
@@ -629,18 +629,18 @@ async def upload_fica_files( docs: list[UploadFile], name: str = Form(...), inv:
 
         # upload to s3
         try:
-            print("PRINTING THIS:",f"upload_fica/{name}.pdf")
+            # print("PRINTING THIS:",f"upload_fica/{name}.pdf")
             s3.upload_file(
                 f"upload_fica/{name}.pdf",
                 AWS_BUCKET_NAME,
                 f"{name}.pdf",
             )
             link = f"https://{AWS_BUCKET_NAME}.s3.{AWS_BUCKET_REGION}.amazonaws.com/{name}.pdf"
-            print("NAME",name)
-            print("SUCCESS")
-            print(link)
+            # print("NAME",name)
+            # print("SUCCESS")
+            # print(link)
             investor = db.investors.find_one({"investor_acc_number": inv})
-            print("INVESTOR",investor)
+            # print("INVESTOR",investor)
             # investor['id'] = str(investor['_id'])
             # del investor['_id']
             # for i in investor['trust']:
