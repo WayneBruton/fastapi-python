@@ -15,6 +15,7 @@ h11
 httptools
 httpx
 idna
+numpy
 openpyxl~=3.0.10
 pandas~=2.0.0
 pandas_datareader~=0.10.0
