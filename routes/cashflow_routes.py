@@ -2255,9 +2255,9 @@ async def generate_investors_new_cashflow_nsst_report(data: Request, background_
         # result = cashflow_projections(invest, construction, sales, operational_costs, xero, opportunities,
         #                               investor_exit, momentum, date)
 
-        for item in construction:
-            print(item)
-            print()
+        # for item in construction:
+        #     print(item)
+        #     print()
         insert = {
             "Whitebox-Able": True,
             "Blocks": "Block R",

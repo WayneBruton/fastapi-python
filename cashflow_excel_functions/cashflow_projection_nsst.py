@@ -4599,10 +4599,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws6.page_margins.top = 2.75
             ws6.page_margins.bottom = 0.75
 
-            #
-            # # freeze panes at cell B10
-            # ws8.freeze_panes = ws8['B10']
-            # convert project to upper case
+
 
             if idx == 0:
                 ws9 = wb.create_sheet('NSST Print')
@@ -4623,12 +4620,13 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             ws9["E1"].border = Border(top=Side(style='medium'), bottom=Side(style='medium'), left=Side(style='medium'),
                                       right=Side(style='medium'))
 
-            # ws9.append(["NSST HERON PROJECT REPORT"])
+
             ws9.append([f"NSST {project.upper()} REPORT"])
             ws9.append(["Report Date", report_date])
-            # format cell B3 as date
+
             ws9["B3"].number_format = 'dd MMMM yyyy'
-            # ws9.append(["Development", "Heron Fields and Heron View"])
+            # print(invest[0])
+
             if project == "Heron":
                 ws9.append(["Development", "Heron Fields and Heron View Open Projects"])
             else:
@@ -4643,36 +4641,34 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
             else:
                 ws9.append(["Total Investment capital to be raised (Estimated)",
                             f"=SUMIFS(Opportunities!$E:$E,Opportunities!$A:$A,\"{project}\")"])
-            # I AM HERE
 
-            # "=SUMIFS(Investors!$M:$M,Investors!$J:$J,"<="&'NSST Print'!B$3)"
             if project == "Consolidated":
                 "=SUMIFS(Investors!$M:$M,Investors!$I:$I," <= "&'NSST Print'!$B$3)"
                 ws9.append(["Total Investment capital received",
                             "=SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3)"])
             elif project == "Heron":
-                # "=SUMIFS(Investors!$M:$M,Investors!$I:$I,"<="&'NSST Print'!$B$3,Investors!$D:$D,"<>"&"Goodwood")"
+
                 ws9.append(["Total Investment capital received",
                             "=SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"Heron Fields\")+SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"Heron View\")"])
+                ws9.append(["Total Investment capital received - Re-invested",0])
+
             else:
                 ws9.append(["Total Investment capital received",
                             f"=SUMIFS(Investors!$M:$M,Investors!$I:$I,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"{project}\")"])
             if project == "Consolidated":
-                # "=SUMIFS(Investors!$M:$M,Investors!$P:$P,FALSE,Investors!$J:$J,"<="&'NSST Print'!$B$3)"
+
                 ws9.append(["Total Funds Drawn Down into Development",
                             "=SUMIFS(Investors!$M:$M,Investors!$J:$J,\"<=\"&'NSST Print'!B3)"])
                 ws9.append(["Momentum Investment Account", "=Cashflow!B13"])
                 ws9.append(["Capital not Raised", "=B6-B7-B11"])
-                # ws9.append(["Available to be raised (Estimated)",
-                #             "==IF((B6-B7)<=0,0,B6-B7)"])
+
             elif project == "Heron":
-                # "=SUMIFS(Investors!$M:$M,Investors!$P:$P,FALSE,Investors!$J:$J,"<="&'NSST Print'!$B$3,Investors!$D:$D,"="&"Heron Fields")+SUMIFS(Investors!$M:$M,Investors!$P:$P,FALSE,Investors!$J:$J,"<="&'NSST Print'!$B$3,Investors!$D:$D,"="&"Heron View")"
+
                 ws9.append(["Total Funds Drawn Down into Development",
                             "=SUMIFS(Investors!$M:$M,Investors!$J:$J,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"Heron Fields\")+SUMIFS(Investors!$M:$M,Investors!$J:$J,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"Heron View\")"])
                 ws9.append(["Momentum Investment Account", f"='Cashflow - Heron'!B13"])
-                ws9.append(["Capital not Raised", "=B6-B7-B11"])
-                # ws9.append(["Available to be raised (Estimated)",
-                #             "==IF((B6-B7)<=0,0,B6-B7)"])
+                # ws9.append(["Capital not Raised", "=B6-B7-B11"])
+
             else:
                 ws9.append(["Total Funds Drawn Down into Development",
                             f"=SUMIFS(Investors!$M:$M,Investors!$J:$J,\"<=\"&'NSST Print'!B3,Investors!$D:$D,\"{project}\")"])
@@ -4683,7 +4679,7 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             # I AM HERE
             if project == "Consolidated":
-                # "=SUMIFS(Investors!$M:$M,Investors!$K:$K,"<="&'NSST Print'!$B$3)"
+
                 ws9.append(["Capital repaid",
                             "=SUMIFS(Investors!$M:$M,Investors!$K:$K,\"<=\"&'NSST Print'!$B$3)"])
 
@@ -4697,16 +4693,16 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws9.append(["Current Investor Capital deployed",
                             f"=SUMIFS(Investors!$M:$M,Investors!$K:$K,\">\"&'NSST Print - Heron'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print - Heron'!$B$3,Investors!$P:$P,FALSE,Investors!$D:$D,\"Heron Fields\",Investors!$I:$I,\"<=\"&'NSST Print - Heron'!$B$3)+SUMIFS(Investors!$M:$M,Investors!$K:$K,\">\"&'NSST Print - Heron'!$B$3,Investors!$P:$P,FALSE,Investors!$D:$D,\"Heron View\",Investors!$I:$I,\"<=\"&'NSST Print - Heron'!$B$3)"])
             else:
-                # "=SUMIFS(Investors!$M:$M,Investors!$K:$K,"<="&'NSST Print'!$B$3,Investors!$D:$D,"="&"Goodwood")"
+
                 ws9.append(["Capital repaid",
                             f"=SUMIFS(Investors!$M:$M,Investors!$K:$K,\"<=\"&'NSST Print'!$B$3,Investors!$D:$D,\"{project}\")"])
-                # "=SUMIFS(Investors!$M:$M,Investors!$K:$K,">"&'NSST Print'!$B$3,Investors!$P:$P,FALSE,Investors!$D:$D,"="&"Goodwood")"
+
                 ws9.append(["Current Investor Capital deployed",
                             f"=SUMIFS(Investors!$M:$M,Investors!$K:$K,\">\"&'NSST Print - {project}'!$B$3,Investors!$I:$I,\"<=\"&'NSST Print - {project}'!$B$3,Investors!$P:$P,FALSE,Investors!$D:$D,\"{project}\",Investors!$I:$I,\"<=\"&'NSST Print - {project}'!$B$3)"])
 
             ws9.append(["INVESTMENTS"])
             if project == "Consolidated":
-                # "=COUNTIFS(Investors!$G:$G,FALSE,Investors!$I:$I,"<="&'NSST Print'!$B$3)+COUNTIFS(Investors!$G:$G,TRUE,Investors!$I:$I,"<="&'NSST Print'!$B$3)"
+
                 ws9.append(
                     ["No. of Capital Investments received",
                      "=COUNTIFS(Investors!$G:$G,FALSE,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)+COUNTIFS(Investors!$G:$G,TRUE,Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)"])
@@ -4922,13 +4918,6 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                 ws9.append(["Interest Due to be Earned to Exit", "=B31-B32"])
 
             elif project == "Heron":
-               # "=B29-B30-('Investor Exit List - Heron'!Q4-'Investor Exit List - Heron'!F4)"
-               #  ws9['F29'] = f"=B29-B30-('Investor Exit List - {project}'!Q4-'Investor Exit List - {project}'!F4)"
-               # # format above as currency
-               #  ws9['F29'].number_format = '$#,##0.00'
-               #  ws9['G29'] = "<CHECK"
-
-
 
                 ws9.append(["Total Estimated Interest",
                             f"=SUMIFS(Investors!$S:$S,Investors!$D:$D,\"Heron Fields\",Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)+SUMIFS(Investors!$S:$S,Investors!$D:$D,\"Heron View\",Investors!$I:$I,\"<=\"&'NSST Print'!$B$3)"])
@@ -5152,39 +5141,13 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
                     ws9[f"{col}46"].alignment = Alignment(horizontal='center', vertical='center')
                     ws9[f"{col}46"].font = Font(bold=True, size=18, color="FFFFFF")
                     ws9[f"{col}46"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
-                # ws9[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
-                # ws9[f"B{i}"].font = Font(bold=True, size=18, color="FFFFFF")
-                # ws9[f"B{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
-                # ws9[f"C{i}"].alignment = Alignment(horizontal='center', vertical='center')
-                # ws9[f"C{i}"].font = Font(bold=True, size=18, color="FFFFFF")
-                # ws9[f"C{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
-                # ws9[f"D{i}"].alignment = Alignment(horizontal='center', vertical='center')
-                # ws9[f"D{i}"].font = Font(bold=True, size=18, color="FFFFFF")
-                # ws9[f"D{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
-                # ws9[f"E{i}"].alignment = Alignment(horizontal='center', vertical='center')
-                # ws9[f"E{i}"].font = Font(bold=True, size=18, color="FFFFFF")
-                # ws9[f"E{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+
 
 
             rows_for_half_merge = [46,47,48,49,50,51]
 
             if project == 'Heron':
-                # if i == 46:
-                #     ws9[f"A{i}"].alignment = Alignment(horizontal='center', vertical='center')
-                #     ws9[f"A{i}"].font = Font(bold=True, size=18, color="FFFFFF")
-                #     ws9[f"A{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
-                #     # ws9[f"B{i}"].alignment = Alignment(horizontal='center', vertical='center')
-                #     # ws9[f"B{i}"].font = Font(bold=True, size=18, color="FFFFFF")
-                #     # ws9[f"B{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
-                #     # ws9[f"C{i}"].alignment = Alignment(horizontal='center', vertical='center')
-                #     # ws9[f"C{i}"].font = Font(bold=True, size=18, color="FFFFFF")
-                #     # ws9[f"C{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
-                #     # ws9[f"D{i}"].alignment = Alignment(horizontal='center', vertical='center')
-                #     # ws9[f"D{i}"].font = Font(bold=True, size=18, color="FFFFFF")
-                #     # ws9[f"D{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
-                #     # ws9[f"E{i}"].alignment = Alignment(horizontal='center', vertical='center')
-                #     # ws9[f"E{i}"].font = Font(bold=True, size=18, color="FFFFFF")
-                #     # ws9[f"E{i}"].fill = PatternFill(start_color="7F9F80", end_color="7F9F80", fill_type="solid")
+
 
                 for i in rows_for_half_merge:
                     ws9[f"A{i}"].border = Border(top=Side(style='thin'), bottom=Side(style='thin'), left=Side(style='thin'),
@@ -5227,7 +5190,8 @@ def cashflow_projections(invest, construction, sales, operational_costs, xero, o
 
             # ws9['F43'].value = "<< SALES COSTS DO NOT APPEAR TO INCLUDED PREVIOUSLY"
             # Hide row 10, 31,32,33
-            ws9.row_dimensions[10].hidden = True
+            if project != "Heron":
+                ws9.row_dimensions[10].hidden = True
             ws9.row_dimensions[31].hidden = True
             ws9.row_dimensions[32].hidden = True
             ws9.row_dimensions[33].hidden = True
