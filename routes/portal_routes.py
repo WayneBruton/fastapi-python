@@ -953,7 +953,7 @@ def get_currency_data():
 def get_commodity_data():
     try:
         tickers = ['GC=F', 'SI=F', 'PL=F', 'BZ=F']  # Tickers for gold, silver, platinum, palladium, and Brent crude
-        commodities = yf.download(tickers, period='10d',
+        commodities = yf.download(tickers, period='5d',
                                   interval='1d')  # Download commodity data for the past day at 1-minute
 
         gold_price = commodities['Close']['GC=F'][-1]
