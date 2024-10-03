@@ -756,7 +756,7 @@ def merge_pdfs(input_folder, output_pdf):
         input_folder (str): Path to the folder containing the PDF files to merge.
         output_pdf (str): Path to the output merged PDF file.
     """
-    merger = PdfFileMerger()
+    merger = PdfFileMerger(strict=False)
 
     # Get a list of all PDF files in the input folder
     pdf_files = [os.path.join(input_folder, f) for f in os.listdir(input_folder) if f.endswith('.pdf')]
@@ -764,12 +764,17 @@ def merge_pdfs(input_folder, output_pdf):
     # Append each PDF file to the merger
     for pdf_file in pdf_files:
         with open(pdf_file, 'rb') as file:
-            merger.append(file)
+            try:
+                merger.append(file)
+            except Exception as e:
+                print("ERROR",e)
+
             print("Here We Are", pdf_file)
 
     # Write the merged PDF to the output file
     with open(output_pdf, 'wb') as output_file:
         merger.write(output_file)
+
 
 
 
