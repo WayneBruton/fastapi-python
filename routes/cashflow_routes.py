@@ -3081,7 +3081,8 @@ async def get_daily_cashflow(request: Request):
         current_report_date = datetime.strptime(current_report_date, '%Y/%m/%d')
 
         # result = background_tasks.add_task(daily_cashflow(sales, investor_exit,date))
-        result = daily_cashflow(sales, investor_exit, date)
+        result = {"filename": 'cashflow_p&l_files/daily_cashflow.xlsx'}
+        # result = daily_cashflow(sales, investor_exit, date)
         print("result", result)
         #
         # return {"sales": sales, "investors": investor_exit, "opportunities": opportunities}
